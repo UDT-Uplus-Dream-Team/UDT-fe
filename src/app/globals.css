@@ -1,26 +1,106 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-style: normal;
+  font-weight: 45 920;
+  font-display: swap;
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /*── 색상 ─────────────────────────────────*/
+  /* Primary */
+  --primary-900:  #0E062B;
+  --primary-800:  #221453;
+  --primary-700:  #33236C;
+  --primary-600:  #453285;
+  --primary-500:  #5A43A2;
+  --primary-400:  #7155B7;
+  --primary-300:  #8669CC;
+  --primary-200:  #A081DC;
+  --primary-100:  #BB99EB;
+  --primary-0:    #D2B1F9;
+
+  /* Action & Status */
+  --action-success: #03C75A;
+  --action-failure: #C32737;
+  --like-color:     #246224;
+  --dislike-color:  #000000;
+  --logo-color:     #FFFACD;
+
+  /* Gray Scale */
+  --gray-100: #222022;
+  --gray-60:  rgba(34,32,34,0.6);
+  --gray-40:  rgba(34,32,34,0.4);
+  --gray-20:  rgba(34,32,34,0.2);
+  --gray-10:  #F5F5F5;
+
+  /*── 반경 ─────────────────────────────────*/
+  --radius-input:  20px;
+  --radius-modal:  24px;
+  --radius-button: 12px;
+  --radius-none:   0;
+
+  /*── 그림자 ───────────────────────────────*/
+  --shadow-2: '0 2px 10px rgba(0, 0, 0, 0.1)';
+  --shadow-4: '0 4px 10px rgba(0, 0, 0, 0.1)';
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /*── Primary ──────────────────────────────*/
+  --color-primary-900: var(--primary-900);
+  --color-primary-800: var(--primary-800);
+  --color-primary-700: var(--primary-700);
+  --color-primary-600: var(--primary-600);
+  --color-primary-500: var(--primary-500);
+  --color-primary-400: var(--primary-400);
+  --color-primary-300: var(--primary-300);
+  --color-primary-200: var(--primary-200);
+  --color-primary-100: var(--primary-100);
+  --color-primary-0:   var(--primary-0);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /*── Action & Status ─────────────────────*/
+  --color-success:   var(--action-success);
+  --color-destructive: var(--action-failure);
+  --color-like:      var(--like-color);
+  --color-dislike:   var(--dislike-color);
+  --color-logo:      var(--logo-color);
+
+  /*── Gray ─────────────────────────────────*/
+  --color-gray-100: var(--gray-100);
+  --color-gray-60:  var(--gray-60);
+  --color-gray-40:  var(--gray-40);
+  --color-gray-20:  var(--gray-20);
+  --color-gray-10:  var(--gray-10);
+
+  /*── 반경(Radius) ─────────────────────────*/
+  --radius-sm:   var(--radius-input);
+  --radius-md:   var(--radius-modal);
+  --radius-lg:   var(--radius-button);
+  --radius-none: var(--radius-none);
+
+  /*── 그림자(Shadow) ──────────────────────*/
+  --shadow-sm:  var(--shadow-2);
+  --shadow-md:  var(--shadow-4);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Pretendard Variable', sans-serif;
+}
+
+.dark {
+  /* (다크 모드용 토큰 재정의는 필요에 따라 위 :root 영역과 동일하게 추가 가능합니다) */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

@@ -19,9 +19,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"], // fallback 전체 경로
-      "@components/*": ["./src/components/*"], // 도메인 컴포넌트
-      "@ui/*": ["./src/components/ui/*"], // shadcn 컴포넌트
+      "@/*": ["./src/*"],
+      "@app/*": ["./src/app/*"],
+      "@components/*": ["./src/components/*"],
+      "@ui/*": ["./src/components/ui/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@lib/*": ["./src/lib/*"],
       "@utils/*": ["./src/utils/*"],

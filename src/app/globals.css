@@ -1,57 +1,93 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
   font-family: 'Pretendard Variable';
   font-style: normal;
-  font-weight: 45 920;
+  font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+  src: url('/fonts/PretendardVariable.woff2') format('woff2');
 }
 
+/* Foundation에서 설정한 토큰 값 입력하는 곳 */
 :root {
-  /*── 색상 ─────────────────────────────────*/
   /* Primary */
-  --primary-900:  #0E062B;
-  --primary-800:  #221453;
-  --primary-700:  #33236C;
-  --primary-600:  #453285;
-  --primary-500:  #5A43A2;
-  --primary-400:  #7155B7;
-  --primary-300:  #8669CC;
-  --primary-200:  #A081DC;
-  --primary-100:  #BB99EB;
-  --primary-0:    #D2B1F9;
+  --primary-900: #0e062b;
+  --primary-800: #221453;
+  --primary-700: #33236c;
+  --primary-600: #453285;
+  --primary-500: #5a43a2;
+  --primary-400: #7155b7;
+  --primary-300: #8669cc;
+  --primary-200: #a081dc;
+  --primary-100: #bb99eb;
+  --primary-0: #d2b1f9;
 
   /* Action & Status */
-  --action-success: #03C75A;
-  --action-failure: #C32737;
-  --like-color:     #246224;
-  --dislike-color:  #000000;
-  --logo-color:     #FFFACD;
+  --action-success: #03c75a;
+  --action-failure: #c32737;
+  --like-color: #246224;
+  --dislike-color: #000000;
+  --logo-color: #fffacd;
 
   /* Gray Scale */
   --gray-100: #222022;
-  --gray-60:  rgba(34,32,34,0.6);
-  --gray-40:  rgba(34,32,34,0.4);
-  --gray-20:  rgba(34,32,34,0.2);
-  --gray-10:  #F5F5F5;
+  --gray-60: rgba(34, 32, 34, 0.6);
+  --gray-40: rgba(34, 32, 34, 0.4);
+  --gray-20: rgba(34, 32, 34, 0.2);
+  --gray-10: #f5f5f5;
+
+  /*── 배경·전경·입력·테두리·링 ─────────────────*/ /* 페이지 배경 */ /* 기본 텍스트 */
+  --input: oklch(0.922 0 0); /* 입력·컨트롤 배경 */
+  --border: oklch(0.922 0 0); /* 테두리 색 */
+  --ring: oklch(0.708 0 0); /* 포커스 링 색 */
 
   /*── 반경 ─────────────────────────────────*/
-  --radius-input:  20px;
-  --radius-modal:  24px;
+  --radius-input: 20px;
+  --radius-modal: 24px;
   --radius-button: 12px;
-  --radius-none:   0;
+  --radius-none: 0;
 
   /*── 그림자 ───────────────────────────────*/
-  --shadow-2: '0 2px 10px rgba(0, 0, 0, 0.1)';
-  --shadow-4: '0 4px 10px rgba(0, 0, 0, 0.1)';
+  --shadow-2: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --shadow-4: 0 4px 10px rgba(0, 0, 0, 0.1);
+  --radius: 0.625rem;
+
+  /*shadcn variable*/
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
 @theme inline {
-  /*── Primary ──────────────────────────────*/
+  /* Primary Color */
   --color-primary-900: var(--primary-900);
   --color-primary-800: var(--primary-800);
   --color-primary-700: var(--primary-700);
@@ -61,39 +97,159 @@
   --color-primary-300: var(--primary-300);
   --color-primary-200: var(--primary-200);
   --color-primary-100: var(--primary-100);
-  --color-primary-0:   var(--primary-0);
+  --color-primary-0: var(--primary-0);
 
-  /*── Action & Status ─────────────────────*/
-  --color-success:   var(--action-success);
+  /* Action & Status */
+  --color-success: var(--action-success);
   --color-destructive: var(--action-failure);
-  --color-like:      var(--like-color);
-  --color-dislike:   var(--dislike-color);
-  --color-logo:      var(--logo-color);
+  --color-like: var(--like-color);
+  --color-dislike: var(--dislike-color);
+  --color-logo: var(--logo-color);
 
-  /*── Gray ─────────────────────────────────*/
+  /* Gray */
   --color-gray-100: var(--gray-100);
-  --color-gray-60:  var(--gray-60);
-  --color-gray-40:  var(--gray-40);
-  --color-gray-20:  var(--gray-20);
-  --color-gray-10:  var(--gray-10);
+  --color-gray-60: var(--gray-60);
+  --color-gray-40: var(--gray-40);
+  --color-gray-20: var(--gray-20);
+  --color-gray-10: var(--gray-10);
 
-  /*── 반경(Radius) ─────────────────────────*/
-  --radius-sm:   var(--radius-input);
-  --radius-md:   var(--radius-modal);
-  --radius-lg:   var(--radius-button);
+  /* etc */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --ring-color: var(--ring);
+
+  /* Border-Radius */
+  --radius-sm: var(--radius-input);
+  --radius-md: var(--radius-modal);
+  --radius-lg: var(--radius-button);
   --radius-none: var(--radius-none);
 
-  /*── 그림자(Shadow) ──────────────────────*/
-  --shadow-sm:  var(--shadow-2);
-  --shadow-md:  var(--shadow-4);
+  /* 그림자(Shadow) */
+  --shadow-sm: var(--shadow-2);
+  --shadow-md: var(--shadow-4);
+
+  --font-sans: 'Pretendard Variable', system-ui, sans-serif;
+
+  /* Shadcn.ui */
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-sidebar-border: var(--sidebar-border);
+
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+
+  --color-sidebar-accent: var(--sidebar-accent);
+
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+
+  --color-sidebar-primary: var(--sidebar-primary);
+
+  --color-sidebar-foreground: var(--sidebar-foreground);
+
+  --color-sidebar: var(--sidebar);
+
+  --color-chart-5: var(--chart-5);
+
+  --color-chart-4: var(--chart-4);
+
+  --color-chart-3: var(--chart-3);
+
+  --color-chart-2: var(--chart-2);
+
+  --color-chart-1: var(--chart-1);
+
+  --color-ring: var(--ring);
+
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-accent: var(--accent);
+
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-muted: var(--muted);
+
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-secondary: var(--secondary);
+
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-primary: var(--primary);
+
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-popover: var(--popover);
+
+  --color-card-foreground: var(--card-foreground);
+
+  --color-card: var(--card);
+
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-body {
-  font-family: 'Pretendard Variable', sans-serif;
+@layer base {
+  *:focus {
+    @apply outline-none;
+  }
+  body {
+    @apply font-sans;
+  }
+
+  /* 모바일 최적화 */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Safe area 지원 */
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* 스크롤바 숨기기 (모바일에서) */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 터치 스크롤 개선 */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .dark {
-  /* (다크 모드용 토큰 재정의는 필요에 따라 위 :root 영역과 동일하게 추가 가능합니다) */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {

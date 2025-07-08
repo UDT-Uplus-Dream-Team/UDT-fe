@@ -1,20 +1,6 @@
+import { MovieCardProps } from '@/types/mypage/Mypage.type';
 import Image from 'next/image';
 import { useState } from 'react';
-
-interface MovieCardProps {
-  title: string;
-  genres: string[];
-  runtime: string;
-  releaseDate: string;
-  rating: string;
-  description: string;
-  thumbnailUrl: string;
-  platformList: {
-    name: string;
-    iconUrl: string;
-    url: string;
-  }[];
-}
 
 const MovieCard = ({
   title,
@@ -102,13 +88,19 @@ const MovieCard = ({
         {/* 설명 */}
         <div className="flex flex-col mt-1">
           <h3 className="text-sm text-gray-400">줄거리</h3>
-          <p
-            className={`text-sm text-gray-700 ${
-              !isExpanded ? 'line-clamp-4' : ''
+
+          {/* 설명 본문 영역 */}
+          <div
+            className={`text-sm text-gray-700 transition-all duration-300 ${
+              isExpanded
+                ? 'max-h-[150px] overflow-y-auto pr-1'
+                : 'line-clamp-4 overflow-hidden'
             }`}
           >
             {description}
-          </p>
+          </div>
+
+          {/* 더보기/접기 버튼 */}
           <button
             className="text-xs text-primary-500 mt-1"
             onClick={toggleDescription}

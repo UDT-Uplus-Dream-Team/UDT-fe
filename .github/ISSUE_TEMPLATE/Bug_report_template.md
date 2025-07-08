@@ -1,9 +1,9 @@
+---
 name: Bug Report
 about: 앱/웹에서 발견된 오류나 비정상 동작을 보고합니다.
 title: '[BUG] 문제 요약 제목'
 labels: 'bug'
 assignees: ''
-
 ---
 
 ## 🐞 Bug Report

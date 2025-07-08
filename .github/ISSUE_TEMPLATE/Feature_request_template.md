@@ -1,9 +1,9 @@
+---
 name: Feature Request
 about: 새로운 기능을 제안하거나 기능 개선 사항을 요청합니다.
 title: '[FEATURE] 간결한 제목 작성'
 labels: 'feature'
 assignees: ''
-
 ---
 
 ## 🚀 Feature Request

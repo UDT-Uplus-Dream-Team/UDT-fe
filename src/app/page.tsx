@@ -1,23 +1,58 @@
 export default function Home() {
   return (
-    <div
-      className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center
-                 min-h-screen p-8 pb-20 gap-16 sm:p-20
-                 font-[family-name:var(--font-geist-sans)]"
-    >
-      <main className="flex flex-col gap-4 row-start-2 items-center sm:items-start">
-        {/* 로고나 배경 이미지가 필요하면 여기에 Image 컴포넌트 추가 */}
-        <h1 className="text-4xl font-bold tracking-tight">
-          환영합니다! {/* 변경됨 */}
-        </h1>
-        <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
-          저희 앱에 오신 것을 진심으로 환영합니다. {/* 변경됨 */}
-        </p>
+    <div className="min-h-[calc(100vh-80px)] flex flex-col p-6 pt-8 w-full">
+      {/* Header */}
+      <header className="mb-6">
+        <h2 className="text-sm text-[var(--primary-200)]">테스트 페이지</h2>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col gap-6">
+        <div className="text-center mb-4">
+          <h1 className="text-3xl font-bold text-white mb-2">
+            커스텀 스타일 확인
+          </h1>
+          <p className="text-[var(--primary-200)] text-base leading-relaxed">
+            이 페이지는 설정한 색상, 반경, 그림자, 폰트를 확인하기 위한
+            샘플입니다.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <button className="w-full px-6 py-3 bg-[var(--primary-500)] text-white rounded-[var(--radius-button)] shadow-[var(--shadow-md)] hover:bg-[var(--primary-600)] transition-colors">
+            버튼 스타일
+          </button>
+
+          <div className="p-4 bg-[var(--primary-100)] bg-opacity-20 border border-[var(--primary-300)] border-opacity-30 rounded-[var(--radius-modal)] shadow-[var(--shadow-sm)]">
+            <p className="text-[var(--primary-100)] text-sm leading-relaxed">
+              이 박스를 통해 배경 색상, 테두리, 반경, 그림자가 적용되었는지
+              확인하세요.
+            </p>
+          </div>
+
+          <input
+            className="w-full p-3 bg-[var(--input)] bg-opacity-10 border border-[var(--border)] border-opacity-30 rounded-[var(--radius-input)] text-white placeholder-[var(--primary-200)] focus:ring-2 focus:ring-[var(--ring)] focus:border-transparent transition-all"
+            placeholder="입력 포커스 링 확인"
+          />
+
+          {/* 추가 컨텐츠로 스크롤 테스트 */}
+          <div className="space-y-3 mt-8">
+            <div className="h-20 bg-[var(--primary-200)] bg-opacity-20 rounded-[var(--radius-modal)] flex items-center justify-center">
+              <span className="text-[var(--primary-100)]">컨텐츠 블록 1</span>
+            </div>
+            <div className="h-20 bg-[var(--primary-200)] bg-opacity-20 rounded-[var(--radius-modal)] flex items-center justify-center">
+              <span className="text-[var(--primary-100)]">컨텐츠 블록 2</span>
+            </div>
+            <div className="h-20 bg-[var(--primary-200)] bg-opacity-20 rounded-[var(--radius-modal)] flex items-center justify-center">
+              <span className="text-[var(--primary-100)]">컨텐츠 블록 3</span>
+            </div>
+          </div>
+        </div>
       </main>
 
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        {/* 필요 없으면 이 부분도 제거하거나 회사 로고·저작권표시 등으로 교체하세요 */}
-        <span className="text-sm text-gray-500">
+      {/* Footer */}
+      <footer className="mt-8 text-center">
+        <span className="text-sm text-[var(--primary-200)]">
           © {new Date().getFullYear()} Your Company
         </span>
       </footer>

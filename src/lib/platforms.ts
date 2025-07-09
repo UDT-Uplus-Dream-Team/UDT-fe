@@ -1,7 +1,7 @@
-import { Platform } from '@/types/platform';
+import { Platform } from '@/types/Platform';
 
 export const PLATFORMS: Platform[] = [
-  { label: '넷플릭스', id: 'neflix' },
+  { label: '넷플릭스', id: 'netflix' },
   { label: '티빙', id: 'tving' },
   { label: '쿠팡플레이', id: 'coupangPlay' },
   { label: '웨이브', id: 'wavve' },

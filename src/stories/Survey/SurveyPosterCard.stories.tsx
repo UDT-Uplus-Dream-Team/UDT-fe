@@ -38,6 +38,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  render: (args) => (
+    <div style={{ width: 120 }}>
+      <SurveyPosterCard {...args} />
+    </div>
+  ),
   args: {
     title: '귀를 기울이면',
     image: '/images/poster1.webp',
@@ -47,6 +52,11 @@ export const Default: Story = {
 };
 
 export const Selected: Story = {
+  render: (args) => (
+    <div style={{ width: 120 }}>
+      <SurveyPosterCard {...args} />
+    </div>
+  ),
   args: {
     title: '고양이의 보은',
     image: '/images/poster2.webp',
@@ -56,6 +66,11 @@ export const Selected: Story = {
 };
 
 export const LongTitleSelected: Story = {
+  render: (args) => (
+    <div style={{ width: 120 }}>
+      <SurveyPosterCard {...args} />
+    </div>
+  ),
   args: {
     title: '벼랑 위의 포뇨',
     image: '/images/poster3.webp',

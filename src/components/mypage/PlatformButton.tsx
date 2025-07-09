@@ -1,6 +1,6 @@
-import Image from 'next/image';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { PlatFormButtonProps } from '@/types/mypage/Mypage';
 import { Button } from '../ui/button';
-import { PlatFormButtonProps } from '@/types/mypage/Mypage.type';
 
 export const PlatformButton = ({
   platformName,
@@ -17,20 +17,13 @@ export const PlatformButton = ({
       className="w-[255px] h-[48px] px-4 py-2 flex justify-between items-center rounded-[12px] text-white bg-gradient-to-r from-[var(--primary-500)] to-[var(--primary-900)]"
     >
       <div className="flex items-center gap-2">
-        <div className="w-[25px] h-[25px] rounded-full overflow-hidden">
-          <Image
-            src={iconUrl}
-            alt={platformName}
-            width={25}
-            height={25}
-            className="object-cover"
-          />
-        </div>
+        <Avatar className="w-[25px] h-[25px]">
+          <AvatarImage src={iconUrl} alt={platformName} />
+          <AvatarFallback>{platformName[0]}</AvatarFallback>
+        </Avatar>
         <span className="text-sm">{platformName}</span>
       </div>
       <span className="text-sm">보러가기 →</span>
     </Button>
   );
 };
-
-export default PlatformButton;

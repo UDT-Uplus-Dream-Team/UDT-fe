@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import MovieCard from '@/components/mypage/MovieCard';
-import { MovieCardProps } from '@/types/mypage/Mypage.type';
+import MovieCard from '@components/mypage/MovieCard';
+import { MovieCardProps } from '@/types/mypage/Mypage';
 
 const meta: Meta<typeof MovieCard> = {
   title: 'Mypage/MovieCard',
@@ -23,14 +23,14 @@ const dummyProps: MovieCardProps = {
   thumbnailUrl: '/movie.webp',
   platformList: [
     {
-      name: 'Wavve',
-      iconUrl: '/disney-plus-icon.jpg',
-      url: 'https://www.wavve.com',
+      name: '넷플릭스',
+      iconUrl: '/images/ott/neflix.png',
+      url: 'https://www.netflix.com',
     },
     {
-      name: 'Netflix',
-      iconUrl: '/disney-plus-icon.jpg',
-      url: 'https://www.netflix.com',
+      name: '왓챠',
+      iconUrl: '/images/ott/watcha.png',
+      url: 'https://watcha.com',
     },
   ],
 };

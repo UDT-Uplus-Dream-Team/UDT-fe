@@ -1,6 +1,6 @@
 'use client';
 
-import { SubscriptionBoxProps } from '@/types/mypage/Mypage.type';
+import { SubscriptionBoxProps } from '@/types/mypage/Mypage';
 
 const SubscriptionBox = ({ title, items }: SubscriptionBoxProps) => {
   return (

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { PlatformButton } from '@/components/mypage/PlatformButton';
+import { PlatformButton } from '@components/mypage/PlatformButton';
 
 const meta: Meta<typeof PlatformButton> = {
   title: 'Components/PlatformButton',
@@ -16,7 +16,7 @@ type Story = StoryObj<typeof PlatformButton>;
 export const Default: Story = {
   args: {
     platformName: '디즈니+',
-    iconUrl: '/disney-plus-icon.png',
+    iconUrl: '/images/ott/disneyPlus.png',
     url: 'https://www.disneyplus.com/ko-kr',
   },
 };
@@ -24,7 +24,7 @@ export const Default: Story = {
 export const Netflix: Story = {
   args: {
     platformName: '넷플릭스',
-    iconUrl: '/disney-plus-icon.png',
+    iconUrl: '/images/ott/neflix.png',
     url: 'https://www.netflix.com',
   },
 };
@@ -32,7 +32,7 @@ export const Netflix: Story = {
 export const Watcha: Story = {
   args: {
     platformName: '왓챠',
-    iconUrl: '/disney-plus-icon.png',
+    iconUrl: '/images/ott/watcha.png',
     url: 'https://watcha.com',
   },
 };

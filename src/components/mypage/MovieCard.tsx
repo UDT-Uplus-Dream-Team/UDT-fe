@@ -1,6 +1,7 @@
-import { MovieCardProps } from '@/types/mypage/Mypage.type';
+import { MovieCardProps } from '@/types/mypage/Mypage';
 import Image from 'next/image';
 import { useState } from 'react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const MovieCard = ({
   title,
@@ -53,21 +54,20 @@ const MovieCard = ({
       {/* 장르 아래 점선 */}
       <div className="border-t-2 border-dashed border-primary-900 my-4" />
 
-      {/* ✅ 플랫폼 아이콘 추가 위치 */}
+      {/* ✅ 플랫폼 아이콘 아바타로 교체된 부분 */}
       <div className="flex gap-2 px-4 mb-2">
         {platformList.map((platform) => (
           <button
             key={platform.name}
             onClick={() => window.open(platform.url, '_blank')}
-            className="w-8 h-8 rounded-full overflow-hidden border border-primary-900"
+            className="w-8 h-8"
           >
-            <Image
-              src={platform.iconUrl}
-              alt={platform.name}
-              width={32}
-              height={32}
-              className="object-cover w-full h-full"
-            />
+            <Avatar className="w-8 h-8 border border-primary-900">
+              <AvatarImage src={platform.iconUrl} alt={platform.name} />
+              <AvatarFallback className="text-[10px]">
+                {platform.name[0]}
+              </AvatarFallback>
+            </Avatar>
           </button>
         ))}
       </div>

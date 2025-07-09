@@ -7,6 +7,7 @@ import { useExplorePageState } from '@/hooks/useExplorePageState';
 // FilterRadioButton을 모아두는 그룹 컴포넌트
 export const FilterRadioButtonGroup = () => {
   const {
+    displayedOptionsInTop, // 모든 표시될 옵션들 (기본 + 선택된 옵션들)
     selectedOptions, // 실제 적용된 옵션들만 표시
     toggleOption,
     isBottomSheetOpen,
@@ -46,7 +47,7 @@ export const FilterRadioButtonGroup = () => {
         </Sheet>
 
         {/* 필터 버튼 옆에는 각 옵션에 대한 라디오 버튼 표시 */}
-        {selectedOptions.map((option) => (
+        {displayedOptionsInTop.map((option) => (
           <FilterRadioButton
             key={option}
             label={option}

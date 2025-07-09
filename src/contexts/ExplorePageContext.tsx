@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useState } from 'react';
+import { createContext, useCallback, useMemo, useState } from 'react';
 import { ExplorePageContextType } from '@type/ExplorePageContextType';
 import { useFetchOttFilterOptions } from '@/hooks/useFetchOttFilterOptions';
 
@@ -14,10 +14,26 @@ export const ExplorePageProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]); // 선택된 옵션들 (현재 표시된 옵션들과는 별개의 내용)
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [tempSelectedOptions, setTempSelectedOptions] = useState<string[]>([]); // BottomSheet가 열릴 때 임시로 선택된 옵션들을 저장하는 상태
+
   const { filterOptions, hasUserData } = useFetchOttFilterOptions();
+
+  // 현재 UI에 표시될 모든 옵션들 (기본 옵션 + 선택된 옵션들, 화면 상단에 표시될 친구들)
+  const displayedOptionsInTop = useMemo(() => {
+    const allOptions = new Set<string>();
+
+    // 1. 기본 필터 옵션들 추가
+    filterOptions.forEach((option) => {
+      allOptions.add(option);
+    });
+
+    // 2. 선택된 옵션들 추가 (기본 옵션에 없는 것들만)
+    selectedOptions.forEach((option) => allOptions.add(option));
+
+    return Array.from(allOptions);
+  }, [filterOptions, selectedOptions]);
 
   //BottomSheet 열기 (현재 선택된 옵션들을 temp에 복사)
   const openBottomSheet = useCallback(() => {
@@ -42,7 +58,7 @@ export const ExplorePageProvider = ({
   const toggleOption = useCallback(
     (label: string, isSelected: boolean) => {
       if (isBottomSheetOpen) {
-        // BottomSheet가 열려있을 때는 임시 상태 업데이트
+        // BottomSheet가 열려있을 때는 "임시" 상태 업데이트
         if (isSelected) {
           setTempSelectedOptions((prev) =>
             prev.includes(label) ? prev : [...prev, label],
@@ -53,7 +69,7 @@ export const ExplorePageProvider = ({
           );
         }
       } else {
-        // BottomSheet가 닫혀있을 때는 실제 상태 즉시 업데이트
+        // BottomSheet가 닫혀있을 때는 실제 상태 "즉시" 업데이트
         if (isSelected) {
           setSelectedOptions((prev) =>
             prev.includes(label) ? prev : [...prev, label],
@@ -69,25 +85,22 @@ export const ExplorePageProvider = ({
   );
 
   // 선택된 옵션들 초기화
-  const clearSelectedOptions = useCallback(() => {
-    if (isBottomSheetOpen) {
-      setTempSelectedOptions([]);
-    } else {
-      setSelectedOptions([]);
-    }
-  }, [isBottomSheetOpen]);
+  const clearSelectedOptions = () => {
+    setTempSelectedOptions([]);
+  };
 
   // 현재 표시해야 할 선택된 옵션들 (BottomSheet 상태에 따라 다름)
   const currentSelectedOptions = isBottomSheetOpen
     ? tempSelectedOptions
-    : selectedOptions;
+    : displayedOptionsInTop;
 
   const value: ExplorePageContextType = {
     filterOptions,
     selectedOptions,
     toggleOption,
     clearSelectedOptions,
-    currentSelectedOptions, // 현재 UI에 표시할 선택된 옵션들
+    displayedOptionsInTop, // UI에 표시될 모든 옵션들 (화면 상단에 나타날 놈들)
+    currentSelectedOptions, // 현재 선택된 옵션들
     hasUserData,
     isBottomSheetOpen,
     openBottomSheet,

@@ -24,7 +24,7 @@ const config: StorybookConfig = {
         '@hooks': path.resolve(__dirname, '..', 'src', 'hooks'),
         '@lib': path.resolve(__dirname, '..', 'src', 'lib'),
         '@utils': path.resolve(__dirname, '..', 'src', 'utils'),
-        '@types': path.resolve(__dirname, '..', 'src', 'types'),
+        '@type': path.resolve(__dirname, '..', 'src', 'types'),
         '@styles': path.resolve(__dirname, '..', 'src', 'styles'),
       };
     }

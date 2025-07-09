@@ -1,12 +1,5 @@
 import Image from 'next/image';
-import type { StaticImageData } from 'next/image';
-
-interface PosterCardProps {
-  title: string;
-  image: string | StaticImageData;
-  isTitleVisible?: boolean;
-  onClick: () => void;
-}
+import { PosterCardProps } from '@type/PosterCardProps';
 
 // 포스터 카드 컴포넌트 (누르면 상세페이지로 이동)
 export const PosterCard = ({

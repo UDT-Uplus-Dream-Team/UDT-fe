@@ -2,8 +2,38 @@
 
 import RecommendationCard from '@/components/mypage/RecommendationCard';
 import SubscriptionBox from '@/components/mypage/SubscriptionBox';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+
+const recommendationData = [
+  {
+    imageUrl: '/movie.webp',
+    title: '추천 콘텐츠 보기',
+    description: '지금까지 추천 받은 모든 콘텐츠를 한눈에 만나보세요!',
+    route: '/recommend',
+  },
+  {
+    imageUrl: '/images/poster4.webp',
+    title: '나의 취향 추천보기',
+    description: '당신만을 위한 추천 콘텐츠를 확인해보세요!',
+    route: '/recommend/me',
+  },
+];
 
 const ProfilePage = () => {
+  const router = useRouter();
+
+  const handleEditClick = () => {
+    router.push('/profile/edit');
+  };
+
   return (
     <div className="grid grid-cols-1 gap-5 w-full px-6 pt-6 text-white place-items-center">
       {/* 프로필 아바타 + 이메일 */}
@@ -13,15 +43,19 @@ const ProfilePage = () => {
         <p className="text-sm text-gray-200">test@gmail.com</p>
       </div>
 
-      {/* 편집 버튼 - 구독박스 위, 오른쪽 정렬 */}
-      <div className="w-full flex justify-end pr-2">
-        <button className="w-[50px] h-[30px] text-[13px] rounded-[8px] bg-primary-200/70 text-white font-semibold">
+      {/* 편집 버튼 */}
+      <div className="w-full flex justify-center ml-60">
+        <Button
+          size="sm"
+          className="w-[50px] h-[30px] text-[13px] rounded-[8px] bg-primary-200/70 text-white font-semibold"
+          onClick={handleEditClick}
+        >
           편집
-        </button>
+        </Button>
       </div>
 
-      {/* OTT 구독 현황  */}
-      <div className="relative w-full max-w-[320px]">
+      {/* OTT 구독 현황 */}
+      <div>
         <SubscriptionBox title="OTT 구독 현황" items={['Netflix', 'Wave']} />
       </div>
 
@@ -33,14 +67,19 @@ const ProfilePage = () => {
         />
       </div>
 
-      {/* 추천 콘텐츠 카드 */}
-      <div>
-        <RecommendationCard
-          imageUrl="/movie.webp"
-          title="추천 콘텐츠 보기"
-          description="지금까지 추천 받은 모든 콘텐츠를 한눈에 만나보세요!"
-          route="/recommend"
-        />
+      {/* 추천 콘텐츠 카드 영역 - ShadCN Carousel 적용 */}
+      <div className="w-full max-w-[320px]">
+        <Carousel opts={{ align: 'center', loop: false }} className="w-full">
+          <CarouselContent>
+            {recommendationData.map((card, index) => (
+              <CarouselItem key={index} className="w-full">
+                <RecommendationCard {...card} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
     </div>
   );

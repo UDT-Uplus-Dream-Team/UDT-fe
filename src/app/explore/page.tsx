@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { FilterRadioButton } from '@components/explore/FilterRadioButton';
-import { PosterCard } from '@components/explore/PosterCard';
+import { FilterRadioButton } from '@/components/explore/FilterRadioButton';
+import { PosterCard } from '@/components/explore/PosterCard';
 
 import {
   Card,

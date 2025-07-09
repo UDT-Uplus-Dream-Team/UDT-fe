@@ -1,8 +1,14 @@
 'use client';
 
-import { RecommendationCardProps } from '@/types/mypage/Mypage.type';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+
+interface RecommendationCardProps {
+  imageUrl: string;
+  title: string;
+  description: string;
+  route: string;
+}
 
 const RecommendationCard = ({
   imageUrl,

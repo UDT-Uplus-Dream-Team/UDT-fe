@@ -1,11 +1,6 @@
 import Image from 'next/image';
 import { Button } from '../ui/button';
-
-interface PlatFormButtonProps {
-  platformName: string;
-  iconUrl: string;
-  url: string;
-}
+import { PlatFormButtonProps } from '@/types/mypage/Mypage.type';
 
 export const PlatformButton = ({
   platformName,

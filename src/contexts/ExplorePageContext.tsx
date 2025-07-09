@@ -1,0 +1,103 @@
+'use client';
+
+import { createContext, useCallback, useState } from 'react';
+import { ExplorePageContextType } from '@type/ExplorePageContextType';
+import { useFetchOttFilterOptions } from '@/hooks/useFetchOttFilterOptions';
+
+export const ExplorePageContext = createContext<
+  ExplorePageContextType | undefined
+>(undefined); // 컨텍스트 생성
+
+// "탐색" 페이지에서 사용할 컨텍스트 제공자 컴포넌트
+export const ExplorePageProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [tempSelectedOptions, setTempSelectedOptions] = useState<string[]>([]); // BottomSheet가 열릴 때 임시로 선택된 옵션들을 저장하는 상태
+  const { filterOptions, hasUserData } = useFetchOttFilterOptions();
+
+  //BottomSheet 열기 (현재 선택된 옵션들을 temp에 복사)
+  const openBottomSheet = useCallback(() => {
+    setTempSelectedOptions(selectedOptions);
+    setIsBottomSheetOpen(true);
+  }, [selectedOptions]);
+
+  // BottomSheet 닫기 (변경사항 취소)
+  const closeBottomSheet = useCallback(() => {
+    setTempSelectedOptions([]); // 임시 상태 초기화
+    setIsBottomSheetOpen(false);
+  }, []);
+
+  // BottomSheet 닫기 (변경사항 적용)
+  const confirmBottomSheet = useCallback(() => {
+    setSelectedOptions([...tempSelectedOptions]); // 임시 상태를 실제 상태로 적용
+    setTempSelectedOptions([]); // 임시 상태 초기화
+    setIsBottomSheetOpen(false);
+  }, [tempSelectedOptions]);
+
+  // 필터 옵션 토글
+  const toggleOption = useCallback(
+    (label: string, isSelected: boolean) => {
+      if (isBottomSheetOpen) {
+        // BottomSheet가 열려있을 때는 임시 상태 업데이트
+        if (isSelected) {
+          setTempSelectedOptions((prev) =>
+            prev.includes(label) ? prev : [...prev, label],
+          );
+        } else {
+          setTempSelectedOptions((prev) =>
+            prev.filter((option) => option !== label),
+          );
+        }
+      } else {
+        // BottomSheet가 닫혀있을 때는 실제 상태 즉시 업데이트
+        if (isSelected) {
+          setSelectedOptions((prev) =>
+            prev.includes(label) ? prev : [...prev, label],
+          );
+        } else {
+          setSelectedOptions((prev) =>
+            prev.filter((option) => option !== label),
+          );
+        }
+      }
+    },
+    [isBottomSheetOpen],
+  );
+
+  // 선택된 옵션들 초기화
+  const clearSelectedOptions = useCallback(() => {
+    if (isBottomSheetOpen) {
+      setTempSelectedOptions([]);
+    } else {
+      setSelectedOptions([]);
+    }
+  }, [isBottomSheetOpen]);
+
+  // 현재 표시해야 할 선택된 옵션들 (BottomSheet 상태에 따라 다름)
+  const currentSelectedOptions = isBottomSheetOpen
+    ? tempSelectedOptions
+    : selectedOptions;
+
+  const value: ExplorePageContextType = {
+    filterOptions,
+    selectedOptions,
+    toggleOption,
+    clearSelectedOptions,
+    currentSelectedOptions, // 현재 UI에 표시할 선택된 옵션들
+    hasUserData,
+    isBottomSheetOpen,
+    openBottomSheet,
+    closeBottomSheet,
+    confirmBottomSheet,
+  };
+
+  return (
+    <ExplorePageContext.Provider value={value}>
+      {children}
+    </ExplorePageContext.Provider>
+  );
+};

@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 
 type TicketProps = {
   movie: MovieData;
-  feedback?: 'liked' | 'unliked';
+  feedback?: 'liked' | 'unliked' | 'neutral';
   variant: 'initial' | 'detail' | 'result';
 };
 
@@ -180,11 +180,13 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             priority
           />
 
-          {feedback && (
+          {feedback !== 'neutral' && (
             <div
-              className={`absolute inset-0 z-20 flex ${
-                feedback === 'liked' ? 'justify-start' : 'justify-end'
-              } items-center ${overlayClass}`}
+              className={`
+              absolute inset-0 z-20 flex 
+              ${feedback === 'liked' ? 'justify-start' : 'justify-end'} 
+              items-center ${overlayClass}
+            `}
             >
               <div className="p-4 flex items-center gap-2 text-white">
                 {feedback === 'liked' ? (

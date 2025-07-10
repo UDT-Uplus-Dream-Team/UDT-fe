@@ -2,17 +2,6 @@
 
 import { FilterRadioButtonGroup } from '@components/explore/FilterRadioButtonGroup';
 import { ExplorePageProvider } from '@contexts/ExplorePageContext';
-import { useState } from 'react';
-import { FilterRadioButton } from '@/components/explore/FilterRadioButton';
-import { PosterCard } from '@/components/explore/PosterCard';
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@components/ui/card';
 
 // 탐색 페이지
 export default function ExplorePage() {

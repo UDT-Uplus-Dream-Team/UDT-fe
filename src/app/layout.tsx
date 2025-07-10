@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className="dark">
+    <html lang="ko">
       <body className="bg-gray-100 min-h-screen overflow-hidden">
         <Providers>
           {/* 외부 컨테이너 - 큰 화면에서 다른 배경색 */}

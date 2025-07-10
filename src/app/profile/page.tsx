@@ -15,15 +15,15 @@ import { Button } from '@/components/ui/button';
 const recommendationData = [
   {
     imageUrl: '/movie.webp',
-    title: '추천 콘텐츠 보기',
-    description: '지금까지 추천 받은 모든 콘텐츠를 한눈에 만나보세요!',
-    route: '/recommend',
+    title: '맞춤형 추천 콘텐츠 보기',
+    description: '지금까지 추천 받은 맞춤형 콘텐츠를 만나보세요!',
+    route: '/profile/recommend',
   },
   {
     imageUrl: '/images/poster4.webp',
-    title: '나의 취향 추천보기',
-    description: '당신만을 위한 추천 콘텐츠를 확인해보세요!',
-    route: '/recommend/me',
+    title: '나의 취향 확인하기',
+    description: '좋아요 싫어요 나의 취향을 확인해보세요!',
+    route: '/profile/feedbacks',
   },
 ];
 

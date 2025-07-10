@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { FilterRadioButton } from '@/components/explore/FilterRadioButton';
 
 const meta = {
-  title: 'Components/FilterRadioButton',
+  title: 'Components/Explore/FilterRadioButton',
   component: FilterRadioButton,
   parameters: {
     layout: 'centered',

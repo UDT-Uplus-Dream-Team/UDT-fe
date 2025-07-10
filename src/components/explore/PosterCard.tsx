@@ -11,6 +11,7 @@ interface PosterCardProps {
   isSelected?: boolean;
 }
 
+
 // 포스터 카드 컴포넌트 (누르면 상세페이지로 이동)
 export const PosterCard = ({
   title,

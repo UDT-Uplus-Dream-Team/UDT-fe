@@ -41,7 +41,7 @@ export default function Step2({ onNext }: Step2Props) {
       <Button
         onClick={onNext}
         className={
-          'bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer'
+          'min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer'
         }
       >
         완료

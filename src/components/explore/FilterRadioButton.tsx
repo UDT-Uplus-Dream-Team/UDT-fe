@@ -17,9 +17,8 @@ export const FilterRadioButton = ({
   return (
     <div className="flex-shrink-0">
       <input
-        type="radio"
+        type="checkbox"
         id={label}
-        name="radio-group"
         value={label}
         checked={isSelected}
         onChange={handleClick}

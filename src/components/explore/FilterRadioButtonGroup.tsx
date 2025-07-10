@@ -8,7 +8,7 @@ import { useExplorePageState } from '@/hooks/useExplorePageState';
 export const FilterRadioButtonGroup = () => {
   const {
     displayedOptionsInTop, // 모든 표시될 옵션들 (기본 + 선택된 옵션들)
-    selectedOptions, // 실제 적용된 옵션들만 표시
+    currentSelectedOptions, // 실제 적용된 옵션들만 표시
     toggleOption,
     isBottomSheetOpen,
     openBottomSheet,
@@ -51,7 +51,7 @@ export const FilterRadioButtonGroup = () => {
           <FilterRadioButton
             key={option}
             label={option}
-            isSelected={selectedOptions.includes(option)}
+            isSelected={currentSelectedOptions.includes(option)}
             onToggle={toggleOption}
           />
         ))}

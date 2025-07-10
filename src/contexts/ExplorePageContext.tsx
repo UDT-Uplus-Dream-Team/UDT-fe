@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useMemo, useState } from 'react';
 import { ExplorePageContextType } from '@type/ExplorePageContextType';
-import { useFetchOttFilterOptions } from '@/hooks/useFetchOttFilterOptions';
+import { useFetchOttFilterOptions } from '@hooks/useFetchOttFilterOptions';
 
 export const ExplorePageContext = createContext<
   ExplorePageContextType | undefined
@@ -24,13 +24,18 @@ export const ExplorePageProvider = ({
   const displayedOptionsInTop = useMemo(() => {
     const allOptions = new Set<string>();
 
-    // 1. 기본 필터 옵션들 추가
+    // 1. 기본 필터 옵션들 추가 (항상 표시되어야 하는 옵션들)
     filterOptions.forEach((option) => {
       allOptions.add(option);
     });
 
-    // 2. 선택된 옵션들 추가 (기본 옵션에 없는 것들만)
-    selectedOptions.forEach((option) => allOptions.add(option));
+    // 2. 선택된 옵션들 중 filterOptions에 없는 것들만 추가
+    selectedOptions.forEach((option) => {
+      // filterOptions에 이미 있는 옵션은 추가하지 않음 (중복 방지)
+      if (!filterOptions.includes(option)) {
+        allOptions.add(option);
+      }
+    });
 
     return Array.from(allOptions);
   }, [filterOptions, selectedOptions]);
@@ -92,15 +97,14 @@ export const ExplorePageProvider = ({
   // 현재 표시해야 할 선택된 옵션들 (BottomSheet 상태에 따라 다름)
   const currentSelectedOptions = isBottomSheetOpen
     ? tempSelectedOptions
-    : displayedOptionsInTop;
+    : selectedOptions;
 
   const value: ExplorePageContextType = {
     filterOptions,
-    selectedOptions,
     toggleOption,
     clearSelectedOptions,
     displayedOptionsInTop, // UI에 표시될 모든 옵션들 (화면 상단에 나타날 놈들)
-    currentSelectedOptions, // 현재 선택된 옵션들
+    currentSelectedOptions, // 현재 선택된 옵션들 (BottomSheet 상태에 따라 "선택된" 옵션 관련 분기 처리를 위해 필요)
     hasUserData,
     isBottomSheetOpen,
     openBottomSheet,

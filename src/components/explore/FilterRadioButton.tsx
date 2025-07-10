@@ -1,11 +1,6 @@
 import React from 'react';
 import { Label } from '@components/ui/label';
-
-interface FilterRadioButtonProps {
-  label: string; // 라디오 버튼에 들어갈 글자 (value로도 사용)
-  isSelected?: boolean; // 선택된 상태
-  onToggle?: (label: string, isSelected: boolean) => void; // 토글 시 호출될 콜백
-}
+import { FilterRadioButtonProps } from '@type/FilterRadioButtonProps';
 
 // 필터링 검색 때 사용하는 라디오 버튼 컴포넌트
 export const FilterRadioButton = ({
@@ -20,11 +15,10 @@ export const FilterRadioButton = ({
   };
 
   return (
-    <div className="relative">
+    <div className="flex-shrink-0">
       <input
-        type="radio"
+        type="checkbox"
         id={label}
-        name="radio-group"
         value={label}
         checked={isSelected}
         onChange={handleClick}
@@ -33,11 +27,11 @@ export const FilterRadioButton = ({
       <Label
         htmlFor={label}
         className={`
-          px-4 py-2 rounded-lg cursor-pointer transition-all
+          px-4 py-[10px] rounded-[8px] cursor-pointer transition-all whitespace-nowrap
           ${
             isSelected
-              ? 'bg-primary-500 text-white opacity-80'
-              : 'bg-white text-gray-700 opacity-20 hover:opacity-60'
+              ? 'bg-primary-100/80 text-white'
+              : 'bg-white/20 text-white hover:bg-white/60'
           }
         `}
       >

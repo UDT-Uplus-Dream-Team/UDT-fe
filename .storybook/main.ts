@@ -17,14 +17,14 @@ const config: StorybookConfig = {
     if (config.resolve) {
       config.resolve.alias = {
         ...config.resolve.alias,
-        '@': path.resolve(dirname, '..', 'src'),
-        '@components': path.resolve(dirname, '..', 'src', 'components'),
-        '@app': path.resolve(dirname, '..', 'src', 'app'),
-        '@ui': path.resolve(dirname, '..', 'src', 'components', 'ui'),
-        '@hooks': path.resolve(dirname, '..', 'src', 'hooks'),
-        '@lib': path.resolve(dirname, '..', 'src', 'lib'),
-        '@utils': path.resolve(dirname, '..', 'src', 'utils'),
-        '@types': path.resolve(dirname, '..', 'src', 'types'),
+        '@': path.resolve(__dirname, '..', 'src'),
+        '@components': path.resolve(__dirname, '..', 'src', 'components'),
+        '@app': path.resolve(__dirname, '..', 'src', 'app'),
+        '@ui': path.resolve(__dirname, '..', 'src', 'components', 'ui'),
+        '@hooks': path.resolve(__dirname, '..', 'src', 'hooks'),
+        '@lib': path.resolve(__dirname, '..', 'src', 'lib'),
+        '@utils': path.resolve(__dirname, '..', 'src', 'utils'),
+        '@type': path.resolve(__dirname, '..', 'src', 'types'),
         '@styles': path.resolve(__dirname, '..', 'src', 'styles'),
       };
     }

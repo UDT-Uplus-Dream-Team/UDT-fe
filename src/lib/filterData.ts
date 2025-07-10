@@ -1,5 +1,16 @@
 // "필터링"할 때 사용할 데이터 정의
 export const filterData = {
+  // OTT (OttCircleOption과 일치하는 라벨들)
+  ott: [
+    '넷플릭스',
+    '왓챠',
+    '디즈니+',
+    '티빙',
+    '쿠팡플레이',
+    '웨이브',
+    '애플티비+',
+  ] as const,
+
   // 대분류
   mainCategories: ['영화', '드라마', '예능', '애니메이션'],
 

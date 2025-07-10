@@ -27,8 +27,7 @@
       "@lib/*": ["./src/lib/*"],
       "@utils/*": ["./src/utils/*"],
       "@type/*": ["./src/types/*"],
-      "@styles/*": ["./src/styles/*"],
-      "@contexts/*": ["./src/contexts/*"]
+      "@contexts/*": ["./src/contexts/*"],
       "@styles/*": ["./src/styles/*"]
     }
   },

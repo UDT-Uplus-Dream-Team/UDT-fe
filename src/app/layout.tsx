@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import './globals.css';
-import BottomNavbar from '@/components/bottom-navbar';
+import BottomNavbar from '@components/common/bottom-navbar';
 
 export const metadata: Metadata = {
   title: 'Your App Title',

@@ -2,17 +2,17 @@ import type { StorybookConfig } from '@storybook/nextjs';
 import path from 'path';
 import { fileURLToPath } from 'url'; // Windows와 Unix에서 파일 경로 처리를 위해 추가
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: ['../src/**/*.stories.@(ts|tsx|js|jsx)', '../src/**/*.mdx'],
   addons: ['@storybook/addon-docs', '@storybook/addon-onboarding'],
   framework: {
     name: '@storybook/nextjs',
     options: {},
   },
-  staticDirs: [path.join(__dirname, '..', 'public')],
+  staticDirs: [path.join(dirname, '..', 'public')],
   webpackFinal: async (config) => {
     if (config.resolve) {
       config.resolve.alias = {

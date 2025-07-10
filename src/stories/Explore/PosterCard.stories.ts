@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { PosterCard } from '@components/explore/PosterCard';
+import { PosterCard } from '@/components/explore/PosterCard';
 
 const meta = {
   title: 'Components/PosterCard',

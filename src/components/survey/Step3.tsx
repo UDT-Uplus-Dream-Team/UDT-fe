@@ -1,6 +1,6 @@
 'use client';
 
-import { useSurveyStore } from '@/stores/surveyStore';
+import { useSurveyContext } from '@/app/survey/survey-context';
 import { SurveyPosterCard } from './SurveyPosterCard';
 import { Button } from '@/components/ui/button';
 
@@ -21,7 +21,7 @@ const MOCK_CONTENTS = [
 ];
 
 export default function Step3({ onNext }: Step3Props) {
-  const { watchedContents, setWatchedContents } = useSurveyStore();
+  const { watchedContents, setWatchedContents } = useSurveyContext();
 
   const toggleContent = (title: string) => {
     const updated = watchedContents.includes(title)

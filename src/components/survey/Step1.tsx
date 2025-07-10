@@ -1,6 +1,6 @@
 'use client';
 
-import { useSurveyStore } from '@/stores/surveyStore';
+import { useSurveyContext } from '@/app/survey/survey-context';
 import { CircleOption } from '../common/circleOption';
 import { PLATFORMS } from '@/lib/platforms';
 import { Button } from '@/components/ui/button';
@@ -10,13 +10,13 @@ type Step1Props = {
 };
 
 export default function Step1({ onNext }: Step1Props) {
-  const { selectedPlatforms, setPlatforms } = useSurveyStore();
+  const { selectedPlatforms, setSelectedPlatforms } = useSurveyContext();
 
   const togglePlatforms = (label: string) => {
     if (selectedPlatforms.includes(label)) {
-      setPlatforms(selectedPlatforms.filter((s) => s !== label));
+      setSelectedPlatforms(selectedPlatforms.filter((s) => s !== label));
     } else {
-      setPlatforms([...selectedPlatforms, label]);
+      setSelectedPlatforms([...selectedPlatforms, label]);
     }
   };
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { GENRES } from '@/lib/genres';
-import { useSurveyStore } from '@/stores/surveyStore';
+import { useSurveyContext } from '@/app/survey/survey-context';
 import { CircleOption } from '@/components/common/circleOption';
 import { Button } from '@/components/ui/button';
 
@@ -10,14 +10,14 @@ type Step2Props = {
 };
 
 export default function Step2({ onNext }: Step2Props) {
-  const { selectedGenres, setGenres } = useSurveyStore();
+  const { selectedGenres, setSelectedGenres } = useSurveyContext();
 
   const toggleGenre = (genre: string) => {
     const updated = selectedGenres.includes(genre)
       ? selectedGenres.filter((g) => g !== genre)
       : [...selectedGenres, genre];
 
-    setGenres(updated);
+    setSelectedGenres(updated);
   };
 
   return (

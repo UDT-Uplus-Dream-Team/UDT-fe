@@ -1,19 +1,11 @@
 import * as React from 'react';
 import { cn } from '@lib/utils';
+import { filterData } from '@lib/filterData';
 import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar';
 
 // OTT 로고 이미지 맵핑 (filterData.ts와 일치하도록 수정)
-const OTT_IMAGES = {
-  넷플릭스: '/images/ott/neflix.png',
-  '디즈니+': '/images/ott/disneyPlus.png',
-  티빙: '/images/ott/tving.png',
-  왓챠: '/images/ott/watcha.png',
-  웨이브: '/images/ott/wavve.png',
-  '애플티비+': '/images/ott/appleTv.png',
-  쿠팡플레이: '/images/ott/coupangPlay.png',
-} as const;
 
-type OttLabel = keyof typeof OTT_IMAGES; // OttLabel은 OTT_IMAGES의 키 타입
+type OttLabel = keyof typeof filterData.OTT_IMAGES; // OttLabel은 OTT_IMAGES의 키 타입
 
 type OttCircleOptionProps = {
   label: OttLabel; // OTT 라벨 텍스트 (맵핑된 OTT 중 하나)
@@ -31,7 +23,7 @@ export function OttCircleOption({
   ...props
 }: OttCircleOptionProps) {
   // label을 통해 자동으로 이미지 소스 가져오기
-  const imageSrc = OTT_IMAGES[label];
+  const imageSrc = filterData.OTT_IMAGES[label];
 
   const handleClick = () => {
     onToggle(label, !isSelected);

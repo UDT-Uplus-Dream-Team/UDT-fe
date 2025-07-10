@@ -1,9 +1,10 @@
 'use client';
 
 import { GENRES } from '@/lib/genres';
-import { useSurveyContext } from '@/app/survey/survey-context';
+import { useSurveyContext } from '@/contexts/SurveyContext';
 import { CircleOption } from '@/components/common/circleOption';
 import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
 
 type Step2Props = {
   onNext: () => void;
@@ -11,6 +12,10 @@ type Step2Props = {
 
 export default function Step2({ onNext }: Step2Props) {
   const { selectedGenres, setSelectedGenres } = useSurveyContext();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const toggleGenre = (genre: string) => {
     const updated = selectedGenres.includes(genre)
@@ -21,7 +26,7 @@ export default function Step2({ onNext }: Step2Props) {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen pt-17 pb-10">
+    <div className="h-[calc(100vh-80px)] overflow-y-auto flex flex-col items-center pt-17 pb-10">
       <h2 className="text-white font-bold text-[20px] mb-14 text-center">
         좋아하는 <span className="text-[#9F8EC5]">장르</span>를 선택해주세요
       </h2>

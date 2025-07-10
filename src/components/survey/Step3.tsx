@@ -1,8 +1,9 @@
 'use client';
 
-import { useSurveyContext } from '@/app/survey/survey-context';
+import { useSurveyContext } from '@/contexts/SurveyContext';
 import { SurveyPosterCard } from './SurveyPosterCard';
 import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
 
 type Step3Props = {
   onNext: () => void;
@@ -23,6 +24,10 @@ const MOCK_CONTENTS = [
 export default function Step3({ onNext }: Step3Props) {
   const { watchedContents, setWatchedContents } = useSurveyContext();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const toggleContent = (title: string) => {
     const updated = watchedContents.includes(title)
       ? watchedContents.filter((t) => t !== title)
@@ -32,7 +37,7 @@ export default function Step3({ onNext }: Step3Props) {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen pt-17 pb-10">
+    <div className="h-[calc(100vh-80px)] overflow-y-auto flex flex-col items-center pt-17 pb-10">
       <h2 className="text-white font-bold text-[20px] mb-14 text-center">
         보신 <span className="text-[#9F8EC5]">컨텐츠</span>가 있다면
         선택해주세요!

@@ -2,6 +2,7 @@
 
 import { useSurveyStore } from '@/stores/surveyStore';
 import { SurveyPosterCard } from './SurveyPosterCard';
+import { Button } from '@/components/ui/button';
 
 type Step3Props = {
   onNext: () => void;
@@ -49,12 +50,14 @@ export default function Step3({ onNext }: Step3Props) {
         ))}
       </div>
 
-      <button
-        className="bg-white text-[#666] px-6 py-2 rounded-full text-sm font-semibold shadow-md"
+      <Button
         onClick={onNext}
+        className={
+          'bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer'
+        }
       >
         완료
-      </button>
+      </Button>
     </div>
   );
 }

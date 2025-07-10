@@ -3,6 +3,7 @@
 import { GENRES } from '@/lib/genres';
 import { useSurveyStore } from '@/stores/surveyStore';
 import { CircleOption } from '@/components/common/circleOption';
+import { Button } from '@/components/ui/button';
 
 type Step2Props = {
   onNext: () => void;
@@ -37,12 +38,14 @@ export default function Step2({ onNext }: Step2Props) {
           />
         ))}
       </div>
-      <button
+      <Button
         onClick={onNext}
-        className="bg-white text-black px-6 py-2 rounded-full"
+        className={
+          'bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer'
+        }
       >
         완료
-      </button>
+      </Button>
     </div>
   );
 }

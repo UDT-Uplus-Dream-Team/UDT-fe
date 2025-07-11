@@ -15,7 +15,7 @@ const avatarWrapperVariants = cva(
       },
       selected: {
         true: 'border-white',
-        false: 'border-transparent',
+        false: 'border-white/30',
       },
     },
     defaultVariants: {
@@ -53,7 +53,7 @@ export function CircleOption({
       {...props}
     >
       <div className={avatarWrapperVariants({ size, selected })}>
-        <Avatar className="w-full h-full rounded-full">
+        <Avatar className="cursor-pointer w-full h-full rounded-full">
           <AvatarImage
             src={imageSrc}
             alt={label}
@@ -63,9 +63,9 @@ export function CircleOption({
         </Avatar>
 
         {selected && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center pointer-events-none">
             {selectedOverlay ?? (
-              <span className="text-white text-2xl font-bold">✔</span>
+              <img src="/icons/check.svg" alt="selected" className="w-6 h-6" />
             )}
           </div>
         )}

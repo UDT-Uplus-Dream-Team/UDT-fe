@@ -5,7 +5,8 @@ import Step2 from '@components/survey/Step2';
 import Step3 from '@components/survey/Step3';
 import SurveyComplete from '@components/survey/SurveyComplete';
 import { useState } from 'react';
-import { SurveyProvider, useSurveyContext } from '@contexts/SurveyContext';
+import { SurveyProvider } from '@contexts/SurveyContext';
+import { useSurveyContext } from '@hooks/useSurveyContext';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);

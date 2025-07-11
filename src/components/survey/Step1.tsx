@@ -1,6 +1,6 @@
 'use client';
 
-import { useSurveyContext } from '@contexts/SurveyContext';
+import { useSurveyContext } from '@hooks/useSurveyContext';
 import { CircleOption } from '@components/common/circleOption';
 import { PLATFORMS } from '@lib/platforms';
 import { Button } from '@components/ui/button';

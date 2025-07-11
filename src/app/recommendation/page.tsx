@@ -3,12 +3,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { Ticket } from '@components/Ticket/Ticket';
 import { dummyMovies } from './moviedata';
+import { useRouter } from 'next/navigation';
 import { Button } from '@components/ui/button';
+import { showInteractiveToast } from '@components/common/Toast';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 type FeedbackType = 'liked' | 'unliked' | 'neutral';
 
 export default function MovieSwipePage() {
+  const router = useRouter();
   // 현재 보여주는 영화의 인덱스
   const [currentIndex, setCurrentIndex] = useState(0);
   // 다음에 보여줄 영화 데이터 스냅샷
@@ -28,6 +31,8 @@ export default function MovieSwipePage() {
 
   // 터치/마우스 시작 지점 저장
   const startPoint = useRef<{ x: number; y: number } | null>(null);
+
+  const [showResults, setShowResults] = useState(false);
 
   const currentMovie = dummyMovies[currentIndex];
   const hasNextMovie = currentIndex < dummyMovies.length - 1;
@@ -69,6 +74,27 @@ export default function MovieSwipePage() {
       setNextMovie(nextIdx < dummyMovies.length ? dummyMovies[nextIdx] : null);
     }
   }, [isAnimating, currentIndex]);
+
+  useEffect(() => {
+    if (currentIndex >= dummyMovies.length) {
+      showInteractiveToast.action({
+        message: '모든 영화를 확인했습니다! 추천 결과를 보시겠어요?',
+        actionText: '결과 보기',
+        duration: 10000,
+        position: 'top-center',
+        className: 'bg-gray-40',
+        onAction: () => {
+          setShowResults(true);
+        },
+      });
+    }
+  }, [currentIndex]);
+
+  useEffect(() => {
+    if (showResults) {
+      router.push('/recommendation/result');
+    }
+  }, [showResults, router]);
 
   /** 키보드 화살표로 스와이프 지원 (웹 PC용) */
   const handleKeyPress = (event: KeyboardEvent) => {
@@ -138,25 +164,8 @@ export default function MovieSwipePage() {
     }
   };
 
-  // 모든 영화를 다 봤을 때 표시할 화면
   if (currentIndex >= dummyMovies.length) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <h1 className="text-3xl font-bold mb-4">모든 영화를 확인했습니다!</h1>
-          <p className="text-lg mb-6">추천 결과를 확인해보세요.</p>
-          <Button
-            onClick={() => {
-              setCurrentIndex(0);
-              setIsFlipped(false);
-            }}
-            className="bg-white text-purple-900 hover:bg-gray-100"
-          >
-            다시 시작하기
-          </Button>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // 메인 UI 렌더링
@@ -277,6 +286,15 @@ export default function MovieSwipePage() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="relative z-30 flex flex-col items-center gap-4 mt-4">
+        <Button
+          onClick={() => setIsFlipped(!isFlipped)}
+          variant="outline"
+          className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
+        >
+          {isFlipped ? '돌아가기' : '상세보기'}
+        </Button>
       </div>
     </div>
   );

@@ -29,7 +29,6 @@
       "@type/*": ["./src/types/*"],
       "@styles/*": ["./src/styles/*"],
       "@contexts/*": ["./src/contexts/*"]
-      "@styles/*": ["./src/styles/*"]
     }
   },
   "include": [

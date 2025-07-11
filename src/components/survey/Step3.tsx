@@ -1,6 +1,6 @@
 'use client';
 
-import { useSurveyContext } from '@contexts/SurveyContext';
+import { useSurveyContext } from '@hooks/useSurveyContext';
 import { SurveyPosterCard } from './SurveyPosterCard';
 import { Button } from '@components/ui/button';
 import { useEffect } from 'react';

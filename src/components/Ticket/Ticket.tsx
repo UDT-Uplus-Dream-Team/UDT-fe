@@ -33,8 +33,8 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
 
   if (variant === 'detail') {
     return (
-      <Card className="w-75 h-135 border-border max-w-sm flex flex-col rounded-2xl overflow-hidden">
-        <div className="relative w-75 h-32.5 border-b border-border overflow-hidden">
+      <Card className="flex flex-col w-full h-full min-w-75 min-h-135 max-w-100 max-h-180 border-none rounded-2xl overflow-hidden">
+        <div className="relative w-full h-[30%] border-b border-border overflow-hidden">
           <Image
             src={movie.posterUrl || '/placeholder.svg'}
             alt={movie.title}
@@ -131,7 +131,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
 
   if (variant === 'result') {
     return (
-      <Card className="w-75 h-135 border-border max-w-sm flex flex-col rounded-2xl overflow-hidden">
+      <Card className="flex flex-col w-full h-full min-w-75 min-h-135 max-w-100 max-h-180 border-none rounded-2xl overflow-hidden">
         <div className="relative w-75 h-100 border-b border-border overflow-hidden">
           <Image
             src={movie.posterUrl || '/placeholder.svg'}
@@ -170,7 +170,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
 
   if (variant === 'initial') {
     return (
-      <Card className="flex flex-col w-75 h-135 overflow-hidden group cursor-pointer transition-transform duration-500">
+      <Card className="flex flex-col w-full h-full min-w-75 min-h-135 max-w-100 max-h-180 border-none rounded-2xl overflow-hidden">
         <div className="relative flex-grow">
           <Image
             src={movie.posterUrl || '/placeholder.svg'}

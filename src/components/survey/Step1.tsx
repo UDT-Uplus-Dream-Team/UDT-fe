@@ -1,9 +1,9 @@
 'use client';
 
-import { useSurveyContext } from '@/contexts/SurveyContext';
-import { CircleOption } from '../common/circleOption';
-import { PLATFORMS } from '@/lib/platforms';
-import { Button } from '@/components/ui/button';
+import { useSurveyContext } from '@contexts/SurveyContext';
+import { CircleOption } from '@components/common/circleOption';
+import { PLATFORMS } from '@lib/platforms';
+import { Button } from '@components/ui/button';
 
 type Step1Props = {
   onNext: () => void;

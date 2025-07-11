@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
-import { cn } from '@/lib/utils';
+import { cn } from '@lib/utils';
 import React from 'react';
 
 interface SurveyPosterCardProps {

@@ -1,11 +1,11 @@
 'use client';
 
-import Step1 from '@/components/survey/Step1';
-import Step2 from '@/components/survey/Step2';
-import Step3 from '@/components/survey/Step3';
-import SurveyComplete from '@/components/survey/SurveyComplete';
+import Step1 from '@components/survey/Step1';
+import Step2 from '@components/survey/Step2';
+import Step3 from '@components/survey/Step3';
+import SurveyComplete from '@components/survey/SurveyComplete';
 import { useState } from 'react';
-import { SurveyProvider, useSurveyContext } from '../../contexts/SurveyContext';
+import { SurveyProvider, useSurveyContext } from '@contexts/SurveyContext';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);

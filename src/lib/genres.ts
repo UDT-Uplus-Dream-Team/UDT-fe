@@ -1,4 +1,4 @@
-import { Genre } from '@/types/Genre';
+import { Genre } from '@type/Genre';
 
 export const GENRES: Genre[] = [
   { label: '액션', id: 'action' },

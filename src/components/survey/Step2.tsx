@@ -1,9 +1,9 @@
 'use client';
 
-import { GENRES } from '@/lib/genres';
-import { useSurveyContext } from '@/contexts/SurveyContext';
-import { CircleOption } from '@/components/common/circleOption';
-import { Button } from '@/components/ui/button';
+import { GENRES } from '@lib/genres';
+import { useSurveyContext } from '@contexts/SurveyContext';
+import { CircleOption } from '@components/common/circleOption';
+import { Button } from '@components/ui/button';
 import { useEffect } from 'react';
 
 type Step2Props = {

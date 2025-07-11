@@ -1,8 +1,8 @@
 'use client';
 
-import { useSurveyContext } from '@/contexts/SurveyContext';
+import { useSurveyContext } from '@contexts/SurveyContext';
 import { SurveyPosterCard } from './SurveyPosterCard';
-import { Button } from '@/components/ui/button';
+import { Button } from '@components/ui/button';
 import { useEffect } from 'react';
 
 type Step3Props = {

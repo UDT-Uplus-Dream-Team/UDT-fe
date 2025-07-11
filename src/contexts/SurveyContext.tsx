@@ -1,6 +1,6 @@
 'use client';
 
-import { SurveyContextType } from '@/types/SurveyContext';
+import { SurveyContextType } from '@type/SurveyContext';
 import React, { createContext, useContext, useState } from 'react';
 
 const SurveyContext = createContext<SurveyContextType | null>(null);

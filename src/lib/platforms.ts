@@ -1,4 +1,4 @@
-import { Platform } from '@/types/Platform';
+import { Platform } from '@type/Platform';
 
 export const PLATFORMS: Platform[] = [
   { label: '넷플릭스', id: 'netflix' },

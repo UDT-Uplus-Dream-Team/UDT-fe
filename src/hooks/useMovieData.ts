@@ -154,9 +154,14 @@ export const useMovieData = (filters?: {
       }
 
       if (filters?.platform) {
+        const platformList = filters.platform
+          .split(',')
+          .map((p) => p.trim().toLowerCase());
         filteredMovies = filteredMovies.filter((movie) =>
           movie.platforms.some((platform) =>
-            platform.toLowerCase().includes(filters.platform!.toLowerCase()),
+            platformList.some((filterPlatform) =>
+              platform.toLowerCase().includes(filterPlatform),
+            ),
           ),
         );
       }

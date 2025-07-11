@@ -1,7 +1,7 @@
 'use client';
 
 import { FilterRadioButtonGroup } from '@components/explore/FilterRadioButtonGroup';
-import { Carousel } from '@components/explore/Carousel';
+import { ExplorePageCarousel } from '@/components/explore/ExplorePageCarousel';
 import { ExplorePageProvider } from '@contexts/ExplorePageContext';
 import { useMovieData } from '@/hooks/useMovieData';
 import { MovieData } from '@/types/Moviedata';
@@ -48,7 +48,7 @@ export default function ExplorePage() {
 
           {!loading && !error && movies.length > 0 && (
             <div className="w-full">
-              <Carousel
+              <ExplorePageCarousel
                 movies={movies}
                 autoPlayInterval={3000} // 3초마다 자동 슬라이드
                 onCardClick={handleCardClick}

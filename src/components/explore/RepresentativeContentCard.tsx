@@ -16,7 +16,7 @@ export const RepresentativeContentCard = ({
 }: RepresentativeContentCardProps) => {
   return (
     <Card
-      className="flex flex-col w-98 h-135 overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-200"
+      className="flex flex-col w-68 h-87 overflow-hidden group cursor-pointer transition-transform duration-200"
       onClick={onClick}
     >
       <div className="relative flex-grow">

@@ -42,7 +42,7 @@ export const FilterBottomSheetContent = () => {
         </div>
 
         {/* 국가 필터 */}
-        <div className="max-w-full">
+        <div className="w-full">
           <span className="text-sm font-medium text-white">국가</span>
           <div className="flex flex-wrap gap-3 mt-2">
             {filterData.countries.map((country) => (
@@ -57,7 +57,7 @@ export const FilterBottomSheetContent = () => {
         </div>
 
         {/* 등급 필터 */}
-        <div className="max-w-full">
+        <div className="w-full">
           <span className="text-sm font-medium text-white">등급</span>
           <div className="flex flex-wrap gap-3 mt-2">
             {filterData.grades.map((grade) => (
@@ -72,7 +72,7 @@ export const FilterBottomSheetContent = () => {
         </div>
 
         {/* 세부 카테고리 필터 */}
-        <div className="max-w-full">
+        <div className="w-full">
           <span className="text-sm font-medium text-white">세부 카테고리</span>
           <div className="flex flex-wrap gap-3 mt-2">
             {filterData.detailedCategories.map((category) => (

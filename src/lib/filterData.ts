@@ -1,5 +1,27 @@
 // "필터링"할 때 사용할 데이터 정의
 export const filterData = {
+  // OTT (OttCircleOption과 일치하는 라벨들)
+  ott: [
+    '넷플릭스',
+    '왓챠',
+    '디즈니+',
+    '티빙',
+    '쿠팡플레이',
+    '웨이브',
+    '애플티비+',
+  ] as const,
+
+  // OTT 로고 이미지 맵핑 (filterData.ts와 일치하도록 수정)
+  OTT_IMAGES: {
+    넷플릭스: '/images/ott/neflix.png',
+    '디즈니+': '/images/ott/disneyPlus.png',
+    티빙: '/images/ott/tving.png',
+    왓챠: '/images/ott/watcha.png',
+    웨이브: '/images/ott/wavve.png',
+    '애플티비+': '/images/ott/appleTv.png',
+    쿠팡플레이: '/images/ott/coupangPlay.png',
+  } as const,
+
   // 대분류
   mainCategories: ['영화', '드라마', '예능', '애니메이션'],
 

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import './globals.css';
 import BottomNavbar from '@components/common/bottom-navbar';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'Your App Title',
@@ -33,6 +34,7 @@ export default function RootLayout({
                 {children}
               </main>
               <BottomNavbar />
+              <Toaster />
             </div>
           </div>
         </Providers>

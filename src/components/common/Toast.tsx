@@ -254,7 +254,7 @@ export const showInteractiveToast = {
       ),
       {
         duration: opts.duration ?? 8000,
-        position: opts.position ?? 'bottom-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },

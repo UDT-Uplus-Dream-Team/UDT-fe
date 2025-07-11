@@ -54,12 +54,12 @@ export default function MovieSwipePage() {
       setSwipeDirection(null);
       setCurrentIndex((prev) => prev + 1);
       setFeedback('neutral');
-    }, 1000);
+    }, 700);
 
     // 추가 200ms 뒤: 등장 애니메이션 완료 → 애니메이션 잠금 해제
     setTimeout(() => {
       setIsAnimating(false);
-    }, 1200);
+    }, 1000);
   };
 
   // currentIndex 또는 애니메이션 상태 변경 시 다음 카드를 갱신
@@ -99,7 +99,7 @@ export default function MovieSwipePage() {
 
   /** 터치/마우스 시작 지점 기록 */
   const onPointerDown = (e: React.PointerEvent) => {
-    if (isAnimating || !hasNextMovie) return;
+    if (isAnimating) return;
     startPoint.current = { x: e.clientX, y: e.clientY };
   };
 
@@ -218,9 +218,9 @@ export default function MovieSwipePage() {
               ${
                 swipeDirection
                   ? // → 스와이프 transform: 700ms 동안 천천히 translate/rotate
-                    `transition-transform duration-1000 ease-in ${getCardTransform()}`
+                    `transition-transform duration-700 ease-in ${getCardTransform()}`
                   : // → 등 장/reverse: 300ms 동안 scale·translate-y 처리
-                    `transition-transform duration-200 linear ${
+                    `transition-transform duration-100 ease-out ${
                       isAnimating
                         ? 'scale-90 translate-y-2 opacity-50 blur-sm'
                         : 'scale-100 translate-y-0 opacity-100'
@@ -277,47 +277,6 @@ export default function MovieSwipePage() {
             </div>
           </div>
         </div>
-      </div>
-      {/* 컨트롤 버튼 */}
-      <div className="relative z-30 flex flex-col items-center gap-4 mt-4">
-        <Button
-          onClick={() => setIsFlipped(!isFlipped)}
-          variant="outline"
-          className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
-        >
-          {isFlipped ? '돌아가기' : '상세보기'}
-        </Button>
-        <div className="flex gap-4">
-          <Button
-            onClick={() => handleSwipe('left', 'unliked')}
-            disabled={isAnimating || !hasNextMovie || isFlipped} // isFlipped 추가
-            variant="outline"
-            className="backdrop-blur-sm"
-          >
-            싫어요 (←)
-          </Button>
-          <Button
-            onClick={() => handleSwipe('up', 'neutral')}
-            disabled={isAnimating || !hasNextMovie || isFlipped} // isFlipped 추가
-            variant="outline"
-            className="backdrop-blur-sm"
-          >
-            건너뛰기 (↓)
-          </Button>
-          <Button
-            onClick={() => handleSwipe('right', 'liked')}
-            disabled={isAnimating || !hasNextMovie || isFlipped} // isFlipped 추가
-            variant="outline"
-            className="backdrop-blur-sm"
-          >
-            좋아요 (→)
-          </Button>
-        </div>
-      </div>
-      {/* 사용 안내 */}
-      <div className="mt-8 text-center text-white/70 text-sm">
-        <p>키보드 화살표 키로도 조작할 수 있습니다</p>
-        <p>← 싫어요 | → 좋아요 | ↓ 건너뛰기</p>
       </div>
     </div>
   );

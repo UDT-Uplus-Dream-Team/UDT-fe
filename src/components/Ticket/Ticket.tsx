@@ -170,7 +170,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
 
   if (variant === 'initial') {
     return (
-      <Card className="flex flex-col w-75 h-135 overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-200">
+      <Card className="flex flex-col w-75 h-135 overflow-hidden group cursor-pointer transition-transform duration-500">
         <div className="relative flex-grow">
           <Image
             src={movie.posterUrl || '/placeholder.svg'}

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import './globals.css';
 import BottomNavbar from '@components/common/bottom-navbar';
-import { Toaster } from '@components/ui/sonner';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'Your App Title',
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className="dark">
+    <html lang="ko">
       <body className="bg-gray-100 min-h-screen overflow-hidden">
         <Providers>
           {/*  Toaster 추가 */}
@@ -36,6 +36,7 @@ export default function RootLayout({
                 {children}
               </main>
               <BottomNavbar />
+              <Toaster />
             </div>
           </div>
         </Providers>

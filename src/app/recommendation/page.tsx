@@ -171,12 +171,6 @@ export default function MovieSwipePage() {
   // 메인 UI 렌더링
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
-      {/* 진행 표시기 */}
-      <div className="my-3 text-white text-center">
-        <div className="text-sm opacity-80">
-          {currentIndex + 1} / {dummyMovies.length}
-        </div>
-      </div>
       {/* 카드 컨테이너 */}
       <div className="my-4 flex w-full justify-center">
         <div
@@ -200,7 +194,7 @@ export default function MovieSwipePage() {
           }}
         >
           {/* 보이지 않는 자리 채우기용 티켓 */}
-          <div className="relative flex w-full aspect-[75/135] invisible pointer-events-none items-center justify-center">
+          <div className="relative flex w-full aspect-[75/135] max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
             <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
           </div>
           {/* ── 다음 카드(peek) ── */}

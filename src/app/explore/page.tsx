@@ -10,7 +10,7 @@ import {
 import { MovieData } from '@type/explore/Explore';
 import { useContext } from 'react';
 
-// Mock 데이터 - 실제 네트워크 통신으로 대체될 예정
+// Mock 데이터 - 실제 네트워크 통신으로 받아온 정보로 대체될 예정
 const mockMovieData = [
   {
     id: 1,

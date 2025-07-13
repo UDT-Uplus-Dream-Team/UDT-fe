@@ -30,6 +30,7 @@ const SCALE_FACTOR = 0.85;
 const SCALE_RANGE = 2;
 const REPEAT_COUNT = 5; // 배열 반복 횟수
 
+// 탐색 페이지의 맨 위에 표시되는 카드 Carousel 컴포넌트
 export const ExplorePageCarousel = ({
   autoPlayInterval = 3000,
   onCardClick,

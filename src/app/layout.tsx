@@ -24,13 +24,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className="bg-gray-100 min-h-screen overflow-hidden">
+      <body className="bg-primary-800 min-h-screen overflow-x-hidden">
         <Providers>
           {/* 외부 컨테이너 - 큰 화면에서 다른 배경색 */}
-          <div className="min-h-screen bg-gray-100 flex justify-center overflow-hidden">
+          <div className="bg-primary-800 min-h-screen flex justify-center overflow-x-hidden">
             {/* 앱 컨테이너 - 고정 너비 */}
-            <div className="w-full max-w-160 bg-primary-800 text-white min-h-screen relative overflow-hidden">
-              <main className="pb-20 min-h-screen overflow-y-auto">
+            <div className="pb-20 w-full max-w-160 text-white min-h-screen relative overflow-x-hidden">
+              <main className="min-h-screen overflow-y-auto overflow-x-hidden">
                 {children}
               </main>
               <BottomNavbar />

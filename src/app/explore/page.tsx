@@ -42,6 +42,11 @@ const mockMovieData = [
     title: '바비',
     image: '/images/poster3.webp',
   },
+  {
+    id: 7,
+    title: '집가고싶다',
+    image: '/images/poster3.webp',
+  },
 ];
 
 // 탐색 페이지
@@ -63,7 +68,7 @@ function ExplorePageContent() {
       : undefined;
 
   return (
-    <div className="container flex flex-col items-center justify-start mx-auto p-6 space-y-6">
+    <div className="container flex flex-col items-center justify-start mx-auto py-6 space-y-6 scrollbar-hide">
       <span className="text-2xl font-semibold">작품 탐색하기</span>
 
       {/* 필터 그룹 컴포넌트 */}

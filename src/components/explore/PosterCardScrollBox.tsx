@@ -12,9 +12,11 @@ export const PosterCardScrollBox = ({
   };
 
   return (
-    <div className="w-full h-auto flex flex-col justify-start items-start gap-2">
-      <span className="text-xl text-primary-600">{title}</span>
-      <div className="w-full h-auto flex flex-row gap-3 overflow-x-auto scrollbar-hide">
+    <div className="w-full h-fit flex flex-col justify-start items-start gap-2">
+      <span className="text-xl text-white font-semibold py-2 ml-6">
+        {title}
+      </span>
+      <div className="w-full h-fit flex flex-row gap-3 overflow-x-auto scrollbar-hide pl-6">
         {SimpleMovieData.map((movie) => (
           <PosterCard
             key={movie.id}

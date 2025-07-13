@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import './globals.css';
 import BottomNavbar from '@components/common/bottom-navbar';
+import { Toaster } from '@components/ui/sonner';
 
 export const metadata: Metadata = {
   title: 'Your App Title',
@@ -25,6 +26,8 @@ export default function RootLayout({
     <html lang="ko" className="dark">
       <body className="bg-gray-100 min-h-screen overflow-hidden">
         <Providers>
+          {/*  Toaster 추가 */}
+          <Toaster />
           {/* 외부 컨테이너 - 큰 화면에서 다른 배경색 */}
           <div className="min-h-screen bg-gray-100 flex justify-center overflow-hidden">
             {/* 앱 컨테이너 - 고정 너비 */}

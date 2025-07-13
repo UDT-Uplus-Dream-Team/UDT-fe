@@ -2,6 +2,7 @@ import { MovieCardProps } from '@/types/mypage/Mypage';
 import Image from 'next/image';
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { PLATFORMS } from '@/lib/platforms';
 
 const MovieCard = ({
   title,
@@ -17,6 +18,12 @@ const MovieCard = ({
 
   const toggleDescription = () => {
     setIsExpanded((prev) => !prev);
+  };
+
+  const getPlatformIconUrl = (platformName: string): string | null => {
+    const matched = PLATFORMS.find((p) => p.label === platformName);
+    if (!matched) return null;
+    return `/images/ott/${matched.id}.png`;
   };
 
   return (
@@ -54,24 +61,26 @@ const MovieCard = ({
       {/* 장르 아래 점선 */}
       <div className="border-t-2 border-dashed border-primary-900 my-4" />
 
-      {/* ✅ 플랫폼 아이콘 아바타로 교체된 부분 */}
+      {/* 플랫폼 아이콘 */}
       <div className="flex gap-2 px-4 mb-2">
-        {platformList.map((platform) => (
-          <button
-            key={platform.name}
-            onClick={() => window.open(platform.url, '_blank')}
-            className="w-8 h-8"
-          >
-            <Avatar className="w-8 h-8 border border-primary-900">
-              <AvatarImage src={platform.iconUrl} alt={platform.name} />
-              <AvatarFallback className="text-[10px]">
-                {platform.name[0]}
-              </AvatarFallback>
-            </Avatar>
-          </button>
-        ))}
+        {platformList.map((platform) => {
+          const iconUrl = getPlatformIconUrl(platform.name);
+          return iconUrl ? (
+            <button
+              key={platform.name}
+              onClick={() => window.open(platform.url, '_blank')}
+              className="w-8 h-8"
+            >
+              <Avatar className="w-8 h-8 border border-primary-900">
+                <AvatarImage src={iconUrl} alt={platform.name} />
+                <AvatarFallback className="text-[10px]">
+                  {platform.name[0]}
+                </AvatarFallback>
+              </Avatar>
+            </button>
+          ) : null;
+        })}
       </div>
-
       <div className="flex flex-col gap-2 px-4 py-2 flex-grow mt-2">
         {/* 러닝타임 등 정보 */}
         <div className="grid grid-cols-[auto_1fr] gap-x-4 text-sm text-gray-400">

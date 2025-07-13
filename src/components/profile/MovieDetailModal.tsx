@@ -1,8 +1,8 @@
 'use client';
 
-import { MovieCardProps } from '@/types/mypage/Mypage';
-import MovieCard from '@/components/mypage/MovieCard';
+import { MovieCardProps } from '@type/mypage/Mypage';
 import { X } from 'lucide-react';
+import MovieCard from '@components/profile/MovieCard';
 
 interface MovieDetailModalProps {
   isOpen: boolean;

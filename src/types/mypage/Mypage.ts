@@ -1,14 +1,14 @@
 export interface MovieCardProps {
+  contentId: number;
   title: string;
-  genres: string[];
   runtime: string;
   releaseDate: string;
   rating: string;
   description: string;
   thumbnailUrl: string;
+  genres: string[];
   platformList: {
     name: string;
-    iconUrl: string;
     url: string;
   }[];
 }

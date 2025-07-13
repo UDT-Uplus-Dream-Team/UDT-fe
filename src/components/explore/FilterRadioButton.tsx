@@ -1,6 +1,6 @@
 import React from 'react';
 import { Label } from '@components/ui/label';
-import { FilterRadioButtonProps } from '@type/FilterRadioButtonProps';
+import { FilterRadioButtonProps } from '@type/explore/Explore';
 
 // 필터링 검색 때 사용하는 라디오 버튼 컴포넌트
 export const FilterRadioButton = ({

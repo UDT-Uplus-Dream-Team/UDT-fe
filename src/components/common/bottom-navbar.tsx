@@ -19,7 +19,7 @@ const navItems: NavItem[] = [
     label: '추천받기',
   },
   {
-    href: '/documents',
+    href: '/explore',
     icon: Search,
     label: '찾아보기',
   },

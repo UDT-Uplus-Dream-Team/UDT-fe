@@ -8,7 +8,7 @@ import React, {
   useMemo,
 } from 'react';
 import { RepresentativeContentCard } from '@components/explore/RepresentativeContentCard';
-import { MovieData } from '@type/Moviedata';
+import { MovieData } from '@type/explore/Explore';
 import { useMovieData } from '@/hooks/useMovieData';
 import { Loader2, RefreshCw } from 'lucide-react';
 

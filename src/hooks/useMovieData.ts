@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MovieData } from '@/types/Moviedata';
+import { MovieData } from '@/types/explore/Moviedata';
 
 interface UseMovieDataReturn {
   movies: MovieData[];

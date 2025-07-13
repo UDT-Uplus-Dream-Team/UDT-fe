@@ -1,13 +1,48 @@
 'use client';
 
 import { FilterRadioButtonGroup } from '@components/explore/FilterRadioButtonGroup';
-import { ExplorePageCarousel } from '@/components/explore/ExplorePageCarousel';
+import { ExplorePageCarousel } from '@components/explore/ExplorePageCarousel';
+import { PosterCardScrollBox } from '@components/explore/PosterCardScrollBox';
 import {
   ExplorePageProvider,
   ExplorePageContext,
-} from '@contexts/ExplorePageContext';
-import { MovieData } from '@/types/Moviedata';
+} from '@/store/ExplorePageContext';
+import { MovieData } from '@type/explore/Explore';
 import { useContext } from 'react';
+
+// Mock 데이터 - 실제 네트워크 통신으로 대체될 예정
+const mockMovieData = [
+  {
+    id: 1,
+    title: '인터스텔라',
+    image: '/images/poster1.webp',
+  },
+  {
+    id: 2,
+    title: '듄: 파트 2',
+    image: '/images/poster2.webp',
+  },
+  {
+    id: 3,
+    title: '데드풀 & 울버린',
+    image: '/images/poster3.webp',
+  },
+  {
+    id: 4,
+    title: '미션 임파서블: 데드 레코닝',
+    image: '/images/poster1.webp',
+  },
+  {
+    id: 5,
+    title: '오펜하이머',
+    image: '/images/poster2.webp',
+  },
+  {
+    id: 6,
+    title: '바비',
+    image: '/images/poster3.webp',
+  },
+];
 
 // 탐색 페이지
 function ExplorePageContent() {
@@ -42,6 +77,18 @@ function ExplorePageContent() {
           filters={filters}
         />
       </div>
+
+      {/* 영화 카드 스크롤 박스 컴포넌트 */}
+      <PosterCardScrollBox
+        title="목요일엔 목적없이 아무거나!"
+        SimpleMovieData={mockMovieData}
+      />
+
+      {/* 영화 카드 스크롤 박스 컴포넌트 */}
+      <PosterCardScrollBox
+        title="지금 🔥Hot🔥한 콘텐츠"
+        SimpleMovieData={mockMovieData}
+      />
     </div>
   );
 }

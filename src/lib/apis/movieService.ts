@@ -1,4 +1,4 @@
-import { MovieData } from '@type/Moviedata';
+import { MovieData } from '@type/explore/Explore';
 
 // 실제 API 엔드포인트 설정
 const API_BASE_URL =

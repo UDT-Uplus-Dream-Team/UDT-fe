@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Heart, X } from 'lucide-react';
-import { MovieData } from '../../types/Moviedata';
+import { MovieData } from '../../types/explore/Moviedata';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 

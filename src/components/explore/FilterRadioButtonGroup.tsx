@@ -2,7 +2,7 @@ import { FilterRadioButton } from './FilterRadioButton';
 import { FilterBottomSheetContent } from '@components/explore/FilterBottomSheetContent';
 import { Sheet, SheetContent, SheetTrigger } from '@components/ui/sheet';
 import Image from 'next/image';
-import { useExplorePageState } from '@/hooks/useExplorePageState';
+import { useExplorePageState } from '@hooks/useExplorePageState';
 
 // FilterRadioButton을 모아두는 그룹 컴포넌트
 export const FilterRadioButtonGroup = () => {

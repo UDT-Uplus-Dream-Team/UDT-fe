@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { RepresentativeContentCard } from '@/components/explore/RepresentativeContentCard';
-import { MovieData } from '@/types/Moviedata';
+import { MovieData } from '@/types/explore/Moviedata';
 
 const meta = {
   title: 'Components/Explore/RepresentativeContentCard',

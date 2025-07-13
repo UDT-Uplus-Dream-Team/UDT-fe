@@ -1,8 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { MovieData } from '@/types/Moviedata';
+import { Card } from '@components/ui/card';
+import { Badge } from '@components/ui/badge';
+import { MovieData } from '@type/explore/Explore';
 
 type RepresentativeContentCardProps = {
   movie: MovieData;

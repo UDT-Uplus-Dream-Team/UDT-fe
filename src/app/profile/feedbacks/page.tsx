@@ -4,101 +4,56 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PosterCard } from '@components/explore/PosterCard';
 import { ChevronLeft, Pencil } from 'lucide-react';
-import MovieDetailModal from '@/components/mypage/MovieDetailModal';
-import { MovieCardProps } from '@/types/mypage/Mypage';
-
-const likedPosters = [
-  { id: '1', title: '센과 치히로의 행방불명', image: '/images/poster1.webp' },
-  { id: '2', title: '바람이 분다', image: '/images/poster2.webp' },
-  { id: '3', title: '이웃집 토토로', image: '/images/poster3.webp' },
-  { id: '4', title: '모노노케 히메', image: '/images/poster4.webp' },
-];
-
-const dislikedPosters = [
-  { id: '1', title: '이웃집 토토로', image: '/images/poster3.webp' },
-  { id: '2', title: '모노노케 히메', image: '/images/poster4.webp' },
-  { id: '3', title: '센과 치히로의 행방불명', image: '/images/poster1.webp' },
-  { id: '4', title: '바람이 분다', image: '/images/poster2.webp' },
-  { id: '5', title: '이웃집 토토로', image: '/images/poster3.webp' },
-  { id: '6', title: '모노노케 히메', image: '/images/poster4.webp' },
-];
+import { MovieCardProps } from '@type/mypage/Mypage';
+import MovieDetailModal from '@components/profile/MovieDetailModal';
+import {
+  dislikedPosters,
+  likedPosters,
+  mockModalDislikedMovieDataList,
+  mockModalMovieDataList,
+} from './feedbacks';
+import { useDeleteMode } from '@hooks/useDeleteMode';
+import { usePosterModal } from '@hooks/usePosterModal';
 
 const FeedbackPage = () => {
   const router = useRouter();
-  const [isDeleteMode, setIsDeleteMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [selectedPosterData, setSelectedPosterData] = useState<
-    (typeof likedPosters)[0] | null
-  >(null);
-  const [isAllSelected, setIsAllSelected] = useState(false);
   const [tab, setTab] = useState<'like' | 'dislike'>('like');
-
   const posters = tab === 'like' ? likedPosters : dislikedPosters;
 
-  const modalMovieData: MovieCardProps | null = selectedPosterData
-    ? {
-        title: selectedPosterData.title,
-        genres: ['애니메이션'],
-        runtime: '120분',
-        releaseDate: '2020-01-01',
-        rating: '전체 이용가',
-        description:
-          "왕년의 게임 챔피언이었지만 지금은 폐업 직전의 게임샵 주인이 된 '개릿'과 엄마를 잃고 낯선 동네로 이사 온 남매 '헨리'와 '나탈리' 그리고 그들을 돕는 부동산 중개업자 '던'. 이들은 ‘개릿’이 수집한 ‘큐브’가 내뿜는 신비한 빛을 따라가다 어느 폐광 속에 열린 포털을 통해 미지의 공간으로 빨려들어간다. 산과 나무, 구름과 달, 심지어 꿀벌까지 상상하는 모든 것이 네모난 현실이 되는 이곳은 바로 ‘오버월드’. 일찍이 이 세계로 넘어와 완벽하게 적응한 ‘스티브’를 만난 네 사람은 지하세계 ‘네더’를 다스리는 마법사 ‘말고샤’의 침공으로 ‘오버월드’가 위험에 빠졌다는 사실을 알게 된다. 현실 세계로 돌아가기 위해서는 일단 살아남아야 하는 법!",
-        thumbnailUrl: selectedPosterData.image,
-        platformList: [
-          {
-            name: '넷플릭스',
-            iconUrl: '/images/ott/neflix.png',
-            url: 'https://www.netflix.com',
-          },
-          {
-            name: '왓챠',
-            iconUrl: '/images/ott/watcha.png',
-            url: 'https://watcha.com',
-          },
-        ],
-      }
-    : null;
+  //삭제 모드 및 상세보기 상태를 관리
+  const {
+    state: { isDeleteMode, isAllSelected, selectedIds },
+    actions: {
+      setIsDeleteMode,
+      handleCardClickInDeleteMode,
+      handleSelectAll,
+      handleDelete,
+      handleCancelDeleteMode,
+    },
+  } = useDeleteMode(posters);
 
-  const handleCardClick = (poster: (typeof posters)[0]) => {
+  const {
+    state: { selectedPosterData },
+    actions: { openModal, closeModal },
+  } = usePosterModal();
+
+  const handleCardClick = (poster: (typeof posters)[number]) => {
     if (isDeleteMode) {
-      setSelectedIds((prev) =>
-        prev.includes(poster.id)
-          ? prev.filter((i) => i !== poster.id)
-          : [...prev, poster.id],
-      );
+      handleCardClickInDeleteMode(poster);
     } else {
-      setSelectedPosterData(poster);
+      openModal(poster);
     }
   };
 
-  const handleCloseModal = () => setSelectedPosterData(null);
-  const handleDelete = () => {
-    if (selectedIds.length === 0) {
-      alert('삭제할 콘텐츠를 선택해 주세요.');
-      return;
-    }
-    alert(`삭제할 ID들: ${selectedIds.join(', ')}`);
-    setSelectedIds([]);
-    setIsDeleteMode(false);
-  };
+  // 상세 보기용 모달 데이터 연결
+  const modalSource =
+    tab === 'like' ? mockModalMovieDataList : mockModalDislikedMovieDataList;
 
-  const handleSelectAll = () => {
-    if (isAllSelected) {
-      setSelectedIds([]);
-      setIsAllSelected(false);
-    } else {
-      const allIds = posters.map((poster) => poster.id);
-      setSelectedIds(allIds);
-      setIsAllSelected(true);
-    }
-  };
-
-  const handleCancelDeleteMode = () => {
-    setIsDeleteMode(false);
-    setIsAllSelected(false);
-    setSelectedIds([]);
-  };
+  const modalMovieData: MovieCardProps | null =
+    modalSource.find(
+      (item: MovieCardProps) =>
+        item.contentId === selectedPosterData?.contentId,
+    ) ?? null;
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center px-4 py-6">
@@ -170,12 +125,12 @@ const FeedbackPage = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 justify-items-center">
           {posters.map((poster) => (
             <PosterCard
-              key={poster.id}
+              key={poster.contentId}
               title={poster.title}
-              image={poster.image}
+              image={poster.posterUrl}
               size="lg"
               isDeletable={isDeleteMode}
-              isSelected={selectedIds.includes(poster.id)}
+              isSelected={selectedIds.includes(poster.contentId)}
               onClick={() => handleCardClick(poster)}
             />
           ))}
@@ -203,7 +158,7 @@ const FeedbackPage = () => {
       {modalMovieData && (
         <MovieDetailModal
           isOpen={true}
-          onClose={handleCloseModal}
+          onClose={closeModal}
           data={modalMovieData}
         />
       )}

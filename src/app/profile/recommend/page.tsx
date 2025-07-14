@@ -5,9 +5,9 @@ import { PosterCard } from '@components/explore/PosterCard';
 import { ChevronLeft, Pencil } from 'lucide-react';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
 import { mockModalMovieDataList, recommendedPosters } from './recommend';
-import { useDeleteMode } from '@/hooks/useDeleteMode';
+import { useDeleteMode } from '@hooks/useDeleteMode';
 import { usePosterModal } from '@/hooks/usePosterModal';
-import { MovieCardProps } from '@/types/mypage/Mypage';
+import { MovieCardProps } from '@type/mypage/Mypage';
 
 const RecommendPage = () => {
   const router = useRouter();

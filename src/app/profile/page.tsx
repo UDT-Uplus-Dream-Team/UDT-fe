@@ -38,7 +38,7 @@ const ProfilePage = () => {
         <div className="flex items-center gap-4 mb-8">
           {/* 프로필 이미지 */}
           <Image
-            src={profileImageUrl || '/images/default-profile.avif'}
+            src={profileImageUrl || '/images/default-profile.png'}
             alt="프로필 이미지"
             width={60}
             height={60}

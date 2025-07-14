@@ -11,18 +11,19 @@ export interface ContentPlatform {
 }
 
 export interface ContentDetail {
+  contentId?: number;
   title: string;
   description: string;
-  posterUrl: string;
+  posterUrl?: string;
   backdropUrl: string;
-  trailerUrl: string;
+  trailerUrl?: string;
   openDate: string;
   runningTime: number;
-  episode: number;
+  episode?: number;
   rating: string;
   categories: ContentCategory[];
-  countries: string[];
-  directors: string[];
-  casts: string[];
+  countries?: string[];
+  directors?: string[];
+  casts?: string[];
   platforms: ContentPlatform[];
 }

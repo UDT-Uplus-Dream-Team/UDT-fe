@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Heart, X } from 'lucide-react';
-import { MovieData } from '../../types/Moviedata';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@components/ui/card';
 import { Badge } from '@components/ui/badge';
-// import { Avatar, AvatarImage, AvatarFallback } from '@components/ui/avatar';
+import { ContentDetail } from '@type/ContentDetail';
 
 type TicketProps = {
-  movie: MovieData;
+  movie: ContentDetail;
   feedback?: 'liked' | 'unliked' | 'neutral';
   variant: 'initial' | 'detail' | 'result';
 };
@@ -54,21 +53,19 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             </div>
           </div>
 
-          <div className="flex gap-2 px-4 mb-2">
-            {movie.platforms.map((platform) => (
-              <button
-                key={platform}
-                onClick={() => window.open(platform, '_blank')}
-                className="w-8 h-8"
-              >
-                {/* <Avatar className="w-8 h-8 border border-primary-900">
-                  <AvatarImage src={platform.iconUrl} alt={platform.name} />
-                  <AvatarFallback className="text-[10px]">
-                    {platform.name[0]}
-                  </AvatarFallback>
-                </Avatar> */}
-              </button>
-            ))}
+          <div className="space-y-2">
+            <h4 className="font-medium text-sm">플랫폼</h4>
+            <div className="flex flex-wrap gap-1">
+              {movie.platforms.map((platform) => (
+                <Badge
+                  key={platform.platformType}
+                  variant="secondary"
+                  className="text-xs"
+                >
+                  {platform.platformType}
+                </Badge>
+              ))}
+            </div>
           </div>
         </CardHeader>
 
@@ -90,7 +87,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gray-60">러닝타임</span>
-              <span className="ml-auto">{movie.runtimeTime}분</span>
+              <span className="ml-auto">{movie.runningTime}분</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gray-60">연령 등급</span>
@@ -167,7 +164,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gray-60">러닝타임</span>
-              <span className="ml-auto">{movie.runtimeTime}분</span>
+              <span className="ml-auto">{movie.runningTime}분</span>
             </div>
           </div>
         </CardContent>
@@ -223,21 +220,25 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
               {movie.title}
             </h3>
             <div className="flex flex-wrap gap-1 pb-5 justify-center">
-              {movie.genres.slice(0, 4).map((genre) => (
-                <Badge
-                  key={genre}
-                  variant="outline"
-                  className="text-sm border-white/30 text-white hover:bg-white/10"
-                >
-                  #{genre}
-                </Badge>
-              ))}
-              {movie.genres.length > 4 && (
+              {movie.categories
+                .flatMap((c) => c.genres)
+                .slice(0, 4)
+                .map((genre) => (
+                  <Badge
+                    key={genre}
+                    variant="outline"
+                    className="text-sm border-white/30 text-white hover:bg-white/10"
+                  >
+                    #{genre}
+                  </Badge>
+                ))}
+
+              {movie.categories.flatMap((c) => c.genres).length > 4 && (
                 <Badge
                   variant="outline"
                   className="text-xs border-white/30 text-white"
                 >
-                  +{movie.genres.length - 4}
+                  +{movie.categories.flatMap((c) => c.genres).length - 4}
                 </Badge>
               )}
             </div>

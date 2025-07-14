@@ -51,7 +51,7 @@ export const FilterRadioButtonGroup = () => {
           }}
         >
           <SheetTrigger asChild>
-            <button className="flex-shrink-0 p-1 flex items-center justify-center w-fit h-auto bg-primary-300/80 rounded-[8px] hover:bg-gray-50 transition-colors">
+            <button className="flex-shrink-0 p-1 flex items-center justify-center w-fit h-auto bg-primary-300/80 rounded-[8px] cursor-pointer">
               <Image
                 src="/icons/tune-icon.svg"
                 alt="필터"

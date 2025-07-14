@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { PosterCard } from '@/components/explore/PosterCard';
 
 const meta = {
-  title: 'Components/PosterCard',
+  title: 'Components/Explore/PosterCard',
   component: PosterCard,
   parameters: {
     layout: 'centered',

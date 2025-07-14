@@ -212,9 +212,11 @@
     display: none;
   }
 
-  /* 터치 스크롤 개선 */
+  /* 터치 스크롤 및 스크롤바 디자인 없애기 */
   * {
     -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

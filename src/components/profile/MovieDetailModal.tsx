@@ -1,13 +1,13 @@
 'use client';
 
-import { MovieCardProps } from '@type/mypage/Mypage';
 import { X } from 'lucide-react';
 import MovieCard from '@components/profile/MovieCard';
+import { ContentDetail } from '@/types/ContentDetail';
 
 interface MovieDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data: MovieCardProps;
+  data: ContentDetail;
 }
 
 const MovieDetailModal = ({ isOpen, onClose, data }: MovieDetailModalProps) => {

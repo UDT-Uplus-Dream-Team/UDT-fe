@@ -2,7 +2,7 @@ export function getPlatformLogo(platform: string): string | undefined {
   switch (platform.toLowerCase()) {
     case '넷플릭스':
       return 'images/ott/netflix.png';
-    case '애플티비+':
+    case 'apple tv': // 소문자 + 공백 포함
       return 'images/ott/appleTv.png';
     case '티빙':
       return 'images/ott/tving.png';
@@ -14,7 +14,6 @@ export function getPlatformLogo(platform: string): string | undefined {
       return 'images/ott/watcha.png';
     case '쿠팡플레이':
       return 'images/ott/coupangPlay.png';
-    // 필요한 플랫폼을 계속 추가…
     default:
       return undefined;
   }

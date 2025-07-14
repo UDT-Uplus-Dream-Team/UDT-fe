@@ -1,6 +1,6 @@
-import type { MovieData } from '@/types/explore/Moviedata';
+import type { ContentData } from '@type/explore/Explore';
 
-export const dummyMovies: MovieData[] = [
+export const dummyMovies: ContentData[] = [
   {
     contentId: 1,
     title: '쿵푸팬더 4',

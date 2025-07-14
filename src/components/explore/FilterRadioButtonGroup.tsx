@@ -8,20 +8,33 @@ import {
   SheetTitle,
 } from '@components/ui/sheet';
 import Image from 'next/image';
-import { useExplorePageState } from '@hooks/useExplorePageState';
+import {
+  useExploreFilters,
+  useExploreUI,
+  useExploreTempFilters,
+} from '@hooks/useExplorePageState';
 
 // FilterRadioButton을 모아두는 그룹 컴포넌트
 export const FilterRadioButtonGroup = () => {
+  const { appliedFilters, displayedOptionsInTop, toggleAppliedFilter } =
+    useExploreFilters();
   const {
-    clearSelectedOptions,
-    confirmBottomSheet,
-    displayedOptionsInTop, // 모든 표시될 옵션들 (기본 + 선택된 옵션들)
-    currentSelectedOptions, // 실제 적용된 옵션들만 표시
-    toggleOption,
     isBottomSheetOpen,
     openBottomSheet,
     closeBottomSheet,
-  } = useExplorePageState();
+    applyTempFilters,
+  } = useExploreUI();
+  const { clearTempFilters, toggleTempFilter } = useExploreTempFilters();
+
+  // 필터 토글 핸들러
+  const handleFilterToggle = (label: string) => {
+    if (isBottomSheetOpen) {
+      // BottomSheet가 열려있을 때는 temp 필터에만 추가/제거
+      toggleTempFilter(label);
+    } else {
+      toggleAppliedFilter(label); // BottomSheet가 열려있지 않을 때는 바로 적용
+    }
+  };
 
   return (
     <div className="w-full">
@@ -71,7 +84,7 @@ export const FilterRadioButtonGroup = () => {
             <div className="flex flex-row items-center justify-center p-4 gap-12">
               <button
                 className="flex items-center text-white text-sm hover:opacity-80 transition cursor-pointer"
-                onClick={clearSelectedOptions}
+                onClick={clearTempFilters}
               >
                 <Image
                   alt="reset"
@@ -84,7 +97,7 @@ export const FilterRadioButtonGroup = () => {
 
               <button
                 className="bg-primary-800 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary-200 transition cursor-pointer"
-                onClick={confirmBottomSheet}
+                onClick={applyTempFilters}
               >
                 적용하기
               </button>
@@ -97,8 +110,8 @@ export const FilterRadioButtonGroup = () => {
           <FilterRadioButton
             key={option}
             label={option}
-            isSelected={currentSelectedOptions.includes(option)}
-            onToggle={toggleOption}
+            isSelected={appliedFilters.includes(option)}
+            onToggle={() => handleFilterToggle(option)}
           />
         ))}
       </div>

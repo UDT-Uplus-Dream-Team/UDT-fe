@@ -170,17 +170,11 @@ export default function MovieSwipePage() {
 
   // 메인 UI 렌더링
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      {/* 진행 표시기 */}
-      <div className="mb-6 text-white text-center">
-        <div className="text-sm opacity-80">
-          {currentIndex + 1} / {dummyMovies.length}
-        </div>
-      </div>
+    <div className="flex flex-1 flex-col items-center justify-center">
       {/* 카드 컨테이너 */}
-      <div className="mb-8 flex justify-center">
+      <div className="my-4 flex w-full justify-center">
         <div
-          className={`relative inline-block select-none ${
+          className={`relative inline-block mx-10 justify-center w-full select-none ${
             isFlipped ? 'touch-action-auto' : 'touch-action-none'
           }`}
           onPointerDown={(e) => {
@@ -200,14 +194,14 @@ export default function MovieSwipePage() {
           }}
         >
           {/* 보이지 않는 자리 채우기용 티켓 */}
-          <div className="invisible pointer-events-none">
+          <div className="relative flex w-full aspect-[75/135] max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
             <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
           </div>
           {/* ── 다음 카드(peek) ── */}
           {nextMovie && (
             <div
               className={`
-                absolute inset-0 z-10 opacity-50 blur-sm
+                absolute inset-0 z-10 flex items-center justify-center opacity-50 blur-sm
                 pointer-events-none
                 transition-transform duration-200 linear
                 ${
@@ -224,6 +218,7 @@ export default function MovieSwipePage() {
           <div
             className={`
               absolute inset-0 z-20
+              flex items-center justify-center
               ${
                 swipeDirection
                   ? // → 스와이프 transform: 700ms 동안 천천히 translate/rotate
@@ -257,7 +252,7 @@ export default function MovieSwipePage() {
               >
                 {/* Front side */}
                 <div
-                  className={`absolute inset-0 transition-opacity duration-300 ${
+                  className={`absolute inset-0 flex justify-center items-center transition-opacity duration-300 ${
                     isFlipped ? 'opacity-0' : 'opacity-100'
                   }`}
                   style={{ backfaceVisibility: 'hidden' }}
@@ -270,7 +265,7 @@ export default function MovieSwipePage() {
                 </div>
                 {/* Back side */}
                 <div
-                  className={`absolute inset-0 transition-opacity duration-300 ${
+                  className={`absolute inset-0 flex justify-center items-center transition-opacity duration-300 ${
                     isFlipped ? 'opacity-100' : 'opacity-0'
                   }`}
                   style={{
@@ -287,7 +282,7 @@ export default function MovieSwipePage() {
           </div>
         </div>
       </div>
-      <div className="relative z-30 flex flex-col items-center gap-4 mt-4">
+      <div className="relative z-30 flex flex-col items-center gap-4">
         <Button
           onClick={() => setIsFlipped(!isFlipped)}
           variant="outline"

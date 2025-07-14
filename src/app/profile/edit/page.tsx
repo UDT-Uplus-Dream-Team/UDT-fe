@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
-import { CircleOption } from '@/components/common/circleOption';
+import { CircleOption } from '@components/common/circleOption';
 import { Button } from '@components/ui/button';
 import { GENRES } from '@lib/genres';
 import { PLATFORMS } from '@lib/platforms';
@@ -13,11 +13,11 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
+} from '@components/ui/carousel';
 import {
   showInteractiveToast,
   showSimpleToast,
-} from '@/components/common/Toast';
+} from '@components/common/Toast';
 
 export default function EditPreferencePage() {
   const [selectedOtt, setSelectedOtt] = useState<string[]>([]);
@@ -40,14 +40,18 @@ export default function EditPreferencePage() {
     if (selectedOtt.length === 0 && selectedGenres.length === 0) {
       showSimpleToast.error({
         message: '변경할 항목을 선택해주세요.',
+        position: 'top-center',
+        className: 'w-full bg-black/80 shadow-lg',
       });
       return;
     }
 
     showInteractiveToast.confirm({
-      message: '정말 저장하시겠습니까?',
-      confirmText: '저장',
+      message: '정말 변경하시겠습니까?',
+      confirmText: '변경',
       cancelText: '취소',
+      position: 'top-center',
+      className: 'w-[360px] bg-white shadow-lg',
       onConfirm: () => {
         console.log('✅ 저장된 OTT:', selectedOtt);
         console.log('✅ 저장된 장르:', selectedGenres);

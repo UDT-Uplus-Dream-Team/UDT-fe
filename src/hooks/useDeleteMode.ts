@@ -33,7 +33,11 @@ export const useDeleteMode = (posters: RecommendedContent[]) => {
 
   const handleDelete = () => {
     if (selectedIds.length === 0) {
-      showSimpleToast.error({ message: '삭제할 콘텐츠를 선택해주세요.' });
+      showSimpleToast.error({
+        message: '삭제할 콘텐츠를 선택해주세요.',
+        position: 'top-center',
+        className: 'w-full bg-black/80 shadow-lg',
+      });
       return;
     }
 
@@ -41,8 +45,10 @@ export const useDeleteMode = (posters: RecommendedContent[]) => {
       message: '정말 삭제하시겠습니까?',
       confirmText: '삭제',
       cancelText: '취소',
+      position: 'top-center',
+      className: 'w-[360px] bg-white shadow-lg',
       onConfirm: () => {
-        // ✅ 실제 삭제 처리 로직 // 현재는 알람처리 이후 변경
+        // ✅ 실제 삭제 처리 로직 api // 현재는 알람처리 이후 변경
         alert(`삭제할 ID들: ${selectedIds.join(', ')}`);
         setSelectedIds([]);
         setIsDeleteMode(false);

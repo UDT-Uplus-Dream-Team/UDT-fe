@@ -4,7 +4,7 @@ import { Heart, X } from 'lucide-react';
 import { MovieData } from '../../types/Moviedata';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@components/ui/badge';
-import { Avatar, AvatarImage, AvatarFallback } from '@components/ui/avatar';
+// import { Avatar, AvatarImage, AvatarFallback } from '@components/ui/avatar';
 
 type TicketProps = {
   movie: MovieData;
@@ -58,15 +58,15 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             {movie.platforms.map((platform) => (
               <button
                 key={platform}
-                onClick={() => window.open(platform.url, '_blank')}
+                onClick={() => window.open(platform, '_blank')}
                 className="w-8 h-8"
               >
-                <Avatar className="w-8 h-8 border border-primary-900">
+                {/* <Avatar className="w-8 h-8 border border-primary-900">
                   <AvatarImage src={platform.iconUrl} alt={platform.name} />
                   <AvatarFallback className="text-[10px]">
                     {platform.name[0]}
                   </AvatarFallback>
-                </Avatar>
+                </Avatar> */}
               </button>
             ))}
           </div>

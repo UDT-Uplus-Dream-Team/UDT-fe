@@ -1,6 +1,12 @@
 import { FilterRadioButton } from './FilterRadioButton';
 import { FilterBottomSheetContent } from '@components/explore/FilterBottomSheetContent';
-import { Sheet, SheetContent, SheetTrigger } from '@components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+} from '@components/ui/sheet';
 import Image from 'next/image';
 import { useExplorePageState } from '@hooks/useExplorePageState';
 
@@ -47,8 +53,12 @@ export const FilterRadioButtonGroup = () => {
             side="bottom"
             className="flex flex-col gap-0 h-[60vh] max-h-[60vh] bg-[#07033E] border-t-0 rounded-t-[20px]"
           >
+            {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
+            <SheetHeader className="p-0">
+              <SheetTitle className="sr-only h-0 p-0">필터</SheetTitle>
+            </SheetHeader>
             {/* 헤더 영역 */}
-            <div className="flex items-center justify-center p-4">
+            <div className="flex items-center justify-center pt-5 p-4">
               <span className="text-xl font-semibold text-white">필터</span>
             </div>
 

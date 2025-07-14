@@ -68,14 +68,21 @@ function ExplorePageContent() {
       : undefined;
 
   return (
-    <div className="container flex flex-col items-center justify-start mx-auto py-6 space-y-6 scrollbar-hide">
-      <span className="text-2xl font-semibold">작품 탐색하기</span>
+    <div className="container flex flex-col items-center justify-start mx-auto py-6 space-y-2 scrollbar-hide bg-primary-800 ">
+      {/* 상단 제목 영역 - 스크롤 시 사라짐 */}
+      <div className="flex items-center justify-center my-0">
+        <span className="text-2xl font-semibold text-white">작품 탐색하기</span>
+      </div>
 
-      {/* 필터 그룹 컴포넌트 */}
-      <FilterRadioButtonGroup />
+      {/* 필터 그룹 - 스크롤 시 상단에 고정 */}
+      <div className="sticky top-0 z-10 bg-primary-800 shadow-lg">
+        <div className="my-4">
+          <FilterRadioButtonGroup />
+        </div>
+      </div>
 
       {/* Carousel을 통해서 맨 위에 큰 카드로 영화를 보여주는 섹션 */}
-      <div className="w-full">
+      <div className="w-full mb-4">
         <ExplorePageCarousel
           autoPlayInterval={3000} // 3초마다 자동 슬라이드
           onCardClick={handleCardClick}
@@ -83,17 +90,18 @@ function ExplorePageContent() {
         />
       </div>
 
-      {/* 영화 카드 스크롤 박스 컴포넌트 */}
-      <PosterCardScrollBox
-        title="목요일엔 목적없이 아무거나!"
-        SimpleMovieData={mockMovieData}
-      />
+      {/* 영화 카드 스크롤 박스 컴포넌트 모음*/}
+      <div className="w-full flex flex-col space-y-4">
+        <PosterCardScrollBox
+          title="목요일엔 목적없이 아무거나!"
+          SimpleMovieData={mockMovieData}
+        />
 
-      {/* 영화 카드 스크롤 박스 컴포넌트 */}
-      <PosterCardScrollBox
-        title="지금 🔥Hot🔥한 콘텐츠"
-        SimpleMovieData={mockMovieData}
-      />
+        <PosterCardScrollBox
+          title="지금 🔥Hot🔥한 콘텐츠"
+          SimpleMovieData={mockMovieData}
+        />
+      </div>
     </div>
   );
 }

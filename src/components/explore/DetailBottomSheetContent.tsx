@@ -62,7 +62,7 @@ export const DetailBottomSheetContent = ({
           src={mockMovieData.posterImage || '/placeholder.svg'}
           alt={mockMovieData.title}
           fill
-          className="object-cover"
+          className="object-cover border-none"
         />
 
         {/* Gradient(검은색 그라데이션..) Overlay */}

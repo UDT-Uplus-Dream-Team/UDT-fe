@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getContentDetail } from '@lib/apis/getContentDetail';
-import { ContentDetail } from '@type/explore/ContentDetail';
+import { ContentDetail } from '@type/ContentDetail';
 
 // 콘텐츠 상세 정보 가져오는 훅 (TanStack Query를 활용해서 필요 시 캐싱 정보 활용)
 export const useGetContentDetail = (contentId: string) => {

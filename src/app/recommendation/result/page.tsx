@@ -4,12 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { RefreshCw, Eye, EyeOff, Plus } from 'lucide-react';
 import { motion, type PanInfo } from 'framer-motion';
 import { Ticket } from '@components/Ticket/Ticket';
-import type { MovieData } from '@type/Moviedata';
 import { Button } from '@/components/ui/button';
 import { dummyMovies } from '../moviedata';
+import { ContentDetail } from '@type/ContentDetail';
 
 const RecommendationResults: React.FC = () => {
-  const [movies, setMovies] = useState<MovieData[]>([]);
+  const [movies, setMovies] = useState<ContentDetail[]>([]);
   const [rerollUsed, setRerollUsed] = useState<boolean[]>([
     false,
     false,

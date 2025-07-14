@@ -42,7 +42,7 @@ export const PosterCardScrollBox = ({
       >
         <SheetContent
           side="bottom"
-          className="p-0 h-[90%] max-w-full rounded-t-2xl bg-[#1B1121]"
+          className="p-0 pb-5 h-[90vh] max-w-full rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide"
         >
           {selectedMovieId && (
             <DetailBottomSheetContent contentId={selectedMovieId} />

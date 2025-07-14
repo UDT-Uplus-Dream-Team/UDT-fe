@@ -2,6 +2,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { PlatFormButtonProps } from '@/types/mypage/Mypage';
 import { Button } from '../ui/button';
 
+// 누르면 해당 콘텐츠에 대해 바로 해당 OTT 페이지로 이동하는 버튼
 export const PlatformButton = ({
   platformName,
   iconUrl,
@@ -14,7 +15,7 @@ export const PlatformButton = ({
   return (
     <Button
       onClick={handleClick}
-      className="w-[255px] h-[48px] px-4 py-2 flex justify-between items-center rounded-[12px] text-white bg-gradient-to-r from-[var(--primary-500)] to-[var(--primary-900)]"
+      className="w-full h-[48px] px-4 py-2 flex justify-between items-center rounded-[12px] text-white bg-white/30"
     >
       <div className="flex items-center gap-2">
         <Avatar className="w-[25px] h-[25px]">

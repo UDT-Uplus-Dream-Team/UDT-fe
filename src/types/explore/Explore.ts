@@ -21,7 +21,8 @@ export interface FilterRadioButtonProps {
   onToggle?: (label: string, isSelected: boolean) => void; // 토글 시 호출될 콜백
 }
 
-export type MovieData = {
+// 콘텐츠 데이터 타입 정의
+export type ContentData = {
   contentId: number;
   title: string;
   description: string;

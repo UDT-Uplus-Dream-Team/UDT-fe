@@ -1,18 +1,18 @@
 export function getPlatformLogo(platform: string): string | undefined {
   switch (platform.toLowerCase()) {
-    case 'netflix':
+    case '넷플릭스':
       return 'images/ott/netflix.png';
-    case 'appletv':
+    case '애플티비+':
       return 'images/ott/appleTv.png';
-    case 'tving':
+    case '티빙':
       return 'images/ott/tving.png';
-    case 'disney plus':
+    case '디즈니+':
       return 'images/ott/disneyPlus.png';
-    case 'wavve':
+    case '웨이브':
       return 'images/ott/wavve.png';
-    case 'watcha':
+    case '왓챠':
       return 'images/ott/watcha.png';
-    case 'coupangplay':
+    case '쿠팡플레이':
       return 'images/ott/coupangPlay.png';
     // 필요한 플랫폼을 계속 추가…
     default:

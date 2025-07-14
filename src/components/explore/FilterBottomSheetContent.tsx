@@ -1,6 +1,12 @@
 import { FilterRadioButton } from '@components/explore/FilterRadioButton';
 import { useExplorePageState } from '@hooks/useExplorePageState';
-import { filterData } from '@lib/filterData';
+import {
+  CONTENT_CATEGORIES,
+  PLATFORMS,
+  GENRES,
+  RATING_OPTIONS,
+  COUNTRIES,
+} from '@constants/FilterData';
 import { OttCircleOption } from '@components/explore/OttCircleOption';
 
 // 필터링 버튼 누를 시 표시되는 BottomSheet 콘텐츠의 내용
@@ -15,7 +21,7 @@ export const FilterBottomSheetContent = () => {
         <div className="w-full">
           <span className="text-sm font-medium text-white">OTT</span>
           <div className="flex flex-nowrap gap-3 mt-2 overflow-x-auto scrollbar-hide">
-            {filterData.ott.map((option) => (
+            {PLATFORMS.map((option) => (
               <OttCircleOption
                 key={option}
                 label={option}
@@ -30,7 +36,7 @@ export const FilterBottomSheetContent = () => {
         <div className="w-full">
           <span className="text-sm font-medium text-white">카테고리</span>
           <div className="flex flex-wrap gap-3 mt-2">
-            {filterData.mainCategories.map((option) => (
+            {CONTENT_CATEGORIES.map((option) => (
               <FilterRadioButton
                 key={option}
                 label={option}
@@ -45,7 +51,7 @@ export const FilterBottomSheetContent = () => {
         <div className="w-full">
           <span className="text-sm font-medium text-white">국가</span>
           <div className="flex flex-wrap gap-3 mt-2">
-            {filterData.countries.map((country) => (
+            {COUNTRIES.map((country) => (
               <FilterRadioButton
                 key={country}
                 label={country}
@@ -60,7 +66,7 @@ export const FilterBottomSheetContent = () => {
         <div className="w-full">
           <span className="text-sm font-medium text-white">등급</span>
           <div className="flex flex-wrap gap-3 mt-2">
-            {filterData.grades.map((grade) => (
+            {RATING_OPTIONS.map((grade) => (
               <FilterRadioButton
                 key={grade}
                 label={grade}
@@ -75,7 +81,7 @@ export const FilterBottomSheetContent = () => {
         <div className="w-full">
           <span className="text-sm font-medium text-white">세부 카테고리</span>
           <div className="flex flex-wrap gap-3 mt-2">
-            {filterData.detailedCategories.map((category) => (
+            {GENRES.map((category) => (
               <FilterRadioButton
                 key={category}
                 label={category}

@@ -1,11 +1,17 @@
 import * as React from 'react';
 import { cn } from '@lib/utils';
-import { filterData } from '@lib/filterData';
 import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar';
+import { getPlatformLogo } from '@utils/getPlatformLogo';
 
-// OTT 로고 이미지 맵핑 (filterData.ts와 일치하도록 수정)
-
-type OttLabel = keyof typeof filterData.OTT_IMAGES; // OttLabel은 OTT_IMAGES의 키 타입
+// OTT Label 타입 정의
+type OttLabel =
+  | '넷플릭스'
+  | '애플티비+'
+  | '티빙'
+  | '디즈니+'
+  | '웨이브'
+  | '왓챠'
+  | '쿠팡플레이';
 
 type OttCircleOptionProps = {
   label: OttLabel; // OTT 라벨 텍스트 (맵핑된 OTT 중 하나)
@@ -14,7 +20,7 @@ type OttCircleOptionProps = {
   onToggle: (label: string, isSelected: boolean) => void; // 토글 이벤트 핸들러
 };
 
-// OTT 원형 옵션 컴포넌트 (52px x 52px 고정 크기)
+// OTwT 원형 옵션 컴포넌트 (52px x 52px 고정 크기)
 export function OttCircleOption({
   label,
   isSelected = false,
@@ -23,7 +29,7 @@ export function OttCircleOption({
   ...props
 }: OttCircleOptionProps) {
   // label을 통해 자동으로 이미지 소스 가져오기
-  const imageSrc = filterData.OTT_IMAGES[label];
+  const imageSrc = getPlatformLogo(label);
 
   const handleClick = () => {
     onToggle(label, !isSelected);

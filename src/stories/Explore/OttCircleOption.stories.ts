@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { OttCircleOption } from '@/components/explore/OttCircleOption';
-import { filterData } from '@/lib/filterData';
+import { PLATFORMS } from '@/constants/FilterData';
 
 const meta = {
   title: 'Components/Explore/OttCircleOption',
@@ -18,7 +18,7 @@ const meta = {
   argTypes: {
     label: {
       control: 'select',
-      options: Object.keys(filterData.OTT_IMAGES),
+      options: Object.keys(PLATFORMS),
       description: 'OTT 플랫폼 라벨',
     },
     isSelected: {

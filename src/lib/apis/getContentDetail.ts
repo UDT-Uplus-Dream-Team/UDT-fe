@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ContentDetail } from '@type/explore/contentDetail';
+import { ContentDetail } from '@type/explore/ContentDetail';
 
 // 콘텐츠 상세 정보 가져오는 api 함수
 export const getContentDetail = async (

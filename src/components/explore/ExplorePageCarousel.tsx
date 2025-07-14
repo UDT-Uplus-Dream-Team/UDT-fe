@@ -8,13 +8,13 @@ import React, {
   useMemo,
 } from 'react';
 import { RepresentativeContentCard } from '@components/explore/RepresentativeContentCard';
-import { MovieData } from '@type/explore/Explore';
-import { useMovieData } from '@/hooks/useMovieData';
+import { ContentData } from '@type/explore/Explore';
+import { useContentData } from '@/hooks/useContentData';
 import { Loader2, RefreshCw } from 'lucide-react';
 
 interface CarouselProps {
   autoPlayInterval?: number;
-  onCardClick?: (movie: MovieData) => void;
+  onCardClick?: (content: ContentData) => void;
   filters?: {
     genre?: string;
     platform?: string;
@@ -36,7 +36,7 @@ export const ExplorePageCarousel = ({
   onCardClick,
   filters,
 }: CarouselProps) => {
-  const { movies, loading, error, refetch } = useMovieData(filters);
+  const { contents, loading, error, refetch } = useContentData(filters);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
@@ -50,25 +50,25 @@ export const ExplorePageCarousel = ({
   const [translateX, setTranslateX] = useState(0);
 
   const extendedMovies = useMemo(() => {
-    return Array(REPEAT_COUNT).fill(movies).flat();
-  }, [movies]);
+    return Array(REPEAT_COUNT).fill(contents).flat();
+  }, [contents]);
 
   // 시작 인덱스
   const startIndex = useMemo(
-    () => movies.length * Math.floor(REPEAT_COUNT / 2),
-    [movies],
+    () => contents.length * Math.floor(REPEAT_COUNT / 2),
+    [contents],
   );
 
   // 리셋 인덱스
   const resetIndex = useMemo(
-    () => movies.length * (REPEAT_COUNT - 1),
-    [movies],
+    () => contents.length * (REPEAT_COUNT - 1),
+    [contents],
   );
 
   // 시작 인덱스 설정 (movies length가 0이 아닐 때만 설정)
   useEffect(() => {
-    if (movies.length > 0) setCurrentIndex(startIndex);
-  }, [startIndex, movies.length]);
+    if (contents.length > 0) setCurrentIndex(startIndex);
+  }, [startIndex, contents.length]);
 
   // 1. 초기 mount 시 + 리사이즈 시
   useEffect(() => {
@@ -86,30 +86,30 @@ export const ExplorePageCarousel = ({
 
   // 2. movies 로드 후 정확한 offsetWidth 측정
   useEffect(() => {
-    if (movies.length === 0) return;
+    if (contents.length === 0) return;
     requestAnimationFrame(() => {
       if (carouselRef.current) {
         setContainerWidth(carouselRef.current.offsetWidth);
       }
     });
-  }, [movies]);
+  }, [contents]);
 
   // 3. containerWidth가 잡힌 후에만 중심 index 설정
   useEffect(() => {
-    if (movies.length > 0 && containerWidth > 0) {
+    if (contents.length > 0 && containerWidth > 0) {
       setCurrentIndex(startIndex);
     }
-  }, [movies.length, containerWidth, startIndex]);
+  }, [contents.length, containerWidth, startIndex]);
 
   // 자동 재생 시작 메소드
   const startAutoPlay = useCallback(() => {
     if (autoPlayRef.current) clearInterval(autoPlayRef.current); // 이미 재생 중이면 중지
-    if (movies.length > 1) {
+    if (contents.length > 1) {
       autoPlayRef.current = setInterval(() => {
         setCurrentIndex((prev) => prev + 1);
       }, autoPlayInterval);
     }
-  }, [movies.length, autoPlayInterval]);
+  }, [contents.length, autoPlayInterval]);
 
   // 자동 재생 중지 메소드
   const stopAutoPlay = useCallback(() => {
@@ -128,7 +128,7 @@ export const ExplorePageCarousel = ({
 
   // 트랜지션 끝나면 중앙으로 리셋
   const handleTransitionEnd = () => {
-    if (currentIndex >= resetIndex || currentIndex < movies.length) {
+    if (currentIndex >= resetIndex || currentIndex < contents.length) {
       setIsTransitioning(false);
       setCurrentIndex(startIndex);
 
@@ -197,12 +197,12 @@ export const ExplorePageCarousel = ({
 
   // 스케일 계산 최적화: 현재 중심 index를 movies.length 기준으로 정규화
   const getCardScale = (index: number) => {
-    const logicalIndex = index % movies.length;
-    const logicalCurrent = currentIndex % movies.length;
+    const logicalIndex = index % contents.length;
+    const logicalCurrent = currentIndex % contents.length;
 
     // 원형 거리 계산
     const direct = Math.abs(logicalIndex - logicalCurrent);
-    const wrapped = movies.length - direct;
+    const wrapped = contents.length - direct;
     const distance = Math.min(direct, wrapped);
 
     if (distance > SCALE_RANGE) return SCALE_FACTOR;
@@ -233,7 +233,7 @@ export const ExplorePageCarousel = ({
     );
   }
 
-  if (movies.length === 0) {
+  if (contents.length === 0) {
     return (
       <div className="w-full max-w-5xl mx-auto py-12 flex justify-center text-gray-500">
         표시할 영화가 없습니다.
@@ -263,8 +263,8 @@ export const ExplorePageCarousel = ({
         >
           {extendedMovies.map((movie, index) => {
             const scale = getCardScale(index);
-            const logicalIndex = index % movies.length;
-            const logicalCurrent = currentIndex % movies.length;
+            const logicalIndex = index % contents.length;
+            const logicalCurrent = currentIndex % contents.length;
             const isCurrent = logicalIndex === logicalCurrent;
 
             return (

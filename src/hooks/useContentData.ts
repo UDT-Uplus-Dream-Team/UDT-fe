@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import { MovieData } from '@/types/explore/Moviedata';
+import { ContentData } from '@type/explore/Explore'; //Explore.ts 파일에 정의된 MovieData 타입 사용
 
-interface UseMovieDataReturn {
-  movies: MovieData[];
+interface UseContentDataReturn {
+  contents: ContentData[];
   loading: boolean;
   error: string | null;
   refetch: () => void;
 }
 
 // 테스트용 더미 영화 데이터 (나중에 API 연동 시 제거)
-const mockMovies: MovieData[] = [
+const mockMovies: ContentData[] = [
   {
     contentId: 1,
     title: '인터스텔라',
@@ -124,13 +124,13 @@ const mockMovies: MovieData[] = [
   },
 ];
 
-export const useMovieData = (filters?: {
+export const useContentData = (filters?: {
   genre?: string;
   platform?: string;
   rating?: string;
   limit?: number;
-}): UseMovieDataReturn => {
-  const [movies, setMovies] = useState<MovieData[]>([]);
+}): UseContentDataReturn => {
+  const [contents, setContents] = useState<ContentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -181,7 +181,7 @@ export const useMovieData = (filters?: {
         throw new Error('네트워크 오류가 발생했습니다.');
       }
 
-      setMovies(filteredMovies);
+      setContents(filteredMovies);
     } catch (err) {
       setError(
         err instanceof Error
@@ -201,5 +201,5 @@ export const useMovieData = (filters?: {
     fetchMovieData();
   };
 
-  return { movies, loading, error, refetch };
+  return { contents, loading, error, refetch };
 };

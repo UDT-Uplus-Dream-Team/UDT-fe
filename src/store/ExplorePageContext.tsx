@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useMemo, useState } from 'react';
-import { ExplorePageContextType } from '@type/ExplorePageContextType';
+import { ExplorePageContextType } from '@type/explore/Explore';
 import { useFetchOttFilterOptions } from '@hooks/useFetchOttFilterOptions';
 
 export const ExplorePageContext = createContext<

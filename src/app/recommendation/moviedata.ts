@@ -1,4 +1,4 @@
-import type { MovieData } from '@type/Moviedata';
+import type { MovieData } from '@/types/explore/Moviedata';
 
 export const dummyMovies: MovieData[] = [
   {

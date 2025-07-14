@@ -28,7 +28,8 @@
       "@utils/*": ["./src/utils/*"],
       "@type/*": ["./src/types/*"],
       "@styles/*": ["./src/styles/*"],
-      "@contexts/*": ["./src/contexts/*"]
+      "@store/*": ["./src/store/*"],
+      "@constants/*": ["./src/constants/*"]
     }
   },
   "include": [

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { Ticket } from '@components/Ticket/Ticket';
-import type { MovieData } from '@type/Moviedata';
+import type { MovieData } from '@/types/explore/Moviedata';
 
 const dummyMovie: MovieData = {
   // MovieData 타입 정의에 맞게 필드 채워주세요

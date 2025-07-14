@@ -11,7 +11,6 @@ interface PosterCardProps {
   isSelected?: boolean;
 }
 
-
 // 포스터 카드 컴포넌트 (누르면 상세페이지로 이동)
 export const PosterCard = ({
   title,
@@ -33,12 +32,21 @@ export const PosterCard = ({
     <div
       onClick={onClick}
       className="relative cursor-pointer flex flex-col items-center"
+      style={{
+        width: `${dimensions.width}px`,
+        minWidth: `${dimensions.width}px`,
+        maxWidth: `${dimensions.width}px`,
+      }}
     >
       <Image
         src={image}
         alt={title}
         width={dimensions.width}
         height={dimensions.height}
+        style={{
+          width: `${dimensions.width}px`,
+          height: `${dimensions.height}px`,
+        }}
         className={`object-cover rounded-lg transition-opacity duration-200 ${
           isDeletable && isSelected ? 'opacity-60' : 'opacity-100'
         }`}

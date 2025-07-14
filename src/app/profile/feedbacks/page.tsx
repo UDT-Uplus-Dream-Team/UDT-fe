@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PosterCard } from '@components/explore/PosterCard';
 import { ChevronLeft, Pencil } from 'lucide-react';
-import { MovieCardProps } from '@type/mypage/Mypage';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
 import {
   dislikedPosters,
@@ -14,6 +13,7 @@ import {
 } from './feedbacks';
 import { useDeleteMode } from '@hooks/useDeleteMode';
 import { usePosterModal } from '@hooks/usePosterModal';
+import { ContentDetail } from '@type/ContentDetail';
 
 const FeedbackPage = () => {
   const router = useRouter();
@@ -49,10 +49,9 @@ const FeedbackPage = () => {
   const modalSource =
     tab === 'like' ? mockModalMovieDataList : mockModalDislikedMovieDataList;
 
-  const modalMovieData: MovieCardProps | null =
+  const modalMovieData: ContentDetail | null =
     modalSource.find(
-      (item: MovieCardProps) =>
-        item.contentId === selectedPosterData?.contentId,
+      (item: ContentDetail) => item.contentId === selectedPosterData?.contentId,
     ) ?? null;
 
   return (
@@ -139,11 +138,10 @@ const FeedbackPage = () => {
 
       {/* 삭제 바 */}
       {isDeleteMode && (
-        <div className="fixed inset-x-0 bottom-0 bg-gray-700 h-[80px] px-4 flex items-center justify-between z-50 max-w-160 mx-auto w-full">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 bg-gray-700 h-[80px] px-4 flex items-center justify-between z-[100] w-full max-w-160">
           <p className="text-white text-sm">삭제할 콘텐츠를 선택하세요.</p>
           <button
             onClick={handleDelete}
-            disabled={selectedIds.length === 0}
             className={`text-2xl ${
               selectedIds.length > 0
                 ? 'text-white'

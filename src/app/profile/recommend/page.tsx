@@ -7,7 +7,7 @@ import MovieDetailModal from '@components/profile/MovieDetailModal';
 import { mockModalMovieDataList, recommendedPosters } from './recommend';
 import { useDeleteMode } from '@hooks/useDeleteMode';
 import { usePosterModal } from '@/hooks/usePosterModal';
-import { MovieCardProps } from '@type/mypage/Mypage';
+import { ContentDetail } from '@/types/ContentDetail';
 
 const RecommendPage = () => {
   const router = useRouter();
@@ -40,7 +40,7 @@ const RecommendPage = () => {
 
   // 상세보기 데이터 contentid로 찾아서 데이터 보여줌
   const selectedPoster = mockModalMovieDataList.find(
-    (item: MovieCardProps) => item.contentId === selectedPosterData?.contentId,
+    (item: ContentDetail) => item.contentId === selectedPosterData?.contentId,
   );
 
   const modalMovieData = selectedPoster ?? null;
@@ -105,7 +105,7 @@ const RecommendPage = () => {
 
       {/* 하단 삭제 바 */}
       {isDeleteMode && (
-        <div className="fixed inset-x-0 bottom-0 bg-gray-700 h-[80px] px-4 flex items-center justify-between z-50 max-w-160 mx-auto w-full">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 bg-gray-700 h-[80px] px-4 flex items-center justify-between z-[100] w-full max-w-160">
           <p className="text-white text-sm">삭제할 콘텐츠를 선택하세요.</p>
           <button
             onClick={handleDelete}

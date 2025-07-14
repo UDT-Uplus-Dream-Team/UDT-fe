@@ -1,19 +1,19 @@
-import { MovieCardProps } from '@/types/mypage/Mypage';
 import Image from 'next/image';
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { PLATFORMS } from '@/lib/platforms';
+import { ContentDetail } from '@/types/ContentDetail';
 
 const MovieCard = ({
   title,
-  genres,
-  runtime,
-  releaseDate,
+  categories,
+  runningTime,
+  openDate,
   rating,
   description,
-  thumbnailUrl,
-  platformList,
-}: MovieCardProps) => {
+  backdropUrl,
+  platforms,
+}: ContentDetail) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleDescription = () => {
@@ -26,12 +26,16 @@ const MovieCard = ({
     return `/images/ott/${matched.id}.png`;
   };
 
+  const genreList = categories.flatMap((cat) => cat.genres);
+
+  const availablePlatforms = platforms.filter((p) => p.isAvailable);
+
   return (
     <div className="w-[300px] h-[538px] rounded-xl shadow-md bg-white flex flex-col overflow-hidden">
       {/* 썸네일 */}
       <div className="w-full h-[130px] relative">
         <Image
-          src={thumbnailUrl}
+          src={backdropUrl}
           alt={title}
           layout="fill"
           objectFit="cover"
@@ -47,12 +51,12 @@ const MovieCard = ({
         <h2 className="text-[25px] text-black font-bold">{title}</h2>
 
         <div className="flex gap-2 text-xs text-gray-500 font-bold mt-1">
-          {genres.map((g) => (
+          {genreList.map((genre) => (
             <span
-              key={g}
+              key={genre}
               className="bg-gray-200 text-gray-700 rounded px-2 py-[2px]"
             >
-              {g}
+              {genre}
             </span>
           ))}
         </div>
@@ -63,32 +67,33 @@ const MovieCard = ({
 
       {/* 플랫폼 아이콘 */}
       <div className="flex gap-2 px-4 mb-2">
-        {platformList.map((platform) => {
-          const iconUrl = getPlatformIconUrl(platform.name);
+        {availablePlatforms.map((platform) => {
+          const iconUrl = getPlatformIconUrl(platform.platformType);
           return iconUrl ? (
             <button
-              key={platform.name}
-              onClick={() => window.open(platform.url, '_blank')}
+              key={platform.platformType}
+              onClick={() => window.open(platform.watchUrl, '_blank')}
               className="w-8 h-8"
             >
               <Avatar className="w-8 h-8 border border-primary-900">
-                <AvatarImage src={iconUrl} alt={platform.name} />
+                <AvatarImage src={iconUrl} alt={platform.platformType} />
                 <AvatarFallback className="text-[10px]">
-                  {platform.name[0]}
+                  {platform.platformType[0]}
                 </AvatarFallback>
               </Avatar>
             </button>
           ) : null;
         })}
       </div>
+
+      {/* 콘텐츠 상세 정보 */}
       <div className="flex flex-col gap-2 px-4 py-2 flex-grow mt-2">
-        {/* 러닝타임 등 정보 */}
         <div className="grid grid-cols-[auto_1fr] gap-x-4 text-sm text-gray-400">
           <span>러닝타임</span>
-          <span className="text-black">{runtime}</span>
+          <span className="text-black">{runningTime}분</span>
 
           <span>개봉일</span>
-          <span className="text-black">{releaseDate}</span>
+          <span className="text-black">{openDate}</span>
 
           <span>연령 등급</span>
           <span className="text-black">{rating}</span>
@@ -98,7 +103,6 @@ const MovieCard = ({
         <div className="flex flex-col mt-1">
           <h3 className="text-sm text-gray-400">줄거리</h3>
 
-          {/* 설명 본문 영역 */}
           <div
             className={`text-sm text-gray-700 transition-all duration-300 ${
               isExpanded
@@ -109,7 +113,6 @@ const MovieCard = ({
             {description}
           </div>
 
-          {/* 더보기/접기 버튼 */}
           <button
             className="text-xs text-primary-500 mt-1"
             onClick={toggleDescription}

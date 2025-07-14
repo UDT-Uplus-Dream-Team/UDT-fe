@@ -7,8 +7,8 @@ import {
   ExplorePageProvider,
   ExplorePageContext,
 } from '@/store/ExplorePageContext';
-import { ContentData } from '@type/explore/Explore';
 import { useContext } from 'react';
+import { ContentDetail } from '@type/ContentDetail';
 
 // Mock 데이터 - 실제 네트워크 통신으로 받아온 정보로 대체될 예정
 const mockMovieData = [
@@ -54,7 +54,7 @@ function ExplorePageContent() {
   const context = useContext(ExplorePageContext);
   const { currentSelectedOptions } = context!;
 
-  const handleCardClick = (content: ContentData) => {
+  const handleCardClick = (content: ContentDetail) => {
     console.log('카드 클릭됨:', content.title);
     // 여기에 카드 클릭 시 처리 로직 추가 (예: 상세 페이지로 이동)
   };

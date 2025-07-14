@@ -26,15 +26,15 @@ export default function RootLayout({
     <html lang="ko">
       <body className="bg-gray-100 min-h-screen overflow-hidden">
         <Providers>
+          <Toaster position="top-center" />
           {/* 외부 컨테이너 - 큰 화면에서 다른 배경색 */}
           <div className="min-h-screen bg-gray-100 flex justify-center overflow-hidden">
             {/* 앱 컨테이너 - 고정 너비 */}
-            <div className="w-full max-w-160 bg-primary-800 text-white h-screen flex flex-col relative overflow-hidden">
-              <main className="flex flex-1 flex-col overflow-y-auto pb-[57px]">
+            <div className="w-full max-w-160 bg-gradient-to-b from-primary-900 via-purple-900 to-indigo-900 text-white h-screen flex flex-col relative overflow-hidden">
+              <main className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto pb-[57px]">
                 {children}
               </main>
               <BottomNavbar />
-              <Toaster />
             </div>
           </div>
         </Providers>

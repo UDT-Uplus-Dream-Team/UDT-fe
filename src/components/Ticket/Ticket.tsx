@@ -3,7 +3,8 @@ import Image from 'next/image';
 import { Heart, X } from 'lucide-react';
 import { MovieData } from '../../types/Moviedata';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@components/ui/avatar';
 
 type TicketProps = {
   movie: MovieData;
@@ -53,15 +54,21 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <h4 className="font-medium text-sm">플랫폼</h4>
-            <div className="flex flex-wrap gap-1">
-              {movie.platforms.map((platform) => (
-                <Badge key={platform} variant="secondary" className="text-xs">
-                  {platform}
-                </Badge>
-              ))}
-            </div>
+          <div className="flex gap-2 px-4 mb-2">
+            {movie.platforms.map((platform) => (
+              <button
+                key={platform}
+                onClick={() => window.open(platform.url, '_blank')}
+                className="w-8 h-8"
+              >
+                <Avatar className="w-8 h-8 border border-primary-900">
+                  <AvatarImage src={platform.iconUrl} alt={platform.name} />
+                  <AvatarFallback className="text-[10px]">
+                    {platform.name[0]}
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+            ))}
           </div>
         </CardHeader>
 

@@ -14,12 +14,12 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    href: '/',
+    href: '/recommendation',
     icon: Bookmark,
     label: '추천받기',
   },
   {
-    href: '/documents',
+    href: '/explore',
     icon: Search,
     label: '찾아보기',
   },
@@ -46,7 +46,7 @@ export default function BottomNavbar() {
               href={item.href}
               className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-200 min-w-[60px] ${
                 isActive
-                  ? 'text-white bg-[var(--primary-600)]/30'
+                  ? 'text-white bg-primary-600/30'
                   : 'text-[var(--primary-200)] hover:text-white hover:bg-[var(--primary-700)]/20'
               }`}
             >

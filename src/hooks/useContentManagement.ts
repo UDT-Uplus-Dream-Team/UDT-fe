@@ -9,7 +9,7 @@ export const useContentManagement = (initialContents: Content[]) => {
   const [editingContent, setEditingContent] = useState<Content | null>(null);
 
   // 추후 수정 예정
-  const addContent = useCallback((contentData: Omit<Content, 'id'>) => {
+  const addContent = useCallback((contentData: Omit<Content, 'contentId'>) => {
     setContents((prev) => {
       const maxId = Math.max(...prev.map((c) => c.contentId), 0);
       const newContent: Content = {

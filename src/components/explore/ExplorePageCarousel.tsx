@@ -249,7 +249,7 @@ export const ExplorePageCarousel = ({
     >
       <div
         ref={carouselRef}
-        className="overflow-hidden rounded-lg"
+        className="overflow-hidden"
         onMouseDown={handleMouseDown}
         onTouchStart={handleMouseDown}
         style={{ cursor: isDragging ? 'grabbing' : 'grab' }}

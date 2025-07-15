@@ -1,5 +1,6 @@
 import { UserInfo } from '@/types/UserInfo';
 import { useQueryClient } from '@tanstack/react-query';
+import { UserInfo } from '@type/explore/Explore';
 import { useMemo } from 'react';
 
 // TanStack Query로 인해 캐싱된 OTT 정보를 가져와 filterOptions를 업데이트하는 useFetchOttFilterOptions

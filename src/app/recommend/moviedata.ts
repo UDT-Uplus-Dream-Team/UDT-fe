@@ -1,6 +1,6 @@
-import { ContentDetail } from '@/types/ContentDetail';
+import { TicketComponent } from '@/types/recommend/TicketComponent';
 
-export const dummyMovies: ContentDetail[] = [
+export const dummyMovies: TicketComponent[] = [
   {
     contentId: 1,
     title: '쿵푸팬더 4',
@@ -10,26 +10,14 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2024년 3월 28일',
     runningTime: 94,
+    episode: 1,
     rating: '전체관람가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['마이크 미첼'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
   {
     contentId: 2,
@@ -40,26 +28,14 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2024년 2월 28일',
     runningTime: 166,
+    episode: 1,
     rating: '12세이상관람가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['드니 빌뇌브'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
   {
     contentId: 3,
@@ -70,26 +46,14 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 8월 15일',
     runningTime: 180,
+    episode: 1,
     rating: '15세이상관람가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['크리스토퍼 놀란'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
   {
     contentId: 4,
@@ -100,26 +64,14 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 6월 21일',
     runningTime: 140,
+    episode: 1,
     rating: '12세이상관람가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['호아킴 도스 산토스'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
   {
     contentId: 5,
@@ -130,26 +82,14 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 3월 22일',
     runningTime: 169,
+    episode: 1,
     rating: '청소년관람불가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['채드 스타헬스키'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
   {
     contentId: 6,
@@ -160,26 +100,14 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 5월 3일',
     runningTime: 150,
+    episode: 1,
     rating: '12세이상관람가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['제임스 건'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
   {
     contentId: 7,
@@ -190,26 +118,14 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 6월 28일',
     runningTime: 154,
+    episode: 1,
     rating: '12세이상관람가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['제임스 맨골드'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
   {
     contentId: 8,
@@ -220,26 +136,14 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 7월 12일',
     runningTime: 163,
+    episode: 1,
     rating: '12세이상관람가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['크리스토퍼 맥쿼리'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
   {
     contentId: 9,
@@ -250,26 +154,14 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 6월 6일',
     runningTime: 127,
+    episode: 1,
     rating: '12세이상관람가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['스티븐 케이플 주니어'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
   {
     contentId: 10,
@@ -280,25 +172,13 @@ export const dummyMovies: ContentDetail[] = [
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 6월 14일',
     runningTime: 144,
+    episode: 1,
     rating: '12세이상관람가',
-    categories: [
-      {
-        category: '영화',
-        genres: ['애니메이션', '액션'],
-      },
-    ],
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '액션'],
+    },
     directors: ['안드레스 무스키에티'],
-    platforms: [
-      {
-        platformType: '넷플릭스',
-        watchUrl: 'https://www.netflix.com/title/example-id',
-        isAvailable: true,
-      },
-      {
-        platformType: '디즈니+',
-        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
-        isAvailable: true,
-      },
-    ],
+    platforms: ['넷플릭스', '디즈니+'],
   },
 ];

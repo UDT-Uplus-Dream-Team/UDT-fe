@@ -6,7 +6,7 @@ import { getPlatformLogo } from '@utils/getPlatformLogo';
 // OTT Label 타입 정의
 type OttLabel =
   | '넷플릭스'
-  | '애플티비+'
+  | 'Apple TV'
   | '티빙'
   | '디즈니+'
   | '웨이브'
@@ -32,6 +32,7 @@ export function OttCircleOption({
   const imageSrc = getPlatformLogo(label);
 
   const handleClick = () => {
+    console.log('imageSrc: ', imageSrc); // 확인용
     onToggle(label, !isSelected);
   };
 
@@ -49,7 +50,7 @@ export function OttCircleOption({
       >
         <Avatar className="w-full h-full rounded-full">
           <AvatarImage
-            src={imageSrc}
+            src={imageSrc || 'images/ott/netflix.png'}
             alt={label}
             className="object-cover w-full h-full"
           />

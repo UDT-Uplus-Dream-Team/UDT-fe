@@ -1,5 +1,4 @@
 import { FilterRadioButton } from '@components/explore/FilterRadioButton';
-import { useExplorePageState } from '@hooks/useExplorePageState';
 import {
   CONTENT_CATEGORIES,
   PLATFORMS,
@@ -8,10 +7,16 @@ import {
   COUNTRIES,
 } from '@constants/FilterData';
 import { OttCircleOption } from '@components/explore/OttCircleOption';
+import { useExploreTempFilters } from '@/hooks/useExplorePageState';
 
 // 필터링 버튼 누를 시 표시되는 BottomSheet 콘텐츠의 내용
 export const FilterBottomSheetContent = () => {
-  const { currentSelectedOptions, toggleOption } = useExplorePageState();
+  const { tempFilters, toggleTempFilter } = useExploreTempFilters();
+
+  // BottomSheet 내부에서 옵션을 토글할 때의 핸들러
+  const handleToggle = (label: string) => {
+    toggleTempFilter(label);
+  };
 
   return (
     <>
@@ -25,8 +30,8 @@ export const FilterBottomSheetContent = () => {
               <OttCircleOption
                 key={option}
                 label={option}
-                isSelected={currentSelectedOptions.includes(option)}
-                onToggle={toggleOption}
+                isSelected={tempFilters.includes(option)}
+                onToggle={handleToggle}
               />
             ))}
           </div>
@@ -40,8 +45,8 @@ export const FilterBottomSheetContent = () => {
               <FilterRadioButton
                 key={option}
                 label={option}
-                isSelected={currentSelectedOptions.includes(option)}
-                onToggle={toggleOption}
+                isSelected={tempFilters.includes(option)}
+                onToggle={handleToggle}
               />
             ))}
           </div>
@@ -55,8 +60,8 @@ export const FilterBottomSheetContent = () => {
               <FilterRadioButton
                 key={country}
                 label={country}
-                isSelected={currentSelectedOptions.includes(country)}
-                onToggle={toggleOption}
+                isSelected={tempFilters.includes(country)}
+                onToggle={handleToggle}
               />
             ))}
           </div>
@@ -70,8 +75,8 @@ export const FilterBottomSheetContent = () => {
               <FilterRadioButton
                 key={grade}
                 label={grade}
-                isSelected={currentSelectedOptions.includes(grade)}
-                onToggle={toggleOption}
+                isSelected={tempFilters.includes(grade)}
+                onToggle={handleToggle}
               />
             ))}
           </div>
@@ -85,8 +90,8 @@ export const FilterBottomSheetContent = () => {
               <FilterRadioButton
                 key={category}
                 label={category}
-                isSelected={currentSelectedOptions.includes(category)}
-                onToggle={toggleOption}
+                isSelected={tempFilters.includes(category)}
+                onToggle={handleToggle}
               />
             ))}
           </div>

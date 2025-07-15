@@ -5,7 +5,7 @@ import Step2 from '@components/survey/Step2';
 import Step3 from '@components/survey/Step3';
 import SurveyComplete from '@components/survey/SurveyComplete';
 import { useState } from 'react';
-import { SurveyProvider } from '@contexts/SurveyContext';
+import { SurveyProvider } from '@store/SurveyContext';
 import { useSurveyContext } from '@hooks/useSurveyContext';
 
 function SurveyFlow() {

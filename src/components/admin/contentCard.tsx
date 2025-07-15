@@ -3,7 +3,7 @@
 import { Badge } from '@components/ui/badge';
 import { Button } from '@components/ui/button';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
-import { getTypeIcon, getTypeBadgeColor } from '@utils/content-utils';
+import { getTypeIcon, getTypeBadgeColor } from '@utils/getContentUtils';
 import type { Content } from '@type/admin/Content';
 import Image from 'next/image';
 import { memo, useMemo } from 'react';

@@ -20,8 +20,8 @@ import {
 import { Plus } from 'lucide-react';
 
 import type { Content } from '@type/admin/Content';
-import { mockContentList } from '@/data/mock-data';
-import { filterContents } from '@utils/content-utils';
+import { mockContentList } from '@utils/getBackMockData';
+import { filterContents } from '@utils/getContentUtils';
 import { useContentManagement } from '@hooks/useContentManagement';
 import ContentForm from './contentForm';
 import ContentDetail from './contentDetail';

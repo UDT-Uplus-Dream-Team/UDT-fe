@@ -14,7 +14,7 @@ import {
 } from '@components/ui/chart';
 import { PieChart, Pie, Cell } from 'recharts';
 import { Content } from '@type/admin/Content';
-import { generateChartData } from '@utils/content-utils';
+import { generateChartData } from '@utils/getContentUtils';
 import { CHART_COLORS } from '@/constants';
 import { useMemo } from 'react';
 

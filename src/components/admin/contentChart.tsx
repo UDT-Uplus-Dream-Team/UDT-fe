@@ -16,29 +16,34 @@ import { PieChart, Pie, Cell } from 'recharts';
 import { Content } from '@type/admin/Content';
 import { generateChartData } from '@utils/content-utils';
 import { CHART_COLORS } from '@/constants';
+import { useMemo } from 'react';
 
 interface ContenChartProps {
   contents: Content[];
 }
 
 export default function ContentChart({ contents }: ContenChartProps) {
-  const chartData = generateChartData(contents); // [{ name: '영화', value: 20 }, { name: '드라마', value: 10 }]
+  const chartData = useMemo(() => generateChartData(contents), [contents]); // [{ name: '영화', value: 20 }, { name: '드라마', value: 10 }]
 
-  const chartConfig = chartData.reduce(
-    (acc, item, index) => {
-      acc[item.name] = {
-        label: item.name,
-        color: CHART_COLORS[index % CHART_COLORS.length],
-      };
-      return acc;
-    },
-    {} as Record<string, { label: string; color: string }>,
-  );
+  const chartConfig = useMemo(() => {
+    return chartData.reduce(
+      (acc, item, index) => {
+        acc[item.name] = {
+          label: item.name,
+          color: CHART_COLORS[index % CHART_COLORS.length],
+        };
+        return acc;
+      },
+      {} as Record<string, { label: string; color: string }>,
+    );
+  }, [chartData]);
 
-  const formattedData = chartData.map((item, index) => ({
-    ...item,
-    fill: CHART_COLORS[index % CHART_COLORS.length],
-  }));
+  const formattedData = useMemo(() => {
+    return chartData.map((item, index) => ({
+      ...item,
+      fill: CHART_COLORS[index % CHART_COLORS.length],
+    }));
+  }, [chartData]);
 
   return (
     <Card className="bg-white">
@@ -49,7 +54,7 @@ export default function ContentChart({ contents }: ContenChartProps) {
       <CardContent>
         <ChartContainer
           config={chartConfig}
-          className="w-full aspect-[2/1] max-h-[250px] mb-7"
+          className="w-full aspect-[2/1] max-h-[250px] mb-5"
         >
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />

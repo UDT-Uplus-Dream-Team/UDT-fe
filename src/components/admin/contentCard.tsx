@@ -1,11 +1,12 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@components/ui/badge';
+import { Button } from '@components/ui/button';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
-import { getTypeIcon, getTypeBadgeColor } from '@/utils/content-utils';
-import type { Content } from '@/types/admin/Content';
+import { getTypeIcon, getTypeBadgeColor } from '@utils/content-utils';
+import type { Content } from '@type/admin/Content';
 import Image from 'next/image';
+import { memo, useMemo } from 'react';
 
 interface ContentCardProps {
   content: Content;
@@ -14,13 +15,11 @@ interface ContentCardProps {
   onDelete: (contentId: number) => void;
 }
 
-export default function ContentCard({
-  content,
-  onView,
-  onEdit,
-  onDelete,
-}: ContentCardProps) {
-  const TypeIcon = getTypeIcon(content.categories[0]?.categoryType || '');
+function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
+  const TypeIcon = useMemo(
+    () => getTypeIcon(content.categories[0]?.categoryType || ''),
+    [content.categories],
+  );
 
   const handleDelete = () => {
     if (confirm('정말로 이 콘텐츠를 삭제하시겠습니까?')) {
@@ -34,7 +33,7 @@ export default function ContentCard({
         <div className="flex items-start space-x-4 flex-1">
           {content.posterUrl && (
             <Image
-              src={content.posterUrl || '/placeholder.svg'}
+              src={content.posterUrl}
               alt={content.title}
               width={64}
               height={80}
@@ -67,8 +66,8 @@ export default function ContentCard({
 
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">플랫폼:</span>
-              {content.platforms.slice(0, 3).map((platform, index) => (
-                <Badge key={index} className="text-xs">
+              {content.platforms.slice(0, 3).map((platform) => (
+                <Badge key={platform.platformType} className="text-xs">
                   {platform.platformType}
                 </Badge>
               ))}
@@ -107,3 +106,5 @@ export default function ContentCard({
     </div>
   );
 }
+
+export default memo(ContentCard);

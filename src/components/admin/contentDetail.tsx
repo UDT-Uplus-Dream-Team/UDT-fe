@@ -1,12 +1,12 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
+import { Button } from '@components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 import { Calendar, Clock, Users, Globe, Play } from 'lucide-react';
 import Image from 'next/image';
-import type { Content } from '@/types/admin/Content';
+import type { Content } from '@type/admin/Content';
 
 interface ContentDetailProps {
   content: Content;

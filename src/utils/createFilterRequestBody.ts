@@ -73,7 +73,7 @@ const CATEGORY_SETS: Record<
   ]),
 };
 
-// 필터 옵션 선택 후 api 요청 시 Request Body를 생성하는 함수
+// 필터 옵션 선택 후 필터링된 콘텐츠를 받아오는 api 요청 시 Request Body를 생성하는 함수
 export function createRequestFilterBody(
   selectedFilters: string[],
 ): RequestFilterBody {

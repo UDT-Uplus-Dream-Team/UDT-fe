@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import SubscriptionBox from '@components/mypage/SubscriptionBox';
+import SubscriptionBox from '@components/profile/SubscriptionBox';
 
 const meta: Meta<typeof SubscriptionBox> = {
   title: 'Mypage/SubscriptionBox',

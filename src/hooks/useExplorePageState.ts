@@ -1,13 +1,59 @@
-import { useContext } from 'react';
-import { ExplorePageContext } from '@/contexts/ExplorePageContext';
+import { useExploreStore } from '@store/ExploreStore';
+import { useFetchOttFilterOptions } from '@hooks/useFetchOttFilterOptions';
+import { useEffect } from 'react';
 
-// "탐색" 페이지에서 사용되는 컨텍스트 정보(지역 전역 state)를 관리하는 커스텀 훅
-export const useExplorePageState = () => {
-  const context = useContext(ExplorePageContext);
-  if (context === undefined) {
-    throw new Error(
-      'useExploreFilter는 반드시 ExploreFilterProvider 내에서 사용되어야 합니다.',
-    );
-  }
-  return context;
+// 필터 관련 상태만 구독하는 훅 (각 항목 분리 구독)
+export const useExploreFilters = () => {
+  const appliedFilters = useExploreStore((s) => s.appliedFilters);
+  const displayedOptionsInTop = useExploreStore((s) => s.displayedOptionsInTop);
+  const toggleAppliedFilter = useExploreStore((s) => s.toggleAppliedFilter);
+
+  return { appliedFilters, displayedOptionsInTop, toggleAppliedFilter };
+};
+
+// 임시 필터 상태만 구독하는 훅
+export const useExploreTempFilters = () => {
+  const tempFilters = useExploreStore((s) => s.tempFilters);
+  const toggleTempFilter = useExploreStore((s) => s.toggleTempFilter);
+  const clearTempFilters = useExploreStore((s) => s.clearTempFilters);
+
+  return { tempFilters, toggleTempFilter, clearTempFilters };
+};
+
+// UI 상태만 구독하는 훅
+export const useExploreUI = () => {
+  const isBottomSheetOpen = useExploreStore((s) => s.isBottomSheetOpen);
+  const openBottomSheet = useExploreStore((s) => s.openBottomSheet);
+  const closeBottomSheet = useExploreStore((s) => s.closeBottomSheet);
+  const applyTempFilters = useExploreStore((s) => s.applyTempFilters);
+
+  return {
+    isBottomSheetOpen,
+    openBottomSheet,
+    closeBottomSheet,
+    applyTempFilters,
+  };
+};
+
+// 초기화 관련 훅
+export const useExploreInitializer = () => {
+  const { filterOptions, hasUserData } = useFetchOttFilterOptions();
+  const initializeFilterOptions = useExploreStore(
+    (s) => s.initializeFilterOptions,
+  );
+  const updateDisplayedOptions = useExploreStore(
+    (s) => s.updateDisplayedOptions,
+  );
+
+  useEffect(() => {
+    initializeFilterOptions(filterOptions, hasUserData);
+    updateDisplayedOptions();
+  }, [
+    filterOptions,
+    hasUserData,
+    initializeFilterOptions,
+    updateDisplayedOptions,
+  ]);
+
+  return { filterOptions, hasUserData };
 };

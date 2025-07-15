@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { SurveyContext } from '@/contexts/SurveyContext';
+import { SurveyContext } from '@store/SurveyContext';
 
 export function useSurveyContext() {
   const context = useContext(SurveyContext);

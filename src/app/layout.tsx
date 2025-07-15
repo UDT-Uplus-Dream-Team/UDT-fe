@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import './globals.css';
-import BottomNavbar from '@components/common/bottom-navbar';
+import LayoutWrapper from './layout-wrapper';
 import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
@@ -27,16 +27,7 @@ export default function RootLayout({
       <body className="bg-gray-100 min-h-screen overflow-x-hidden">
         <Providers>
           <Toaster position="top-center" />
-          {/* 외부 컨테이너 - 큰 화면에서 다른 배경색 */}
-          <div className="bg-gray-100 min-h-screen flex justify-center overflow-x-hidden">
-            {/* 앱 컨테이너 - 고정 너비 */}
-            <div className="w-full max-w-160 bg-gradient-to-b from-primary-900 via-purple-900 to-indigo-900 text-white h-screen flex flex-col relative overflow-hidden">
-              <main className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto pb-[57px]">
-                {children}
-              </main>
-              <BottomNavbar />
-            </div>
-          </div>
+          <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
       </body>
     </html>

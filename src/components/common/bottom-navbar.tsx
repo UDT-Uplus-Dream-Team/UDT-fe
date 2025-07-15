@@ -14,7 +14,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    href: '/recommendation',
+    href: '/recommend',
     icon: Bookmark,
     label: '추천받기',
   },

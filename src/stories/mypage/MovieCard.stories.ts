@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import MovieCard from '@components/mypage/MovieCard';
+import MovieCard from '@components/profile/MovieCard';
 import { MovieCardProps } from '@/types/mypage/Mypage';
 
 const meta: Meta<typeof MovieCard> = {
@@ -13,6 +13,7 @@ export default meta;
 type Story = StoryObj<typeof MovieCard>;
 
 const dummyProps: MovieCardProps = {
+  contentId: 1,
   title: '쇼생크 탈출',
   genres: ['드라마', '감동'],
   runtime: '142분',
@@ -24,12 +25,10 @@ const dummyProps: MovieCardProps = {
   platformList: [
     {
       name: '넷플릭스',
-      iconUrl: '/images/ott/neflix.png',
       url: 'https://www.netflix.com',
     },
     {
       name: '왓챠',
-      iconUrl: '/images/ott/watcha.png',
       url: 'https://watcha.com',
     },
   ],

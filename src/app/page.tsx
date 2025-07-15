@@ -7,6 +7,8 @@ export default function KakaoLoginPage() {
   const handleKakaoLogin = () => {
     // KakaoTalk login logic would go here
     console.log('KakaoTalk login initiated');
+    window.location.href =
+      'https://dev.banditbool.com/oauth2/authorization/kakao';
   };
 
   return (
@@ -58,7 +60,7 @@ export default function KakaoLoginPage() {
         >
           <Button
             onClick={handleKakaoLogin}
-            className="w-full bg-transparent border-none transition-all duration-200"
+            className="w-full bg-transparent border-none transition-all duration-200 cursor-pointer hover:bg-transparent"
           >
             <Image
               src="/icons/kakaologin-icon.png"

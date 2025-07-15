@@ -22,10 +22,12 @@ export default function LayoutWrapper({
 
   return (
     // 외부 컨테이너 - 큰 화면에서 다른 배경색
-    <div className="min-h-screen bg-gray-100 flex justify-center overflow-hidden">
+    <div className="w-full max-w-160 min-h-screen bg-gray-100 flex justify-center overflow-hidden">
       {/* 앱 컨테이너 - 고정 너비 */}
       <div className="w-full max-w-160 bg-primary-800 text-white min-h-screen relative overflow-hidden">
-        <main className="pb-20 min-h-screen overflow-y-auto">{children}</main>
+        <main className="pb-15 min-h-screen flex flex-col overflow-y-auto">
+          {children}
+        </main>
         <BottomNavbar />
       </div>
     </div>

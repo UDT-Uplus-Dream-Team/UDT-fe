@@ -1,6 +1,6 @@
 import { UserProfile } from '@type/auth/UserProfile';
 import { useQuery } from '@tanstack/react-query';
-import { authService } from '@lib/apis/authSevice';
+import { authService } from '@lib/apis/authService';
 
 export const useGetUserProfile = () => {
   return useQuery<UserProfile, Error>({

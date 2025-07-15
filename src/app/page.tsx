@@ -10,7 +10,7 @@ export default function KakaoLoginPage() {
   };
 
   return (
-    <div className="min-h-full flex flex-col text-white items-center justify-center p-4 relative overflow-hidden">
+    <div className="flex flex-col min-h-screen text-white items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0">
         {[...Array(50)].map((_, i) => (
           <div

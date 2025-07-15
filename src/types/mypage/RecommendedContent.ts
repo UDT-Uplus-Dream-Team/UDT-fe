@@ -3,8 +3,10 @@ export interface RecommendedContent {
   title: string;
   posterUrl: string;
   rating: string;
-  genre: string[];
   countries: string[];
-  platform: string[];
-  categories: string[];
+  platforms: string[];
+  categories: {
+    category: string;
+    genres: string[];
+  }[];
 }

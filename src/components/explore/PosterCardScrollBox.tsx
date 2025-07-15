@@ -2,7 +2,12 @@
 import { PosterCardScrollBoxProps } from '@type/explore/Explore';
 import { PosterCard } from './PosterCard';
 import { useState } from 'react';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { DetailBottomSheetContent } from '@components/explore/DetailBottomSheetContent';
 
 export const PosterCardScrollBox = ({
@@ -42,8 +47,12 @@ export const PosterCardScrollBox = ({
       >
         <SheetContent
           side="bottom"
-          className="p-0 pb-5 h-[90vh] max-w-full rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide"
+          className="px-0 pb-5 h-[90vh] max-w-full rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
         >
+          {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
+          <SheetHeader className="p-0">
+            <SheetTitle className="sr-only h-0 p-0">상세정보</SheetTitle>
+          </SheetHeader>
           {selectedMovieId && (
             <DetailBottomSheetContent contentId={selectedMovieId} />
           )}

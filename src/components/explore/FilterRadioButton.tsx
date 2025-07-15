@@ -10,7 +10,7 @@ export const FilterRadioButton = ({
 }: FilterRadioButtonProps) => {
   const handleClick = () => {
     if (onToggle) {
-      onToggle(label, !isSelected);
+      onToggle(label);
     }
   };
 

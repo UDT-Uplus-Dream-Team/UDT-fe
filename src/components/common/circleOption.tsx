@@ -71,7 +71,7 @@ export function CircleOption({
         )}
       </div>
 
-      {showLabel && <span className="text-sm text-white mt-1">{label}</span>}
+      {showLabel && <span className="text-xs text-white mt-1">{label}</span>}
     </button>
   );
 }

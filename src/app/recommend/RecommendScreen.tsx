@@ -233,7 +233,7 @@ export function RecommendScreen({ onComplete }: RecommendProps) {
         <Button
           onClick={() => setIsFlipped((f) => !f)}
           variant="outline"
-          className=" bg-white/20 border-white/20 text-white px-5                                                                                    py-2 text-sm hover:bg-white/20 backdrop-blur-sm"
+          className=" bg-white/20 border-white/20 text-white px-5 py-2 text-sm hover:bg-white/20 backdrop-blur-sm"
         >
           {isFlipped ? '돌아가기' : '상세보기'}
         </Button>

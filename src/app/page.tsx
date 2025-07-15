@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 
 export default function KakaoLoginPage() {
@@ -59,12 +58,14 @@ export default function KakaoLoginPage() {
         >
           <Button
             onClick={handleKakaoLogin}
-            className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 sm:py-4 lg:py-5 px-6 rounded-2xl flex items-center justify-center space-x-3 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-base sm:text-lg lg:text-xl"
+            className="w-full bg-transparent border-none transition-all duration-200"
           >
-            <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 bg-black rounded-full flex items-center justify-center">
-              <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 fill-yellow-400 text-yellow-400" />
-            </div>
-            <span>카카오톡으로 시작하기</span>
+            <Image
+              src="/icons/kakaologin-icon.png"
+              alt="kakao"
+              width={300}
+              height={45}
+            />
           </Button>
         </div>
       </div>

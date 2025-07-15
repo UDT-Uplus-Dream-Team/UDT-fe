@@ -74,7 +74,7 @@ export default function EditPreferencePage() {
       </div>
 
       {/* OTT 선택 */}
-      <div className="mb-2 flex justify-between items-center px-1">
+      <div className="my-4 flex justify-between items-center px-1">
         <h2 className="text-[20px] font-bold ml-3">시청 OTT</h2>
         <Button
           size="sm"
@@ -85,7 +85,7 @@ export default function EditPreferencePage() {
         </Button>
       </div>
 
-      <div className="mb-10 bg-primary-900/40 rounded-[20px] p-4 shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+      <div className="mb-10 bg-primary-900/40 rounded-[20px] p-4 md:p-8 shadow-[0_0_10px_rgba(255,255,255,0.4)]">
         <div className="grid grid-cols-4 gap-4 justify-center">
           {PLATFORMS.map(({ label, id }) => (
             <CircleOption
@@ -107,7 +107,7 @@ export default function EditPreferencePage() {
       </div>
 
       {/* 장르 선택 */}
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-center my-4">
         <h2 className="text-[20px] font-bold ml-3">선호 장르</h2>
         <Button
           size="sm"
@@ -118,7 +118,7 @@ export default function EditPreferencePage() {
         </Button>
       </div>
 
-      <div className="bg-primary-900/40 rounded-[20px] p-4 shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+      <div className="bg-primary-900/40 rounded-[20px] p-4 md:p-8 shadow-[0_0_10px_rgba(255,255,255,0.4)]">
         <Carousel className="w-full">
           <CarouselContent>
             {[0, 1].map((page) => (

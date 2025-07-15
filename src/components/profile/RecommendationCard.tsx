@@ -22,7 +22,7 @@ const RecommendationCard = ({
       <Image src={imageUrl} alt={title} fill className="object-cover" />
 
       {/* 그라데이션 배경 (하단 어둡게) */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/0 z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/0 z-10" />
 
       {/* 텍스트 내용 */}
       <div className="absolute bottom-0 left-0 p-3 w-full text-white text-center z-20">

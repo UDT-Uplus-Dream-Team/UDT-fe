@@ -12,6 +12,10 @@ export default function LayoutWrapper({
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin');
 
+  // BottomNavbar를 숨겨야 하는 페이지들
+  const hideBottomNavbarPaths = ['/', '/survey'];
+  const shouldHideBottomNavbar = hideBottomNavbarPaths.includes(pathname);
+
   if (isAdmin) {
     return (
       <div className="min-h-screen w-full bg-white text-black overflow-w-hidden">
@@ -28,7 +32,7 @@ export default function LayoutWrapper({
         <main className="pb-15 min-h-screen flex flex-col overflow-y-auto">
           {children}
         </main>
-        <BottomNavbar />
+        {!shouldHideBottomNavbar && <BottomNavbar />}
       </div>
     </div>
   );

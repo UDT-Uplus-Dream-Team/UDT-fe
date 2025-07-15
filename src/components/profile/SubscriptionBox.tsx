@@ -4,7 +4,7 @@ import { SubscriptionBoxProps } from '@/types/mypage/Mypage';
 
 const SubscriptionBox = ({ title, items }: SubscriptionBoxProps) => {
   return (
-    <div className="w-full max-w-[500px] bg-white/40 rounded-[16px] p-4 flex flex-col justify-between">
+    <div className="w-full max-w-[500px] bg-white/20 rounded-[16px] p-4 flex flex-col justify-between">
       <h3 className="text-[20px] text-white font-bold mb-2">{title}</h3>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (

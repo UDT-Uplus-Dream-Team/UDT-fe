@@ -33,36 +33,57 @@ const ProfilePage = () => {
         <span className="text-lg font-bold text-center text-white">프로필</span>
       </div>
 
-      <div className="w-full max-w-[600px] flex flex-col items-center gap-3 px-4 sm:px-6">
-        {/* 프로필 이미지 + 이름/이메일 수평 정렬 */}
-        <div className="flex items-center gap-4 mb-8">
-          {/* 프로필 이미지 */}
-          <Image
-            src={profileImageUrl || '/images/default-profile.png'}
-            alt="프로필 이미지"
-            width={60}
-            height={60}
-            className="rounded-full object-cover"
-          />
+      <div className="w-full max-w-[600px] flex flex-col justify-center gap-3 px-4 sm:px-6">
+        {/* 프로필 페이지 상단의 유저 정보 (편집/로그아웃 버튼 포함) */}
+        <div className="w-full max-w-[500px] flex flex-col justify-start bg-white/20 rounded-[16px] p-4">
+          {/* 프로필 이미지 + 이름/이메일 수평 정렬 */}
+          <div className="flex flex-row items-center justify-start gap-4 mb-2">
+            {/* 프로필 이미지 */}
+            <Image
+              src={profileImageUrl || '/images/default-profile.png'}
+              alt="프로필 이미지"
+              width={60}
+              height={60}
+              className="rounded-full object-cover"
+            />
 
-          {/* 이름 + 이메일 */}
-          <div className="flex flex-col">
-            <h2 className="text-lg font-bold text-white">{name}</h2>
-            <p className="text-sm text-gray-300">{email}</p>
+            {/* 이름 + 이메일 */}
+            <div className="flex flex-col">
+              <h2 className="text-lg font-bold text-white">{name}</h2>
+              <p className="text-sm text-gray-300">{email}</p>
+            </div>
+          </div>
+
+          {/* 편집 버튼 */}
+          <div className="w-full flex justify-end gap-4">
+            <Button
+              size="sm"
+              className="w-fit h-[30px] text-[13px] rounded-[8px] bg-primary-200/70 text-white font-semibold"
+              onClick={handleEditClick}
+            >
+              <Image
+                src="/icons/edit-icon.svg"
+                alt="편집"
+                width={20}
+                height={20}
+              />
+              구독/장르 수정
+            </Button>
+            <Button
+              size="sm"
+              className="w-fit h-[30px] text-[13px] rounded-[8px] bg-primary-200/70 text-white font-semibold"
+              onClick={handleEditClick}
+            >
+              <Image
+                src="/icons/logout-icon.svg"
+                alt="로그아웃"
+                width={16}
+                height={16}
+              />
+              로그아웃
+            </Button>
           </div>
         </div>
-
-        {/* 편집 버튼 */}
-        <div className="w-full flex justify-end">
-          <Button
-            size="sm"
-            className="w-[50px] h-[30px] text-[13px] rounded-[8px] bg-primary-200/70 text-white font-semibold mr-[5%]"
-            onClick={handleEditClick}
-          >
-            편집
-          </Button>
-        </div>
-
         {/* OTT 구독 현황 */}
         <SubscriptionBox title="OTT 구독 현황" items={platforms} />
 

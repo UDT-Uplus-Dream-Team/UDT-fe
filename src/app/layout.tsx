@@ -26,6 +26,8 @@ export default function RootLayout({
     <html lang="ko">
       <body className="bg-gray-100 min-h-screen overflow-x-hidden">
         <Providers>
+          {/*  Toaster 추가 */}
+          <Toaster />
           {/* 외부 컨테이너 - 큰 화면에서 다른 배경색 */}
           <div className="bg-gray-100 min-h-screen flex justify-center overflow-x-hidden">
             {/* 앱 컨테이너 - 고정 너비 */}

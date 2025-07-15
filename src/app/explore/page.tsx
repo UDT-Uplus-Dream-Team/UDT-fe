@@ -58,7 +58,7 @@ export default function ExplorePage() {
   // 필터 상태 구독
   const { appliedFilters } = useExploreFilters();
 
-  const handleCardClick = (content: ContentData) => {
+  const handleCardClick = (content: ContentDetail) => {
     console.log('카드 클릭됨:', content.title);
   };
 

@@ -9,12 +9,27 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2024년 3월 28일',
-    runtimeTime: 94,
+    runningTime: 94,
     rating: '전체관람가',
-    categories: ['애니메이션', '액션'],
-    genres: ['액션', '애니메이션', '코미디', '가족'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['마이크 미첼'],
-    platforms: ['넷플릭스', '디즈니+'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
   {
     contentId: 2,
@@ -24,12 +39,27 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2024년 2월 28일',
-    runtimeTime: 166,
+    runningTime: 166,
     rating: '12세이상관람가',
-    categories: ['SF', '액션'],
-    genres: ['SF', '액션', '드라마', '어드벤처'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['드니 빌뇌브'],
-    platforms: ['왓챠', 'TVING'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
   {
     contentId: 3,
@@ -39,12 +69,27 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 8월 15일',
-    runtimeTime: 180,
+    runningTime: 180,
     rating: '15세이상관람가',
-    categories: ['드라마', '역사'],
-    genres: ['드라마', '역사', '스릴러', '전기'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['크리스토퍼 놀란'],
-    platforms: ['넷플릭스', '아마존 프라임'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
   {
     contentId: 4,
@@ -54,12 +99,27 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 6월 21일',
-    runtimeTime: 140,
+    runningTime: 140,
     rating: '12세이상관람가',
-    categories: ['애니메이션', '액션'],
-    genres: ['애니메이션', '액션', '어드벤처', 'SF'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['호아킴 도스 산토스'],
-    platforms: ['넷플릭스', '디즈니+'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
   {
     contentId: 5,
@@ -69,12 +129,27 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 3월 22일',
-    runtimeTime: 169,
+    runningTime: 169,
     rating: '청소년관람불가',
-    categories: ['액션', '스릴러'],
-    genres: ['액션', '스릴러', '범죄', '드라마'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['채드 스타헬스키'],
-    platforms: ['왓챠', 'TVING'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
   {
     contentId: 6,
@@ -84,12 +159,27 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 5월 3일',
-    runtimeTime: 150,
+    runningTime: 150,
     rating: '12세이상관람가',
-    categories: ['액션', 'SF'],
-    genres: ['액션', 'SF', '코미디', '어드벤처'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['제임스 건'],
-    platforms: ['디즈니+', '넷플릭스'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
   {
     contentId: 7,
@@ -99,12 +189,27 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 6월 28일',
-    runtimeTime: 154,
+    runningTime: 154,
     rating: '12세이상관람가',
-    categories: ['액션', '어드벤처'],
-    genres: ['액션', '어드벤처', '드라마', '역사'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['제임스 맨골드'],
-    platforms: ['디즈니+', '아마존 프라임'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
   {
     contentId: 8,
@@ -114,12 +219,27 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 7월 12일',
-    runtimeTime: 163,
+    runningTime: 163,
     rating: '12세이상관람가',
-    categories: ['액션', '스릴러'],
-    genres: ['액션', '스릴러', '어드벤처', '범죄'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['크리스토퍼 맥쿼리'],
-    platforms: ['아마존 프라임', 'TVING'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
   {
     contentId: 9,
@@ -129,12 +249,27 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 6월 6일',
-    runtimeTime: 127,
+    runningTime: 127,
     rating: '12세이상관람가',
-    categories: ['액션', 'SF'],
-    genres: ['액션', 'SF', '어드벤처', '스릴러'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['스티븐 케이플 주니어'],
-    platforms: ['넷플릭스', '왓챠'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
   {
     contentId: 10,
@@ -144,11 +279,26 @@ export const dummyMovies: ContentData[] = [
     posterUrl: '/poster.webp',
     backdropUrl: '/snapshot.webp',
     openDate: '2023년 6월 14일',
-    runtimeTime: 144,
+    runningTime: 144,
     rating: '12세이상관람가',
-    categories: ['액션', 'SF'],
-    genres: ['액션', 'SF', '어드벤처', '판타지'],
+    categories: [
+      {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+    ],
     directors: ['안드레스 무스키에티'],
-    platforms: ['HBO Max', 'TVING'],
+    platforms: [
+      {
+        platformType: '넷플릭스',
+        watchUrl: 'https://www.netflix.com/title/example-id',
+        isAvailable: true,
+      },
+      {
+        platformType: '디즈니+',
+        watchUrl: 'https://www.disneyplus.com/ko-kr/movies/example-id',
+        isAvailable: true,
+      },
+    ],
   },
 ];

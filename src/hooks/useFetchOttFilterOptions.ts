@@ -1,3 +1,4 @@
+import { UserInfo } from '@/types/UserInfo';
 import { useQueryClient } from '@tanstack/react-query';
 import { UserInfo } from '@type/explore/Explore';
 import { useMemo } from 'react';
@@ -14,8 +15,8 @@ export const useFetchOttFilterOptions = () => {
     const options: string[] = [];
 
     // 1. 사용자 OTT 구독 서비스들을 맨 앞에 추가
-    if (userInfo?.ott && userInfo.ott.length > 0) {
-      options.push(...userInfo.ott);
+    if (userInfo?.platforms && userInfo.platforms.length > 0) {
+      options.push(...userInfo.platforms);
     }
 
     // 2. 나머지 기본 옵션들 추가

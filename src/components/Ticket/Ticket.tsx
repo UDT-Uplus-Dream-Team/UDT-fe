@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Heart, X } from 'lucide-react';
-import { MovieData } from '../../types/explore/Moviedata';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@components/ui/card';
+import { Badge } from '@components/ui/badge';
+import { ContentDetail } from '@type/ContentDetail';
 
 type TicketProps = {
-  movie: MovieData;
+  movie: ContentDetail;
   feedback?: 'liked' | 'unliked' | 'neutral';
   variant: 'initial' | 'detail' | 'result';
 };
@@ -57,8 +57,12 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             <h4 className="font-medium text-sm">플랫폼</h4>
             <div className="flex flex-wrap gap-1">
               {movie.platforms.map((platform) => (
-                <Badge key={platform} variant="secondary" className="text-xs">
-                  {platform}
+                <Badge
+                  key={platform.platformType}
+                  variant="secondary"
+                  className="text-xs"
+                >
+                  {platform.platformType}
                 </Badge>
               ))}
             </div>
@@ -83,7 +87,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gray-60">러닝타임</span>
-              <span className="ml-auto">{movie.runtimeTime}분</span>
+              <span className="ml-auto">{movie.runningTime}분</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gray-60">연령 등급</span>
@@ -160,7 +164,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gray-60">러닝타임</span>
-              <span className="ml-auto">{movie.runtimeTime}분</span>
+              <span className="ml-auto">{movie.runningTime}분</span>
             </div>
           </div>
         </CardContent>
@@ -216,21 +220,25 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
               {movie.title}
             </h3>
             <div className="flex flex-wrap gap-1 pb-5 justify-center">
-              {movie.genres.slice(0, 4).map((genre) => (
-                <Badge
-                  key={genre}
-                  variant="outline"
-                  className="text-sm border-white/30 text-white hover:bg-white/10"
-                >
-                  #{genre}
-                </Badge>
-              ))}
-              {movie.genres.length > 4 && (
+              {movie.categories
+                .flatMap((c) => c.genres)
+                .slice(0, 4)
+                .map((genre) => (
+                  <Badge
+                    key={genre}
+                    variant="outline"
+                    className="text-sm border-white/30 text-white hover:bg-white/10"
+                  >
+                    #{genre}
+                  </Badge>
+                ))}
+
+              {movie.categories.flatMap((c) => c.genres).length > 4 && (
                 <Badge
                   variant="outline"
                   className="text-xs border-white/30 text-white"
                 >
-                  +{movie.genres.length - 4}
+                  +{movie.categories.flatMap((c) => c.genres).length - 4}
                 </Badge>
               )}
             </div>

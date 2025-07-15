@@ -213,7 +213,7 @@ export const showInteractiveToast = {
           className={[
             'flex flex-col justify-between',
             'rounded-lg p-4',
-            'w-[340px] flex none',
+            'w-[340px] mx-auto',
             'shadow-sm',
             opts.className,
             'animate-enter',
@@ -223,7 +223,9 @@ export const showInteractiveToast = {
         >
           <div className="flex items-center mb-3">
             <CheckCircle className="w-7 h-7 pr-2 text-success font-bold" />
-            <span className="text-sm font-bold">{opts.message}</span>
+            <span className="text-base text-white whitespace-pre-line">
+              {opts.message}
+            </span>
             <Button
               variant="ghost"
               size="sm"
@@ -244,7 +246,7 @@ export const showInteractiveToast = {
                   opts.onAction?.();
                   toast.dismiss(id);
                 }}
-                className="h-6 px-2 bg-gray-60 text-xs"
+                className="h-6 p-2 bg-gray-40 text-xs"
               >
                 {opts.actionText ?? '확인'}
               </Button>

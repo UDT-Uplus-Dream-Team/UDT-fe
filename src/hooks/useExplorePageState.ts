@@ -1,5 +1,5 @@
 import { useExploreStore } from '@store/ExploreStore';
-import { useFetchOttFilterOptions } from '@hooks/useFetchOttFilterOptions';
+import { useFetchOttFilterOptions } from '@/hooks/explore/useFetchOttFilterOptions';
 import { useEffect } from 'react';
 
 // 필터 관련 상태만 구독하는 훅 (각 항목 분리 구독)

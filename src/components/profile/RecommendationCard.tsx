@@ -9,6 +9,7 @@ const RecommendationCard = ({
   title,
   description,
   route,
+  disabled = false,
 }: RecommendationCardProps) => {
   const router = useRouter();
 
@@ -31,6 +32,7 @@ const RecommendationCard = ({
         <div className="w-full flex justify-center">
           <button
             onClick={handleClick}
+            disabled={disabled}
             className="max-w-[200px] w-full py-2 mt-2 bg-white/40 text-white rounded-[10px] text-[12px] font-semibold cursor-pointer"
           >
             보러가기

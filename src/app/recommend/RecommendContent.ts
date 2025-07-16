@@ -1,6 +1,7 @@
 import { TicketComponent } from '@/types/recommend/TicketComponent';
 
-export const dummyMovies: TicketComponent[] = [
+// 실제로는 API에서 받아올 데이터
+let contentDataPool: TicketComponent[] = [
   {
     contentId: 1,
     title: '쿵푸팬더 4',
@@ -182,3 +183,55 @@ export const dummyMovies: TicketComponent[] = [
     platforms: ['넷플릭스', '디즈니+'],
   },
 ];
+
+// 새로운 영화 데이터를 풀에 추가하는 함수
+export const addcontentDataPool = (newContent: TicketComponent[]): void => {
+  contentDataPool.push(...newContent);
+};
+
+// 현재 사용 가능한 영화 데이터 가져오기
+export const getAvailableContents = (): TicketComponent[] => {
+  return [...contentDataPool]; // 복사본 반환
+};
+
+// 특정 범위의 영화 가져오기
+export const getContentsSlice = (
+  start: number,
+  count: number,
+): TicketComponent[] => {
+  return contentDataPool.slice(start, start + count);
+};
+
+// 풀 크기 확인
+export const getPoolSize = (): number => {
+  return contentDataPool.length;
+};
+
+// API 호출 시뮬레이션 (10초마다 실행될 함수)
+export const fetchMoreContents = async (): Promise<TicketComponent[]> => {
+  // 실제로는 axiosInstance.get('/recommend/more') 같은 API 호출
+
+  const newMovies: TicketComponent[] = [
+    {
+      contentId: 10,
+      title: '플래시',
+      description:
+        '과거를 바꾸기 위해 시간여행을 한 플래시가 예상치 못한 결과로 인해 다중우주에서 벌어지는 모험.',
+      posterUrl: '/poster.webp',
+      backdropUrl: '/snapshot.webp',
+      openDate: '2023년 6월 14일',
+      runningTime: 144,
+      episode: 1,
+      rating: '12세이상관람가',
+      categories: {
+        category: '영화',
+        genres: ['애니메이션', '액션'],
+      },
+      directors: ['안드레스 무스키에티'],
+      platforms: ['넷플릭스', '디즈니+'],
+    },
+  ];
+
+  addcontentDataPool(newMovies);
+  return newMovies;
+};

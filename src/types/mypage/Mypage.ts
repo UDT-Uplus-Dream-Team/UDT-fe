@@ -24,6 +24,7 @@ export interface RecommendationCardProps {
   title: string;
   description: string;
   route: string;
+  disabled?: boolean;
 }
 
 export interface SubscriptionBoxProps {

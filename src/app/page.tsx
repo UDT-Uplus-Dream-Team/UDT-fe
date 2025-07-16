@@ -31,7 +31,7 @@ export default function KakaoLoginPage() {
   }, []);
 
   return (
-    <div className="min-h-full flex flex-col text-white items-center justify-center p-4 relative overflow-hidden">
+    <div className="flex flex-col min-h-full text-white items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0">
         {stars.map((star) => (
           <div
@@ -79,7 +79,7 @@ export default function KakaoLoginPage() {
         >
           <Button
             onClick={handleKakaoLogin}
-            className="w-full bg-transparent border-none transition-all duration-200"
+            className="w-full bg-transparent border-none transition-all duration-200 cursor-pointer hover:bg-transparent"
           >
             <Image
               src="/icons/kakaologin-icon.png"

@@ -33,6 +33,7 @@ export interface InteractiveToastOptions extends ToastOptions {
   actionText?: string;
   onAction?: () => void;
   onClose?: () => void;
+  showCloseButton?: boolean;
 }
 
 // ─── Simple Toast ────────────────────────────────────────────────────────

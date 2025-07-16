@@ -116,7 +116,7 @@ export const ResultScreen: React.FC = () => {
   if (isLoading) return <LoadingScreen />;
 
   return (
-    <div className="min-h-full flex items-center justify-center">
+    <div className="flex min-h-full items-center justify-center">
       {/* overflow-hidden 제거 */}
       <div className="w-full">
         <div className="text-center mb-4">

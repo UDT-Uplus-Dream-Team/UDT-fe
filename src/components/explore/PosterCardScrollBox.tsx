@@ -1,5 +1,4 @@
 // 영화(PosterCard) 카드를 모아 놓은 스크롤 박스 컴포넌트
-import { PosterCardScrollBoxProps } from '@type/explore/Explore';
 import { PosterCard } from './PosterCard';
 import { useState } from 'react';
 import {
@@ -10,12 +9,38 @@ import {
 } from '@/components/ui/sheet';
 import { DetailBottomSheetContent } from '@components/explore/DetailBottomSheetContent';
 
-export const PosterCardScrollBox = ({
-  title,
-  SimpleMovieData,
-}: PosterCardScrollBoxProps) => {
+export interface PosterCardScrollBoxProps {
+  BoxTitle: string;
+}
+
+// 포스터를 모아놓은 스크롤 박스 컴포넌트 (여기는 x축으로 왼쪽/오른쪽 스크롤 가능)
+export const PosterCardScrollBox = ({ BoxTitle }: PosterCardScrollBoxProps) => {
   const [isDetailBottomSheetOpen, setIsDetailBottomSheetOpen] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
+
+  // TODO: 해당 mockData는 네트워크 통신으로 대체해야 함
+  const mockSimpleMovieData = [
+    {
+      contentId: 1,
+      posterUrl: '/images/poster1.webp',
+    },
+    {
+      contentId: 2,
+      posterUrl: '/images/poster2.webp',
+    },
+    {
+      contentId: 3,
+      posterUrl: '/images/poster3.webp',
+    },
+    {
+      contentId: 4,
+      posterUrl: '/images/poster4.webp',
+    },
+    {
+      contentId: 5,
+      posterUrl: '/images/poster5.webp',
+    },
+  ];
 
   const handlePosterClick = (movieId: number) => {
     //TODO: 이것을 네트워크 통신으로 대체해야 함
@@ -26,16 +51,16 @@ export const PosterCardScrollBox = ({
   return (
     <div className="w-full h-fit flex flex-col justify-start items-start gap-2">
       <span className="text-xl text-white font-semibold py-2 ml-6">
-        {title}
+        {BoxTitle}
       </span>
       <div className="w-full h-fit flex flex-row gap-3 overflow-x-auto scrollbar-hide px-6">
-        {SimpleMovieData.map((movie) => (
+        {mockSimpleMovieData.map((movie) => (
           <PosterCard
-            key={movie.id}
-            title={movie.title}
-            image={movie.image}
-            isTitleVisible={true}
-            onClick={() => handlePosterClick(movie.id)}
+            key={movie.contentId}
+            title={'타이틀없음'}
+            image={movie.posterUrl}
+            isTitleVisible={false}
+            onClick={() => handlePosterClick(movie.contentId)}
           />
         ))}
       </div>

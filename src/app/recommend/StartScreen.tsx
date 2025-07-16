@@ -20,7 +20,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
   }, []);
 
   return (
-    <div className="min-h-full flex items-center justify-center relative overflow-hidden">
+    <div className="flex flex-col min-h-screen items-center justify-center relative overflow-hidden">
       {/* Animated background stars */}
       <div className="absolute inset-0">
         {[...Array(50)].map((_, i) => (

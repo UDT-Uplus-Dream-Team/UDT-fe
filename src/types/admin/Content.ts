@@ -55,8 +55,8 @@ export interface AdminContentListResponse {
   hasNext: boolean;
 }
 
-// 콘텐츠 등록 요청 타입 (id 제외)
-export interface CreateContentRequest {
+// id 제외 콘텐츠 타입
+export interface ContentWithoutId {
   title: string;
   description: string;
   posterUrl: string;

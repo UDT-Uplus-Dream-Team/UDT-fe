@@ -23,10 +23,10 @@ export const PosterCard = ({
 }: PosterCardProps) => {
   // 사이즈별 width/height 설정
   const dimensions =
-    size === 'lg' ? { width: 160, height: 220 } : { width: 100, height: 142 };
+    size === 'lg' ? { width: 160, height: 220 } : { width: 110, height: 154 };
 
   const titleClass =
-    size === 'lg' ? 'text-base max-w-[160px]' : 'text-sm max-w-[100px]';
+    size === 'lg' ? 'text-base max-w-[160px]' : 'text-sm max-w-[120px]';
 
   return (
     <div

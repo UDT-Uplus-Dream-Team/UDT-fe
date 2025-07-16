@@ -5,12 +5,14 @@ import Image from 'next/image';
 
 export default function KakaoLoginPage() {
   const handleKakaoLogin = () => {
-    // KakaoTalk login logic would go here
+    // 카카오 로그인 로직 여기서 수행
     console.log('KakaoTalk login initiated');
+    window.location.href =
+      'https://dev.banditbool.com/oauth2/authorization/kakao';
   };
 
   return (
-    <div className="min-h-full flex flex-col text-white items-center justify-center p-4 relative overflow-hidden">
+    <div className="flex flex-col min-h-full text-white items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0">
         {[...Array(50)].map((_, i) => (
           <div
@@ -31,8 +33,8 @@ export default function KakaoLoginPage() {
           <Image
             src="/icons/FireFlyLogo.png"
             alt="biglogo"
-            width={120}
-            height={120}
+            width={720}
+            height={720}
             style={{
               width: '280px',
               height: '280px',
@@ -58,7 +60,7 @@ export default function KakaoLoginPage() {
         >
           <Button
             onClick={handleKakaoLogin}
-            className="w-full bg-transparent border-none transition-all duration-200"
+            className="w-full bg-transparent border-none transition-all duration-200 cursor-pointer hover:bg-transparent"
           >
             <Image
               src="/icons/kakaologin-icon.png"

@@ -32,6 +32,7 @@ export interface InteractiveToastOptions extends ToastOptions {
   showCancel?: boolean;
   actionText?: string;
   onAction?: () => void;
+  showCloseButton?: boolean;
 }
 
 // ─── Simple Toast ────────────────────────────────────────────────────────
@@ -226,14 +227,16 @@ export const showInteractiveToast = {
             <span className="text-base text-white whitespace-pre-line">
               {opts.message}
             </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => toast.dismiss(id)}
-              className="ml-auto h-5 w-5 p-0"
-            >
-              <X className="w-4 h-4" />
-            </Button>
+            {opts.showCloseButton !== false && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toast.dismiss(id)}
+                className="ml-auto h-5 w-5 p-0"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
           </div>
 
           {/* 우측 액션 버튼 + 닫기 */}

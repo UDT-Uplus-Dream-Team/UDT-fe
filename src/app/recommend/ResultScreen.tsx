@@ -13,7 +13,7 @@ import { getCuratedContents } from '@lib/apis/recommend/getCuratedContents';
 import { useRecommendStore } from '@store/useRecommendStore';
 
 export const ResultScreen: React.FC = () => {
-  const { setPhase } = useRecommendStore();
+  const setPhase = useRecommendStore((state) => state.setPhase);
 
   const [movies, setMovies] = useState<TicketComponent[]>([]);
   const [rerollUsed, setRerollUsed] = useState<boolean[]>([
@@ -238,7 +238,9 @@ export const ResultScreen: React.FC = () => {
           </Button>
 
           <Button
-            onClick={() => setPhase('recommend')}
+            onClick={() => {
+              setPhase('recommend');
+            }}
             className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2"
           >
             <Undo2 className="w-5 h-5" />

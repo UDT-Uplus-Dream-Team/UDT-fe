@@ -146,7 +146,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       setToastShown(true); // 토스트 표시됨으로 설정
 
       showInteractiveToast.action({
-        message: '모든 영화를 확인했습니다!\n추천 결과를 보시겠어요?',
+        message: '컨텐츠 추천이 준비되었습니다!\n추천 결과를 보시겠어요?',
         actionText: '결과 보기',
         duration: Infinity,
         position: 'top-center',
@@ -245,9 +245,6 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
-      <div className="text-lg">
-        <p>테스트용 - 총 {moviesRef.current.length}개 영화</p>
-      </div>
       <div className="my-8 flex w-full justify-center">
         <div></div>
         <div

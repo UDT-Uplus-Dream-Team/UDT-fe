@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { StartScreen } from './StartScreen';
 import { RecommendScreen } from './RecommendScreen';
 import { ResultScreen } from './ResultScreen';
-
-type Phase = 'start' | 'recommend' | 'result';
+import { useRecommendStore } from '@/store/useRecommendStore';
 
 export default function RecommendationPage() {
-  const [phase, setPhase] = useState<Phase>('start');
+  const { phase, setPhase } = useRecommendStore();
 
   return (
     <>

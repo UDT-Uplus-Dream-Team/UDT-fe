@@ -125,10 +125,6 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                 />
               ))} */}
             </div>
-
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-              컨텐츠 추천 받기
-            </h1>
           </motion.div>
 
           {/* Description */}

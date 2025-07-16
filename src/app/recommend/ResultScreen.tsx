@@ -2,14 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { LoadingScreen } from './LoadingScreen';
-import { RefreshCw, Plus, Eye, EyeOff } from 'lucide-react';
+import { RefreshCw, Plus, Eye, EyeOff, Undo2 } from 'lucide-react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
 import { Ticket } from '@components/Ticket/Ticket';
 import { Button } from '@components/ui/button';
-import { dummyMovies } from './moviedata';
+import { dummyMovies } from './ContentList';
 import { TicketComponent } from '@type/recommend/TicketComponent';
+import { getCuratedContents } from '@lib/apis/recommend/getCuratedContents';
+
+import { useRecommendStore } from '@store/useRecommendStore';
 
 export const ResultScreen: React.FC = () => {
+  const setPhase = useRecommendStore((state) => state.setPhase);
+
   const [movies, setMovies] = useState<TicketComponent[]>([]);
   const [rerollUsed, setRerollUsed] = useState<boolean[]>([
     false,
@@ -22,11 +27,37 @@ export const ResultScreen: React.FC = () => {
   const [isFlipped, setIsFlipped] = useState<boolean[]>([false, false, false]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMovies(dummyMovies.slice(0, 3));
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    const fetchCuratedContents = async (): Promise<void> => {
+      try {
+        setIsLoading(true);
+
+        // API 호출과 최소 3초 대기를 동시에 시작
+        const [response] = await Promise.all([
+          getCuratedContents(),
+          new Promise((resolve) => setTimeout(resolve, 3000)), // 3초 최소 대기
+        ]);
+
+        if (response.success && response.data.length > 0) {
+          setMovies(response.data);
+        } else {
+          // API 실패 시 fallback으로 더미 데이터
+          console.warn(
+            '큐레이션 데이터 로드 실패, 더미 데이터 사용:',
+            response.message,
+          );
+          setMovies(dummyMovies.slice(0, 3));
+        }
+
+        setIsLoading(false);
+      } catch (error: unknown) {
+        console.error('큐레이션 콘텐츠 로드 중 오류:', error);
+        // 에러 시 fallback으로 더미 데이터
+        setMovies(dummyMovies.slice(0, 3));
+        setIsLoading(false);
+      }
+    };
+
+    fetchCuratedContents();
   }, []);
 
   const handleReroll = (idx: number) => {
@@ -160,33 +191,35 @@ export const ResultScreen: React.FC = () => {
                 {isCenter && (
                   <div className="absolute -top-2 -right-2 flex gap-2 z-50">
                     {/* 상세보기 버튼 */}
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleFlip(idx)}
-                    >
-                      <Button variant="outline" size="icon">
+                    <motion.div whileTap={{ scale: 0.9 }}>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleFlip(idx)}
+                      >
                         {isFlipped[idx] ? (
                           <EyeOff className="w-4 h-4 text-black" />
                         ) : (
                           <Eye className="w-4 h-4 text-black" />
                         )}
                       </Button>
-                    </motion.button>
+                    </motion.div>
 
                     {/* 리롤 버튼 */}
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleReroll(idx)}
-                      disabled={rerollUsed[idx]}
-                    >
-                      <Button variant="outline" size="icon">
+                    <motion.div whileTap={{ scale: 0.9 }}>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleReroll(idx)}
+                        disabled={rerollUsed[idx]}
+                      >
                         <RefreshCw
                           className={`w-4 h-4 ${
                             rerollUsed[idx] ? 'text-gray-60' : 'text-black'
                           }`}
                         />
                       </Button>
-                    </motion.button>
+                    </motion.div>
                   </div>
                 )}
               </motion.div>
@@ -195,13 +228,23 @@ export const ResultScreen: React.FC = () => {
         </div>
 
         {/* Add Content Button */}
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-8 gap-4">
           <Button
             onClick={handleAddContent}
-            className="px-8 py-3 bg-gray-40 hover:bg-gray-60 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+            className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
             <span className="font-medium">이 콘텐츠 추가하기</span>
+          </Button>
+
+          <Button
+            onClick={() => {
+              setPhase('recommend');
+            }}
+            className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2"
+          >
+            <Undo2 className="w-5 h-5" />
+            다시 추천받기
           </Button>
         </div>
       </div>

@@ -9,7 +9,7 @@ export interface FilterRadioButtonProps {
 
 // 상세 보기가 아닌 카드 목록에 사용되는 콘텐츠 데이터 타입 (간단하게 포스터, 제목만 표시하는 버전)
 export interface SimpleContentData {
-  contendId: number;
+  contentId: number;
   title: string;
   posterUrl: string;
 }

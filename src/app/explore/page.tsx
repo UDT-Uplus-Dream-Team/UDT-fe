@@ -31,26 +31,18 @@ export default function ExplorePage() {
       enabled: filters !== undefined,
     });
 
-  const handleCardClick = (contentId: number) => {
-    console.log('카드 클릭됨. 카드 id', contentId);
-  };
-
   // 필터링된 콘텐츠 목록 데이터 추출
   const contents = data?.pages.flatMap((page) => page.item) || [];
 
   return (
-    <div className="flex flex-col min-h-screen overflow-y-auto">
+    <div className="flex flex-col pt-6 min-h-screen overflow-y-auto">
       {/* 상단 제목 영역 */}
-      <div className="flex items-center justify-center pt-6 pb-2">
+      <div className="flex items-center justify-center pt-6">
         <span className="text-2xl font-semibold text-white">작품 탐색하기</span>
       </div>
 
       {/* 필터 그룹 - 스크롤 시 상단에 고정 */}
-      <div className="sticky top-0 z-10">
-        <div className="py-4">
-          <FilterRadioButtonGroup />
-        </div>
-      </div>
+      <FilterRadioButtonGroup />
 
       {
         // 필터가 적용된 경우
@@ -65,10 +57,7 @@ export default function ExplorePage() {
           // 스크롤 가능한 콘텐츠 영역
           <div className="flex-1 container mx-auto space-y-6 pt-4 pb-24">
             <div className="w-full">
-              <ExplorePageCarousel
-                autoPlayInterval={3000}
-                onCardClick={handleCardClick}
-              />
+              <ExplorePageCarousel autoPlayInterval={3000} />
             </div>
 
             <PosterCardScrollBox BoxTitle="목요일엔 목적없이 아무거나!" />

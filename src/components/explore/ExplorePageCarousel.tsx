@@ -11,10 +11,10 @@ import { RepresentativeContentCard } from '@/components/explore/RepresentativeCo
 import { RecentContentData } from '@type/explore/Explore';
 import { getLatestContents } from '@lib/apis/explore/getLatestContents';
 import { Loader2, RefreshCw } from 'lucide-react';
+import { mockRecentContentData } from '@utils/getMockContentData';
 
 interface CarouselProps {
   autoPlayInterval?: number;
-  onCardClick?: (contentId: number) => void;
 }
 
 const CARD_WIDTH = 272;
@@ -27,7 +27,6 @@ const REPEAT_COUNT = 5; // 배열 반복 횟수
 // 탐색 페이지의 맨 위에 표시되는 카드 Carousel 컴포넌트
 export const ExplorePageCarousel = ({
   autoPlayInterval = 3000,
-  onCardClick,
 }: CarouselProps) => {
   const [contents, setContents] = useState<RecentContentData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,7 +104,12 @@ export const ExplorePageCarousel = ({
       const data = await getLatestContents(); // filters 적용이 필요하다면 여기에 반영
       setContents(data);
     } catch (error) {
-      setError('콘텐츠를 불러오는데 실패했습니다. 에러 내용: ' + error);
+      // TODO: 불러오기 실패하면 우선 mock 데이터로 대체
+      if (mockRecentContentData.length !== 0) {
+        setContents(mockRecentContentData);
+      } else {
+        setError('콘텐츠를 불러오는데 실패했습니다. 에러 내용: ' + error);
+      }
     } finally {
       setLoading(false);
     }
@@ -294,10 +298,7 @@ export const ExplorePageCarousel = ({
                 }}
               >
                 <div className="relative">
-                  <RepresentativeContentCard
-                    content={content}
-                    onClick={() => onCardClick?.(content)}
-                  />
+                  <RepresentativeContentCard content={content} />
                   {!isCurrent && (
                     <div className="absolute inset-0 bg-black/40 rounded-lg pointer-events-none" />
                   )}

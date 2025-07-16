@@ -24,7 +24,8 @@ export const PlatformButton = ({
         </Avatar>
         <span className="text-sm">{platformName}</span>
       </div>
-      <span className="text-sm">보러가기 →</span>
+      {/* url이 있을 경우 보러가기 버튼 표시 */}
+      {url !== null && <span className="text-sm">보러가기 →</span>}
     </Button>
   );
 };

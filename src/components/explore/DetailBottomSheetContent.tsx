@@ -18,7 +18,7 @@ import {
   getMockContentData,
   MockContentData,
 } from '@/utils/getMockContentData';
-import { VideoPlayer } from './VideoPlayer';
+import { VideoPlayer } from '@components/explore/VideoPlayer';
 
 interface DetailBottomSheetContentProps {
   contentId: number;
@@ -154,12 +154,15 @@ export const DetailBottomSheetContent = ({
 
       {/* 사진 밑에 콘텐츠 정보 */}
       <div className="flex flex-col space-y-6 px-4 pt-4 bg-gradient-to-b from-black/100 to-primary-800">
-        {/* "보러가기" 버튼 */}
-        <PlatformButton
-          platformName="디즈니+"
-          iconUrl={getPlatformLogo('디즈니+') || ''}
-          url="https://www.disneyplus.com"
-        />
+        {/* 플랫폼 버튼, url이 null인 경우 '보러가기' 버튼 미표시 */}
+        {contentData.platforms.map((platform, idx) => (
+          <PlatformButton
+            key={idx}
+            platformName={platform.platformType}
+            iconUrl={getPlatformLogo(platform.platformType) || ''}
+            url={platform.watchUrl}
+          />
+        ))}
 
         {/* 시놉시스(줄거리) */}
         <div className="space-y-2">
@@ -199,7 +202,7 @@ export const DetailBottomSheetContent = ({
         <div className="flex flex-col space-y-3">
           <span className="text-lg font-semibold text-white">출연진</span>
           <div className="flex space-x-4 overflow-x-auto">
-            {contentData.cast.map((actor, index) => (
+            {contentData.casts.map((actor, index) => (
               <div
                 key={index}
                 className="flex flex-col items-center space-y-2 min-w-[60px]"

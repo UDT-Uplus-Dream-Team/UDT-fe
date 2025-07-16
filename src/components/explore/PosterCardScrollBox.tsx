@@ -6,8 +6,9 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
+} from '@components/ui/sheet';
 import { DetailBottomSheetContent } from '@components/explore/DetailBottomSheetContent';
+import { mockRecentContentData } from '@/utils/getMockContentData';
 
 export interface PosterCardScrollBoxProps {
   BoxTitle: string;
@@ -19,28 +20,12 @@ export const PosterCardScrollBox = ({ BoxTitle }: PosterCardScrollBoxProps) => {
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
 
   // TODO: 해당 mockData는 네트워크 통신으로 대체해야 함
-  const mockSimpleMovieData = [
-    {
-      contentId: 1,
-      posterUrl: '/images/poster1.webp',
-    },
-    {
-      contentId: 2,
-      posterUrl: '/images/poster2.webp',
-    },
-    {
-      contentId: 3,
-      posterUrl: '/images/poster3.webp',
-    },
-    {
-      contentId: 4,
-      posterUrl: '/images/poster4.webp',
-    },
-    {
-      contentId: 5,
-      posterUrl: '/images/poster5.webp',
-    },
-  ];
+  const simpleMovieData = mockRecentContentData.map(
+    ({ contentId, posterUrl }) => ({
+      contentId,
+      posterUrl,
+    }),
+  );
 
   const handlePosterClick = (movieId: number) => {
     //TODO: 이것을 네트워크 통신으로 대체해야 함
@@ -54,7 +39,7 @@ export const PosterCardScrollBox = ({ BoxTitle }: PosterCardScrollBoxProps) => {
         {BoxTitle}
       </span>
       <div className="w-full h-fit flex flex-row gap-3 overflow-x-auto scrollbar-hide px-6">
-        {mockSimpleMovieData.map((movie) => (
+        {simpleMovieData.map((movie) => (
           <PosterCard
             key={movie.contentId}
             title={'타이틀없음'}

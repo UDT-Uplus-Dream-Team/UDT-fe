@@ -1,0 +1,149 @@
+import { TicketComponent } from '@type/recommend/TicketComponent';
+
+export const MockMovies: TicketComponent[] = [
+  {
+    contentId: 1,
+    title: '그랜드 부다페스트 호텔',
+    description:
+      '1927년 세계대전이 한창이던 어느 날, 세계 최고 부호 마담 D가 그랜드 부다페스트 호텔에 다녀간 지 얼마 지나지 않아 의문의 살인을 당한다.',
+    posterUrl: '/images/mockPoster/Budapest.webp',
+    backdropUrl: '/snapshot.webp',
+    openDate: '2014년 3월 20일',
+    runningTime: 160,
+    episode: 1,
+    rating: '18세이상관람가',
+    categories: {
+      category: '영화',
+      genres: ['코미디', '드라마'],
+    },
+    directors: ['웨스 앤더슨'],
+    platforms: ['디즈니+', '쿠팡플레이'],
+  },
+  {
+    contentId: 2,
+    title: '그린북',
+    description:
+      '1962년 미국, 입담과 주먹만 믿고 살아가던 토니 발레롱가는 교양과 우아함 그 자체인 천재 피아니스트 돈 셜리의 운전기사 면접을 보게 된다. 백악관에도 초청되는 등 미국 전역에서 콘서트 요청을 받으며 명성을 떨치고 있는 돈 셜리는 위험하기로 소문난 미국 남부 투어 공연을 떠나기로 결심하고, 투어 기간 동안 자신의 보디가드 겸 운전기사로 토니를 고용한다. 거친 인생을 살아온 토니와 교양과 기품을 지키며 살아온 돈. 생각, 행동, 말투, 취향까지 달라도 너무 다른 두 사람은 그들을 위한 여행안내서 그린북에 의존해 특별한 남부 투어를 시작하는데...',
+    posterUrl: '/images/mockPoster/Green Book.webp',
+    backdropUrl: '/images/mockPoster/ShawshankBakc.jpg',
+    openDate: '2019년 1월 09일',
+    runningTime: 130,
+    episode: 1,
+    rating: '12세이상관람가',
+    categories: {
+      category: '영화',
+      genres: ['드라마', '역사'],
+    },
+    directors: ['피터 패럴리'],
+    platforms: ['웨이브', '넷플릭스'],
+  },
+  {
+    contentId: 3,
+    title: '보헤미안 랩소디',
+    description:
+      '공항 수하물 노동자로 일하며 음악의 꿈을 키우던 이민자 출신의 아웃사이더 파록 버사라. 보컬을 구하던 로컬 밴드에 들어가게 되면서 프레디 머큐리라는 이름으로 밴드 퀸을 이끌게 된다. 시대를 앞서가는 독창적인 음악과 화려한 퍼포먼스로 관중들을 사로잡으며 성장하던 퀸은 방송에서 외면을 받을 것이라는 음반사의 반대에도 불구하고 무려 6분 동안 이어지는 실험적인 곡 보헤미안 랩소디로 대성공을 거두며 월드스타 반열에 오른다. 그러나 독보적인 존재감을 뿜어내던 프레디는 솔로 데뷔라는 유혹에 흔들리게 되고, 오랜 시간 함께 해왔던 멤버들과 결별을 선언하게 되는데...',
+    posterUrl: '/images/mockPoster/Bohemian.webp',
+    backdropUrl: '/images/mockPoster/ShawshankBakc.jpg',
+    openDate: '2018년 10월 31일',
+    runningTime: 134,
+    episode: 1,
+    rating: '12세이상관람가',
+    categories: {
+      category: '영화',
+      genres: ['드라마', '음악'],
+    },
+    directors: ['Anthony McCarten'],
+    platforms: ['넷플릭스', '쿠팡플레이'],
+  },
+  {
+    contentId: 4,
+    title: '쇼생크 탈출',
+    description:
+      '촉망받는 은행 간부 앤디 듀프레인은 아내와 그녀의 정부를 살해했다는 누명을 쓴다. 주변의 증언과 살해 현장의 그럴듯한 증거들로 그는 종신형을 선고받고 악질범들만 수용한다는 지옥같은 교도소 쇼생크로 향한다. 인간 말종 쓰레기들만 모인 그곳에서 그는 이루 말할 수 없는 억압과 짐승보다 못한 취급을 당한다. 그러던 어느 날, 간수의 세금을 면제받게 해 준 덕분에 그는 일약 교도소의 비공식 회계사로 일하게 된다. 그 와중에 교도소 소장은 죄수들을 이리저리 부리면서 검은 돈을 긁어 모으고 앤디는 이 돈을 세탁하여 불려주면서 그의 돈을 관리하는데...',
+    posterUrl: '/images/mockPoster/Shawshank.webp',
+    backdropUrl: '/images/mockPoster/ShawshankBakc.jpg',
+    openDate: '1995년 1월 28일',
+    runningTime: 142,
+    episode: 1,
+    rating: '전체관람가',
+    categories: {
+      category: '영화',
+      genres: ['드라마', '범죄'],
+    },
+    directors: ['프랭크 다라본트'],
+    platforms: ['웨이브', '쿠팡플레이'],
+  },
+  {
+    contentId: 5,
+    title: '너의 이름은',
+    description:
+      '시골에 사는 소녀 미츠하(가미시라이시 모네)는 어느 날 잠에서 깬 후 자신의 몸이 남자로 바뀐 걸 알게 된다. 같은 시간, 도쿄에 사는 소년 타키(가미키 류노스케) 역시 이 기이한 상황을 겪고 있다. 낯선 가족, 낯선 친구들, 낯선 풍경들... 서로에게 이어진 끈을 알게 된 둘은 둘만의 규칙을 정하고 점차 상황을 받아들이기 시작한다. 서로에게 남긴 메모를 확인하며 점점 친구가 되어가는 타키와 미츠하. 언제부턴가 더 이상 몸이 바뀌지 않자 자신들이 특별하게 이어져있었음을 깨달은 타키는 미츠하를 만나러 가는데...',
+    posterUrl: '/images/mockPoster/yourname.webp',
+    backdropUrl: '/snapshot.webp',
+    openDate: '2017년 1월 04일',
+    runningTime: 106,
+    episode: 1,
+    rating: '전체관람가',
+    categories: {
+      category: '영화',
+      genres: ['애니메이션', '로맨스'],
+    },
+    directors: ['신카이 마코토'],
+    platforms: ['웨이브', '왓차'],
+  },
+
+  {
+    contentId: 6,
+    title: '인터스텔라',
+    description:
+      '세계 각국의 정부와 경제가 완전히 붕괴된 미래가 다가온다. 지난 20세기에 범한 잘못이 전 세계적인 식량 부족을 불러왔고, NASA도 해체되었다. 나사 소속 우주비행사였던 쿠퍼는 지구에 몰아친 식량난으로 옥수수나 키우며 살고 있다. 거센 황사가 몰아친 어느 날 알 수 없는 힘에 이끌려 딸과 함께 도착한 곳은 인류가 이주할 행성을 찾는 나사의 비밀본부. 이 때 시공간에 불가사의한 틈이 열리고, 이 곳을 탐험해 인류를 구해야 하는 임무를 위해 쿠퍼는 만류하는 딸을 뒤로한 채 우주선에 탑승하는데...',
+    posterUrl: '/images/mockPoster/Interstellar.webp',
+    backdropUrl: '/snapshot.webp',
+    openDate: '2014년 11월 06일',
+    runningTime: 169,
+    episode: 1,
+    rating: '12세이상관람가',
+    categories: {
+      category: '영화',
+      genres: ['모험', 'SF'],
+    },
+    directors: ['크리스토퍼 놀란'],
+    platforms: ['넷플릭스', '쿠팡플레이', '웨이브'],
+  },
+  {
+    contentId: 7,
+    title: '반지의 제왕: 왕의 귀환 ',
+    description:
+      '사우론이 인간들의 마지막 요새인 곤도르를 향해 야욕을 드러내고 있는 한편, 아라곤은 쇠락해가고 있는 곤도르의 재건을 위해 왕위 계승을 신중하게 결정지어야만 하는 상황. 이제 중간대륙의 미래는 그의 어깨에 달려있는 것. 사우론이 이끄는 어둠의 군대와의 마지막 전투를 위해 간달프는 곤도르에 흩어져 있던 병사들을 모으고, 로한의 왕 세오덴에게 도움을 받기도 하지만 사우론의 군대에 비하면 열세를 면치 못한다. 그러나 그들은 중간대륙을 사우론의 야욕으로부터 지키려는 사명감과, 마지막 반지 운반자에게 임무를 끝낼 기회를 주기 위해 어둠의 군대를 향해 돌진하게 되는데...',
+    posterUrl: '/images/mockPoster/Lord of the Rings.webp',
+    backdropUrl: '/snapshot.webp',
+    openDate: '2003년 12월 17일',
+    runningTime: 199,
+    episode: 1,
+    rating: '12세이상관람가',
+    categories: {
+      category: '영화',
+      genres: ['판타지', '액션'],
+    },
+    directors: ['피터 잭슨'],
+    platforms: ['넷플릭스', '디즈니+'],
+  },
+  {
+    contentId: 8,
+    title: '기생충',
+    description:
+      '전원 백수로 살 길 막막하지만 사이는 좋은 기택 가족. 장남 기우에게 명문대생 친구가 연결시켜 준 고액 과외 자리는 모처럼 싹튼 고정수입의 희망이다. 온 가족의 도움과 기대 속에 박 사장 집으로 향하는 기우. 글로벌 IT기업의 CEO인 박 사장의 저택에 도착하자 젊고 아름다운 사모님 연교와 가정부 문광이 기우를 맞이한다. 큰 문제 없이 박 사장의 딸 다혜의 과외를 시작한 기우. 그러나 이렇게 시작된 두 가족의 만남 뒤로, 걷잡을 수 없는 사건이 기다리고 있는데.....',
+    posterUrl: '/images/mockPoster/Parasite.webp',
+    backdropUrl: '/snapshot.webp',
+    openDate: '2019년 5월 30일',
+    runningTime: 131,
+    episode: 1,
+    rating: '15세이상관람가',
+    categories: {
+      category: '영화',
+      genres: ['코미디', '액스릴러'],
+    },
+    directors: ['봉준호'],
+    platforms: ['넷플릭스', '쿠팡플레이', '왓차'],
+  },
+];

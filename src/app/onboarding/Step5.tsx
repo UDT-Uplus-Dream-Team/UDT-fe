@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Ticket } from '@components/Ticket/Ticket';
-import { dummyMovies } from '../recommend/moviedata';
+import { MockMovies } from './moviedata';
 
 interface StepProps5 {
   onNext: () => void;
@@ -15,7 +15,7 @@ export default function Step5({ onNext }: StepProps5) {
   // ── 상태 ─────────────────────────────────────────────────────────────
   const [currentIndex, setCurrentIndex] = useState(0);
   const [nextMovie, setNextMovie] = useState(
-    dummyMovies.length > 1 ? dummyMovies[1] : null,
+    MockMovies.length > 1 ? MockMovies[1] : null,
   );
   const [isFlipped, setIsFlipped] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(
@@ -25,7 +25,7 @@ export default function Step5({ onNext }: StepProps5) {
   const [isAnimating, setIsAnimating] = useState(false);
   const startPoint = useRef<{ x: number; y: number } | null>(null);
 
-  const currentMovie = dummyMovies[currentIndex];
+  const currentMovie = MockMovies[currentIndex];
 
   // ── 스와이프 처리 ──────────────────────────────────────────────────
   const handleSwipe = (
@@ -58,9 +58,11 @@ export default function Step5({ onNext }: StepProps5) {
   }, [currentIndex, onNext]);
 
   useEffect(() => {
-    const nextIdx = currentIndex + 1;
-    setNextMovie(dummyMovies[nextIdx] ?? null);
-  }, [currentIndex]);
+    if (!isAnimating) {
+      const nextIdx = currentIndex + 1;
+      setNextMovie(MockMovies[nextIdx] ?? null);
+    }
+  }, [isAnimating, currentIndex]);
 
   // ── 키보드 스와이프 지원 ────────────────────────────────────────────
   const handleKeyPress = (e: KeyboardEvent) => {
@@ -117,7 +119,7 @@ export default function Step5({ onNext }: StepProps5) {
   };
 
   // ── 렌더링 ─────────────────────────────────────────────────────────
-  if (currentIndex >= dummyMovies.length) return null;
+  if (currentIndex >= MockMovies.length) return null;
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen pt-10 px-4 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1]">

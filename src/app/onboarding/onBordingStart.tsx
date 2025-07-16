@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Play } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { Button } from '@components/ui/button';
 
 interface StartScreenProps {
   onStart: () => void;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { StartScreen } from './onBording';
+import { StartScreen } from './onBordingStart';
 import Step0 from './Step0';
 import Step1 from './Step1';
 import Step2 from './Step2';

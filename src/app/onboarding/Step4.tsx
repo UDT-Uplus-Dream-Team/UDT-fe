@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Ticket } from '@components/Ticket/Ticket';
 import { Button } from '@components/ui/button';
-import { dummyMovies } from '../recommend/moviedata';
+import { MockMovies } from './moviedata';
 
 interface StepProps4 {
   onNext: () => void;
@@ -11,7 +11,7 @@ interface StepProps4 {
 
 export default function Step4({ onNext }: StepProps4) {
   const [flipped, setFlipped] = useState(false);
-  const movie = dummyMovies[0];
+  const currentMovie = MockMovies[0];
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen px-6 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
@@ -44,7 +44,7 @@ export default function Step4({ onNext }: StepProps4) {
             className="absolute inset-0"
             style={{ backfaceVisibility: 'hidden' }}
           >
-            <Ticket movie={movie} variant="initial" feedback="neutral" />
+            <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
           </div>
 
           {/* 뒷면 */}
@@ -55,7 +55,7 @@ export default function Step4({ onNext }: StepProps4) {
               transform: 'rotateY(180deg)',
             }}
           >
-            <Ticket movie={movie} variant="detail" />
+            <Ticket movie={currentMovie} variant="detail" />
           </div>
         </div>
       </div>

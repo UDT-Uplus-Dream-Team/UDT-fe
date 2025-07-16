@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Ticket } from '@components/Ticket/Ticket';
-import { dummyMovies } from '../recommend/moviedata';
 import { showInteractiveToast } from '@components/common/Toast';
+import { MockMovies } from './moviedata';
 
 interface Step6Props {
   onNext: () => void;
@@ -36,7 +36,7 @@ export default function Step6({ onNext }: Step6Props) {
 
   if (!mounted) return null;
 
-  const currentMovie = dummyMovies[0];
+  const currentMovie = MockMovies[1];
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen px-6 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">

@@ -5,8 +5,8 @@ import { RefreshCw, Plus, Eye, EyeOff, ArrowDown } from 'lucide-react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
 import { Ticket } from '@components/Ticket/Ticket';
 import { Button } from '@components/ui/button';
-import { dummyMovies } from '../recommend/moviedata';
 import { TicketComponent } from '@type/recommend/TicketComponent';
+import { MockMovies } from './moviedata';
 
 interface Step7Props {
   onNext: () => void;
@@ -23,7 +23,7 @@ export default function Step7({ onNext }: Step7Props) {
   const [currentIndex, setCurrentIndex] = useState(1);
 
   useEffect(() => {
-    setMovies(dummyMovies.slice(0, 3));
+    setMovies(MockMovies.slice(0, 3));
   }, []);
 
   const handleFlip = (idx: number) => {
@@ -35,9 +35,9 @@ export default function Step7({ onNext }: Step7Props) {
   };
 
   const handleReroll = (idx: number) => {
-    if (rerollUsed[idx] || dummyMovies.length < 6) return;
+    if (rerollUsed[idx] || MockMovies.length < 6) return;
     const next = [...movies];
-    next[idx] = dummyMovies[idx + 3];
+    next[idx] = MockMovies[idx + 3];
     setMovies(next);
 
     setRerollUsed((prev) => {

@@ -1,15 +1,15 @@
 'use client';
 
-import { Ticket } from '@/components/Ticket/Ticket';
-import { Button } from '@/components/ui/button';
-import { dummyMovies } from '../recommend/moviedata';
+import { Ticket } from '@components/Ticket/Ticket';
+import { Button } from '@components/ui/button';
+import { MockMovies } from './moviedata';
 
 interface StepProps {
   onNext: () => void;
 }
 
 export default function Step0({ onNext }: StepProps) {
-  const currentMovie = dummyMovies[0];
+  const currentMovie = MockMovies[0];
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen px-6 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">

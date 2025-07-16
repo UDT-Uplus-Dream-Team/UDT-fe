@@ -28,6 +28,7 @@ OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇�
 ## 🖥️ 주요 화면 및 기능 (FE 중심)
 
 ### 1. 설문조사 페이지 (`/survey`)
+
 사용자의 취향을 기반으로 OTT 콘텐츠를 추천하기 위해 진행되는 설문형 페이지입니다.
 
 - OTT 구독 서비스 선택
@@ -35,11 +36,9 @@ OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇�
 - 관련 콘텐츠 리스트업 (회원들의 좋아요/싫어요 기반 정렬)
 - Survey 완료 전 이탈 시 → 임시회원 처리 및 재접속 유도
 - Survey 완료 시 → 일반회원 전환 후 메인 페이지 진입
-  
+
 <img width="300" height="778" alt="image" src="https://github.com/user-attachments/assets/ac8ce252-743b-4ee6-966b-90d4f13d6c7c" />
 <img width="300" height="778" alt="image" src="https://github.com/user-attachments/assets/1f0cc4dd-b062-43e7-a21f-823aa4707459" />
-
-
 
 ### 2. 온보딩 페이지 (`/onboarding`)
 
@@ -73,10 +72,12 @@ OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇�
 
 콘텐츠 등록, 수정, 삭제 및 통계 관리가 가능한 백오피스 관리자 페이지입니다.
 
-- 장르/카테고리별 콘텐츠 입력 가능 (영화/애니/예능/드라마 등)
-- 큐레이션 콘텐츠 수동 입력 가능
-<img width="800" height="921" alt="image" src="https://github.com/user-attachments/assets/365dc320-c791-410f-bf64-b9c5a60d915d" />
+- 등록된 전체 콘텐츠 리스트 조회
+- 콘텐츠 장르 기반 필터링
+- 개별 콘텐츠 등록, 수정, 삭제 가능
+- 콘텐츠 카드 클릭 시 모달 형태로 상세 정보 조회
 
+<img width="800" height="921" alt="image" src="https://github.com/user-attachments/assets/365dc320-c791-410f-bf64-b9c5a60d915d" />
 
 ---
 

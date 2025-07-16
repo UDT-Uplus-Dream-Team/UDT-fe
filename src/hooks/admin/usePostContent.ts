@@ -9,7 +9,7 @@ export const usePostContent = () => {
   return useMutation({
     mutationFn: (data: ContentWithoutId) => postContent(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['adminContent'] });
+      queryClient.invalidateQueries({ queryKey: ['adminContentDetail'] });
     },
   });
 };

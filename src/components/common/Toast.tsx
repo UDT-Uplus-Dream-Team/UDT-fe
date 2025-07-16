@@ -32,6 +32,7 @@ export interface InteractiveToastOptions extends ToastOptions {
   showCancel?: boolean;
   actionText?: string;
   onAction?: () => void;
+  onClose?: () => void;
 }
 
 // ─── Simple Toast ────────────────────────────────────────────────────────
@@ -229,7 +230,10 @@ export const showInteractiveToast = {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => toast.dismiss(id)}
+              onClick={() => {
+                opts.onClose?.();
+                toast.dismiss(id);
+              }}
               className="ml-auto h-5 w-5 p-0"
             >
               <X className="w-4 h-4" />

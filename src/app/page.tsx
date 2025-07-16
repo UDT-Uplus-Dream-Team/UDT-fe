@@ -2,24 +2,45 @@
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
+
+interface StarData {
+  id: number;
+  left: number;
+  top: number;
+  delay: number;
+}
 
 export default function KakaoLoginPage() {
+  const [stars, setStars] = useState<StarData[]>([]);
+
   const handleKakaoLogin = () => {
-    // KakaoTalk login logic would go here
-    console.log('KakaoTalk login initiated');
+    window.location.href =
+      'https://dev.banditbool.com/oauth2/authorization/kakao';
   };
+
+  // 클라이언트에서만 별 생성
+  useEffect(() => {
+    const starData: StarData[] = [...Array(50)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: i * 0.1,
+    }));
+    setStars(starData);
+  }, []);
 
   return (
     <div className="min-h-full flex flex-col text-white items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0">
-        {[...Array(50)].map((_, i) => (
+        {stars.map((star) => (
           <div
-            key={i}
+            key={star.id}
             className="absolute w-1 h-1 bg-white rounded-full opacity-0 animate-star-appear"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${i * 0.1}s`,
+              left: `${star.left}%`,
+              top: `${star.top}%`,
+              animationDelay: `${star.delay}s`,
             }}
           />
         ))}
@@ -31,8 +52,8 @@ export default function KakaoLoginPage() {
           <Image
             src="/icons/FireFlyLogo.png"
             alt="biglogo"
-            width={120}
-            height={120}
+            width={720}
+            height={720}
             style={{
               width: '280px',
               height: '280px',

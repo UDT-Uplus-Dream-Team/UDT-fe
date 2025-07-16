@@ -120,7 +120,7 @@ export default function Step5({ onNext }: StepProps5) {
   if (currentIndex >= dummyMovies.length) return null;
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen pt-10 px-4">
+    <div className="flex flex-col items-center justify-start min-h-screen pt-10 px-4 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1]">
       {/* 카드 위 문구 */}
       <div className="text-center space-y-2 mb-2">
         <p className="text-sm text-white/80">{`${currentIndex + 1} / 2`}</p>

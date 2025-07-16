@@ -7,20 +7,14 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { RepresentativeContentCard } from '@components/explore/RepresentativeContentCard';
-import { ContentData } from '@type/explore/Explore';
-import { useContentData } from '@/hooks/useContentData';
+import { RepresentativeContentCard } from '@/components/explore/RepresentativeContentCard';
+import { RecentContentData } from '@type/explore/Explore';
+import { getLatestContents } from '@lib/apis/explore/getLatestContents';
 import { Loader2, RefreshCw } from 'lucide-react';
 
 interface CarouselProps {
   autoPlayInterval?: number;
-  onCardClick?: (content: ContentData) => void;
-  filters?: {
-    genre?: string;
-    platform?: string;
-    rating?: string;
-    limit?: number;
-  };
+  onCardClick?: (contentId: number) => void;
 }
 
 const CARD_WIDTH = 272;
@@ -34,9 +28,10 @@ const REPEAT_COUNT = 5; // 배열 반복 횟수
 export const ExplorePageCarousel = ({
   autoPlayInterval = 3000,
   onCardClick,
-  filters,
 }: CarouselProps) => {
-  const { contents, loading, error, refetch } = useContentData(filters);
+  const [contents, setContents] = useState<RecentContentData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
@@ -100,6 +95,25 @@ export const ExplorePageCarousel = ({
       setCurrentIndex(startIndex);
     }
   }, [contents.length, containerWidth, startIndex]);
+
+  // 최신 콘텐츠를 가져오는 fetchContents 함수
+  const fetchContents = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const data = await getLatestContents(); // filters 적용이 필요하다면 여기에 반영
+      setContents(data);
+    } catch (error) {
+      setError('콘텐츠를 불러오는데 실패했습니다. 에러 내용: ' + error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchContents();
+  }, [fetchContents]);
 
   // 자동 재생 시작 메소드
   const startAutoPlay = useCallback(() => {
@@ -223,7 +237,7 @@ export const ExplorePageCarousel = ({
       <div className="w-full max-w-5xl mx-auto py-12 flex flex-col items-center space-y-4">
         <p className="text-red-500">{error}</p>
         <button
-          onClick={refetch}
+          onClick={fetchContents}
           className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           <RefreshCw className="w-4 h-4 mr-2" />
@@ -261,7 +275,7 @@ export const ExplorePageCarousel = ({
           style={transformStyle}
           onTransitionEnd={handleTransitionEnd}
         >
-          {extendedMovies.map((movie, index) => {
+          {extendedMovies.map((content, index) => {
             const scale = getCardScale(index);
             const logicalIndex = index % contents.length;
             const logicalCurrent = currentIndex % contents.length;
@@ -269,7 +283,7 @@ export const ExplorePageCarousel = ({
 
             return (
               <div
-                key={`${movie.contentId}-${index}`}
+                key={`${content.contentId}-${index}`}
                 className="flex-shrink-0"
                 style={{
                   width: CARD_WIDTH,
@@ -281,8 +295,8 @@ export const ExplorePageCarousel = ({
               >
                 <div className="relative">
                   <RepresentativeContentCard
-                    movie={movie}
-                    onClick={() => onCardClick?.(movie)}
+                    content={content}
+                    onClick={() => onCardClick?.(content)}
                   />
                   {!isCurrent && (
                     <div className="absolute inset-0 bg-black/40 rounded-lg pointer-events-none" />

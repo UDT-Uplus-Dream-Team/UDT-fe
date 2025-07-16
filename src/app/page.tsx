@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 export default function KakaoLoginPage() {
   const handleKakaoLogin = () => {
-    // KakaoTalk login logic would go here
+    // 카카오 로그인 로직 여기서 수행
     console.log('KakaoTalk login initiated');
     window.location.href =
       'https://dev.banditbool.com/oauth2/authorization/kakao';

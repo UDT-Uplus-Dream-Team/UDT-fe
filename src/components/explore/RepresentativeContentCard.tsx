@@ -2,16 +2,16 @@ import React from 'react';
 import Image from 'next/image';
 import { Card } from '@components/ui/card';
 import { Badge } from '@components/ui/badge';
-import { MovieData } from '@type/explore/Explore';
+import { RecentContentData } from '@type/explore/Explore';
 
 type RepresentativeContentCardProps = {
-  movie: MovieData;
+  content: RecentContentData;
   onClick?: () => void;
 };
 
 // 화면 위에 표시될 엄청 큰 카드 (콘텐츠 정보 표시)
 export const RepresentativeContentCard = ({
-  movie,
+  content,
   onClick,
 }: RepresentativeContentCardProps) => {
   return (
@@ -21,8 +21,8 @@ export const RepresentativeContentCard = ({
     >
       <div className="relative flex-grow">
         <Image
-          src={movie.posterUrl || '/placeholder.svg'}
-          alt={movie.title}
+          src={content.posterUrl || '/placeholder.svg'}
+          alt={content.title}
           fill
           className="object-cover"
           priority
@@ -35,26 +35,37 @@ export const RepresentativeContentCard = ({
         <div className="absolute bottom-0 left-0 right-0 px-5 text-white flex flex-col items-center z-10">
           {/* 제목 */}
           <h3 className="font-bold text-xl mb-3 leading-tight text-center">
-            {movie.title}
+            {content.title}
           </h3>
 
           {/* 장르 태그들 */}
           <div className="flex flex-wrap gap-1 pb-5 justify-center">
-            {movie.genres.slice(0, 4).map((genre) => (
-              <Badge
-                key={genre}
-                variant="outline"
-                className="text-sm border-white/30 text-white hover:bg-white/10"
-              >
-                #{genre}
-              </Badge>
-            ))}
-            {movie.genres.length > 4 && (
+            {content.categories
+              .flatMap(({ category, genres }) => [category, ...genres])
+              .slice(0, 4)
+              .map((tag) => (
+                <Badge
+                  key={tag}
+                  variant="outline"
+                  className="text-sm border-white/30 text-white hover:bg-white/10"
+                >
+                  #{tag}
+                </Badge>
+              ))}
+
+            {content.categories.flatMap(({ category, genres }) => [
+              category,
+              ...genres,
+            ]).length > 4 && (
               <Badge
                 variant="outline"
                 className="text-xs border-white/30 text-white"
               >
-                +{movie.genres.length - 4}
+                +
+                {content.categories.flatMap(({ category, genres }) => [
+                  category,
+                  ...genres,
+                ]).length - 4}
               </Badge>
             )}
           </div>

@@ -11,6 +11,7 @@ export interface Category {
 export interface Platform {
   platformType: string;
   watchUrl: string;
+  // 삭제 예정
   isAvailable: boolean;
 }
 
@@ -32,6 +33,7 @@ export interface Content {
   platforms: Platform[];
 }
 
+// 콘텐츠 목록 조회 params 타입
 export interface AdminContentListParams {
   cursor?: number;
   size?: number;
@@ -51,4 +53,22 @@ export interface AdminContentListResponse {
   item: ContentSummary[];
   nextCursor: string | null;
   hasNext: boolean;
+}
+
+// 콘텐츠 등록 요청 타입 (id 제외)
+export interface CreateContentRequest {
+  title: string;
+  description: string;
+  posterUrl: string;
+  backdropUrl: string;
+  trailerUrl: string;
+  openDate: string;
+  runningTime: number;
+  episode: number;
+  rating: string;
+  categories: Category[];
+  countries: string[];
+  directors: string[];
+  casts: Cast[];
+  platforms: Platform[];
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import type { Content } from '@type/admin/Content';
+import type { Content, ContentWithoutId } from '@type/admin/Content';
 
 export const useContentManagement = (initialContents: Content[]) => {
   const [contents, setContents] = useState<Content[]>(initialContents);
@@ -9,7 +9,7 @@ export const useContentManagement = (initialContents: Content[]) => {
   const [editingContent, setEditingContent] = useState<Content | null>(null);
 
   // 추후 수정 예정
-  const addContent = useCallback((contentData: Omit<Content, 'contentId'>) => {
+  const addContent = useCallback((contentData: ContentWithoutId) => {
     setContents((prev) => {
       const maxId = Math.max(...prev.map((c) => c.contentId), 0);
       const newContent: Content = {

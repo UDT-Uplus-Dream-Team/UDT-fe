@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 import { Switch } from '@components/ui/switch';
 import { X, Plus } from 'lucide-react';
-import type { Content } from '@type/admin/Content';
+import type { Content, ContentWithoutId } from '@type/admin/Content';
 import {
   RATING_OPTIONS,
   CONTENT_CATEGORIES,
@@ -30,7 +30,7 @@ import Image from 'next/image';
 
 interface ContentFormProps {
   content?: Content;
-  onSave: (content: Omit<Content, 'contentId'> | Content) => void;
+  onSave: (content: ContentWithoutId | Content) => void;
   onCancel: () => void;
 }
 
@@ -39,7 +39,7 @@ export default function ContentForm({
   onSave,
   onCancel,
 }: ContentFormProps) {
-  const [formData, setFormData] = useState<Omit<Content, 'contentId'>>({
+  const [formData, setFormData] = useState<ContentWithoutId>({
     title: content?.title || '',
     description: content?.description || '',
     posterUrl: content?.posterUrl || '',

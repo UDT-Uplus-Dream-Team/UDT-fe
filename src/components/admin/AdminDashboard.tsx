@@ -19,7 +19,7 @@ import {
 } from '@components/ui/dialog';
 import { Plus } from 'lucide-react';
 
-import type { Content } from '@type/admin/Content';
+import type { Content, ContentWithoutId } from '@type/admin/Content';
 import { mockContentList } from '@utils/getBackMockData';
 import { filterContents } from '@utils/getContentUtils';
 import { useContentManagement } from '@hooks/useContentManagement';
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
   );
 
   const handleAddContent = useCallback(
-    (contentData: Omit<Content, 'contentId'>) => {
+    (contentData: ContentWithoutId) => {
       addContent(contentData);
       setIsAddDialogOpen(false);
     },
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
   );
 
   const handleEditContent = useCallback(
-    (contentData: Content | Omit<Content, 'contentId'>) => {
+    (contentData: Content | ContentWithoutId) => {
       // contentId가 있는 경우에만 수정 수행
       if ('contentId' in contentData) {
         updateContent(contentData);

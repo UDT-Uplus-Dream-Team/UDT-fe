@@ -1,3 +1,4 @@
+
 # 🌌 반딧불 - OTT 콘텐츠 추천 서비스 (Front-end Repository)
 
 > “어둠 속, 반딧불 하나의 빛으로.  
@@ -25,6 +26,12 @@ OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇�
 
 ---
 
+## 플로우 차트
+
+<img width="4528" height="2384" alt="융합 프로젝트 4조 chart" src="https://github.com/user-attachments/assets/a9cd3998-5b16-44b3-8882-7ea22455e0f2" />
+
+---
+
 ## 🖥️ 주요 화면 및 기능 (FE 중심)
 
 ### 1. 설문조사 페이지 (`/survey`)
@@ -46,15 +53,24 @@ OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇�
 - 추천 시스템 및 사용 방식 설명
 - 모든 튜토리얼 완료 시 → 메인 페이지 진입
 
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/216c6556-0c80-42c6-b4d4-988f97f1518c" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/5dce1473-331c-4f1d-b4e0-94e1c67da1b1" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/7113431e-fdd0-4603-b8af-f9fbca5667f9" />
+
+
 ### 3. 빠른 콘텐츠 추천 페이지 (`/recommend`)
 
 - 카드 기반 릴스 UI로 콘텐츠 추천
   - 오른쪽 스와이프: 좋아요
   - 왼쪽 스와이프: 싫어요
   - 넘기기: 관심 없음
-- **진행도 Progress Bar** 및 **10개 단위 추천 POST 처리**
-- **선캐싱 기반 카드 10개 미리 로딩**
+- **스와이프를 통한 피드백 진행 경과**에 따라 엄선된 결과 추천 페이지 트리거
 - 엄선된 추천 결과가 준비되면 토스트 알림
+- 추천 결과는 한 번씩 리롫이 가능하며, 각 컨텐츠의 상세 정보 조회 및 저장 가능
+
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/17fea270-0837-457f-9435-08bb72123e24" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/0a7560c6-e365-4caf-a6ab-8ed46452dd9a" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/2c487d04-bead-442c-9467-d6bae8d4912a" />
 
 ### 4. 마이페이지 (`/mypage`)
 
@@ -63,10 +79,17 @@ OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇�
 - 불필요한 콘텐츠 이력 삭제 가능
 - 콘텐츠 상세 조회 가능 (탭 → 카드 확장)
 
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/88cc0749-651b-4861-91ff-ed9f98c8ba86" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/4c806ccf-7c3b-4b0e-81e1-b1da63a8e46d" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/b52c0155-b366-418b-b4fc-c65214916c43" />
+
 ### 5. 리스트 페이지 (`/list`)
 
 - DB 전체 콘텐츠 필터링 및 검색
 - 콘텐츠 상세 조회 제공
+- 
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/efe1aa26-4409-4d5d-af76-ff280e76ea11" />
+
 
 ### 6. 백오피스 페이지 (`/admin`)
 

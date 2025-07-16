@@ -11,8 +11,6 @@ export interface Category {
 export interface Platform {
   platformType: string;
   watchUrl: string;
-  // 삭제 예정
-  isAvailable: boolean;
 }
 
 export interface Content {

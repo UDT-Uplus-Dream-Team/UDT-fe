@@ -17,7 +17,6 @@ import {
 import { Badge } from '@components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
-import { Switch } from '@components/ui/switch';
 import { X, Plus } from 'lucide-react';
 import type { Content, ContentWithoutId } from '@type/admin/Content';
 import {
@@ -61,7 +60,6 @@ export default function ContentForm({
   const [newPlatform, setNewPlatform] = useState({
     platformType: '',
     watchUrl: '',
-    isAvailable: true,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -162,7 +160,7 @@ export default function ContentForm({
         ...formData,
         platforms: [...formData.platforms, newPlatform],
       });
-      setNewPlatform({ platformType: '', watchUrl: '', isAvailable: true });
+      setNewPlatform({ platformType: '', watchUrl: '' });
     }
   }, [newPlatform]);
 
@@ -578,15 +576,7 @@ export default function ContentForm({
                   placeholder="시청 URL"
                 />
               </div>
-              <div className="flex items-center space-x-2 mb-3">
-                <Switch
-                  checked={newPlatform.isAvailable}
-                  onCheckedChange={(checked) =>
-                    setNewPlatform({ ...newPlatform, isAvailable: checked })
-                  }
-                />
-                <Label>이용 가능</Label>
-              </div>
+              <div className="flex items-center space-x-2 mb-3"></div>
               <Button
                 type="button"
                 onClick={addPlatform}
@@ -606,11 +596,6 @@ export default function ContentForm({
                       <div className="text-sm text-gray-500">
                         {platform.watchUrl}
                       </div>
-                      <Badge
-                        variant={platform.isAvailable ? 'default' : 'secondary'}
-                      >
-                        {platform.isAvailable ? '이용 가능' : '이용 불가'}
-                      </Badge>
                     </div>
                     <Button
                       type="button"

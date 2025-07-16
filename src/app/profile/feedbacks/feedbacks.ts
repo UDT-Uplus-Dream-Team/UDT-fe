@@ -1,99 +1,54 @@
 import { ContentDetail } from '@type/ContentDetail';
-import { RecommendedContent } from '@type/mypage/RecommendedContent';
+import { FeedbackContent } from '@type/mypage/RecommendedContent';
 
-export const likedPosters: RecommendedContent[] = [
+export const likedPosters: FeedbackContent[] = [
   {
     contentId: 1,
     title: '귀를 기울이면',
     posterUrl: '/images/poster1.webp',
-    rating: '전체 관람가',
-    genre: ['판타지', '모험'],
-    countries: ['일본'],
-    platform: ['넷플릭스', '디즈니+'],
-    categories: ['애니'],
   },
   {
     contentId: 2,
     title: '고양이의 보은',
     posterUrl: '/images/poster2.webp',
-    rating: '12세 이상 관람가',
-    genre: ['드라마', '로맨스'],
-    countries: ['일본'],
-    platform: ['왓챠'],
-    categories: ['애니'],
   },
   {
     contentId: 3,
     title: '벼랑위의 포뇨',
     posterUrl: '/images/poster3.webp',
-    rating: '전체 관람가',
-    genre: ['가족', '힐링'],
-    countries: ['일본'],
-    platform: ['넷플릭스'],
-    categories: ['애니'],
   },
   {
     contentId: 4,
     title: '어벤져스',
     posterUrl: '/images/poster4.webp',
-    rating: '15세 이상 관람가',
-    genre: ['판타지', '액션'],
-    countries: ['미국'],
-    platform: ['디즈니+'],
-    categories: ['영화'],
   },
 ];
 
-export const dislikedPosters: RecommendedContent[] = [
+export const dislikedPosters: FeedbackContent[] = [
   {
     contentId: 1,
     title: '귀를 기울이면',
     posterUrl: '/images/poster1.webp',
-    rating: '전체 관람가',
-    genre: ['판타지', '모험'],
-    countries: ['일본'],
-    platform: ['넷플릭스', '디즈니+'],
-    categories: ['애니'],
   },
   {
     contentId: 2,
     title: '고양이의 보은',
     posterUrl: '/images/poster2.webp',
-    rating: '12세 이상 관람가',
-    genre: ['드라마', '로맨스'],
-    countries: ['일본'],
-    platform: ['왓챠'],
-    categories: ['애니'],
   },
   {
     contentId: 3,
     title: '벼랑위의 포뇨',
     posterUrl: '/images/poster3.webp',
-    rating: '전체 관람가',
-    genre: ['가족', '힐링'],
-    countries: ['일본'],
-    platform: ['넷플릭스'],
-    categories: ['애니'],
   },
   {
     contentId: 4,
     title: '어벤져스',
     posterUrl: '/images/poster4.webp',
-    rating: '15세 이상 관람가',
-    genre: ['판타지', '액션'],
-    countries: ['일본'],
-    platform: ['디즈니+'],
-    categories: ['영화'],
   },
   {
     contentId: 5,
     title: '어벤져스',
     posterUrl: '/images/poster4.webp',
-    rating: '15세 이상 관람가',
-    genre: ['판타지', '액션'],
-    countries: ['일본'],
-    platform: ['디즈니+'],
-    categories: ['영화'],
   },
 ];
 

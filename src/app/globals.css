@@ -319,6 +319,34 @@
     }
   }
 
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      opacity: 1;
+      filter: drop-shadow(0 0 10px rgba(255, 250, 205, 0.5));
+    }
+    50% {
+      opacity: 0.8;
+      filter: drop-shadow(0 0 20px rgba(255, 250, 205, 0.8))
+        drop-shadow(0 0 30px rgba(255, 250, 205, 0.4));
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
   .animate-star-appear {
     animation: star-appear 2s ease-in-out forwards;
   }
@@ -357,6 +385,12 @@
   .animate-bounce-in {
     animation: bounce-in 0.6s ease-out forwards;
     opacity: 0;
+  }
+
+  .glow-effect {
+    filter: drop-shadow(0 0 20px rgba(255, 250, 205, 0.8))
+      drop-shadow(0 0 40px rgba(255, 250, 205, 0.6))
+      drop-shadow(0 0 60px rgba(255, 250, 205, 0.4));
   }
 }
 .dark {

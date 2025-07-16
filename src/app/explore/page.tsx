@@ -39,14 +39,14 @@ export default function ExplorePage() {
   const contents = data?.pages.flatMap((page) => page.item) || [];
 
   return (
-    <div className="flex flex-col min-h-screen bg-primary-800 overflow-y-auto">
+    <div className="flex flex-col min-h-screen overflow-y-auto">
       {/* 상단 제목 영역 */}
       <div className="flex items-center justify-center pt-6 pb-2">
         <span className="text-2xl font-semibold text-white">작품 탐색하기</span>
       </div>
 
       {/* 필터 그룹 - 스크롤 시 상단에 고정 */}
-      <div className="sticky top-0 z-10 bg-primary-800">
+      <div className="sticky top-0 z-10">
         <div className="py-4">
           <FilterRadioButtonGroup />
         </div>

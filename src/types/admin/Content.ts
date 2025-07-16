@@ -31,3 +31,24 @@ export interface Content {
   casts: Cast[];
   platforms: Platform[];
 }
+
+export interface AdminContentListParams {
+  cursor?: number;
+  size?: number;
+}
+
+// 콘텐츠 목록 조회용 Content 타입
+export interface ContentSummary {
+  contentId: number;
+  title: string;
+  posterUrl: string;
+  openDate: string;
+  rating: string;
+}
+
+// 콘텐츠 목록 조회 전체 응답 타입
+export interface AdminContentListResponse {
+  item: ContentSummary[];
+  nextCursor: string | null;
+  hasNext: boolean;
+}

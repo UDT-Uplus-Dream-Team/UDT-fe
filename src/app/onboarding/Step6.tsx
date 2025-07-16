@@ -1,177 +1,71 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { RefreshCw, Plus, Eye, EyeOff, ArrowDown } from 'lucide-react';
-import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { Ticket } from '@components/Ticket/Ticket';
-import { Button } from '@components/ui/button';
 import { dummyMovies } from '../recommend/moviedata';
-import { TicketComponent } from '@type/recommend/TicketComponent';
+import { showInteractiveToast } from '@components/common/Toast';
 
 interface Step6Props {
   onNext: () => void;
 }
 
 export default function Step6({ onNext }: Step6Props) {
-  const [movies, setMovies] = useState<TicketComponent[]>([]);
-  const [rerollUsed, setRerollUsed] = useState<boolean[]>([
-    false,
-    false,
-    false,
-  ]);
-  const [isFlipped, setIsFlipped] = useState<boolean[]>([false, false, false]);
-  const [currentIndex, setCurrentIndex] = useState(1);
+  const [toastShown, setToastShown] = useState(false);
+  const [mounted, setMounted] = useState(false); // hydration 방지
 
   useEffect(() => {
-    setMovies(dummyMovies.slice(0, 3));
+    setMounted(true);
   }, []);
 
-  const handleFlip = (idx: number) => {
-    setIsFlipped((prev) => {
-      const copy = [...prev];
-      copy[idx] = !copy[idx];
-      return copy;
-    });
-  };
+  useEffect(() => {
+    if (mounted && !toastShown) {
+      showInteractiveToast.action({
+        message: '모든 영화를 확인했습니다!\n추천 결과를 보시겠어요?',
+        actionText: '결과 보기',
+        duration: Infinity,
+        position: 'top-center',
+        className: 'bg-gray-500',
+        onAction: () => {
+          setToastShown(true); // 바로 true 처리 (중복 방지)
+          onNext(); // Step6으로 전환
+        },
+        showCloseButton: false, // X 못하게 없엠
+      });
+    }
+  }, [mounted, toastShown, onNext]);
 
-  const handleReroll = (idx: number) => {
-    if (rerollUsed[idx] || dummyMovies.length < 6) return;
-    const next = [...movies];
-    next[idx] = dummyMovies[idx + 3];
-    setMovies(next);
+  if (!mounted) return null;
 
-    setRerollUsed((prev) => {
-      const copy = [...prev];
-      copy[idx] = true;
-      return copy;
-    });
-
-    setIsFlipped((prev) => {
-      const copy = [...prev];
-      copy[idx] = false;
-      return copy;
-    });
-  };
-
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x > 50 && currentIndex > 0) setCurrentIndex((i) => i - 1);
-    else if (info.offset.x < -50 && currentIndex < movies.length - 1)
-      setCurrentIndex((i) => i + 1);
-  };
-
-  const getCardPosition = (idx: number) => {
-    const diff = idx - currentIndex;
-    return {
-      x: diff * 300,
-      scale: diff === 0 ? 1 : 0.8,
-      opacity: diff === 0 ? 1 : 0.6,
-      zIndex: diff === 0 ? 10 : 1,
-    };
-  };
+  const currentMovie = dummyMovies[0];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white px-4 relative">
-      {/* 안내 멘트 */}
-      <div className="absolute top-4 text-center z-20">
-        <p className="text-lg font-semibold leading-relaxed text-white mt-8">
-          👀 <strong>눈 버튼</strong>을 눌러 상세 정보를 확인하고 <br />
-          🔄 <strong>리롤 버튼(1회)</strong>으로 다른 콘텐츠도 확인해보세요!
-        </p>
-        <ArrowDown className="w-6 h-6 text-gray-500 mt-2 animate-bounce mx-auto" />
-      </div>
-
-      {/* 카드 슬라이더 */}
-      <div className="relative h-[600px] mt-20 py-5 flex items-center justify-center w-full">
-        {movies.map((movie, idx) => {
-          const pos = getCardPosition(idx);
-          const isCenter = idx === currentIndex;
-          return (
-            <motion.div
-              key={`${movie.contentId}-${rerollUsed[idx]}-${isFlipped[idx]}`}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0}
-              onDragEnd={handleDragEnd}
-              animate={{
-                x: pos.x,
-                scale: pos.scale,
-                opacity: pos.opacity,
-                zIndex: pos.zIndex,
-              }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="absolute w-80 h-full flex flex-col items-center"
-            >
-              <motion.div className="relative w-full h-full">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`flip-${movie.contentId}-${isFlipped[idx]}`}
-                    initial={{ rotateY: isFlipped[idx] ? 90 : -90 }}
-                    animate={{ rotateY: 0 }}
-                    exit={{ rotateY: isFlipped[idx] ? -90 : 90 }}
-                    transition={{ duration: 0.2 }}
-                    className="w-full h-full"
-                    style={{ transformStyle: 'preserve-3d' }}
-                  >
-                    <Ticket
-                      movie={movie}
-                      variant={isFlipped[idx] ? 'detail' : 'result'}
-                      feedback="neutral"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </motion.div>
-
-              {isCenter && (
-                <div className="absolute -top-2 -right-2 flex gap-2 z-50">
-                  {/* 상세보기 버튼 */}
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => handleFlip(idx)}
-                  >
-                    <Button variant="outline" size="icon">
-                      {isFlipped[idx] ? (
-                        <EyeOff className="w-4 h-4 text-black" />
-                      ) : (
-                        <Eye className="w-4 h-4 text-black" />
-                      )}
-                    </Button>
-                  </motion.button>
-
-                  {/* 리롤 버튼 */}
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => handleReroll(idx)}
-                  >
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      disabled={rerollUsed[idx]}
-                    >
-                      <RefreshCw
-                        className={`w-4 h-4 ${
-                          rerollUsed[idx] ? 'text-gray-400' : 'text-black'
-                        }`}
-                      />
-                    </Button>
-                  </motion.button>
-                </div>
-              )}
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* 콘텐츠 추가 버튼 */}
-      <div className="flex justify-center mt-8">
-        <Button
-          onClick={() => {
-            onNext();
-          }}
-          className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full shadow-lg flex items-center gap-2"
+    <div className="relative flex flex-col items-center justify-center min-h-screen px-6 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
+      {/* 검정 반투명 오버레이 + 설명 */}
+      <div className="absolute inset-0 bg-black/70 z-20 flex flex-col items-center justify-center text-center px-4">
+        <svg
+          className="w-6 h-6 animate-bounce text-white/80 mb-2"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
         >
-          <Plus className="w-5 h-5" />
-          <span className="font-medium">이 콘텐츠 추가 눌러보기</span>
-        </Button>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+        <p className="text-lg font-semibold leading-relaxed">
+          사용자님의 취향을 확인하여 <br />
+          완전 맞춤형 컨텐츠를 추천 드립니다! <br />
+          <br />
+          상단의 <strong>결과 보기</strong>를 클릭해 보세요~
+        </p>
+      </div>
+
+      {/* 카드 - 중앙 정렬 */}
+      <div className="relative w-full max-w-[320px] aspect-[75/135] mb-6 z-10">
+        <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
       </div>
     </div>
   );

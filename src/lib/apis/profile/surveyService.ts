@@ -1,19 +1,12 @@
-import axios from 'axios';
-
-// 실제 API 엔드포인트 설정
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api';
+import axiosInstance from '../axiosInstance';
 
 //[PATCH] /api/users/survey/genre 유저 선호 장르 수정
 export const patchGenre = async (
   genres: string[],
 ): Promise<{ genres: string[] }> => {
-  const response = await axios.patch(
-    // TODO: axiosInstance 객체를 따로 만들 경우, 여기 수정 예정
-    `${API_BASE_URL}/users/survey/genre`,
-    { genres },
-    { withCredentials: true },
-  );
+  const response = await axiosInstance.patch('/api/users/survey/genre', {
+    genres,
+  });
   return response.data;
 };
 
@@ -21,11 +14,8 @@ export const patchGenre = async (
 export const patchPlatform = async (
   platforms: string[],
 ): Promise<{ platforms: string[] }> => {
-  // TODO: axiosInstance 객체를 따로 만들 경우, 여기 수정 예정
-  const response = await axios.patch(
-    `${API_BASE_URL}/users/survey/platform`,
-    { platforms },
-    { withCredentials: true },
-  );
+  const response = await axiosInstance.patch('/api/users/survey/platform', {
+    platforms,
+  });
   return response.data;
 };

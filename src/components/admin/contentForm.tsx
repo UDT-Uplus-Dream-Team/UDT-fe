@@ -64,6 +64,18 @@ export default function ContentForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const { title, rating, openDate, runningTime, categories } = formData;
+
+    // 필수 항목 검사
+    if (!title.trim()) return alert('제목은 필수 항목입니다.');
+    if (!rating.trim()) return alert('관람등급은 필수 항목입니다.');
+    if (!openDate.trim()) return alert('개봉일은 필수 항목입니다.');
+    if (!runningTime || runningTime <= 0)
+      return alert('상영시간을 입력해주세요.');
+    if (!categories.length || !categories[0].categoryType.trim())
+      return alert('카테고리는 필수 항목입니다.');
+
     if (content) {
       onSave({ ...formData, contentId: content.contentId });
     } else {
@@ -221,7 +233,7 @@ export default function ContentForm({
                   >
                     <SelectTrigger className="cursor-pointer">
                       {formData.rating ? (
-                        <span className="text-white">{formData.rating}</span>
+                        <span>{formData.rating}</span>
                       ) : (
                         <SelectValue placeholder="관람등급 선택" />
                       )}

@@ -27,13 +27,13 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-80px)] overflow-y-auto w-full px-4 pt-6 text-white flex flex-col items-center">
+    <div className="h-[calc(100vh-80px)] overflow-y-auto w-full mx-auto px-4 pt-6 text-white flex flex-col items-center">
       {/* 상단 제목 */}
       <div className="w-full flex justify-center mb-4 h-10">
         <span className="text-lg font-bold text-center text-white">프로필</span>
       </div>
 
-      <div className="w-full max-w-[600px] flex flex-col justify-center gap-3 px-4 sm:px-6">
+      <div className="w-full max-w-[600px] flex flex-col justify-center items-center gap-3 px-4 sm:px-6">
         {/* 프로필 페이지 상단의 유저 정보 (편집/로그아웃 버튼 포함) */}
         <div className="w-full max-w-[500px] flex flex-col justify-start bg-white/20 rounded-[16px] p-4">
           {/* 프로필 이미지 + 이름/이메일 수평 정렬 */}

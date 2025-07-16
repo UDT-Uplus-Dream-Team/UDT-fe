@@ -12,7 +12,7 @@ export default function KakaoLoginPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen text-white items-center justify-center p-4 relative overflow-hidden">
+    <div className="flex flex-col min-h-full text-white items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0">
         {[...Array(50)].map((_, i) => (
           <div
@@ -33,8 +33,8 @@ export default function KakaoLoginPage() {
           <Image
             src="/icons/FireFlyLogo.png"
             alt="biglogo"
-            width={120}
-            height={120}
+            width={720}
+            height={720}
             style={{
               width: '280px',
               height: '280px',

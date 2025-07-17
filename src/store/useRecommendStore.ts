@@ -15,6 +15,10 @@ interface RecommendState {
   currentIndex: number;
   swipeCount: number;
 
+  // 엄선된 컨텐츠 관리
+  curatedContents: TicketComponent[];
+  isResultLoading: boolean;
+
   // 액션들
   setMoviePool: (movies: TicketComponent[]) => void;
   addMoviesToPool: (newMovies: TicketComponent[]) => void;
@@ -22,6 +26,8 @@ interface RecommendState {
   incrementSwipeCount: () => void;
   resetSwipeCount: () => void;
   resetRecommendProgress: () => void;
+  setCuratedContents: (contents: TicketComponent[]) => void;
+  setIsResultLoading: (loading: boolean) => void;
 
   // 헬퍼 함수들
   getCurrentMovie: () => TicketComponent | undefined;
@@ -40,6 +46,8 @@ export const useRecommendStore = create<RecommendState>()(
       moviePool: [],
       currentIndex: 0,
       swipeCount: 0,
+      curatedContents: [],
+      isResultLoading: false,
 
       // 기존 액션
       setPhase: (phase: Phase) => set({ phase }),
@@ -54,6 +62,9 @@ export const useRecommendStore = create<RecommendState>()(
 
       setCurrentIndex: (index: number) => set({ currentIndex: index }),
 
+      setIsResultLoading: (loading: boolean) =>
+        set({ isResultLoading: loading }),
+
       incrementSwipeCount: () =>
         set((state) => ({ swipeCount: state.swipeCount + 1 })),
 
@@ -65,6 +76,9 @@ export const useRecommendStore = create<RecommendState>()(
           currentIndex: 0,
           swipeCount: 0,
         }),
+
+      setCuratedContents: (contents: TicketComponent[]) =>
+        set({ curatedContents: contents }),
 
       // 헬퍼 함수들
       getCurrentMovie: () => {

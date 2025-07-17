@@ -1,6 +1,6 @@
 // src/store/useRecommendStore.ts
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { subscribeWithSelector, devtools } from 'zustand/middleware';
 import { TicketComponent } from '@/types/recommend/TicketComponent';
 
 type Phase = 'start' | 'recommend' | 'result';
@@ -20,17 +20,19 @@ interface RecommendState {
   addMoviesToPool: (newMovies: TicketComponent[]) => void;
   setCurrentIndex: (index: number) => void;
   incrementSwipeCount: () => void;
+  resetSwipeCount: () => void;
   resetRecommendProgress: () => void;
 
   // 헬퍼 함수들
   getCurrentMovie: () => TicketComponent | undefined;
   getNextMovie: () => TicketComponent | undefined;
   shouldLoadMoreContent: () => boolean;
+  shouldShowFinish: () => boolean;
 }
 
 export const useRecommendStore = create<RecommendState>()(
-  persist(
-    (set, get) => ({
+  devtools(
+    subscribeWithSelector((set, get) => ({
       // 기존 상태들
       phase: 'start',
 
@@ -55,6 +57,8 @@ export const useRecommendStore = create<RecommendState>()(
       incrementSwipeCount: () =>
         set((state) => ({ swipeCount: state.swipeCount + 1 })),
 
+      resetSwipeCount: () => set(() => ({ swipeCount: 0 })),
+
       resetRecommendProgress: () =>
         set({
           moviePool: [],
@@ -77,15 +81,12 @@ export const useRecommendStore = create<RecommendState>()(
         const { currentIndex } = get();
         return currentIndex > 0 && currentIndex % 5 === 0;
       },
-    }),
-    {
-      name: 'recommend-storage',
-      partialize: (state) => ({
-        phase: state.phase,
-        moviePool: state.moviePool,
-        currentIndex: state.currentIndex,
-        swipeCount: state.swipeCount,
-      }),
-    },
+
+      shouldShowFinish: () => {
+        const { currentIndex } = get();
+        return currentIndex >= 5;
+      },
+    })),
+    { name: 'recommend-storage' },
   ),
 );

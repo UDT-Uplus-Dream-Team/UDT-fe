@@ -4,7 +4,7 @@
 import React from 'react';
 
 export const LoadingScreen: React.FC = () => (
-  <div className="min-h-screen bg-gradient-to-b from-primary-900 via-purple-900 to-indigo-900 flex items-center justify-center relative overflow-hidden">
+  <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
     <div className="absolute inset-0">
       {[...Array(30)].map((_, i) => (
         <div

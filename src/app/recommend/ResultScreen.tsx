@@ -239,7 +239,7 @@ export const ResultScreen: React.FC = () => {
 
           <Button
             onClick={() => {
-              setPhase('recommend');
+              setPhase('start');
             }}
             className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2"
           >

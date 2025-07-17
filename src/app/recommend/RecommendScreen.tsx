@@ -6,7 +6,8 @@ import { Button } from '@components/ui/button';
 import { showInteractiveToast } from '@components/common/Toast';
 import { fetchMoreContents, getAvailableContents } from './RecommendContent';
 import { postFeedbackContent } from '@lib/apis/recommend/postFeedbackContent';
-import { useRecommendStore } from '@/store/useRecommendStore';
+import { useRecommendStore } from '@store/useRecommendStore';
+import { FinishScreen } from './FinishScreen';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 type FeedbackType = 'liked' | 'unliked' | 'neutral';
@@ -25,9 +26,11 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     addMoviesToPool,
     setCurrentIndex,
     incrementSwipeCount,
+    resetSwipeCount,
     getCurrentMovie,
     getNextMovie,
     shouldLoadMoreContent,
+    shouldShowFinish,
   } = useRecommendStore();
 
   // 로컬 UI 상태들 (애니메이션 관련은 persist 불필요)
@@ -164,7 +167,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
 
   // ── 10번 스와이프 후 토스트 표시 ──────────────────────────────────────
   useEffect(() => {
-    const SWIPE_THRESHOLD = 10;
+    const SWIPE_THRESHOLD = 3;
 
     if (swipeCount >= SWIPE_THRESHOLD && !resultReady && !toastShown) {
       setToastShown(true);
@@ -175,11 +178,12 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         duration: Infinity,
         position: 'top-center',
         className: 'bg-gray-500',
-        onAction: async () => {
+        onAction: () => {
           setResultReady(true);
           onComplete();
         },
         onClose: () => {
+          resetSwipeCount();
           setToastShown(false);
           setResultReady(false);
         },
@@ -243,6 +247,10 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         return 'translate-y-[-100vh]';
     }
   };
+
+  if (shouldShowFinish()) {
+    return <FinishScreen />;
+  }
 
   // ── 렌더링 ─────────────────────────────────────────────────────────
   if (!currentMovie) {

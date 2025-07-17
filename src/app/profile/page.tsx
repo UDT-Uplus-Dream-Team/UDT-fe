@@ -12,24 +12,68 @@ import { Button } from '@components/ui/button';
 import SubscriptionBox from '@components/profile/SubscriptionBox';
 import RecommendationCard from '@components/profile/RecommendationCard';
 import { recommendData } from './profileData';
-
-//나중에 api로 수정 예정
-import { mockUserProfile } from '@app/profile/profileData';
 import Image from 'next/image';
-// 프로필 데이터 나중에 api로 수정 예정
-const { name, email, profileImageUrl, platforms, genres } = mockUserProfile;
+import { useGetUserProfile } from '@/hooks/useGetUserProfile';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ProfilePage = () => {
   const router = useRouter();
+
+  const { data: userProfile, isLoading, isError } = useGetUserProfile();
 
   const handleEditClick = () => {
     router.push('/profile/edit');
   };
 
+  if (isLoading) {
+    return (
+      <div className="h-[calc(100vh-80px)] overflow-y-auto w-full mx-auto px-4 pt-6 text-white flex flex-col items-center">
+        <div className="w-full flex justify-center mb-16 h-10">
+          <span className="text-lg font-bold text-center text-white">
+            프로필
+          </span>
+        </div>
+        <div className="w-full max-w-[600px] flex flex-col justify-center items-center gap-3 px-4 sm:px-6">
+          {/* 유저 정보 스켈레톤 */}
+          <div className="w-full max-w-[500px] bg-white/20 rounded-[16px] p-4">
+            <div className="flex items-center gap-4 mb-2">
+              <Skeleton className="w-[60px] h-[60px] rounded-full" />
+              <div className="flex flex-col gap-2">
+                <Skeleton className="w-[120px] h-[18px] rounded-md" />
+                <Skeleton className="w-[180px] h-[14px] rounded-md" />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Skeleton className="w-[100px] h-[30px] rounded-md" />
+              <Skeleton className="w-[100px] h-[30px] rounded-md" />
+            </div>
+          </div>
+
+          {/* SubscriptionBox 2개 스켈레톤 */}
+          <Skeleton className="w-full max-w-[500px] h-[80px] rounded-[16px]" />
+          <Skeleton className="w-full max-w-[500px] h-[80px] rounded-[16px]" />
+
+          {/* 추천 캐러셀 카드 스켈레톤 */}
+          <Skeleton className="w-full max-w-[500px] h-[240px] rounded-[16px]" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !userProfile) {
+    return (
+      <p className="text-red-500 text-center mt-10">
+        유저 정보를 불러오지 못했습니다.
+      </p>
+    );
+  }
+
+  const { name, email, profileImageUrl, platforms, genres } = userProfile;
+
   return (
     <div className="h-[calc(100vh-80px)] overflow-y-auto w-full mx-auto px-4 pt-6 text-white flex flex-col items-center">
       {/* 상단 제목 */}
-      <div className="w-full flex justify-center mb-4 h-10">
+      <div className="w-full flex justify-center mb-16  h-10">
         <span className="text-lg font-bold text-center text-white">프로필</span>
       </div>
 

@@ -44,6 +44,8 @@ export interface ContentSummary {
   posterUrl: string;
   openDate: string;
   rating: string;
+  categories: Category[];
+  platforms: Platform[];
 }
 
 // 콘텐츠 목록 조회 전체 응답 타입

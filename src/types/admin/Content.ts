@@ -33,8 +33,9 @@ export interface Content {
 
 // 콘텐츠 목록 조회 params 타입
 export interface AdminContentListParams {
-  cursor?: number;
-  size?: number;
+  cursor: 0;
+  size: 0;
+  categoryType: 'string';
 }
 
 // 콘텐츠 목록 조회용 Content 타입

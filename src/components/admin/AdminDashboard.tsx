@@ -19,10 +19,13 @@ import {
 } from '@components/ui/dialog';
 import { Plus } from 'lucide-react';
 
-import type { Content, ContentWithoutId } from '@type/admin/Content';
-import { mockContentList } from '@utils/getBackMockData';
+import type { ContentWithoutId } from '@type/admin/Content';
 import { filterContents } from '@utils/getContentUtils';
-import { useContentManagement } from '@hooks/useContentManagement';
+import { useAdminContentList } from '@hooks/admin/useGetContentList';
+import { usePostContent } from '@hooks/admin/usePostContent';
+import { useUpdateContent } from '@hooks/admin/usePatchContent';
+import { useDeleteContent } from '@hooks/admin/useDeleteContent';
+import { useGetContentDetail } from '@hooks/admin/useGetContentDetail';
 import ContentForm from './contentForm';
 import ContentDetail from './contentDetail';
 import ContentCard from './contentCard';
@@ -30,25 +33,54 @@ import SearchFilter from './searchFilter';
 import ContentChart from './contentChart';
 
 export default function AdminDashboard() {
-  const initialContents = useMemo(() => mockContentList, []);
-  const {
-    contents,
-    selectedContent,
-    editingContent,
-    addContent,
-    updateContent,
-    deleteContent,
-    selectContent,
-    setEditContent,
-  } = useContentManagement(initialContents);
+  // API 연동: 목록 조회
+  const { data, isLoading, isError } = useAdminContentList();
+  const postContent = usePostContent();
+  const updateContent = useUpdateContent();
+  const deleteContent = useDeleteContent();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<string>('all');
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  // 상태 관리
+  const [selectedContentId, setSelectedContentId] = useState<number | null>(
+    null,
+  );
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState<string>('all');
+  const [editContent, setEditContent] = useState<ContentWithoutId | null>(null);
+
+  // 상세/수정 데이터 fetch (상세 모달에서만 사용)
+  const {
+    data: detailData,
+    isLoading: isDetailLoading,
+    isError: isDetailError,
+  } = useGetContentDetail(
+    isDetailDialogOpen ? (selectedContentId ?? undefined) : undefined,
+  );
+
+  // 상세/수정 모달 오픈 핸들러
+  const openDetailDialog = useCallback((contentId: number) => {
+    setSelectedContentId(contentId);
+    setIsDetailDialogOpen(true);
+  }, []);
+  const openEditDialog = useCallback((content?: ContentWithoutId) => {
+    if (content) {
+      setEditContent(content);
+      setIsEditDialogOpen(true);
+    }
+  }, []);
+  const closeDetailDialog = useCallback(() => {
+    setIsDetailDialogOpen(false);
+    setSelectedContentId(null);
+  }, []);
+  const closeEditDialog = useCallback(() => {
+    setIsEditDialogOpen(false);
+    setEditContent(null);
+  }, []);
 
   // 필터링된 콘텐츠 목록
+  const contents = data?.item || [];
   const filteredContents = useMemo(
     () => filterContents(contents, searchTerm, filterType),
     [contents, searchTerm, filterType],
@@ -56,37 +88,47 @@ export default function AdminDashboard() {
 
   const handleAddContent = useCallback(
     (contentData: ContentWithoutId) => {
-      addContent(contentData);
-      setIsAddDialogOpen(false);
+      postContent.mutate(contentData, {
+        onSuccess: () => setIsAddDialogOpen(false),
+      });
     },
-    [addContent],
+    [postContent],
   );
 
+  // 수정
   const handleEditContent = useCallback(
-    (contentData: Content | ContentWithoutId) => {
-      // contentId가 있는 경우에만 수정 수행
-      if ('contentId' in contentData) {
-        updateContent(contentData);
-        setIsEditDialogOpen(false);
-        setEditContent(null);
+    (contentData: ContentWithoutId) => {
+      if (selectedContentId) {
+        updateContent.mutate(
+          { contentId: selectedContentId, data: contentData },
+          {
+            onSuccess: () => {
+              setIsEditDialogOpen(false);
+              setSelectedContentId(null);
+            },
+          },
+        );
       }
     },
-    [updateContent],
+    [updateContent, selectedContentId],
   );
 
-  const openEditDialog = useCallback((content: Content) => {
-    setEditContent(content);
-    setIsEditDialogOpen(true);
-  }, []);
+  // 삭제
+  const handleDeleteContent = useCallback(
+    (contentId: number) => {
+      deleteContent.mutate(contentId, {
+        onSuccess: () => {
+          setIsDetailDialogOpen(false);
+          setSelectedContentId(null);
+        },
+      });
+    },
+    [deleteContent],
+  );
 
-  const openDetailDialog = useCallback((content: Content) => {
-    selectContent(content);
-    setIsDetailDialogOpen(true);
-  }, []);
-  const closeDetailDialog = useCallback(() => {
-    setIsDetailDialogOpen(false);
-    selectContent(null);
-  }, []);
+  // 로딩/에러 처리
+  if (isLoading) return <div>로딩 중...</div>;
+  if (isError) return <div>데이터를 불러오는 중 오류가 발생했습니다.</div>;
 
   return (
     <div className="h-screen overflow-y-auto bg-gray-50 p-6">
@@ -146,8 +188,8 @@ export default function AdminDashboard() {
                     key={content.contentId}
                     content={content}
                     onView={openDetailDialog}
-                    onEdit={openEditDialog}
-                    onDelete={deleteContent}
+                    onEdit={(contentId) => openDetailDialog(contentId)} // 수정도 상세 fetch 후 모달에서 처리
+                    onDelete={handleDeleteContent}
                   />
                 ))}
               </div>
@@ -173,7 +215,7 @@ export default function AdminDashboard() {
           </Dialog>
         )}
 
-        {isEditDialogOpen && editingContent && (
+        {isEditDialogOpen && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
             <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
@@ -182,21 +224,20 @@ export default function AdminDashboard() {
                   콘텐츠 정보를 수정해주세요.
                 </DialogDescription>
               </DialogHeader>
-              {editingContent && (
+              {editContent ? (
                 <ContentForm
-                  content={editingContent}
+                  content={editContent}
                   onSave={handleEditContent}
-                  onCancel={() => {
-                    setIsEditDialogOpen(false);
-                    setEditContent(null);
-                  }}
+                  onCancel={closeEditDialog}
                 />
+              ) : (
+                <div>수정 정보를 불러오지 못했습니다.</div>
               )}
             </DialogContent>
           </Dialog>
         )}
 
-        {isDetailDialogOpen && selectedContent && (
+        {isDetailDialogOpen && selectedContentId && (
           <Dialog
             open={isDetailDialogOpen}
             onOpenChange={setIsDetailDialogOpen}
@@ -205,12 +246,16 @@ export default function AdminDashboard() {
               <DialogHeader>
                 <DialogTitle>콘텐츠 상세 정보</DialogTitle>
               </DialogHeader>
-              {selectedContent && (
+              {isDetailLoading ? (
+                <div>상세 정보를 불러오는 중...</div>
+              ) : isDetailError || !detailData ? (
+                <div>상세 정보를 불러오지 못했습니다.</div>
+              ) : (
                 <ContentDetail
-                  content={selectedContent}
+                  content={{ ...detailData, contentId: selectedContentId }}
                   onEdit={() => {
                     closeDetailDialog();
-                    openEditDialog(selectedContent);
+                    openEditDialog(detailData);
                   }}
                   onClose={closeDetailDialog}
                 />

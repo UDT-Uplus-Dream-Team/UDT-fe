@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -34,7 +34,11 @@ import ContentChart from './contentChart';
 
 export default function AdminDashboard() {
   // API 연동: 목록 조회
-  const { data, isLoading, isError } = useAdminContentList();
+  const { data, isLoading, isError } = useAdminContentList({
+    cursor: 0,
+    size: 20,
+    categoryType: '영화',
+  });
   const postContent = usePostContent();
   const updateContent = useUpdateContent();
   const deleteContent = useDeleteContent();
@@ -59,6 +63,20 @@ export default function AdminDashboard() {
     isDetailDialogOpen ? (selectedContentId ?? undefined) : undefined,
   );
 
+  const {
+    data: editData,
+    isLoading: isEditLoading,
+    isError: isEditError,
+  } = useGetContentDetail(
+    isEditDialogOpen ? (selectedContentId ?? undefined) : undefined,
+  );
+
+  useEffect(() => {
+    if (editData && isEditDialogOpen) {
+      setEditContent(editData);
+    }
+  }, [editData, isEditDialogOpen]);
+
   // 상세/수정 모달 오픈 핸들러
   const openDetailDialog = useCallback((contentId: number) => {
     setSelectedContentId(contentId);
@@ -79,7 +97,7 @@ export default function AdminDashboard() {
     setEditContent(null);
   }, []);
 
-  // 필터링된 콘텐츠 목록
+  // 필터링된 콘텐츠 목록 (필터링 api 연동으로 바뀔 예정)
   const contents = data?.item || [];
   const filteredContents = useMemo(
     () => filterContents(contents, searchTerm, filterType),
@@ -224,14 +242,16 @@ export default function AdminDashboard() {
                   콘텐츠 정보를 수정해주세요.
                 </DialogDescription>
               </DialogHeader>
-              {editContent ? (
+              {isEditLoading ? (
+                <div>불러오는 중...</div>
+              ) : isEditError || !editContent ? (
+                <div>수정 정보를 불러오지 못했습니다.</div>
+              ) : (
                 <ContentForm
                   content={editContent}
                   onSave={handleEditContent}
                   onCancel={closeEditDialog}
                 />
-              ) : (
-                <div>수정 정보를 불러오지 못했습니다.</div>
               )}
             </DialogContent>
           </Dialog>

@@ -6,7 +6,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 
 // 관리자 콘텐츠 목록을 불러오는 훅
-export const useAdminContentList = (params?: AdminContentListParams) => {
+export const useAdminContentList = (params: AdminContentListParams) => {
   return useQuery<AdminContentListResponse>({
     queryKey: ['adminContentList', params],
     queryFn: () => getContentList(params),

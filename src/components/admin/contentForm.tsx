@@ -18,7 +18,7 @@ import { Badge } from '@components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 import { X, Plus } from 'lucide-react';
-import type { Content, ContentWithoutId } from '@type/admin/Content';
+import type { ContentWithoutId } from '@type/admin/Content';
 import {
   RATING_OPTIONS,
   CONTENT_CATEGORIES,
@@ -28,8 +28,8 @@ import {
 import Image from 'next/image';
 
 interface ContentFormProps {
-  content?: Content;
-  onSave: (content: ContentWithoutId | Content) => void;
+  content?: ContentWithoutId;
+  onSave: (content: ContentWithoutId) => void;
   onCancel: () => void;
 }
 
@@ -77,7 +77,7 @@ export default function ContentForm({
       return alert('카테고리는 필수 항목입니다.');
 
     if (content) {
-      onSave({ ...formData, contentId: content.contentId });
+      onSave({ ...formData });
     } else {
       onSave(formData);
     }

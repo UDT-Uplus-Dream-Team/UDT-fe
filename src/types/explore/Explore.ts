@@ -1,19 +1,5 @@
 import type { StaticImageData } from 'next/image';
 
-// "탐색 페이지"에서 사용되는 컨텍스트 타입 정의
-export interface ExplorePageContextType {
-  filterOptions: string[]; // 목록 상단에 표시될 필터 옵션들
-  hasUserData: boolean; // 사용자 정보 존재 여부
-  isBottomSheetOpen: boolean; // 필터 BottomSheet 열림 여부
-  displayedOptionsInTop: string[]; // UI에 표시될 모든 옵션들 (기본 + 선택된 옵션들)
-  currentSelectedOptions: string[]; // 현재 선택된 옵션들 (BottomSheet 상태에 따라 temp 또는 실제)
-  openBottomSheet: () => void; // 필터 BottomSheet 열기 함수
-  closeBottomSheet: () => void; // 필터 BottomSheet 닫기 함수
-  confirmBottomSheet: () => void; // 필터 BottomSheet 확정 함수
-  toggleOption: (label: string, isSelected: boolean) => void; // 필터 옵션 토글 함수
-  clearSelectedOptions: () => void; // 선택된 옵션들 초기화 함수
-}
-
 // FilterRadioButton 컴포넌트의 props 타입 정의
 export interface FilterRadioButtonProps {
   label: string; // 라디오 버튼에 들어갈 글자 (value로도 사용)
@@ -21,21 +7,50 @@ export interface FilterRadioButtonProps {
   onToggle?: (label: string) => void; // 토글 시 호출될 콜백
 }
 
-// 콘텐츠 데이터 타입 정의
-export type ContentData = {
-  contentId: number;
+// 상세 보기가 아닌 카드 목록에 사용되는 콘텐츠 데이터 타입 (간단하게 포스터, 제목만 표시하는 버전)
+export interface SimpleContentData {
+  contendId: number;
+  title: string;
+  posterUrl: string;
+}
+
+// 카테고리 관련 타입 (대분류/소분류를 한 DTO에 묶어서 사용)
+export interface CategoryDTO {
+  category: string;
+  genres: string[];
+}
+
+// 탐색 창 메인에 큰 카드에 사용되는 콘텐츠 데이터 타입
+export interface RecentContentData extends SimpleContentData {
+  categories: CategoryDTO[];
+}
+
+// "상세 보기"에 사용되는 콘텐츠 데이터 타입
+export interface DetailContentData {
   title: string;
   description: string;
   posterUrl: string;
   backdropUrl: string;
-  openDate: string;
-  runtimeTime: number;
+  trailerUrl: string;
+  openDate: string; // ISO 형식의 날짜 문자열
+  runningTime: number; // 단위: 분
+  episode: number;
   rating: string;
-  categories: string[];
-  genres: string[];
-  directors: string[];
-  platforms: string[];
-};
+
+  categories: {
+    category: string;
+    genres: string[]; // 예: ["SF", "코미디"]
+  }[];
+
+  countries: string[]; // 예: ["미국", "영국"]
+  directors: string[]; // 예: ["봉준호", "스티븐 스필버그"]
+  casts: string[]; // 예: ["이가인", "영따이"]
+
+  platforms: {
+    platformType: string; // 예: "넷플릭스"
+    watchUrl: string | null; // 예: "https://netflix.com"
+  }[];
+}
 
 // PosterCard 컴포넌트의 props 타입 정의
 export interface PosterCardProps {
@@ -43,11 +58,6 @@ export interface PosterCardProps {
   image: string | StaticImageData;
   isTitleVisible?: boolean;
   onClick: () => void;
-}
-
-export interface PosterCardScrollBoxProps {
-  title: string;
-  SimpleMovieData: SimpleMovieData[];
 }
 
 // 영화 카드 스크롤 박스에 사용되는 영화 데이터 타입 (간단하게 포스터, 제목만 표시하는 버전)

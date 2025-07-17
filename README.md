@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# 🌌 반딧불 - OTT 콘텐츠 추천 서비스 (Front-end Repository)
 
-First, run the development server:
+> “어둠 속, 반딧불 하나의 빛으로.  
+> 수많은 OTT 콘텐츠 숲을 단숨에 환히 밝히는 당신만의 가이드.”
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🧭 프로젝트 개요
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 📌 기획 배경
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇을 볼지" 고민하나요?  
+**반딧불**은 사용자 취향 기반으로 단 30초 만에 콘텐츠를 추천해주는 **직관적이고 유쾌한 콘텐츠 큐레이션 서비스**입니다.
 
-## Learn More
+- 콘텐츠 과포화 → 선택 피로 (평균 탐색 시간 10~20분)
+- 구독 플랫폼 분산 → 통합 탐색의 어려움
+- 사용자 피드백 부재 → 낮은 추천 정밀도
 
-To learn more about Next.js, take a look at the following resources:
+### 🎯 서비스 목표
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **스와이프 기반 인터랙션**으로 콘텐츠 피드백 수집
+- **실시간 개인화 추천**을 통해 탐색 시간 단축
+- **구독 중인 OTT 우선 추천** + **발견 기반 큐레이션**
+- **설문 기반 cold-start 해결** + **빠른 리롤링 캐싱 전략**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 플로우 차트
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+<img width="4528" height="2384" alt="융합 프로젝트 4조 chart" src="https://github.com/user-attachments/assets/a9cd3998-5b16-44b3-8882-7ea22455e0f2" />
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🖥️ 주요 화면 및 기능 (FE 중심)
+
+### 1. 설문조사 페이지 (`/survey`)
+
+사용자의 취향을 기반으로 OTT 콘텐츠를 추천하기 위해 진행되는 설문형 페이지입니다.
+
+- OTT 구독 서비스 선택
+- 선호 장르 선택
+- 관련 콘텐츠 리스트업 (회원들의 좋아요/싫어요 기반 정렬)
+- Survey 완료 전 이탈 시 → 임시회원 처리 및 재접속 유도
+- Survey 완료 시 → 일반회원 전환 후 메인 페이지 진입
+
+<img width="300" height="778" alt="image" src="https://github.com/user-attachments/assets/ac8ce252-743b-4ee6-966b-90d4f13d6c7c" />
+<img width="300" height="778" alt="image" src="https://github.com/user-attachments/assets/1f0cc4dd-b062-43e7-a21f-823aa4707459" />
+
+### 2. 온보딩 페이지 (`/onboarding`)
+
+- 스와이프 인터랙션 튜토리얼
+- 추천 시스템 및 사용 방식 설명
+- 모든 튜토리얼 완료 시 → 메인 페이지 진입
+
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/216c6556-0c80-42c6-b4d4-988f97f1518c" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/5dce1473-331c-4f1d-b4e0-94e1c67da1b1" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/7113431e-fdd0-4603-b8af-f9fbca5667f9" />
+
+
+### 3. 빠른 콘텐츠 추천 페이지 (`/recommend`)
+
+- 카드 기반 릴스 UI로 콘텐츠 추천
+  - 오른쪽 스와이프: 좋아요
+  - 왼쪽 스와이프: 싫어요
+  - 넘기기: 관심 없음
+- **스와이프를 통한 피드백 진행 경과**에 따라 엄선된 결과 추천 페이지 트리거
+- 엄선된 추천 결과가 준비되면 토스트 알림
+- 추천 결과는 한 번씩 리롫이 가능하며, 각 컨텐츠의 상세 정보 조회 및 저장 가능
+
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/17fea270-0837-457f-9435-08bb72123e24" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/0a7560c6-e365-4caf-a6ab-8ed46452dd9a" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/2c487d04-bead-442c-9467-d6bae8d4912a" />
+
+### 4. 마이페이지 (`/mypage`)
+
+- 사용자 정보, OTT 구독 현황, 선호 장르 수정 가능
+- 좋아요/싫어요한 콘텐츠 및 추천 내역 조회 가능
+- 불필요한 콘텐츠 이력 삭제 가능
+- 콘텐츠 상세 조회 가능 (탭 → 카드 확장)
+
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/88cc0749-651b-4861-91ff-ed9f98c8ba86" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/4c806ccf-7c3b-4b0e-81e1-b1da63a8e46d" />
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/b52c0155-b366-418b-b4fc-c65214916c43" />
+
+### 5. 리스트 페이지 (`/list`)
+
+- DB 전체 콘텐츠 필터링 및 검색
+- 콘텐츠 상세 조회 제공
+- 
+<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/efe1aa26-4409-4d5d-af76-ff280e76ea11" />
+
+
+### 6. 백오피스 페이지 (`/admin`)
+
+콘텐츠 등록, 수정, 삭제 및 통계 관리가 가능한 백오피스 관리자 페이지입니다.
+
+- 등록된 전체 콘텐츠 리스트 조회
+- 콘텐츠 장르 기반 필터링
+- 개별 콘텐츠 등록, 수정, 삭제 가능
+- 콘텐츠 카드 클릭 시 모달 형태로 상세 정보 조회
+
+<img width="800" height="921" alt="image" src="https://github.com/user-attachments/assets/365dc320-c791-410f-bf64-b9c5a60d915d" />
+
+---
+
+## 🧱 기술 스택
+
+### 💻 Frontend
+
+| 기술                          | 설명                                         |
+| ----------------------------- | -------------------------------------------- |
+| **TypeScript**                | 정적 타입으로 안정적인 협업 지원             |
+| **React 19**                  | 컴포넌트 기반 UI, CSR 중심                   |
+| **Next.js 15 (App Router)**   | SEO 대응 및 API Route, 이미지 최적화         |
+| **Tailwind CSS + shadcn/ui**  | 유틸리티 퍼스트 CSS, 접근성 높은 UI 컴포넌트 |
+| **Zustand**                   | 로컬 전역 상태 관리                          |
+| **Tanstack Query + Axios**    | 서버 상태 캐싱 및 API 통신                   |
+| **Storybook**                 | 컴포넌트 문서화 및 시각 테스트               |
+| **ESLint + Prettier + Husky** | 코드 스타일 및 커밋 전 검사 자동화           |

@@ -1,5 +1,5 @@
 import { ContentDetail } from '@/types/ContentDetail';
-import { RecommendedContent } from '@/types/mypage/RecommendedContent';
+import { RecommendedContent } from '@type/profile/RecommendedContent';
 
 export const recommendedPosters: RecommendedContent[] = [
   {

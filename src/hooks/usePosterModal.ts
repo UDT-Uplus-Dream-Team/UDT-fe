@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { RecommendedContent } from '@/types/mypage/RecommendedContent';
+import { RecommendedContent } from '@type/profile/RecommendedContent';
 
 export const usePosterModal = () => {
   const [selectedPosterData, setSelectedPosterData] =

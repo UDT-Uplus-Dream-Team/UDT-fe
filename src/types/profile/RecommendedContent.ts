@@ -12,6 +12,7 @@ export interface RecommendedContent {
 }
 
 export interface FeedbackContent {
+  feedbackId?: number;
   contentId: number;
   title: string;
   posterUrl: string;

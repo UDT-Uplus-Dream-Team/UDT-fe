@@ -1,4 +1,4 @@
-import { RecommendedContent } from '@type/mypage/RecommendedContent';
+import { RecommendedContent } from '@type/profile/RecommendedContent';
 import { useQuery } from '@tanstack/react-query';
 import { getCuratedContents } from '@/lib/apis/profile/recommendService';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { RecommendedContent } from '@type/mypage/RecommendedContent';
+import { RecommendedContent } from '@type/profile/RecommendedContent';
 import {
   showInteractiveToast,
   showSimpleToast,

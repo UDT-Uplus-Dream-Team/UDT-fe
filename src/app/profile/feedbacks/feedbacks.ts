@@ -1,5 +1,5 @@
 import { ContentDetail } from '@type/ContentDetail';
-import { FeedbackContent } from '@type/mypage/RecommendedContent';
+import { FeedbackContent } from '@type/profile/RecommendedContent';
 
 export const likedPosters: FeedbackContent[] = [
   {

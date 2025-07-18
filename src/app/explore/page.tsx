@@ -12,6 +12,7 @@ import {
   useExploreInitializer,
 } from '@/hooks/useExplorePageState';
 import { PosterCardScrollBox } from '@/components/explore/PosterCardScrollBox';
+import { useFetchTodayRecommendSentence } from '@/hooks/explore/useFetchTodayRecommendSentence';
 
 export default function ExplorePage() {
   // 초기화 (필터 옵션 로드)
@@ -33,6 +34,9 @@ export default function ExplorePage() {
 
   // 필터링된 콘텐츠 목록 데이터 추출
   const contents = data?.pages.flatMap((page) => page.item) || [];
+
+  // 오늘 추천 문구 추출 (SSR/Hydration 이슈 해결을 위해 customHook 사용)
+  const todayRecommendSentence = useFetchTodayRecommendSentence();
 
   return (
     <div className="flex flex-col pt-6 min-h-screen overflow-y-auto">
@@ -60,8 +64,14 @@ export default function ExplorePage() {
               <ExplorePageCarousel autoPlayInterval={3000} />
             </div>
 
-            <PosterCardScrollBox BoxTitle="목요일엔 목적없이 아무거나!" />
-            <PosterCardScrollBox BoxTitle="지금 🔥Hot🔥한 콘텐츠" />
+            <PosterCardScrollBox
+              BoxTitle={todayRecommendSentence}
+              BoxType="todayRecommend"
+            />
+            <PosterCardScrollBox
+              BoxTitle="지금 🔥Hot🔥한 콘텐츠"
+              BoxType="popular"
+            />
           </div>
         )
       }

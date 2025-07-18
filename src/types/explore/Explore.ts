@@ -10,23 +10,18 @@ export interface FilterRadioButtonProps {
 // 상세 보기가 아닌 카드 목록에 사용되는 콘텐츠 데이터 타입 (간단하게 포스터, 제목만 표시하는 버전)
 export interface SimpleContentData {
   contentId: number;
-  title: string;
+  title?: string; // 영화 제목은 들어갈 수도 있고 아닐수도 있다
   posterUrl: string;
-}
-
-// 카테고리 관련 타입 (대분류/소분류를 한 DTO에 묶어서 사용)
-export interface CategoryDTO {
-  category: string;
-  genres: string[];
 }
 
 // 탐색 창 메인에 큰 카드에 사용되는 콘텐츠 데이터 타입
 export interface RecentContentData extends SimpleContentData {
-  categories: CategoryDTO[];
+  categories: string[];
+  genres: string[];
 }
 
 // "상세 보기"에 사용되는 콘텐츠 데이터 타입
-export interface DetailContentData {
+export interface DetailedContentData {
   title: string;
   description: string;
   posterUrl: string;
@@ -36,15 +31,12 @@ export interface DetailContentData {
   runningTime: number; // 단위: 분
   episode: number;
   rating: string;
-
-  categories: {
-    category: string;
-    genres: string[]; // 예: ["SF", "코미디"]
-  }[];
+  categories: string[];
+  genres: string[]; // 예: ["SF", "코미디"]
 
   countries: string[]; // 예: ["미국", "영국"]
-  directors: string[]; // 예: ["봉준호", "스티븐 스필버그"]
-  casts: string[]; // 예: ["이가인", "영따이"]
+  directors: { name: string }[];
+  casts: { name: string; image: string }[];
 
   platforms: {
     platformType: string; // 예: "넷플릭스"
@@ -67,32 +59,11 @@ export interface SimpleMovieData {
   image: string;
 }
 
-// 회원 정보 타입
+// 회원 정보 타입 (Explore 페이지에서 OTT 정보를 들고 오기 위해 사용)
 export interface UserInfo {
   name: string;
   email: string;
   genres: string[]; // 선호 장르
   ott: string[]; // 선호 OTT
   profileImageUrl: string; // 프로필 이미지 URL
-}
-
-// 콘텐츠 하나
-export interface ExploreContent {
-  contentId: number;
-  poster_url: string;
-}
-
-// API 요청 파라미터
-export interface FetchExploreParams {
-  cursor?: number;
-  size: number;
-  type?: string;
-  genre?: string;
-}
-
-// API 응답 데이터
-export interface FetchExploreResponse {
-  contents: ExploreContent[];
-  nextCursor: number;
-  hasNext: boolean;
 }

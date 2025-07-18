@@ -9,23 +9,20 @@ import {
   memo,
   Suspense,
   useEffect,
-  useMemo,
   useState,
   useCallback,
   useRef,
 } from 'react';
-import {
-  getMockContentData,
-  MockContentData,
-} from '@/utils/getMockContentData';
+import { DetailedContentData } from '@type/explore/Explore';
 import { VideoPlayer } from '@components/explore/VideoPlayer';
+import { useGetContentDetails } from '@hooks/explore/useGetContentDetails';
 
 interface DetailBottomSheetContentProps {
   contentId: number;
 }
 
 interface VideoPlayerWrapperProps {
-  contentData: MockContentData;
+  contentData: DetailedContentData;
   onError: () => void;
 }
 
@@ -45,9 +42,28 @@ export const DetailBottomSheetContent = ({
   const [isTextOverflowing, setIsTextOverflowing] = useState(false); // 텍스트가 5줄을 넘는지 여부
 
   const synopsisRef = useRef<HTMLSpanElement>(null); // 시놉시스 텍스트 요소 참조
+  const {
+    data: contentData,
+    isLoading,
+    isError,
+  } = useGetContentDetails(contentId, true); // 콘텐츠 상세 정보 데이터 조회
 
-  // contentId에 따른 콘텐츠 데이터 가져오기
-  const contentData = useMemo(() => getMockContentData(contentId), [contentId]);
+  if (isLoading) {
+    return <div>로딩 중입니다.</div>;
+  }
+
+  if (isError) {
+    return <div>에러가 발생했습니다, 관리자에게 문의 바랍니다.</div>;
+  }
+
+  // contentData가 없는 경우 처리
+  if (!contentData) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-white">콘텐츠 정보가 없습니다.</div>
+      </div>
+    );
+  }
 
   // 비디오 정보를 불러 오다가 에러가 났을 경우, isVideoLoaded 상태를 false로 변경
   const handleVideoError = useCallback(() => {
@@ -78,13 +94,13 @@ export const DetailBottomSheetContent = ({
     return () => {
       window.removeEventListener('resize', checkTextOverflow);
     };
-  }, [contentData.description]); // description이 변경될 때마다 재확인
+  }, [contentData?.description]); // description이 변경될 때마다 재확인
 
   // TODO: 실제 API 호출 시에 contentId에 따른 데이터 fetching 필요 (추후 get 요청을 하는 hook과 contentId를 연동해야 함)
   useEffect(() => {
     setHasValidTrailer(false); // 새로운 콘텐츠 로드 시에 초기화 (video 로딩 중인 상태로 초기화)
 
-    if (contentData.trailerUrl) {
+    if (contentData?.trailerUrl) {
       setHasValidTrailer(true);
       console.log('지금 트레일러 영상 있음!, contentId: ', contentId);
     } else {
@@ -99,8 +115,8 @@ export const DetailBottomSheetContent = ({
         fallback={
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
-              src={contentData.backdropUrl || '/placeholder.svg'}
-              alt={contentData.title}
+              src={contentData?.backdropUrl || '/placeholder.svg'}
+              alt={contentData?.title || ''}
               fill
               className="object-cover"
             />
@@ -110,12 +126,12 @@ export const DetailBottomSheetContent = ({
             {/* 콘텐츠 정보 */}
             <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center text-center space-y-3">
               <span className="text-3xl font-bold text-white">
-                {contentData.title}
+                {contentData?.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData.openDate.split('-')[0]}</span>
-                <span>{contentData.rating}</span>
-                <span>{contentData.countries[0]}</span>
+                <span>{contentData?.openDate.split('-')[0]}</span>
+                <span>{contentData?.rating}</span>
+                <span>{contentData?.countries[0]}</span>
               </div>
             </div>
           </div>
@@ -123,14 +139,14 @@ export const DetailBottomSheetContent = ({
       >
         {hasValidTrailer ? (
           <VideoPlayerWrapper
-            contentData={contentData}
+            contentData={contentData!}
             onError={handleVideoError}
           />
         ) : (
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
-              src={contentData.backdropUrl || '/placeholder.svg'}
-              alt={contentData.title}
+              src={contentData?.backdropUrl || '/placeholder.svg'}
+              alt={contentData?.title || ''}
               fill
               className="object-cover"
             />
@@ -140,12 +156,12 @@ export const DetailBottomSheetContent = ({
             {/* 콘텐츠 정보 */}
             <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center text-center space-y-3">
               <span className="text-3xl font-bold text-white">
-                {contentData.title}
+                {contentData?.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData.openDate.split('-')[0]}</span>
-                <span>{contentData.rating}</span>
-                <span>{contentData.countries[0]}</span>
+                <span>{contentData?.openDate.split('-')[0]}</span>
+                <span>{contentData?.rating}</span>
+                <span>{contentData?.countries[0]}</span>
               </div>
             </div>
           </div>
@@ -160,7 +176,7 @@ export const DetailBottomSheetContent = ({
             key={idx}
             platformName={platform.platformType}
             iconUrl={getPlatformLogo(platform.platformType) || ''}
-            url={platform.watchUrl}
+            url={platform.watchUrl || null}
           />
         ))}
 

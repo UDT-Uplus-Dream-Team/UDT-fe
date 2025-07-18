@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { RecommendedContent } from '@type/profile/RecommendedContent';
+import { FeedbackContent } from '@type/profile/RecommendedContent';
 
 export const usePosterModal = () => {
   const [selectedPosterData, setSelectedPosterData] =
-    useState<RecommendedContent | null>(null);
+    useState<FeedbackContent | null>(null);
 
-  const openModal = (poster: RecommendedContent) => {
+  const openModal = (poster: FeedbackContent) => {
     setSelectedPosterData(poster);
   };
 

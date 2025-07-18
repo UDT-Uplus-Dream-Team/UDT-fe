@@ -1,38 +1,42 @@
 'use client';
 
 import { useState } from 'react';
-import { RecommendedContent } from '@type/profile/RecommendedContent';
+import { FeedbackContent } from '@type/profile/RecommendedContent';
 import {
   showInteractiveToast,
   showSimpleToast,
 } from '@components/common/Toast';
 
-export const useDeleteMode = (posters: RecommendedContent[]) => {
+export const useDeleteMode = (posters: FeedbackContent[]) => {
   const [isDeleteMode, setIsDeleteMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedFeedbackIds, setSelectedFeedbackIds] = useState<number[]>([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
 
-  const handleCardClickInDeleteMode = (poster: RecommendedContent) => {
-    setSelectedIds((prev) =>
-      prev.includes(poster.contentId)
-        ? prev.filter((id) => id !== poster.contentId)
-        : [...prev, poster.contentId],
+  const handleCardClickInDeleteMode = (poster: FeedbackContent) => {
+    const id = poster.feedbackId;
+    if (id === undefined) return;
+
+    setSelectedFeedbackIds((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id],
     );
   };
 
   const handleSelectAll = () => {
+    const allIds = posters
+      .map((poster) => poster.feedbackId)
+      .filter((id): id is number => id !== undefined);
+
     if (isAllSelected) {
-      setSelectedIds([]);
+      setSelectedFeedbackIds([]);
       setIsAllSelected(false);
     } else {
-      const allIds = posters.map((poster) => poster.contentId);
-      setSelectedIds(allIds);
+      setSelectedFeedbackIds(allIds);
       setIsAllSelected(true);
     }
   };
 
   const handleDelete = () => {
-    if (selectedIds.length === 0) {
+    if (selectedFeedbackIds.length === 0) {
       showSimpleToast.error({
         message: '삭제할 콘텐츠를 선택해주세요.',
         position: 'top-center',
@@ -49,26 +53,29 @@ export const useDeleteMode = (posters: RecommendedContent[]) => {
       className: 'w-[360px] bg-white shadow-lg',
       onConfirm: () => {
         // ✅ 실제 삭제 처리 로직 api // 현재는 알람처리 이후 변경
-        alert(`삭제할 ID들: ${selectedIds.join(', ')}`);
-        setSelectedIds([]);
+        alert(`삭제할 ID들: ${selectedFeedbackIds.join(', ')}`);
+        // TODO: 실제 삭제 API 연동
+        // await deleteFeedbacksByIds(selectedFeedbackIds);
+
+        // 상태 초기화
+        setSelectedFeedbackIds([]);
         setIsDeleteMode(false);
-      },
-      onCancel: () => {
-        // 선택적 처리: 취소할 때 필요한 로직이 있다면 여기에
+        setIsAllSelected(false);
       },
     });
   };
+
   const handleCancelDeleteMode = () => {
     setIsDeleteMode(false);
     setIsAllSelected(false);
-    setSelectedIds([]);
+    setSelectedFeedbackIds([]);
   };
 
   return {
     state: {
       isDeleteMode,
       isAllSelected,
-      selectedIds,
+      selectedIds: selectedFeedbackIds,
     },
     actions: {
       setIsDeleteMode,

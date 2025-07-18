@@ -1,24 +1,48 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { PosterCard } from '@components/explore/PosterCard';
 import { ChevronLeft, Pencil } from 'lucide-react';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
-import {
-  dislikedPosters,
-  likedPosters,
-  mockModalDislikedMovieDataList,
-  mockModalMovieDataList,
-} from './feedbacks';
 import { useDeleteMode } from '@hooks/useDeleteMode';
 import { usePosterModal } from '@hooks/usePosterModal';
 import { ContentDetail } from '@type/ContentDetail';
+import { useInfiniteFeedbacks } from '@/hooks/profile/useInfiniteFeedbacks';
+import {
+  mockModalDislikedMovieDataList,
+  mockModalMovieDataList,
+} from './feedbacks';
 
 const FeedbackPage = () => {
   const router = useRouter();
   const [tab, setTab] = useState<'like' | 'dislike'>('like');
-  const posters = tab === 'like' ? likedPosters : dislikedPosters;
+  //실제 데이터 연결(로딩, 에러 나중에 추가)
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteFeedbacks({
+      size: 20,
+      feedbackType: tab === 'like' ? 'LIKE' : 'DISLIKE',
+      feedbackSortType: 'NEWEST',
+    });
+
+  const observerRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        fetchNextPage();
+      }
+    });
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage]);
+
+  const posters = useMemo(
+    () => data?.pages.flatMap((page) => page.contents) ?? [],
+    [data],
+  );
 
   //삭제 모드 및 상세보기 상태를 관리
   const {
@@ -105,7 +129,7 @@ const FeedbackPage = () => {
               : 'text-gray-400'
           }`}
         >
-          좋아요 {likedPosters.length}
+          좋아요 {tab === 'like' ? posters.length : ''}
         </button>
         <button
           onClick={() => setTab('dislike')}
@@ -115,21 +139,24 @@ const FeedbackPage = () => {
               : 'text-gray-400'
           }`}
         >
-          싫어요 {dislikedPosters.length}
+          싫어요 {tab === 'dislike' ? posters.length : ''}
         </button>
       </div>
 
       {/* 카드 리스트 */}
       <div className="w-full max-w-screen-md">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 justify-items-center">
-          {posters.map((poster) => (
+          {posters.map((poster, index) => (
             <PosterCard
-              key={poster.contentId}
+              key={`${poster.feedbackId ?? poster.contentId}-${index}`}
               title={poster.title}
               image={poster.posterUrl}
               size="lg"
               isDeletable={isDeleteMode}
-              isSelected={selectedIds.includes(poster.contentId)}
+              isSelected={
+                poster.feedbackId !== undefined &&
+                selectedIds.includes(poster.feedbackId)
+              }
               onClick={() => handleCardClick(poster)}
             />
           ))}

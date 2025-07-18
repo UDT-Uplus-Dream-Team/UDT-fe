@@ -1,5 +1,4 @@
 // 최신 콘텐츠 목록 조회
-
 import axiosInstance from '@lib/apis/axiosInstance';
 import { RecentContentData } from '@type/explore/Explore';
 

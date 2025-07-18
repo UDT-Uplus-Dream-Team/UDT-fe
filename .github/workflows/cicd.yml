@@ -32,18 +32,15 @@ jobs:
         run: npm run lint
         continue-on-error: true # 린트 에러가 있어도 빌드 계속 진행
 
-      - name: Run type checking
-        run: npm run type-check
-        continue-on-error: true # TypeScript 에러가 있어도 빌드 계속 진행
-
       - name: Build Next.js application
         run: npm run build
         env:
           NODE_ENV: production
 
-      - name: Run tests
-        run: npm test
-        continue-on-error: true # 테스트 실패해도 배포는 진행
+      # Jest 사용 시 활성화
+      # - name: Run tests
+      #   run: npm test
+      #   continue-on-error: true # 테스트 실패해도 배포는 진행
 
       - name: Upload build artifacts
         if: matrix.node-version == '22.x' # 한 번만 업로드

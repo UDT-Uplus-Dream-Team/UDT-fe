@@ -43,7 +43,7 @@ export const ResultScreen: React.FC = () => {
 
         if (response.success && response.data.length > 0) {
           setCuratedContents(response.data);
-          setContents(curatedContents.slice(0, 3));
+          setContents(response.data.slice(0, 3));
         } else {
           // API 실패 시 fallback으로 더미 데이터
           console.warn(

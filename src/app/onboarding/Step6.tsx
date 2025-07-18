@@ -56,6 +56,10 @@ export default function Step6({ onNext }: Step6Props) {
           />
         </svg>
         <p className="text-lg font-semibold leading-relaxed">
+          <span className="text-purple-100  text-xl font-bold">
+            10개 이상 넘어가면
+          </span>
+          <br />
           사용자님의 취향을 확인하여 <br />
           완전 맞춤형 컨텐츠를 추천 드립니다! <br />
           <br />

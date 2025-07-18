@@ -40,7 +40,7 @@ export const PosterCard = ({
     >
       <Image
         src={image}
-        alt={title}
+        alt={title || ''}
         width={dimensions.width}
         height={dimensions.height}
         style={{

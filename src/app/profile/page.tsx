@@ -13,8 +13,9 @@ import SubscriptionBox from '@components/profile/SubscriptionBox';
 import RecommendationCard from '@components/profile/RecommendationCard';
 import { recommendData } from './profileData';
 import Image from 'next/image';
-import { useGetUserProfile } from '@/hooks/useGetUserProfile';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useGetUserProfile } from '@hooks/useGetUserProfile';
+import { Skeleton } from '@components/ui/skeleton';
+import { authService } from '@/lib/apis/authService';
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -23,6 +24,23 @@ const ProfilePage = () => {
 
   const handleEditClick = () => {
     router.push('/profile/edit');
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout(); // 서버 로그아웃
+    } catch (error) {
+      console.warn('로그아웃 API 실패:', error);
+    }
+
+    // 상태 초기화
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // 로그인 페이지로 이동
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
   };
 
   if (isLoading) {
@@ -116,7 +134,7 @@ const ProfilePage = () => {
             <Button
               size="sm"
               className="w-fit h-[30px] text-[13px] rounded-[8px] bg-primary-200/70 text-white font-semibold"
-              onClick={handleEditClick}
+              onClick={handleLogout}
             >
               <Image
                 src="/icons/logout-icon.svg"

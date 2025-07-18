@@ -1,5 +1,3 @@
-import { UserInfo } from '@type/UserInfo';
-
 // 추천 데이터 보러가기 고정값
 export const recommendData = [
   {
@@ -15,11 +13,3 @@ export const recommendData = [
     route: '/profile/feedbacks',
   },
 ];
-
-// api 연동 시 없엘 테스트용
-export const mockUserProfile: UserInfo = {
-  name: '테스트',
-  email: 'udt@udt.com',
-  platforms: ['넷플릭스', '왓챠'],
-  genres: ['액션', '코미디', '로맨스', '공포'],
-};

@@ -1,5 +1,5 @@
 import { Film, Tv, Gamepad2, Drama } from 'lucide-react';
-import type { Content } from '@type/admin/Content';
+import type { ContentSummary } from '@type/admin/Content';
 
 export const getTypeIcon = (type: string) => {
   switch (type) {
@@ -31,7 +31,7 @@ export const getTypeBadgeColor = (type: string) => {
   }
 };
 
-export const generateChartData = (contents: Content[]) => {
+export const generateChartData = (contents: ContentSummary[]) => {
   const chartData = contents.reduce(
     (acc, content) => {
       const category = content.categories[0]?.categoryType || '기타';
@@ -61,7 +61,7 @@ export const generatePieChartData = (
 };
 
 export const filterContents = (
-  contents: Content[],
+  contents: ContentSummary[],
   searchTerm: string,
   filterType: string,
 ) => {

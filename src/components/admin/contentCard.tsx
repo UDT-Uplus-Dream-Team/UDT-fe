@@ -4,14 +4,15 @@ import { Badge } from '@components/ui/badge';
 import { Button } from '@components/ui/button';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
 import { getTypeIcon, getTypeBadgeColor } from '@utils/getContentUtils';
-import type { Content } from '@type/admin/Content';
+import type { ContentSummary } from '@type/admin/Content';
 import Image from 'next/image';
 import { memo, useMemo } from 'react';
+import { showInteractiveToast } from '@components/common/Toast';
 
 interface ContentCardProps {
-  content: Content;
-  onView: (content: Content) => void;
-  onEdit: (content: Content) => void;
+  content: ContentSummary;
+  onView: (contentId: number) => void;
+  onEdit: (contentId: number) => void;
   onDelete: (contentId: number) => void;
 }
 
@@ -22,9 +23,12 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
   );
 
   const handleDelete = () => {
-    if (confirm('정말로 이 콘텐츠를 삭제하시겠습니까?')) {
-      onDelete(content.contentId);
-    }
+    showInteractiveToast.confirm({
+      message: '정말로 이 콘텐츠를 삭제하시겠습니까?',
+      onConfirm: () => onDelete(content.contentId),
+      confirmText: '삭제',
+      cancelText: '취소',
+    });
   };
 
   return (
@@ -79,29 +83,27 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
             </div>
           </div>
         </div>
-        <div className="flex space-x-1 ml-4">
-          <Button
-            size="sm"
-            onClick={() => onView(content)}
-            className="h-8 w-8 p-0 bg-transparent hover:bg-green-100 cursor-pointer"
-          >
-            <Eye className="h-4 w-4 text-green-600" />
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => onEdit(content)}
-            className="h-8 w-8 p-0 bg-transparent hover:bg-blue-100 cursor-pointer"
-          >
-            <Pencil className="h-4 w-4 text-blue-600" />
-          </Button>
-          <Button
-            size="sm"
-            onClick={handleDelete}
-            className="h-8 w-8 p-0 bg-transparent hover:bg-red-100 cursor-pointer"
-          >
-            <Trash2 className="h-4 w-4 text-red-600" />
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          onClick={() => onView(content.contentId)}
+          className="h-8 w-8 p-0 bg-transparent hover:bg-green-100 cursor-pointer"
+        >
+          <Eye className="h-4 w-4 text-green-600" />
+        </Button>
+        <Button
+          size="sm"
+          onClick={() => onEdit(content.contentId)}
+          className="h-8 w-8 p-0 bg-transparent hover:bg-blue-100 cursor-pointer"
+        >
+          <Pencil className="h-4 w-4 text-blue-600" />
+        </Button>
+        <Button
+          size="sm"
+          onClick={handleDelete}
+          className="h-8 w-8 p-0 bg-transparent hover:bg-red-100 cursor-pointer"
+        >
+          <Trash2 className="h-4 w-4 text-red-600" />
+        </Button>
       </div>
     </div>
   );

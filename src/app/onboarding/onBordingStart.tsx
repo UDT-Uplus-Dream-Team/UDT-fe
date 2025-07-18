@@ -9,21 +9,35 @@ interface StartScreenProps {
   onStart: () => void;
 }
 
+interface Star {
+  left: string;
+  top: string;
+}
+
 export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
   const [showContent, setShowContent] = useState(false);
+  const [stars, setStars] = useState<Star[]>([]);
 
   useEffect(() => {
+    // 클라이언트에서만 랜덤 위치를 계산
+    const generatedStars = Array.from({ length: 50 }, () => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+    }));
+    setStars(generatedStars);
+
     const timer = setTimeout(() => {
       setShowContent(true);
     }, 500);
+
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="min-h-full flex items-center justify-center relative overflow-hidden">
-      {/* Animated background stars */}
+      {/* 랜덤 위치 별들 */}
       <div className="absolute inset-0">
-        {[...Array(50)].map((_, i) => (
+        {stars.map((star, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-white rounded-full"
@@ -35,12 +49,12 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
             transition={{
               duration: 3,
               delay: i * 0.05,
-              repeat: Number.POSITIVE_INFINITY,
+              repeat: Infinity,
               repeatType: 'reverse',
             }}
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: star.left,
+              top: star.top,
             }}
           />
         ))}

@@ -8,13 +8,13 @@ import React, {
   useMemo,
 } from 'react';
 import { RepresentativeContentCard } from '@/components/explore/RepresentativeContentCard';
-import { RecentContentData } from '@type/explore/Explore';
-import { getLatestContents } from '@lib/apis/explore/getLatestContents';
 import { Loader2, RefreshCw } from 'lucide-react';
+import type { RecentContentData } from '@type/explore/Explore';
+// TODO: 나중에 MVP를 거치며 최신 콘텐츠 목록 조회가 아닌 다른 것을 조회하는 것으로 바뀔 수 있음 -> 명칭 변경될 수도 있음
+// import { useGetLatestContents } from '@hooks/explore/useGetLatestContents'; // 현재는 최신 콘텐츠를 불러오는 것으로 구현되어 있음
 
 interface CarouselProps {
   autoPlayInterval?: number;
-  onCardClick?: (contentId: number) => void;
 }
 
 const CARD_WIDTH = 272;
@@ -24,15 +24,56 @@ const SCALE_FACTOR = 0.85;
 const SCALE_RANGE = 2;
 const REPEAT_COUNT = 5; // 배열 반복 횟수
 
+// Mock 데이터
+const MOCK_LATEST_CONTENTS: RecentContentData[] = [
+  {
+    contentId: 1,
+    title: '센과 치히로의 행방불명',
+    posterUrl: '/images/poster1.webp',
+    categories: ['애니메이션', '판타지'],
+    genres: ['모험', '가족', '스튜디오지브리'],
+  },
+  {
+    contentId: 2,
+    title: '이웃집 토토로',
+    posterUrl: '/images/poster2.webp',
+    categories: ['애니메이션', '가족'],
+    genres: ['힐링', '판타지', '스튜디오지브리'],
+  },
+  {
+    contentId: 3,
+    title: '벼랑 위의 포뇨',
+    posterUrl: '/images/poster3.webp',
+    categories: ['애니메이션', '가족'],
+    genres: ['모험', '힐링', '스튜디오지브리'],
+  },
+  {
+    contentId: 4,
+    title: '하울의 움직이는 성',
+    posterUrl: '/images/poster1.webp',
+    categories: ['애니메이션', '로맨스'],
+    genres: ['판타지', '전쟁', '스튜디오지브리'],
+  },
+  {
+    contentId: 5,
+    title: '마녀 배달부 키키',
+    posterUrl: '/images/poster2.webp',
+    categories: ['애니메이션', '성장'],
+    genres: ['힐링', '모험', '스튜디오지브리'],
+  },
+  {
+    contentId: 6,
+    title: '모노노케 히메',
+    posterUrl: '/images/poster3.webp',
+    categories: ['애니메이션', '판타지'],
+    genres: ['모험', '환경', '스튜디오지브리'],
+  },
+];
+
 // 탐색 페이지의 맨 위에 표시되는 카드 Carousel 컴포넌트
 export const ExplorePageCarousel = ({
   autoPlayInterval = 3000,
-  onCardClick,
 }: CarouselProps) => {
-  const [contents, setContents] = useState<RecentContentData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const carouselRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -43,6 +84,17 @@ export const ExplorePageCarousel = ({
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [translateX, setTranslateX] = useState(0);
+
+  // const {
+  //   data: contents,
+  //   isLoading,
+  //   isError,
+  //   refetch,
+  // } = useGetLatestContents();
+
+  const contents = MOCK_LATEST_CONTENTS;
+  const isLoading = false;
+  const isError = false;
 
   const extendedMovies = useMemo(() => {
     return Array(REPEAT_COUNT).fill(contents).flat();
@@ -95,25 +147,6 @@ export const ExplorePageCarousel = ({
       setCurrentIndex(startIndex);
     }
   }, [contents.length, containerWidth, startIndex]);
-
-  // 최신 콘텐츠를 가져오는 fetchContents 함수
-  const fetchContents = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const data = await getLatestContents(); // filters 적용이 필요하다면 여기에 반영
-      setContents(data);
-    } catch (error) {
-      setError('콘텐츠를 불러오는데 실패했습니다. 에러 내용: ' + error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchContents();
-  }, [fetchContents]);
 
   // 자동 재생 시작 메소드
   const startAutoPlay = useCallback(() => {
@@ -223,7 +256,8 @@ export const ExplorePageCarousel = ({
     return 1 - (distance / SCALE_RANGE) * (1 - SCALE_FACTOR);
   };
 
-  if (loading) {
+  // 로딩 상태 처리
+  if (isLoading) {
     return (
       <div className="w-full max-w-5xl mx-auto py-12 flex flex-col items-center space-y-4">
         <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
@@ -232,12 +266,13 @@ export const ExplorePageCarousel = ({
     );
   }
 
-  if (error) {
+  // 에러 상태 처리
+  if (isError) {
     return (
       <div className="w-full max-w-5xl mx-auto py-12 flex flex-col items-center space-y-4">
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-500">{isError}</p>
         <button
-          onClick={fetchContents}
+          // onClick={() => refetch()}
           className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           <RefreshCw className="w-4 h-4 mr-2" />
@@ -247,6 +282,7 @@ export const ExplorePageCarousel = ({
     );
   }
 
+  // 콘텐츠가 없는 경우 처리
   if (contents.length === 0) {
     return (
       <div className="w-full max-w-5xl mx-auto py-12 flex justify-center text-gray-500">
@@ -294,10 +330,7 @@ export const ExplorePageCarousel = ({
                 }}
               >
                 <div className="relative">
-                  <RepresentativeContentCard
-                    content={content}
-                    onClick={() => onCardClick?.(content)}
-                  />
+                  <RepresentativeContentCard content={content} />
                   {!isCurrent && (
                     <div className="absolute inset-0 bg-black/40 rounded-lg pointer-events-none" />
                   )}

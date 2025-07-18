@@ -23,7 +23,7 @@ export default function Step8({ onNext }: Step8Props) {
       </div>
 
       {/* 카드 영역 */}
-      <div className="flex flex-col gap-6 items-center w-full max-w-[550px] max-h-[580px]">
+      <div className="flex flex-col gap-6 items-center w-full max-w-[550px] max-h-[560px] md:max-h-[620px] ">
         {recommendData.map((card, index) => (
           <RecommendationCard key={index} {...card} disabled />
         ))}
@@ -32,7 +32,7 @@ export default function Step8({ onNext }: Step8Props) {
       {/* 이동 버튼 */}
       <Button
         variant="ghost"
-        className="text-white border border-white/30 hover:bg-white/10 mt-12"
+        className="text-white border border-white/30 hover:bg-white/10 mt-4"
         onClick={onNext}
       >
         추천 받으러 가기

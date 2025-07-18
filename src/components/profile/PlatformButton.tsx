@@ -1,5 +1,5 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { PlatFormButtonProps } from '@/types/mypage/Mypage';
+import { PlatFormButtonProps } from '@type/profile/Mypage';
 import { Button } from '../ui/button';
 
 // 누르면 해당 콘텐츠에 대해 바로 해당 OTT 페이지로 이동하는 버튼
@@ -9,7 +9,10 @@ export const PlatformButton = ({
   url,
 }: PlatFormButtonProps) => {
   const handleClick = () => {
-    window.open(url!, '_blank');
+    if (url) {
+      // null 체크
+      window.open(url, '_blank');
+    }
   };
 
   return (

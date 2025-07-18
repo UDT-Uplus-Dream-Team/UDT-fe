@@ -1,28 +1,48 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Card } from '@components/ui/card';
 import { Badge } from '@components/ui/badge';
 import { RecentContentData } from '@type/explore/Explore';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@components/ui/sheet';
+import { DetailBottomSheetContent } from './DetailBottomSheetContent';
 
 type RepresentativeContentCardProps = {
   content: RecentContentData;
-  onClick?: () => void;
 };
 
 // 화면 위에 표시될 엄청 큰 카드 (콘텐츠 정보 표시)
 export const RepresentativeContentCard = ({
   content,
-  onClick,
 }: RepresentativeContentCardProps) => {
+  const [isDetailBottomSheetOpen, setIsDetailBottomSheetOpen] = useState(false);
+
+  // 동일한 props에 대한 계산 결과 고정, SSR/CSR 불일치 방지 (hydration 이슈 해결)
+  const combinedTags = useMemo(() => {
+    return [...(content.categories || []), ...(content.genres || [])];
+  }, [content.categories, content.genres]);
+
+  const displayedTags = useMemo(() => combinedTags.slice(0, 4), [combinedTags]);
+
+  // 카드 클릭 시 BottomSheet 열기
+  const handlePosterClick = () => {
+    //TODO: 이것을 네트워크 통신으로 대체해야 함
+    setIsDetailBottomSheetOpen(true);
+  };
+
   return (
     <Card
-      className="flex flex-col w-68 h-87 overflow-hidden group cursor-pointer transition-transform duration-200"
-      onClick={onClick}
+      className="flex flex-col w-68 h-87 overflow-hidden group cursor-pointer transition-transform duration-200 border-none"
+      onClick={handlePosterClick}
     >
       <div className="relative flex-grow">
         <Image
           src={content.posterUrl || '/placeholder.svg'}
-          alt={content.title}
+          alt={content.title || '제목 없음'}
           fill
           className="object-cover"
           priority
@@ -40,37 +60,35 @@ export const RepresentativeContentCard = ({
 
           {/* 장르 태그들 */}
           <div className="flex flex-wrap gap-1 pb-5 justify-center">
-            {content.categories
-              .flatMap(({ category, genres }) => [category, ...genres])
-              .slice(0, 4)
-              .map((tag) => (
-                <Badge
-                  key={tag}
-                  variant="outline"
-                  className="text-sm border-white/30 text-white hover:bg-white/10"
-                >
-                  #{tag}
-                </Badge>
-              ))}
-
-            {content.categories.flatMap(({ category, genres }) => [
-              category,
-              ...genres,
-            ]).length > 4 && (
+            {displayedTags.map((tag, idx) => (
               <Badge
+                key={idx}
                 variant="outline"
-                className="text-xs border-white/30 text-white"
+                className="text-sm border-white/30 text-white hover:bg-white/10"
               >
-                +
-                {content.categories.flatMap(({ category, genres }) => [
-                  category,
-                  ...genres,
-                ]).length - 4}
+                #{tag}
               </Badge>
-            )}
+            ))}
           </div>
         </div>
       </div>
+
+      {/* 영화 상세 정보 BottomSheet (필요 시 pop-up) */}
+      <Sheet
+        open={isDetailBottomSheetOpen}
+        onOpenChange={setIsDetailBottomSheetOpen}
+      >
+        <SheetContent
+          side="bottom"
+          className="px-0 pb-5 h-[90vh] max-w-full rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
+        >
+          {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
+          <SheetHeader className="p-0">
+            <SheetTitle className="sr-only h-0 p-0">상세정보</SheetTitle>
+          </SheetHeader>
+          <DetailBottomSheetContent contentId={content.contentId} />
+        </SheetContent>
+      </Sheet>
     </Card>
   );
 };

@@ -11,7 +11,7 @@ export const usePatchPlatform = () => {
   return useMutation({
     mutationFn: patchPlatform,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userInfo'] });
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
     },
   });
 };

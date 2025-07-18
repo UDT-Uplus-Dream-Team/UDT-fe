@@ -2,7 +2,7 @@ import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 
 interface PosterCardProps {
-  title: string;
+  title: string | undefined;
   image: string | StaticImageData;
   isTitleVisible?: boolean;
   onClick: () => void;

@@ -9,7 +9,10 @@ export const PlatformButton = ({
   url,
 }: PlatFormButtonProps) => {
   const handleClick = () => {
-    window.open(url, '_blank');
+    if (url) {
+      // null 체크
+      window.open(url, '_blank');
+    }
   };
 
   return (

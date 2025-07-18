@@ -16,8 +16,8 @@ export const usePreferenceHandler = (
   selectedGenres: string[],
 ) => {
   // API 호출 훅
-  const { mutate: patchPlatforms } = usePatchPlatform();
-  const { mutate: patchGenres } = usePatchGenre();
+  const { mutateAsync: patchPlatformsAsync } = usePatchPlatform();
+  const { mutateAsync: patchGenresAsync } = usePatchGenre();
 
   // 변경할 항목이 있는지 확인
   const validateSelections = () => {
@@ -29,7 +29,7 @@ export const usePreferenceHandler = (
     showSimpleToast.success({
       message,
       position: 'top-center',
-      className: 'w-full bg-black/80 shadow-lg',
+      className: 'w-full bg-black/80 shadow-lg text-white',
     });
   };
 
@@ -38,24 +38,29 @@ export const usePreferenceHandler = (
     showSimpleToast.error({
       message,
       position: 'top-center',
-      className: 'w-full bg-black/80 shadow-lg',
+      className: 'w-full bg-black/80 shadow-lg text-white',
     });
   };
 
   // 실제 업데이트 실행
-  const updatePreferences = () => {
-    if (selectedOtt.length > 0) {
-      patchPlatforms(selectedOtt, {
-        onSuccess: () => showSuccess('OTT 항목이 성공적으로 수정되었습니다!'),
-        onError: () => showError('OTT 항목 수정에 실패했습니다.'),
-      });
-    }
+  const updatePreferences = async () => {
+    try {
+      const tasks: Promise<unknown>[] = [];
 
-    if (selectedGenres.length > 0) {
-      patchGenres(selectedGenres, {
-        onSuccess: () => showSuccess('선호 장르가 성공적으로 수정되었습니다!'),
-        onError: () => showError('선호 장르 수정에 실패했습니다.'),
-      });
+      if (selectedOtt.length > 0) {
+        tasks.push(patchPlatformsAsync(selectedOtt));
+      }
+
+      if (selectedGenres.length > 0) {
+        tasks.push(patchGenresAsync(selectedGenres));
+      }
+
+      await Promise.all(tasks);
+
+      showSuccess('설정이 성공적으로 변경되었습니다!');
+    } catch (error) {
+      console.error('Update failed:', error);
+      showError('일부 항목 저장에 실패했습니다.');
     }
   };
 

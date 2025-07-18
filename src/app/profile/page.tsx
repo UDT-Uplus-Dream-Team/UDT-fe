@@ -91,7 +91,7 @@ const ProfilePage = () => {
   return (
     <div className="h-[calc(100vh-80px)] overflow-y-auto w-full mx-auto px-4 pt-6 text-white flex flex-col items-center">
       {/* 상단 제목 */}
-      <div className="w-full flex justify-center mb-16  h-10">
+      <div className="w-full flex justify-center mb-10  h-10">
         <span className="text-lg font-bold text-center text-white">프로필</span>
       </div>
 
@@ -101,12 +101,10 @@ const ProfilePage = () => {
           {/* 프로필 이미지 + 이름/이메일 수평 정렬 */}
           <div className="flex flex-row items-center justify-start gap-4 mb-2">
             {/* 프로필 이미지 */}
-            <Image
+            <img
               src={profileImageUrl || '/images/default-profile.png'}
               alt="프로필 이미지"
-              width={60}
-              height={60}
-              className="rounded-full object-cover"
+              className="w-[60px] h-[60px] rounded-full object-cover"
             />
 
             {/* 이름 + 이메일 */}

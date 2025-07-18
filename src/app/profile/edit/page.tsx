@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { CircleOption } from '@components/common/circleOption';
@@ -15,12 +15,22 @@ import {
   CarouselPrevious,
 } from '@components/ui/carousel';
 import { usePreferenceHandler } from '@hooks/profile/usePreferenceHandler';
+import { useGetUserProfile } from '@/hooks/useGetUserProfile';
+// import { useGetUserProfile } from '@hooks/useGetUserProfile';
 
 export default function EditPreferencePage() {
   const [selectedOtt, setSelectedOtt] = useState<string[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const router = useRouter();
   const { handleSave } = usePreferenceHandler(selectedOtt, selectedGenres);
+  const { data: userProfile } = useGetUserProfile();
+
+  useEffect(() => {
+    if (userProfile) {
+      setSelectedOtt(userProfile.platforms || []);
+      setSelectedGenres(userProfile.genres || []);
+    }
+  }, [userProfile]);
 
   const toggleSelection = (
     value: string,
@@ -33,6 +43,7 @@ export default function EditPreferencePage() {
       setFn([...selectedList, value]);
     }
   };
+
   return (
     <div className="h-[calc(100vh-80px)] overflow-y-auto px-9 py-4 text-white max-w-[550px] mx-auto">
       {/* 헤더 */}

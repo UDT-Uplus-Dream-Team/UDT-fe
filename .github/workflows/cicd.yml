@@ -86,7 +86,7 @@ jobs:
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
 
       - name: Comment PR with preview link
-        if: github.ref == 'refs/heads/dev' && github.event_name == 'pull_request'
+        if: github.base_ref == 'dev' && github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |

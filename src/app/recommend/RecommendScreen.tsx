@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Ticket } from '@components/Ticket/Ticket';
 import { Button } from '@components/ui/button';
 import { showInteractiveToast } from '@components/common/Toast';
-import { getAvailableContents, fetchMoreContents } from './RecommendContent';
+import { fetchMoreContents, getAvailableContents } from './RecommendContent';
 import { postFeedbackContent } from '@lib/apis/recommend/postFeedbackContent';
-import { TicketComponent } from '@type/recommend/TicketComponent';
+import { useRecommendStore } from '@store/useRecommendStore';
+import { FinishScreen } from './FinishScreen';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 type FeedbackType = 'liked' | 'unliked' | 'neutral';
@@ -16,71 +17,126 @@ export interface RecommendProps {
 }
 
 export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
-  // ── useRef로 관리되는 데이터들 ──────────────────────────────────────
-  const moviesRef = useRef<TicketComponent[]>([]);
-  const feedbackRef = useRef<{ contentId: number; feedback: string }[]>([]);
-  const swipeCountRef = useRef<number>(0);
+  // Zustand store에서 상태와 액션들 가져오기
+  const {
+    moviePool,
+    currentIndex,
+    swipeCount,
+    setMoviePool,
+    addMoviesToPool,
+    setCurrentIndex,
+    incrementSwipeCount,
+    resetSwipeCount,
+    getCurrentMovie,
+    getNextMovie,
+    shouldLoadMoreContent,
+    shouldShowFinish,
+  } = useRecommendStore();
 
-  // ── 기존 UI 상태들 (애니메이션 관련은 절대 건드리지 않음) ─────────────
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [nextMovie, setNextMovie] = useState<TicketComponent | null>(null);
+  // 로컬 UI 상태들 (애니메이션 관련은 persist 불필요)
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(
     null,
   );
   const [feedback, setFeedback] = useState<FeedbackType>('neutral');
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
-  const startPoint = useRef<{ x: number; y: number } | null>(null);
   const [resultReady, setResultReady] = useState<boolean>(false);
-  const [swipeCount, setSwipeCount] = useState<number>(0);
   const [toastShown, setToastShown] = useState<boolean>(false);
+  const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(
+    null,
+  );
 
-  // 현재 영화 (useRef에서 안전하게 가져오기)
-  const currentMovie: TicketComponent | undefined =
-    moviesRef.current[currentIndex];
-
-  // ── 초기 데이터 로드 ───────────────────────────────────────────────
+  // ── 초기 데이터 로드 또는 기존 상태 복원 ────────────────────────────
   useEffect(() => {
-    const initialMovies: TicketComponent[] = getAvailableContents();
-    moviesRef.current = initialMovies;
+    const initializeContent = async () => {
+      // 이미 영화 데이터가 있다면 복원, 없다면 새로 로드
+      if (moviePool.length === 0) {
+        try {
+          console.log('초기 콘텐츠 로딩 시작...');
+          const initialMovies = getAvailableContents();
+          console.log(
+            `${initialMovies.length}개의 초기 콘텐츠가 로드되었습니다.`,
+          );
+          setMoviePool(initialMovies);
+        } catch (error: unknown) {
+          console.error('초기 콘텐츠 로딩 실패:', error);
+        }
+      } else {
+        console.log('기존 진행 상황 복원:', {
+          movieCount: moviePool.length,
+          currentIndex,
+          swipeCount,
+        });
+      }
+    };
 
-    // nextMovie 설정
-    if (initialMovies.length > 1) {
-      setNextMovie(initialMovies[1]);
+    initializeContent();
+  }, []); // 빈 의존성 배열 - 한 번만 실행
+
+  // 현재 영화 정보
+  const currentMovie = getCurrentMovie();
+  const nextMovie = getNextMovie();
+
+  // ── currentIndex가 5의 배수일 때마다 새로운 콘텐츠 추가 ───────────────
+  useEffect(() => {
+    const loadMoreContents = async () => {
+      if (shouldLoadMoreContent()) {
+        try {
+          console.log(`currentIndex ${currentIndex}: 추가 콘텐츠 로딩 시작...`);
+          const newMovies = await fetchMoreContents();
+          console.log(`${newMovies.length}개의 새로운 영화가 추가되었습니다.`);
+          addMoviesToPool(newMovies);
+        } catch (error: unknown) {
+          console.error('영화 데이터 추가 실패:', error);
+        }
+      }
+    };
+
+    loadMoreContents();
+  }, [currentIndex, shouldLoadMoreContent, addMoviesToPool]);
+
+  // ── 즉시 피드백 전송 함수 ──────────────────────────────────────────
+  const sendFeedbackImmediately = async (
+    contentId: number,
+    feedbackType: FeedbackType,
+  ): Promise<void> => {
+    let feedbackValue: string;
+
+    switch (feedbackType) {
+      case 'liked':
+        feedbackValue = 'LIKE';
+        break;
+      case 'unliked':
+        feedbackValue = 'DISLIKE';
+        break;
+      case 'neutral':
+        feedbackValue = 'UNINTERESTED';
+        break;
+      default:
+        feedbackValue = 'UNINTERESTED';
     }
 
-    setCurrentIndex(0);
-    setSwipeCount(0);
-    swipeCountRef.current = 0;
+    const feedbackData = [{ contentId, feedback: feedbackValue }];
 
-    return () => {
-      moviesRef.current = [];
-      // feedbackRef.current = [];
-    };
-  }, []);
+    try {
+      console.log('피드백 즉시 전송:', feedbackData);
+      const result = await postFeedbackContent(feedbackData);
 
-  // ── 10초마다 새로운 영화 데이터 추가 ──────────────────────────────
-  useEffect(() => {
-    const interval: NodeJS.Timeout = setInterval(async () => {
-      try {
-        const newMovies: TicketComponent[] = await fetchMoreContents();
-        console.log(`${newMovies.length}개의 새로운 영화가 추가되었습니다.`);
-
-        // useRef 업데이트 (리렌더링 없음)
-        moviesRef.current = getAvailableContents();
-      } catch (error: unknown) {
-        console.error('영화 데이터 추가 실패:', error);
+      if (result.success) {
+        console.log('피드백 전송 성공:', result.message);
+      } else {
+        console.warn('피드백 전송 실패:', result.message);
       }
-    }, 10000); // 10초마다
+    } catch (error: unknown) {
+      console.error('피드백 전송 중 오류:', error);
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, []);
-
-  // ── 스와이프 처리 (피드백 데이터 useRef에 저장) ─────────────────────
-  const handleSwipe = (
+  // ── 스와이프 처리 ─────────────────────────────────────────────────
+  const handleSwipe = async (
     direction: SwipeDirection,
     feedbackType?: FeedbackType,
-  ): void => {
+  ): Promise<void> => {
     if (isAnimating || isFlipped || !currentMovie) return;
 
     setIsAnimating(true);
@@ -88,37 +144,18 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     if (feedbackType) setFeedback(feedbackType);
     setIsFlipped(false);
 
-    // 피드백 데이터 저장 (리렌더링 없음)
+    // 즉시 피드백 전송
     if (feedbackType && currentMovie) {
-      let feedbackValue: string;
-
-      switch (feedbackType) {
-        case 'liked':
-          feedbackValue = 'LIKE';
-          break;
-        case 'unliked':
-          feedbackValue = 'DISLIKE';
-          break;
-        case 'neutral':
-          feedbackValue = 'UNINTERESTED';
-          break;
-        default:
-          feedbackValue = 'UNINTERESTED';
-      }
-
-      feedbackRef.current.push({
-        contentId: currentMovie.contentId,
-        feedback: feedbackValue,
-      });
+      sendFeedbackImmediately(currentMovie.contentId, feedbackType);
     }
-    // 스와이프 카운트 증가
-    swipeCountRef.current += 1;
-    setSwipeCount((prev: number) => prev + 1);
+
+    // Store 업데이트
+    incrementSwipeCount();
 
     // 애니메이션 → 인덱스 이동
     setTimeout(() => {
       setSwipeDirection(null);
-      setCurrentIndex((prev: number) => prev + 1);
+      setCurrentIndex(currentIndex + 1);
       setFeedback('neutral');
     }, 700);
 
@@ -126,24 +163,14 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     setTimeout(() => {
       setIsAnimating(false);
     }, 1000);
-
-    console.log(feedbackRef);
   };
 
-  // ── 다음 카드 갱신 (useRef 데이터 사용) ────────────────────────────
+  // ── 10번 스와이프 후 토스트 표시 ──────────────────────────────────────
   useEffect(() => {
-    if (!isAnimating) {
-      const nextIdx: number = currentIndex + 1;
-      setNextMovie(moviesRef.current[nextIdx] ?? null);
-    }
-  }, [isAnimating, currentIndex]);
-
-  // ── 절반 넘으면 한 번만 결과 호출 ───────────────────────────────────
-  useEffect(() => {
-    const SWIPE_THRESHOLD = 10; // 10번 스와이프하면 결과 호출
+    const SWIPE_THRESHOLD = 3;
 
     if (swipeCount >= SWIPE_THRESHOLD && !resultReady && !toastShown) {
-      setToastShown(true); // 토스트 표시됨으로 설정
+      setToastShown(true);
 
       showInteractiveToast.action({
         message: '컨텐츠 추천이 준비되었습니다!\n추천 결과를 보시겠어요?',
@@ -151,71 +178,52 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         duration: Infinity,
         position: 'top-center',
         className: 'bg-gray-500',
-        onAction: async () => {
-          console.log('수집된 피드백 데이터:', feedbackRef.current);
-          try {
-            // 피드백 데이터 POST 요청
-            const result = await postFeedbackContent(feedbackRef.current);
-
-            if (result.success) {
-              console.log('피드백 전송 성공:', result.message);
-            } else {
-              console.warn('피드백 전송 실패:', result.message);
-            }
-          } catch (error: unknown) {
-            console.error('피드백 전송 중 오류:', error);
-          }
-
-          // 피드백 전송 결과와 관계없이 ResultScreen으로 이동
+        onAction: () => {
           setResultReady(true);
           onComplete();
         },
         onClose: () => {
-          // Toast 닫기 시 count만 초기화 (phase는 그대로)
-          console.log('Toast 닫힘 - 카운트만 초기화');
-          setSwipeCount(0);
-          swipeCountRef.current = 0;
+          resetSwipeCount();
+          setToastShown(false);
           setResultReady(false);
-          setToastShown(false); // 토스트 상태 초기화
-          // feedbackRef는 초기화하지 않음 (phase 변경 시에만 초기화)
         },
       });
     }
   }, [swipeCount, resultReady, toastShown, onComplete]);
 
-  // ── 키보드 스와이프 지원 ────────────────────────────────────────────
-  const handleKeyPress = (e: KeyboardEvent): void => {
-    if (isAnimating || isFlipped) return;
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      handleSwipe('left', 'unliked');
-    }
-    if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      handleSwipe('right', 'liked');
-    }
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      handleSwipe('up');
-    }
-  };
-
+  // ── 키보드 이벤트 처리 ────────────────────────────────────────────
   useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent): void => {
+      if (isAnimating || isFlipped) return;
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        handleSwipe('left', 'unliked');
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        handleSwipe('right', 'liked');
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        handleSwipe('up');
+      }
+    };
+
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isAnimating, isFlipped]);
+  }, [isAnimating, isFlipped, currentIndex]);
 
-  // ── 터치/마우스 시작 & 끝 처리 ────────────────────────────────────
+  // ── 터치/마우스 이벤트 처리 ───────────────────────────────────────────
   const onPointerDown = (e: React.PointerEvent): void => {
     if (isAnimating) return;
-    startPoint.current = { x: e.clientX, y: e.clientY };
+    setStartPoint({ x: e.clientX, y: e.clientY });
   };
 
   const onPointerUp = (e: React.PointerEvent): void => {
-    if (!startPoint.current) return;
-    const dx: number = e.clientX - startPoint.current.x;
-    const dy: number = e.clientY - startPoint.current.y;
-    startPoint.current = null;
+    if (!startPoint) return;
+    const dx: number = e.clientX - startPoint.x;
+    const dy: number = e.clientY - startPoint.y;
+    setStartPoint(null);
     const absX: number = Math.abs(dx);
     const absY: number = Math.abs(dy);
     const threshold: number = 150;
@@ -240,8 +248,18 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     }
   };
 
+  if (shouldShowFinish()) {
+    return <FinishScreen />;
+  }
+
   // ── 렌더링 ─────────────────────────────────────────────────────────
-  if (currentIndex >= moviesRef.current.length || !currentMovie) return null;
+  if (!currentMovie) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="text-white text-lg">콘텐츠를 로딩 중...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
@@ -253,7 +271,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
           }`}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
-          onPointerCancel={() => (startPoint.current = null)}
+          onPointerCancel={() => setStartPoint(null)}
         >
           {/* 자리 채우기 티켓 */}
           <div className="relative flex w-full aspect-[75/135] max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">

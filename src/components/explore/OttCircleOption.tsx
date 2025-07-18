@@ -6,7 +6,7 @@ import { getPlatformLogo } from '@utils/getPlatformLogo';
 // OTT Label 타입 정의
 type OttLabel =
   | '넷플릭스'
-  | 'Apple TV'
+  | '애플티비'
   | '티빙'
   | '디즈니+'
   | '웨이브'

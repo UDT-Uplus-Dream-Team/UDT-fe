@@ -9,23 +9,20 @@ import {
   memo,
   Suspense,
   useEffect,
-  useMemo,
   useState,
   useCallback,
   useRef,
 } from 'react';
-import {
-  getMockContentData,
-  MockContentData,
-} from '@/utils/getMockContentData';
-import { VideoPlayer } from './VideoPlayer';
+import { DetailedContentData } from '@type/explore/Explore';
+import { VideoPlayer } from '@components/explore/VideoPlayer';
+import { useGetContentDetails } from '@hooks/explore/useGetContentDetails';
 
 interface DetailBottomSheetContentProps {
   contentId: number;
 }
 
 interface VideoPlayerWrapperProps {
-  contentData: MockContentData;
+  contentData: DetailedContentData;
   onError: () => void;
 }
 
@@ -45,9 +42,28 @@ export const DetailBottomSheetContent = ({
   const [isTextOverflowing, setIsTextOverflowing] = useState(false); // 텍스트가 5줄을 넘는지 여부
 
   const synopsisRef = useRef<HTMLSpanElement>(null); // 시놉시스 텍스트 요소 참조
+  const {
+    data: contentData,
+    isLoading,
+    isError,
+  } = useGetContentDetails(contentId); // 콘텐츠 상세 정보 데이터 조회
 
-  // contentId에 따른 콘텐츠 데이터 가져오기
-  const contentData = useMemo(() => getMockContentData(contentId), [contentId]);
+  if (isLoading) {
+    return <div>로딩 중입니다.</div>;
+  }
+
+  if (isError) {
+    return <div>에러가 발생했습니다, 관리자에게 문의 바랍니다.</div>;
+  }
+
+  // contentData가 없는 경우 처리
+  if (!contentData) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-white">콘텐츠 정보가 없습니다.</div>
+      </div>
+    );
+  }
 
   // 비디오 정보를 불러 오다가 에러가 났을 경우, isVideoLoaded 상태를 false로 변경
   const handleVideoError = useCallback(() => {
@@ -84,7 +100,7 @@ export const DetailBottomSheetContent = ({
   useEffect(() => {
     setHasValidTrailer(false); // 새로운 콘텐츠 로드 시에 초기화 (video 로딩 중인 상태로 초기화)
 
-    if (contentData.trailerUrl) {
+    if (contentData?.trailerUrl) {
       setHasValidTrailer(true);
       console.log('지금 트레일러 영상 있음!, contentId: ', contentId);
     } else {
@@ -100,7 +116,7 @@ export const DetailBottomSheetContent = ({
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
               src={contentData.backdropUrl || '/placeholder.svg'}
-              alt={contentData.title}
+              alt={contentData.title || ''}
               fill
               className="object-cover"
             />
@@ -130,7 +146,7 @@ export const DetailBottomSheetContent = ({
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
               src={contentData.backdropUrl || '/placeholder.svg'}
-              alt={contentData.title}
+              alt={contentData.title || ''}
               fill
               className="object-cover"
             />
@@ -154,12 +170,15 @@ export const DetailBottomSheetContent = ({
 
       {/* 사진 밑에 콘텐츠 정보 */}
       <div className="flex flex-col space-y-6 px-4 pt-4 bg-gradient-to-b from-black/100 to-primary-800">
-        {/* "보러가기" 버튼 */}
-        <PlatformButton
-          platformName="디즈니+"
-          iconUrl={getPlatformLogo('디즈니+') || ''}
-          url="https://www.disneyplus.com"
-        />
+        {/* 플랫폼 버튼, url이 null인 경우 '보러가기' 버튼 미표시 */}
+        {contentData.platforms.map((platform, idx) => (
+          <PlatformButton
+            key={idx}
+            platformName={platform.platformType}
+            iconUrl={getPlatformLogo(platform.platformType) || ''}
+            url={platform.watchUrl || null}
+          />
+        ))}
 
         {/* 시놉시스(줄거리) */}
         <div className="space-y-2">
@@ -199,7 +218,7 @@ export const DetailBottomSheetContent = ({
         <div className="flex flex-col space-y-3">
           <span className="text-lg font-semibold text-white">출연진</span>
           <div className="flex space-x-4 overflow-x-auto">
-            {contentData.cast.map((actor, index) => (
+            {contentData.casts.map((actor, index) => (
               <div
                 key={index}
                 className="flex flex-col items-center space-y-2 min-w-[60px]"

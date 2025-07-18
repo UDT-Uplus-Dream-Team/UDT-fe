@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:https": "next dev --experimental-https --experimental-https-key ./local.banditbool.com-key.pem --experimental-https-cert ./local.banditbool.com.pem -p 3000 -H local.banditbool.com",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

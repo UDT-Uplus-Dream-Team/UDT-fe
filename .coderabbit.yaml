@@ -1,0 +1,10 @@
+# 예시: .coderabbit.yaml
+version: '1'
+review:
+  summary: simple # PR 요약은 간단하게
+  comments: inline # 필요한 부분에만 댓글 달기
+  language: ko # 한국어로 작성
+cursor:
+  learn_from: ./cursor # 팀 컨벤션 학습
+other_settings:
+  default: true # 일반 PR 작성 방식 유지

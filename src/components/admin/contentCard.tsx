@@ -7,6 +7,7 @@ import { getTypeIcon, getTypeBadgeColor } from '@utils/getContentUtils';
 import type { ContentSummary } from '@type/admin/Content';
 import Image from 'next/image';
 import { memo, useMemo } from 'react';
+import { showInteractiveToast } from '@components/common/Toast';
 
 interface ContentCardProps {
   content: ContentSummary;
@@ -22,9 +23,12 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
   );
 
   const handleDelete = () => {
-    if (confirm('정말로 이 콘텐츠를 삭제하시겠습니까?')) {
-      onDelete(content.contentId);
-    }
+    showInteractiveToast.confirm({
+      message: '정말로 이 콘텐츠를 삭제하시겠습니까?',
+      onConfirm: () => onDelete(content.contentId),
+      confirmText: '삭제',
+      cancelText: '취소',
+    });
   };
 
   return (

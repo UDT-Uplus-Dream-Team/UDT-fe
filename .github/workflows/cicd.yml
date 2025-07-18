@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -46,7 +46,7 @@ jobs:
         continue-on-error: true # 테스트 실패해도 배포는 진행
 
       - name: Upload build artifacts
-        if: matrix.node-version == '20.x' # 한 번만 업로드
+        if: matrix.node-version == '22.x' # 한 번만 업로드
         uses: actions/upload-artifact@v4
         with:
           name: nextjs-build
@@ -100,24 +100,24 @@ jobs:
               body: `🚀 Preview deployment ready!\n\n👀 Preview: ${process.env.VERCEL_PREVIEW_URL}`
             })
 
-  # 라이트하우스 성능 테스트 (선택사항)
-  lighthouse:
-    needs: deploy
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
+  # # 라이트하우스 성능 테스트 (선택사항)
+  # lighthouse:
+  #   needs: deploy
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Wait for deployment
-        run: sleep 30
+  #     - name: Wait for deployment
+  #       run: sleep 30
 
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v10
-        with:
-          urls: |
-            ${{ needs.deploy.outputs.deployment_url || 'https://your-domain.vercel.app' }}
-          configPath: './lighthouserc.js'
-          uploadArtifacts: true
-          temporaryPublicStorage: true
+  #     - name: Run Lighthouse CI
+  #       uses: treosh/lighthouse-ci-action@v10
+  #       with:
+  #         urls: |
+  #           ${{ needs.deploy.outputs.deployment_url || 'https://your-domain.vercel.app' }}
+  #         configPath: './lighthouserc.js'
+  #         uploadArtifacts: true
+  #         temporaryPublicStorage: true

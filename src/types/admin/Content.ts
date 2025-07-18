@@ -35,7 +35,7 @@ export interface Content {
 export interface AdminContentListParams {
   cursor: number;
   size: number;
-  categoryType: string;
+  categoryType: string | null;
 }
 
 // 콘텐츠 목록 조회용 Content 타입
@@ -45,8 +45,8 @@ export interface ContentSummary {
   posterUrl: string;
   openDate: string;
   rating: string;
-  categories: Category[];
-  platforms: Platform[];
+  categories: string[];
+  platforms: string[];
 }
 
 // 콘텐츠 목록 조회 전체 응답 타입

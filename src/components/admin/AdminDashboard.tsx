@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -20,8 +20,7 @@ import {
 import { Plus } from 'lucide-react';
 
 import type { ContentWithoutId } from '@type/admin/Content';
-import { filterContents } from '@utils/getContentUtils';
-import { useAdminContentList } from '@hooks/admin/useGetContentList';
+import { useInfiniteAdminContentList } from '@hooks/admin/useGetContentList';
 import { usePostContent } from '@hooks/admin/usePostContent';
 import { useUpdateContent } from '@hooks/admin/usePatchContent';
 import { useDeleteContent } from '@hooks/admin/useDeleteContent';
@@ -33,25 +32,47 @@ import SearchFilter from './searchFilter';
 import ContentChart from './contentChart';
 
 export default function AdminDashboard() {
-  // API 연동: 목록 조회
-  const { data, isLoading, isError } = useAdminContentList({
-    cursor: 0,
-    size: 20,
-    categoryType: '영화',
-  });
+  // 무한 스크롤용 필터 상태
+  const size = 20;
+  const [categoryType, setCategoryType] = useState<string>('');
+  // 무한 스크롤 쿼리
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteAdminContentList({ size, categoryType });
+
+  // Intersection Observer로 하단 감지
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        fetchNextPage();
+      }
+    });
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+    return () => {
+      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   const postContent = usePostContent();
   const updateContent = useUpdateContent();
   const deleteContent = useDeleteContent();
 
-  // 상태 관리
+  // 상태 관리 (상세/수정/추가 등)
   const [selectedContentId, setSelectedContentId] = useState<number | null>(
     null,
   );
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<string>('all');
   const [editContent, setEditContent] = useState<ContentWithoutId | null>(null);
 
   // 상세/수정 데이터 fetch (상세 모달에서만 사용)
@@ -97,12 +118,12 @@ export default function AdminDashboard() {
     setEditContent(null);
   }, []);
 
+  // 필터 변경 시 refetch
+  const handleFilterChange = (type: string) => {
+    setCategoryType(type);
+  };
+
   // 필터링된 콘텐츠 목록 (필터링 api 연동으로 바뀔 예정)
-  const contents = data?.item || [];
-  const filteredContents = useMemo(
-    () => filterContents(contents, searchTerm, filterType),
-    [contents, searchTerm, filterType],
-  );
 
   const handleAddContent = useCallback(
     (contentData: ContentWithoutId) => {
@@ -148,6 +169,9 @@ export default function AdminDashboard() {
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>데이터를 불러오는 중 오류가 발생했습니다.</div>;
 
+  // 모든 페이지의 콘텐츠 합치기
+  const allContents = data?.pages.flatMap((page) => page.item) || [];
+
   return (
     <div className="h-screen overflow-y-auto bg-gray-50 p-6">
       <div className="mx-auto max-w-5xl space-y-6">
@@ -162,7 +186,7 @@ export default function AdminDashboard() {
         {/* 콘텐츠 분포 차트 */}
         <div className="w-full flex justify-center">
           <div className="w-full max-w-5xl">
-            <ContentChart contents={contents} />
+            <ContentChart contents={allContents} />
           </div>
         </div>
 
@@ -175,7 +199,7 @@ export default function AdminDashboard() {
                   등록된 콘텐츠 목록
                 </CardTitle>
                 <CardDescription>
-                  전체 {filteredContents.length}개의 콘텐츠
+                  전체 {allContents.length}개의 콘텐츠
                 </CardDescription>
               </div>
               <Button
@@ -190,10 +214,8 @@ export default function AdminDashboard() {
             {/* 검색 및 필터 */}
             <div className="mt-4">
               <SearchFilter
-                searchTerm={searchTerm}
-                filterType={filterType}
-                onSearchChange={setSearchTerm}
-                onFilterChange={setFilterType}
+                filterType={categoryType}
+                onFilterChange={handleFilterChange}
               />
             </div>
           </CardHeader>
@@ -201,17 +223,24 @@ export default function AdminDashboard() {
           <CardContent>
             <ScrollArea className="h-96">
               <div className="space-y-3 mb-3">
-                {filteredContents.map((content) => (
+                {allContents.map((content, index) => (
                   <ContentCard
-                    key={content.contentId}
+                    key={`${content.contentId}-${index}`}
                     content={content}
                     onView={openDetailDialog}
-                    onEdit={(contentId) => openDetailDialog(contentId)} // 수정도 상세 fetch 후 모달에서 처리
+                    onEdit={openDetailDialog}
                     onDelete={handleDeleteContent}
                   />
                 ))}
+                <div ref={loadMoreRef} style={{ height: 1 }} />
               </div>
             </ScrollArea>
+            {isFetchingNextPage && (
+              <div className="text-center py-2">불러오는 중...</div>
+            )}
+            {!hasNextPage && (
+              <div className="text-center py-2">더 이상 데이터가 없습니다.</div>
+            )}
           </CardContent>
         </Card>
 

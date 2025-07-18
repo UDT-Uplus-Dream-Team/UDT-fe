@@ -13,13 +13,13 @@ import {
   ChartTooltipContent,
 } from '@components/ui/chart';
 import { PieChart, Pie, Cell } from 'recharts';
-import { Content } from '@type/admin/Content';
+import { ContentSummary } from '@type/admin/Content';
 import { generateChartData } from '@utils/getContentUtils';
 import { CHART_COLORS } from '@/constants';
 import { useMemo } from 'react';
 
 interface ContenChartProps {
-  contents: Content[];
+  contents: ContentSummary[];
 }
 
 export default function ContentChart({ contents }: ContenChartProps) {

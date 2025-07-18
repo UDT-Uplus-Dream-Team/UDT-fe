@@ -17,9 +17,8 @@ import {
 import { Badge } from '@components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
-import { Switch } from '@components/ui/switch';
 import { X, Plus } from 'lucide-react';
-import type { Content } from '@type/admin/Content';
+import type { ContentWithoutId } from '@type/admin/Content';
 import {
   RATING_OPTIONS,
   CONTENT_CATEGORIES,
@@ -29,8 +28,8 @@ import {
 import Image from 'next/image';
 
 interface ContentFormProps {
-  content?: Content;
-  onSave: (content: Omit<Content, 'contentId'> | Content) => void;
+  content?: ContentWithoutId;
+  onSave: (content: ContentWithoutId) => void;
   onCancel: () => void;
 }
 
@@ -39,7 +38,7 @@ export default function ContentForm({
   onSave,
   onCancel,
 }: ContentFormProps) {
-  const [formData, setFormData] = useState<Omit<Content, 'contentId'>>({
+  const [formData, setFormData] = useState<ContentWithoutId>({
     title: content?.title || '',
     description: content?.description || '',
     posterUrl: content?.posterUrl || '',
@@ -61,13 +60,24 @@ export default function ContentForm({
   const [newPlatform, setNewPlatform] = useState({
     platformType: '',
     watchUrl: '',
-    isAvailable: true,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const { title, rating, openDate, runningTime, categories } = formData;
+
+    // 필수 항목 검사
+    if (!title.trim()) return alert('제목은 필수 항목입니다.');
+    if (!rating.trim()) return alert('관람등급은 필수 항목입니다.');
+    if (!openDate.trim()) return alert('개봉일은 필수 항목입니다.');
+    if (!runningTime || runningTime <= 0)
+      return alert('상영시간을 입력해주세요.');
+    if (!categories.length || !categories[0].categoryType.trim())
+      return alert('카테고리는 필수 항목입니다.');
+
     if (content) {
-      onSave({ ...formData, contentId: content.contentId });
+      onSave({ ...formData });
     } else {
       onSave(formData);
     }
@@ -162,7 +172,7 @@ export default function ContentForm({
         ...formData,
         platforms: [...formData.platforms, newPlatform],
       });
-      setNewPlatform({ platformType: '', watchUrl: '', isAvailable: true });
+      setNewPlatform({ platformType: '', watchUrl: '' });
     }
   }, [newPlatform]);
 
@@ -223,7 +233,7 @@ export default function ContentForm({
                   >
                     <SelectTrigger className="cursor-pointer">
                       {formData.rating ? (
-                        <span className="text-white">{formData.rating}</span>
+                        <span>{formData.rating}</span>
                       ) : (
                         <SelectValue placeholder="관람등급 선택" />
                       )}
@@ -578,15 +588,7 @@ export default function ContentForm({
                   placeholder="시청 URL"
                 />
               </div>
-              <div className="flex items-center space-x-2 mb-3">
-                <Switch
-                  checked={newPlatform.isAvailable}
-                  onCheckedChange={(checked) =>
-                    setNewPlatform({ ...newPlatform, isAvailable: checked })
-                  }
-                />
-                <Label>이용 가능</Label>
-              </div>
+              <div className="flex items-center space-x-2 mb-3"></div>
               <Button
                 type="button"
                 onClick={addPlatform}
@@ -606,11 +608,6 @@ export default function ContentForm({
                       <div className="text-sm text-gray-500">
                         {platform.watchUrl}
                       </div>
-                      <Badge
-                        variant={platform.isAvailable ? 'default' : 'secondary'}
-                      >
-                        {platform.isAvailable ? '이용 가능' : '이용 불가'}
-                      </Badge>
                     </div>
                     <Button
                       type="button"

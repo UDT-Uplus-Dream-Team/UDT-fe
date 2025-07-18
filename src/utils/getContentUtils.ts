@@ -34,7 +34,7 @@ export const getTypeBadgeColor = (type: string) => {
 export const generateChartData = (contents: ContentSummary[]) => {
   const chartData = contents.reduce(
     (acc, content) => {
-      const category = content.categories[0]?.categoryType || '기타';
+      const category = content.categories[0] || '기타';
       const existing = acc.find((item) => item.name === category);
       if (existing) {
         existing.count += 1;
@@ -70,8 +70,7 @@ export const filterContents = (
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesType =
-      filterType === 'all' ||
-      content.categories[0]?.categoryType === filterType;
+      filterType === 'all' || content.categories[0] === filterType;
     return matchesSearch && matchesType;
   });
 };

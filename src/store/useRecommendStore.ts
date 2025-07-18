@@ -75,6 +75,8 @@ export const useRecommendStore = create<RecommendState>()(
           moviePool: [],
           currentIndex: 0,
           swipeCount: 0,
+          curatedContents: [],
+          isResultLoading: false,
         }),
 
       setCuratedContents: (contents: TicketComponent[]) =>

@@ -1,8 +1,9 @@
+// 플랫폼 로고 이미지 반환 함수
 export function getPlatformLogo(platform: string): string | undefined {
   switch (platform.toLowerCase()) {
     case '넷플릭스':
       return 'images/ott/netflix.png';
-    case 'apple tv': // 소문자 + 공백 포함
+    case '애플티비':
       return 'images/ott/appleTv.png';
     case '티빙':
       return 'images/ott/tving.png';

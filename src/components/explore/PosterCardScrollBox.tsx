@@ -6,41 +6,25 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
+} from '@components/ui/sheet';
 import { DetailBottomSheetContent } from '@components/explore/DetailBottomSheetContent';
+import { useGetContentListByBoxType } from '@hooks/explore/useGetContentListByBoxType';
 
 export interface PosterCardScrollBoxProps {
   BoxTitle: string;
+  BoxType: 'popular' | 'todayRecommend';
 }
 
 // 포스터를 모아놓은 스크롤 박스 컴포넌트 (여기는 x축으로 왼쪽/오른쪽 스크롤 가능)
-export const PosterCardScrollBox = ({ BoxTitle }: PosterCardScrollBoxProps) => {
+export const PosterCardScrollBox = ({
+  BoxTitle,
+  BoxType,
+}: PosterCardScrollBoxProps) => {
   const [isDetailBottomSheetOpen, setIsDetailBottomSheetOpen] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
 
-  // TODO: 해당 mockData는 네트워크 통신으로 대체해야 함
-  const mockSimpleMovieData = [
-    {
-      contentId: 1,
-      posterUrl: '/images/poster1.webp',
-    },
-    {
-      contentId: 2,
-      posterUrl: '/images/poster2.webp',
-    },
-    {
-      contentId: 3,
-      posterUrl: '/images/poster3.webp',
-    },
-    {
-      contentId: 4,
-      posterUrl: '/images/poster4.webp',
-    },
-    {
-      contentId: 5,
-      posterUrl: '/images/poster5.webp',
-    },
-  ];
+  // 포스터 스크롤 박스 타입에 따라 콘텐츠 목록 조회 API 호출하는 custom Hook 호출
+  const { data: contentData } = useGetContentListByBoxType(BoxType);
 
   const handlePosterClick = (movieId: number) => {
     //TODO: 이것을 네트워크 통신으로 대체해야 함
@@ -54,7 +38,7 @@ export const PosterCardScrollBox = ({ BoxTitle }: PosterCardScrollBoxProps) => {
         {BoxTitle}
       </span>
       <div className="w-full h-fit flex flex-row gap-3 overflow-x-auto scrollbar-hide px-6">
-        {mockSimpleMovieData.map((movie) => (
+        {contentData.map((movie) => (
           <PosterCard
             key={movie.contentId}
             title={'타이틀없음'}

@@ -14,15 +14,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@components/ui/carousel';
-import {
-  showInteractiveToast,
-  showSimpleToast,
-} from '@components/common/Toast';
+import { usePreferenceHandler } from '@hooks/profile/usePreferenceHandler';
 
 export default function EditPreferencePage() {
   const [selectedOtt, setSelectedOtt] = useState<string[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const router = useRouter();
+  const { handleSave } = usePreferenceHandler(selectedOtt, selectedGenres);
 
   const toggleSelection = (
     value: string,
@@ -35,31 +33,6 @@ export default function EditPreferencePage() {
       setFn([...selectedList, value]);
     }
   };
-
-  const handleSavePreferences = () => {
-    if (selectedOtt.length === 0 && selectedGenres.length === 0) {
-      showSimpleToast.error({
-        message: '변경할 항목을 선택해주세요.',
-        position: 'top-center',
-        className: 'w-full bg-black/80 shadow-lg',
-      });
-      return;
-    }
-
-    showInteractiveToast.confirm({
-      message: '정말 변경하시겠습니까?',
-      confirmText: '변경',
-      cancelText: '취소',
-      position: 'top-center',
-      className: 'w-[360px] bg-white shadow-lg',
-      onConfirm: () => {
-        console.log('✅ 저장된 OTT:', selectedOtt);
-        console.log('✅ 저장된 장르:', selectedGenres);
-        // TODO: 서버 전송 API 연동
-      },
-    });
-  };
-
   return (
     <div className="h-[calc(100vh-80px)] overflow-y-auto px-9 py-4 text-white max-w-[550px] mx-auto">
       {/* 헤더 */}
@@ -79,7 +52,7 @@ export default function EditPreferencePage() {
         <Button
           size="sm"
           className="bg-white/30 text-white px-4 py-1 rounded-md"
-          onClick={handleSavePreferences}
+          onClick={handleSave}
         >
           확인
         </Button>
@@ -112,7 +85,7 @@ export default function EditPreferencePage() {
         <Button
           size="sm"
           className="bg-white/30 text-white px-4 py-1 rounded-md"
-          onClick={handleSavePreferences}
+          onClick={handleSave}
         >
           확인
         </Button>

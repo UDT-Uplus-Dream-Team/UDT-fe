@@ -1,26 +1,18 @@
-import { ContentDetail } from '@/types/ContentDetail';
-import { RecommendedContent } from '@/types/mypage/RecommendedContent';
+import { ContentDetail } from '@type/ContentDetail';
+import type { FeedbackContent } from '@type/profile/RecommendedContent';
 
-export const recommendedPosters: RecommendedContent[] = [
+export const recommendedPosters: FeedbackContent[] = [
   {
     contentId: 1,
     title: '센과 치히로의 행방불명',
     posterUrl: '/images/poster1.webp',
-    rating: '전체 관람가',
-    genre: ['판타지', '모험'],
-    countries: ['일본'],
-    platform: ['넷플릭스', '디즈니+'],
-    categories: ['애니'],
+    categories: ['애니', '판타지', '모험'],
   },
   {
     contentId: 2,
     title: '이웃집 토토로',
     posterUrl: '/images/poster2.webp',
-    rating: '전체 관람가',
-    genre: ['가족', '힐링'],
-    countries: ['일본'],
-    platform: ['왓챠'],
-    categories: ['애니'],
+    categories: ['애니', '가족', '힐링'],
   },
 ];
 

@@ -73,7 +73,7 @@ export default function Step7({ onNext }: Step7Props) {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white px-4 relative">
       {/* 안내 멘트 */}
       <div className="absolute top-4 text-center z-20">
-        <p className="text-lg font-semibold leading-relaxed text-white mt-8">
+        <p className="md:text-lg  text-[16px] font-semibold leading-relaxed text-white mt-8">
           👀 <strong>눈 버튼</strong>을 눌러 상세 정보를 확인하고 <br />
           🔄 <strong>리롤 버튼(1회)</strong>으로 다른 콘텐츠도 확인해보세요!
         </p>

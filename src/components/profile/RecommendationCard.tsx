@@ -1,6 +1,6 @@
 'use client';
 
-import { RecommendationCardProps } from '@/types/mypage/Mypage';
+import { RecommendationCardProps } from '@type/profile/Mypage';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 

@@ -1,4 +1,3 @@
-// hooks/useFilteredContents.ts
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getFilteredContents } from '@lib/apis/explore/getFilteredContents';
 import {

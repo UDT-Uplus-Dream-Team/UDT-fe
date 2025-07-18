@@ -1,16 +1,19 @@
-import { UserProfile } from '@type/auth/UserProfile';
+import axiosInstance from './axiosInstance';
+import { UserProfile } from '@/types/auth/UserProfile'; // 필요 시 경로 수정
 
 export const authService = {
-  // 현재 사용자 정보 조회 (백엔드가 role 포함해서 다 줌)
+  /**
+   * 현재 로그인한 사용자 정보 조회
+   */
   getCurrentUser: async (): Promise<UserProfile> => {
-    const response = await fetch('/api/users/me', {
-      credentials: 'include', // 쿠키 포함
-    });
+    const response = await axiosInstance.get('/api/users/me');
+    return response.data;
+  },
 
-    if (!response.ok) {
-      throw new Error('사용자 정보를 가져올 수 없습니다');
-    }
-
-    return response.json();
+  /**
+   * 로그아웃 요청
+   */
+  logout: async (): Promise<void> => {
+    await axiosInstance.post('/api/auth/logout');
   },
 };

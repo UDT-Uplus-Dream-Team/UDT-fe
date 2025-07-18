@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { DetailedContentData } from '@type/explore/Explore';
 import Image from 'next/image';
-import { MockContentData } from '@utils/getMockContentData';
 
 // 트레일러 영상 재생 컴포넌트에 사용할 props 타입
 interface VideoPlayerProps {
-  contentData: MockContentData;
+  contentData: DetailedContentData;
   onLoadError?: () => void;
 }
 

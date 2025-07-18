@@ -1,5 +1,5 @@
 import { deleteFeedback } from '@/lib/apis/profile/feedbackService';
-import { FeedbackQueryParams } from '@/types/mypage/RecommendedContent';
+import { FeedbackQueryParams } from '@type/profile/RecommendedContent';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteFeedback = (

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import MovieCard from '@components/profile/MovieCard';
-import { MovieCardProps } from '@/types/mypage/Mypage';
+import { MovieCardProps } from '@type/profile/Mypage';
 
 const meta: Meta<typeof MovieCard> = {
   title: 'Mypage/MovieCard',

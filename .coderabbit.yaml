@@ -1,0 +1,14 @@
+version: '1'
+
+review:
+  summary: none # 요약 제거 (간단 요약도 안 함)
+  comments: inline # 필요한 부분에만 코멘트
+  language: ko # 한국어로 리뷰
+  diagrams: false # 시퀀스 다이어그램 같은 시각화 기능 꺼짐
+  tone: friendly # 친구처럼 자연스러운 말투 (선택 사항)
+
+cursor:
+  learn_from: ./cursor # 팀 컨벤션 학습 경로
+
+other_settings:
+  default: true # 나머지는 일반 PR 작성처럼

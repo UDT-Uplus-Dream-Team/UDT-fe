@@ -46,7 +46,7 @@ export const DetailBottomSheetContent = ({
     data: contentData,
     isLoading,
     isError,
-  } = useGetContentDetails(contentId, true); // 콘텐츠 상세 정보 데이터 조회
+  } = useGetContentDetails(contentId); // 콘텐츠 상세 정보 데이터 조회
 
   if (isLoading) {
     return <div>로딩 중입니다.</div>;
@@ -94,7 +94,7 @@ export const DetailBottomSheetContent = ({
     return () => {
       window.removeEventListener('resize', checkTextOverflow);
     };
-  }, [contentData?.description]); // description이 변경될 때마다 재확인
+  }, [contentData.description]); // description이 변경될 때마다 재확인
 
   // TODO: 실제 API 호출 시에 contentId에 따른 데이터 fetching 필요 (추후 get 요청을 하는 hook과 contentId를 연동해야 함)
   useEffect(() => {
@@ -115,8 +115,8 @@ export const DetailBottomSheetContent = ({
         fallback={
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
-              src={contentData?.backdropUrl || '/placeholder.svg'}
-              alt={contentData?.title || ''}
+              src={contentData.backdropUrl || '/placeholder.svg'}
+              alt={contentData.title || ''}
               fill
               className="object-cover"
             />
@@ -126,12 +126,12 @@ export const DetailBottomSheetContent = ({
             {/* 콘텐츠 정보 */}
             <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center text-center space-y-3">
               <span className="text-3xl font-bold text-white">
-                {contentData?.title}
+                {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData?.openDate.split('-')[0]}</span>
-                <span>{contentData?.rating}</span>
-                <span>{contentData?.countries[0]}</span>
+                <span>{contentData.openDate.split('-')[0]}</span>
+                <span>{contentData.rating}</span>
+                <span>{contentData.countries[0]}</span>
               </div>
             </div>
           </div>
@@ -139,14 +139,14 @@ export const DetailBottomSheetContent = ({
       >
         {hasValidTrailer ? (
           <VideoPlayerWrapper
-            contentData={contentData!}
+            contentData={contentData}
             onError={handleVideoError}
           />
         ) : (
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
-              src={contentData?.backdropUrl || '/placeholder.svg'}
-              alt={contentData?.title || ''}
+              src={contentData.backdropUrl || '/placeholder.svg'}
+              alt={contentData.title || ''}
               fill
               className="object-cover"
             />
@@ -156,12 +156,12 @@ export const DetailBottomSheetContent = ({
             {/* 콘텐츠 정보 */}
             <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center text-center space-y-3">
               <span className="text-3xl font-bold text-white">
-                {contentData?.title}
+                {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData?.openDate.split('-')[0]}</span>
-                <span>{contentData?.rating}</span>
-                <span>{contentData?.countries[0]}</span>
+                <span>{contentData.openDate.split('-')[0]}</span>
+                <span>{contentData.rating}</span>
+                <span>{contentData.countries[0]}</span>
               </div>
             </div>
           </div>

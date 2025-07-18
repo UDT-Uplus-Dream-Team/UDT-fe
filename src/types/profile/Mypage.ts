@@ -16,7 +16,7 @@ export interface MovieCardProps {
 export interface PlatFormButtonProps {
   platformName: string;
   iconUrl: string;
-  url: string | null;
+  url: string
 }
 
 export interface RecommendationCardProps {

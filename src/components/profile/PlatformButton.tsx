@@ -9,7 +9,7 @@ export const PlatformButton = ({
   url,
 }: PlatFormButtonProps) => {
   const handleClick = () => {
-    window.open(url, '_blank');
+    window.open(url!, '_blank');
   };
 
   return (

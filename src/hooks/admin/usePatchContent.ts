@@ -15,7 +15,7 @@ export const useUpdateContent = () => {
       data: ContentWithoutId;
     }) => patchContent(contentId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['adminContentList'] });
+      queryClient.invalidateQueries({ queryKey: ['infiniteAdminContentList'] });
     },
   });
 };

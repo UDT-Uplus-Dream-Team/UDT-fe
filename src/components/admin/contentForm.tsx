@@ -38,7 +38,7 @@ export default function ContentForm({
   onSave,
   onCancel,
 }: ContentFormProps) {
-  const [formData, setFormData] = useState<ContentWithoutId>({
+  const [formData, setFormData] = useState<ContentWithoutId>(() => ({
     title: content?.title || '',
     description: content?.description || '',
     posterUrl: content?.posterUrl || '',
@@ -53,7 +53,7 @@ export default function ContentForm({
     directors: content?.directors || [],
     casts: content?.casts || [],
     platforms: content?.platforms || [],
-  });
+  }));
 
   const [newDirector, setNewDirector] = useState('');
   const [newCast, setNewCast] = useState({ castName: '', castImageUrl: '' });
@@ -83,104 +83,95 @@ export default function ContentForm({
     }
   };
 
-  const addGenre = useCallback(
-    (selectedGenre: string) => {
-      if (!selectedGenre.trim()) return;
+  const addGenre = useCallback((selectedGenre: string) => {
+    if (!selectedGenre.trim()) return;
 
-      const currentGenres = formData.categories[0]?.genres || [];
-
-      // 중복 추가 방지
-      if (currentGenres.includes(selectedGenre)) return;
-
-      const updatedCategories = formData.categories.map((cat, index) =>
+    setFormData((prev) => {
+      const currentGenres = prev.categories[0]?.genres || [];
+      if (currentGenres.includes(selectedGenre)) return prev;
+      const updatedCategories = prev.categories.map((cat, index) =>
         index === 0 ? { ...cat, genres: [...cat.genres, selectedGenre] } : cat,
       );
+      return { ...prev, categories: updatedCategories };
+    });
+  }, []);
 
-      setFormData({ ...formData, categories: updatedCategories });
-    },
-    [formData.categories],
-  );
-
-  const removeGenre = useCallback(
-    (genreToRemove: string) => {
-      const updatedCategories = formData.categories.map((cat, index) =>
+  const removeGenre = useCallback((genreToRemove: string) => {
+    setFormData((prev) => {
+      const updatedCategories = prev.categories.map((cat, index) =>
         index === 0
           ? { ...cat, genres: cat.genres.filter((g) => g !== genreToRemove) }
           : cat,
       );
-      setFormData({ ...formData, categories: updatedCategories });
-    },
-    [formData.categories],
-  );
-
-  const addCountry = useCallback(
-    (selected: string) => {
-      if (!formData.countries.includes(selected)) {
-        setFormData({
-          ...formData,
-          countries: [...formData.countries, selected],
-        });
-      }
-    },
-    [formData.countries],
-  );
-
-  const removeCountry = useCallback((countryToRemove: string) => {
-    setFormData({
-      ...formData,
-      countries: formData.countries.filter((c) => c !== countryToRemove),
+      return { ...prev, categories: updatedCategories };
     });
   }, []);
 
+  const addCountry = useCallback((selected: string) => {
+    setFormData((prev) => {
+      if (!prev.countries.includes(selected)) {
+        return { ...prev, countries: [...prev.countries, selected] };
+      }
+      return prev;
+    });
+  }, []);
+
+  const removeCountry = useCallback((countryToRemove: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      countries: prev.countries.filter((c) => c !== countryToRemove),
+    }));
+  }, []);
+
   const addDirector = useCallback(() => {
-    if (
-      newDirector.trim() &&
-      !formData.directors.includes(newDirector.trim())
-    ) {
-      setFormData({
-        ...formData,
-        directors: [...formData.directors, newDirector.trim()],
-      });
-      setNewDirector('');
-    }
-  }, [newDirector, formData.directors]);
+    setFormData((prev) => {
+      if (newDirector.trim() && !prev.directors.includes(newDirector.trim())) {
+        return {
+          ...prev,
+          directors: [...prev.directors, newDirector.trim()],
+        };
+      }
+      return prev;
+    });
+    setNewDirector('');
+  }, [newDirector]);
 
   const removeDirector = useCallback((directorToRemove: string) => {
-    setFormData({
-      ...formData,
-      directors: formData.directors.filter((d) => d !== directorToRemove),
-    });
+    setFormData((prev) => ({
+      ...prev,
+      directors: prev.directors.filter((d) => d !== directorToRemove),
+    }));
   }, []);
 
   const addCast = useCallback(() => {
     if (newCast.castName.trim()) {
-      setFormData({ ...formData, casts: [...formData.casts, newCast] });
+      setFormData((prev) => ({ ...prev, casts: [...prev.casts, newCast] }));
       setNewCast({ castName: '', castImageUrl: '' });
     }
   }, [newCast]);
 
   const removeCast = useCallback((index: number) => {
-    setFormData({
-      ...formData,
-      casts: formData.casts.filter((_, i) => i !== index),
-    });
+    setFormData((prev) => ({
+      ...prev,
+      casts: prev.casts.filter((_, i) => i !== index),
+    }));
   }, []);
 
   const addPlatform = useCallback(() => {
     if (newPlatform.platformType.trim() && newPlatform.watchUrl.trim()) {
-      setFormData({
-        ...formData,
-        platforms: [...formData.platforms, newPlatform],
-      });
+      setFormData((prev) => ({
+        ...prev,
+        platforms: [...prev.platforms, newPlatform],
+      }));
       setNewPlatform({ platformType: '', watchUrl: '' });
     }
   }, [newPlatform]);
 
   const removePlatform = useCallback((index: number) => {
-    setFormData({
-      ...formData,
-      platforms: formData.platforms.filter((_, i) => i !== index),
-    });
+    setFormData((prev) => ({
+      ...prev,
+      platforms: prev.platforms.filter((_, i) => i !== index),
+    }));
   }, []);
 
   return (

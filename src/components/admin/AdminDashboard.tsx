@@ -73,7 +73,6 @@ export default function AdminDashboard() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editContent, setEditContent] = useState<ContentWithoutId | null>(null);
 
   // 상세/수정 데이터 fetch (상세 모달에서만 사용)
   const {
@@ -92,22 +91,14 @@ export default function AdminDashboard() {
     isEditDialogOpen ? (selectedContentId ?? undefined) : undefined,
   );
 
-  useEffect(() => {
-    if (editData && isEditDialogOpen) {
-      setEditContent(editData);
-    }
-  }, [editData, isEditDialogOpen]);
-
   // 상세/수정 모달 오픈 핸들러
   const openDetailDialog = useCallback((contentId: number) => {
     setSelectedContentId(contentId);
     setIsDetailDialogOpen(true);
   }, []);
-  const openEditDialog = useCallback((content?: ContentWithoutId) => {
-    if (content) {
-      setEditContent(content);
-      setIsEditDialogOpen(true);
-    }
+  const openEditDialog = useCallback((contentId: number) => {
+    setSelectedContentId(contentId);
+    setIsEditDialogOpen(true);
   }, []);
   const closeDetailDialog = useCallback(() => {
     setIsDetailDialogOpen(false);
@@ -115,7 +106,6 @@ export default function AdminDashboard() {
   }, []);
   const closeEditDialog = useCallback(() => {
     setIsEditDialogOpen(false);
-    setEditContent(null);
   }, []);
 
   // 필터 변경 시 refetch
@@ -223,12 +213,12 @@ export default function AdminDashboard() {
           <CardContent>
             <ScrollArea className="h-96">
               <div className="space-y-3 mb-3">
-                {allContents.map((content, index) => (
+                {allContents.map((content) => (
                   <ContentCard
-                    key={`${content.contentId}-${index}`}
+                    key={content.contentId}
                     content={content}
                     onView={openDetailDialog}
-                    onEdit={openDetailDialog}
+                    onEdit={openEditDialog}
                     onDelete={handleDeleteContent}
                   />
                 ))}
@@ -273,11 +263,11 @@ export default function AdminDashboard() {
               </DialogHeader>
               {isEditLoading ? (
                 <div>불러오는 중...</div>
-              ) : isEditError || !editContent ? (
+              ) : isEditError || !editData ? (
                 <div>수정 정보를 불러오지 못했습니다.</div>
               ) : (
                 <ContentForm
-                  content={editContent}
+                  content={editData}
                   onSave={handleEditContent}
                   onCancel={closeEditDialog}
                 />
@@ -304,7 +294,7 @@ export default function AdminDashboard() {
                   content={{ ...detailData, contentId: selectedContentId }}
                   onEdit={() => {
                     closeDetailDialog();
-                    openEditDialog(detailData);
+                    openEditDialog(selectedContentId);
                   }}
                   onClose={closeDetailDialog}
                 />

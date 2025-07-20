@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/apis/axiosInstance';
-import { TicketComponent } from '@/types/recommend/TicketComponent';
+import { TicketComponent } from '@type/recommend/TicketComponent';
 
 interface CuratedContentsResponse {
   success: boolean;

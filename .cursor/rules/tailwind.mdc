@@ -1,0 +1,12 @@
+---
+description: UDT Tailwind CSS 스타일링 컨벤션
+alwaysApply: false
+---
+
+- 클래스 순서:
+  1. Layout (flex, grid)
+  2. Spacing (p-, m-)
+  3. Typography (text-, font-)
+  4. Color (bg-, text-)
+  5. State (hover:, focus:)
+- Tailwind v4에서는 @import "tailwindcss"; 사용

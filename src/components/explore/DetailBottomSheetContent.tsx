@@ -37,16 +37,17 @@ const VideoPlayerWrapper = memo(
 export const DetailBottomSheetContent = ({
   contentId,
 }: DetailBottomSheetContentProps) => {
-  const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false); // 시놉시스(줄거리) 부분에 대해서 더 자세하게 보여주기 여부
-  const [hasValidTrailer, setHasValidTrailer] = useState(true); // 트레일러 주소가 유효한지 여부
-  const [isTextOverflowing, setIsTextOverflowing] = useState(false); // 텍스트가 5줄을 넘는지 여부
-
   const synopsisRef = useRef<HTMLSpanElement>(null); // 시놉시스 텍스트 요소 참조
   const {
     data: contentData,
     isLoading,
     isError,
   } = useGetContentDetails(contentId); // 콘텐츠 상세 정보 데이터 조회
+
+  const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false); // 시놉시스(줄거리) 부분에 대해서 더 자세하게 보여주기 여부
+  const [hasValidTrailer, setHasValidTrailer] = useState(true); // 트레일러 주소가 유효한지 여부
+  const [isTextOverflowing, setIsTextOverflowing] = useState(false); // 텍스트가 5줄을 넘는지 여부
+  const [imgSrc, setImgSrc] = useState<string>(contentData.backdropUrl); // 백드랍 이미지 소스
 
   if (isLoading) {
     return <div>로딩 중입니다.</div>;
@@ -115,10 +116,11 @@ export const DetailBottomSheetContent = ({
         fallback={
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
-              src={contentData.backdropUrl || '/placeholder.svg'}
-              alt={contentData.title || ''}
+              src={imgSrc}
+              alt={contentData.title || '썸네일'}
               fill
               className="object-cover"
+              onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
             />
             {/* 그라데이션 오버레이 */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
@@ -145,10 +147,11 @@ export const DetailBottomSheetContent = ({
         ) : (
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
-              src={contentData.backdropUrl || '/placeholder.svg'}
+              src={imgSrc}
               alt={contentData.title || ''}
               fill
               className="object-cover"
+              onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
             />
             {/* 그라데이션 오버레이 */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />

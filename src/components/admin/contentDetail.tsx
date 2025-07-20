@@ -209,13 +209,6 @@ export default function ContentDetail({
                             </div>
                           </div>
                         </div>
-                        <Badge
-                          variant={
-                            platform.isAvailable ? 'default' : 'secondary'
-                          }
-                        >
-                          {platform.isAvailable ? '이용 가능' : '이용 불가'}
-                        </Badge>
                       </div>
                     ))}
                   </div>

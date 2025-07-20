@@ -14,7 +14,12 @@ export interface ContentSearchConditionDTO {
 export interface FilterContentRequest {
   cursor: string | null;
   size: number;
-  contentSearchConditionDTO: ContentSearchConditionDTO;
+  categories: string[];
+  platforms: string[];
+  countries: string[];
+  openDates: string[]; // ISO 8601 datetime string
+  ratings: string[];
+  genres: string[];
 }
 
 // 필터링 요청 시 Response에 받는 타입

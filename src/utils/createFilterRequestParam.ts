@@ -106,5 +106,13 @@ export function createFilterRequestParam(
     });
   });
 
-  return result;
+  // 여기서 불필요한 빈 배열 제거 (정제)
+  const cleanedResult = Object.entries(result).reduce((acc, [key, value]) => {
+    if (Array.isArray(value) && value.length > 0) {
+      acc[key as keyof RequestFilterBody] = value;
+    }
+    return acc;
+  }, {} as Partial<RequestFilterBody>);
+
+  return cleanedResult as RequestFilterBody;
 }

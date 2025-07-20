@@ -26,7 +26,12 @@ export const useGetFilteredContents = ({
       return getFilteredContents({
         cursor,
         size,
-        contentSearchConditionDTO: filters,
+        categories: filters.categories,
+        platforms: filters.platforms,
+        countries: filters.countries,
+        openDates: filters.openDates,
+        ratings: filters.ratings,
+        genres: filters.genres,
       });
     },
     initialPageParam: null,

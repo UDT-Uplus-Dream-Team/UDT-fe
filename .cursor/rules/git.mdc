@@ -1,0 +1,10 @@
+---
+description: Git 브랜치 & 커밋 메시지 규칙 (Jira 연동)
+alwaysApply: true
+globs: ['.git/**/*', '**/*']
+---
+
+- 브랜치 형식: [Jira번호]-[작업유형]-[slug]
+- 커밋 메시지: [UDT-번호] 타입: 설명
+- 타입: feature, fix, refactor, chore, docs, test
+- 설명은 명령형, 현재 시제, 마침표 없이 작성

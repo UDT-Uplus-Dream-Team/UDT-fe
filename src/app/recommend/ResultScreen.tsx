@@ -9,19 +9,23 @@ import { Button } from '@components/ui/button';
 import { dummyMovies } from './ContentList';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 import { getCuratedContents } from '@lib/apis/recommend/getCuratedContents';
-
 import { useRecommendStore } from '@store/useRecommendStore';
 
 export const ResultScreen: React.FC = () => {
-  const setPhase = useRecommendStore((state) => state.setPhase);
+  const {
+    setPhase,
+    curatedContents,
+    setCuratedContents,
+    isResultLoading,
+    setIsResultLoading,
+  } = useRecommendStore();
 
-  const [movies, setMovies] = useState<TicketComponent[]>([]);
+  const [contents, setContents] = useState<TicketComponent[]>([]);
   const [rerollUsed, setRerollUsed] = useState<boolean[]>([
     false,
     false,
     false,
   ]);
-  const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(1);
   const [rerollCount, setRerollCount] = useState([0, 0, 0]);
   const [isFlipped, setIsFlipped] = useState<boolean[]>([false, false, false]);
@@ -29,7 +33,7 @@ export const ResultScreen: React.FC = () => {
   useEffect(() => {
     const fetchCuratedContents = async (): Promise<void> => {
       try {
-        setIsLoading(true);
+        setIsResultLoading(true);
 
         // API 호출과 최소 3초 대기를 동시에 시작
         const [response] = await Promise.all([
@@ -38,22 +42,23 @@ export const ResultScreen: React.FC = () => {
         ]);
 
         if (response.success && response.data.length > 0) {
-          setMovies(response.data);
+          setCuratedContents(response.data);
+          setContents(response.data.slice(0, 3));
         } else {
           // API 실패 시 fallback으로 더미 데이터
           console.warn(
             '큐레이션 데이터 로드 실패, 더미 데이터 사용:',
             response.message,
           );
-          setMovies(dummyMovies.slice(0, 3));
+          setContents(dummyMovies.slice(0, 3));
         }
 
-        setIsLoading(false);
+        setIsResultLoading(false);
       } catch (error: unknown) {
         console.error('큐레이션 콘텐츠 로드 중 오류:', error);
         // 에러 시 fallback으로 더미 데이터
-        setMovies(dummyMovies.slice(0, 3));
-        setIsLoading(false);
+        setContents(dummyMovies.slice(0, 3));
+        setIsResultLoading(false);
       }
     };
 
@@ -61,7 +66,8 @@ export const ResultScreen: React.FC = () => {
   }, []);
 
   const handleReroll = (idx: number) => {
-    if (rerollUsed[idx] || movies.length < 3 || dummyMovies.length < 6) return;
+    if (rerollUsed[idx] || curatedContents.length < 3 || dummyMovies.length < 6)
+      return;
 
     // 1단계: 카운터만 증가시켜서 exit 애니메이션 트리거
     setRerollCount((prev) => {
@@ -72,9 +78,10 @@ export const ResultScreen: React.FC = () => {
 
     // 2단계: exit 애니메이션 완료 후 새로운 데이터로 교체
     setTimeout(() => {
-      const next = [...movies];
-      next[idx] = dummyMovies[idx + 3];
-      setMovies(next);
+      const next = [...curatedContents];
+      if (curatedContents.length >= 6) next[idx] = curatedContents[idx + 3];
+      else next[idx] = dummyMovies[idx + 3];
+      setContents(next);
 
       setRerollUsed((prev) => {
         const copy = [...prev];
@@ -93,13 +100,13 @@ export const ResultScreen: React.FC = () => {
   };
 
   const handleAddContent = () => {
-    const movie = movies[currentIndex];
+    const movie = contents[currentIndex];
     if (movie) console.log('추가된 콘텐츠:', movie);
   };
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     if (info.offset.x > 50 && currentIndex > 0) setCurrentIndex((i) => i - 1);
-    else if (info.offset.x < -50 && currentIndex < movies.length - 1)
+    else if (info.offset.x < -50 && currentIndex < contents.length - 1)
       setCurrentIndex((i) => i + 1);
   };
 
@@ -113,7 +120,7 @@ export const ResultScreen: React.FC = () => {
     };
   };
 
-  if (isLoading) return <LoadingScreen />;
+  if (isResultLoading) return <LoadingScreen />;
 
   return (
     <div className="flex min-h-full items-center justify-center">
@@ -126,12 +133,12 @@ export const ResultScreen: React.FC = () => {
 
         {/* Carousel Container */}
         <div className="relative h-[600px] py-5 flex items-center justify-center">
-          {movies.map((movie, idx) => {
+          {contents.map((content, idx) => {
             const pos = getCardPosition(idx);
             const isCenter = idx === currentIndex;
             return (
               <motion.div
-                key={movie.contentId}
+                key={content.contentId}
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0}
@@ -151,7 +158,7 @@ export const ResultScreen: React.FC = () => {
                     {/* 리롤 애니메이션용 AnimatePresence */}
                     <AnimatePresence mode="wait">
                       <motion.div
-                        key={`reroll-${movie.contentId}-${rerollCount[idx]}`}
+                        key={`reroll-${content.contentId}-${rerollCount[idx]}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
@@ -161,7 +168,7 @@ export const ResultScreen: React.FC = () => {
                         {/* 플립 애니메이션용 AnimatePresence */}
                         <AnimatePresence mode="wait">
                           <motion.div
-                            key={`flip-${movie.contentId}-${
+                            key={`flip-${content.contentId}-${
                               isFlipped[idx] ? 'back' : 'front'
                             }`}
                             initial={{ rotateY: isFlipped[idx] ? 90 : -90 }}
@@ -172,7 +179,7 @@ export const ResultScreen: React.FC = () => {
                             style={{ transformStyle: 'preserve-3d' }}
                           >
                             <Ticket
-                              movie={movie}
+                              movie={content}
                               variant={isFlipped[idx] ? 'detail' : 'result'}
                               feedback="neutral"
                             />
@@ -184,7 +191,11 @@ export const ResultScreen: React.FC = () => {
                 ) : (
                   // 비중앙 카드는 static 렌더
                   <div className="relative w-full h-full">
-                    <Ticket movie={movie} variant="result" feedback="neutral" />
+                    <Ticket
+                      movie={content}
+                      variant="result"
+                      feedback="neutral"
+                    />
                   </div>
                 )}
 
@@ -239,7 +250,7 @@ export const ResultScreen: React.FC = () => {
 
           <Button
             onClick={() => {
-              setPhase('recommend');
+              setPhase('start');
             }}
             className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2"
           >

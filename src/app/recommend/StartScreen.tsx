@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Play, Film } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@components/ui/button';
+import { useRecommendStore } from '@store/useRecommendStore';
 
 interface StartScreenProps {
   onStart: () => void;
@@ -11,6 +12,7 @@ interface StartScreenProps {
 
 export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
   const [showContent, setShowContent] = useState(false);
+  const { resetRecommendProgress, setPhase } = useRecommendStore();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -18,6 +20,22 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
     }, 500);
     return () => clearTimeout(timer);
   }, []);
+
+  // 추천 시작 시 이전 상태 초기화 후 phase 변경
+  const handleStartRecommendation = () => {
+    console.log('🔄 추천 진행 상황 초기화 중...');
+
+    // 1. 이전 추천 진행 상황 모두 초기화
+    resetRecommendProgress();
+
+    // 2. phase를 recommend로 변경
+    setPhase('recommend');
+
+    // 3. 부모 컴포넌트의 onStart 콜백 실행 (호환성 유지)
+    onStart();
+
+    console.log('✅ 새로운 추천 세션 시작');
+  };
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center relative overflow-hidden">
@@ -184,7 +202,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
             transition={{ duration: 0.8, delay: 1.2 }}
           >
             <Button
-              onClick={onStart}
+              onClick={handleStartRecommendation}
               size="lg"
               className="px-15 py-4 text-lg font-semibold
                bg-gradient-to-r from-primary-100 to-primary-400 

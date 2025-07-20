@@ -12,6 +12,7 @@ interface VideoPlayerProps {
 export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [imgSrc, setImgSrc] = useState<string>(contentData.backdropUrl);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // YouTube iframe 로드 완료 핸들러 (최적화됨)
@@ -87,10 +88,11 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
     return (
       <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
         <Image
-          src={contentData.backdropUrl || '/placeholder.svg'}
+          src={imgSrc}
           alt={contentData.title}
           fill
           className="object-cover"
+          onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
         />
         {/* 그라데이션 오버레이 */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
@@ -116,10 +118,11 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
       {!isVideoReady && (
         <>
           <Image
-            src={contentData.backdropUrl || '/placeholder.svg'}
+            src={imgSrc}
             alt={contentData.title}
             fill
             className="object-cover"
+            onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
             priority
           />
           {/* 그라데이션 오버레이 */}

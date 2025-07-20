@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
+import { useState } from 'react';
 
 interface PosterCardProps {
   title: string | undefined;
@@ -21,6 +22,8 @@ export const PosterCard = ({
   isDeletable = false,
   isSelected = false,
 }: PosterCardProps) => {
+  const [imgSrc, setImgSrc] = useState<string | StaticImageData>(image);
+
   // 사이즈별 width/height 설정
   const dimensions =
     size === 'lg' ? { width: 160, height: 220 } : { width: 110, height: 154 };
@@ -38,11 +41,13 @@ export const PosterCard = ({
         maxWidth: `${dimensions.width}px`,
       }}
     >
+      {/* 포스터 이미지 (오류 나면 default-poster.png 로 대체)*/}
       <Image
-        src={image}
-        alt={title || ''}
+        src={imgSrc}
+        alt={title || '포스터'}
         width={dimensions.width}
         height={dimensions.height}
+        onError={() => setImgSrc('/images/default-poster.png')}
         style={{
           width: `${dimensions.width}px`,
           height: `${dimensions.height}px`,

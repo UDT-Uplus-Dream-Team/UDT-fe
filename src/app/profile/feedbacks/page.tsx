@@ -7,12 +7,9 @@ import { ChevronLeft, Pencil } from 'lucide-react';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
 import { useDeleteMode } from '@hooks/useDeleteMode';
 import { usePosterModal } from '@hooks/usePosterModal';
-import { ContentDetail } from '@type/ContentDetail';
 import { useInfiniteFeedbacks } from '@/hooks/profile/useInfiniteFeedbacks';
-import {
-  mockModalDislikedMovieDataList,
-  mockModalMovieDataList,
-} from './feedbacks';
+import { useGetStoredContentDetail } from '@/hooks/profile/useGetStoredContentDetail';
+import { FeedbackContent } from '@type/profile/FeedbackContent';
 
 const FeedbackPage = () => {
   const router = useRouter();
@@ -27,7 +24,7 @@ const FeedbackPage = () => {
 
   const observerRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
+    if (!hasNextPage || isFetchingNextPage || isEmpty) return;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         fetchNextPage();
@@ -37,12 +34,18 @@ const FeedbackPage = () => {
       observer.observe(observerRef.current);
     }
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage]);
+  }, [hasNextPage, isFetchingNextPage, tab]);
 
   const posters = useMemo(
-    () => data?.pages.flatMap((page) => page.contents) ?? [],
+    () =>
+      (data?.pages.flatMap((page) => page.item) ?? []).filter(
+        (item): item is FeedbackContent => item !== null && item !== undefined,
+      ),
     [data],
   );
+
+  //컨텐츠 아예 없을 경우 api 호출을 막음
+  const isEmpty = posters.length === 0;
 
   //삭제 모드 및 상세보기 상태를 관리
   const {
@@ -70,16 +73,12 @@ const FeedbackPage = () => {
   };
 
   // 상세 보기용 모달 데이터 연결
-  const modalSource =
-    tab === 'like' ? mockModalMovieDataList : mockModalDislikedMovieDataList;
+  const selectedContentId = selectedPosterData?.contentId ?? null;
 
-  const modalMovieData: ContentDetail | null =
-    modalSource.find(
-      (item: ContentDetail) => item.contentId === selectedPosterData?.contentId,
-    ) ?? null;
+  const { data: modalMovieData } = useGetStoredContentDetail(selectedContentId);
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center px-4 py-6">
+    <div className="min-h-[calc(100vh-80px)] w-full flex flex-col items-center px-4 py-6 overflow-y-auto">
       {/* 헤더 */}
       <div className="relative w-full max-w-screen-md flex items-center justify-center mb-2 h-10">
         {isDeleteMode ? (
@@ -98,7 +97,7 @@ const FeedbackPage = () => {
             <ChevronLeft size={24} />
           </button>
         )}
-        <h1 className="text-lg font-bold text-white">선호 콘텐츠</h1>
+        <h1 className="text-lg font-bold text-white">피드백 콘텐츠</h1>
         <div className="absolute right-0 pr-2">
           {isDeleteMode ? (
             <button
@@ -145,22 +144,35 @@ const FeedbackPage = () => {
 
       {/* 카드 리스트 */}
       <div className="w-full max-w-screen-md">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 justify-items-center">
-          {posters.map((poster, index) => (
-            <PosterCard
-              key={`${poster.feedbackId ?? poster.contentId}-${index}`}
-              title={poster.title}
-              image={poster.posterUrl}
-              size="lg"
-              isDeletable={isDeleteMode}
-              isSelected={
-                poster.feedbackId !== undefined &&
-                selectedIds.includes(poster.feedbackId)
-              }
-              onClick={() => handleCardClick(poster)}
-            />
-          ))}
-        </div>
+        {isEmpty ? (
+          <div className="text-center text-white/60 text-sm py-10">
+            현재 저장된 콘텐츠가 없습니다.
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 justify-items-center">
+            {posters.map((poster) => (
+              <PosterCard
+                // key={`${poster.feedbackId ?? poster.contentId}-${index}`}
+                key={poster.contentId}
+                title={poster.title}
+                image={poster.posterUrl}
+                size="lg"
+                isDeletable={isDeleteMode}
+                // isSelected={
+                //   poster.feedbackId !== undefined &&
+                //   selectedIds.includes(poster.feedbackId)
+                // }
+                // onClick={() => handleCardClick(poster)}
+                isSelected={
+                  // TODO: feedbackId가 백에서 내려오면 아래 조건을 다시 수정
+                  selectedIds.includes(poster.contentId)
+                }
+                onClick={() => handleCardClick(poster)}
+              />
+            ))}
+            <div ref={observerRef} className="h-1 w-full col-span-full" />
+          </div>
+        )}
       </div>
 
       {/* 삭제 바 */}
@@ -168,7 +180,11 @@ const FeedbackPage = () => {
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 bg-gray-700 h-[80px] px-4 flex items-center justify-between z-[100] w-full max-w-160">
           <p className="text-white text-sm">삭제할 콘텐츠를 선택하세요.</p>
           <button
-            onClick={handleDelete}
+            onClick={() => {
+              if (selectedIds.length > 0) {
+                handleDelete();
+              }
+            }}
             className={`text-2xl ${
               selectedIds.length > 0
                 ? 'text-white'

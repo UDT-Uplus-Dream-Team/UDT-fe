@@ -77,9 +77,15 @@ export default function ContentForm({
       return alert('카테고리는 필수 항목입니다.');
 
     if (content) {
-      onSave({ ...formData });
+      onSave({
+        ...formData,
+        openDate: formData.openDate + 'T00:00:00',
+      });
     } else {
-      onSave(formData);
+      onSave({
+        ...formData,
+        openDate: formData.openDate + 'T00:00:00',
+      });
     }
   };
 
@@ -316,7 +322,7 @@ export default function ContentForm({
                   <Input
                     id="openDate"
                     type="date"
-                    value={formData.openDate}
+                    value={formData.openDate?.split('T')[0] || ''}
                     onChange={(e) =>
                       setFormData({ ...formData, openDate: e.target.value })
                     }

@@ -15,7 +15,7 @@ import { recommendData } from './profileData';
 import Image from 'next/image';
 import { useGetUserProfile } from '@hooks/useGetUserProfile';
 import { Skeleton } from '@components/ui/skeleton';
-import { authService } from '@/lib/apis/authService';
+import { useLogoutHandler } from '@hooks/profile/useLogoutHandler';
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -26,22 +26,7 @@ const ProfilePage = () => {
     router.push('/profile/edit');
   };
 
-  const handleLogout = async () => {
-    try {
-      await authService.logout(); // 서버 로그아웃
-    } catch (error) {
-      console.warn('로그아웃 API 실패:', error);
-    }
-
-    // 상태 초기화
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // 로그인 페이지로 이동
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
-    }
-  };
+  const { handleLogout } = useLogoutHandler();
 
   if (isLoading) {
     return (

@@ -14,6 +14,7 @@ export const getFeedbackContents = async (
   return response.data;
 };
 
+//단일 삭제
 export const deleteFeedback = async (feedbackId: number): Promise<void> => {
   await axiosInstance.delete(`/api/users/me/feedbacks/${feedbackId}`, {});
 };

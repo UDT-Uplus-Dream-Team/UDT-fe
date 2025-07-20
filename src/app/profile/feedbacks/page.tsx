@@ -5,11 +5,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { PosterCard } from '@components/explore/PosterCard';
 import { ChevronLeft, Pencil } from 'lucide-react';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
-import { useDeleteMode } from '@hooks/useDeleteMode';
+import { useDeleteMode } from '@/hooks/profile/useDeleteMode';
 import { usePosterModal } from '@hooks/usePosterModal';
 import { useInfiniteFeedbacks } from '@/hooks/profile/useInfiniteFeedbacks';
 import { useGetStoredContentDetail } from '@/hooks/profile/useGetStoredContentDetail';
 import { FeedbackContent } from '@type/profile/FeedbackContent';
+import { useDeleteFeedbackToast } from '@/hooks/profile/useDeleteFeedbackToast';
 
 const FeedbackPage = () => {
   const router = useRouter();
@@ -55,10 +56,14 @@ const FeedbackPage = () => {
       setIsDeleteMode,
       handleCardClickInDeleteMode,
       handleSelectAll,
-      handleDelete,
       handleCancelDeleteMode,
     },
   } = useDeleteMode(posters);
+
+  const { handleDelete: triggerDelete } = useDeleteFeedbackToast({
+    selectedIds,
+    onDeleteComplete: handleCancelDeleteMode,
+  });
 
   const {
     state: { selectedPosterData },
@@ -151,6 +156,7 @@ const FeedbackPage = () => {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 justify-items-center">
             {posters.map((poster) => (
+              // TODO: feedbackId 기반으로 복구 예정
               <PosterCard
                 // key={`${poster.feedbackId ?? poster.contentId}-${index}`}
                 key={poster.contentId}
@@ -182,7 +188,7 @@ const FeedbackPage = () => {
           <button
             onClick={() => {
               if (selectedIds.length > 0) {
-                handleDelete();
+                triggerDelete();
               }
             }}
             className={`text-2xl ${

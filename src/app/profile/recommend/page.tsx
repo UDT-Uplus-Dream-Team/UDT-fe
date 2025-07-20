@@ -22,10 +22,19 @@ const RecommendPage = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteCuratedContents({ size: 20 });
 
+  const posters = useMemo(
+    () => data?.pages.flatMap((page) => page.item) ?? [],
+    [data],
+  );
+
+  //컨텐츠 아예 없을 경우 api 호출을 막음
+  const isEmpty = posters.length === 0;
+
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage || isEmpty) return;
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         fetchNextPage();
@@ -35,19 +44,11 @@ const RecommendPage = () => {
       observer.observe(observerRef.current);
     }
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage]);
-
-  const posters = useMemo(
-    () => data?.pages.flatMap((page) => page.item) ?? [],
-    [data],
-  );
+  }, [hasNextPage, isFetchingNextPage, isEmpty]);
 
   const handleCardClick = (poster: (typeof posters)[number]) => {
     openModal(poster);
   };
-
-  //컨텐츠 아예 없을 경우 api 호출을 막음
-  const isEmpty = posters.length === 0;
 
   // 상세보기 데이터 contentid로 찾아서 데이터 보여줌
   const selectedContentId = selectedPosterData?.contentId ?? null;

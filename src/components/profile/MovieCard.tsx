@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@components/ui/avatar';
 import { PLATFORMS } from '@lib/platforms';
-import { StoredContentDetail } from '@type/profile/storedContentDetail';
+import { StoredContentDetail } from '@type/profile/StoredContentDetail';
 
 const fallbackUrls: Record<string, string> = {
   넷플릭스: 'https://www.netflix.com',
@@ -36,16 +36,19 @@ const MovieCard = ({
     return `/images/ott/${matched.id}.png`;
   };
 
+  const [imgSrc, setImgSrc] = useState(backdropUrl);
+
   return (
     <div className="w-[300px] h-[538px] rounded-xl shadow-md bg-white flex flex-col overflow-hidden">
       {/* 썸네일 */}
       <div className="w-full h-[130px] relative">
         <Image
-          src={backdropUrl}
+          src={imgSrc}
           alt={title}
           layout="fill"
           objectFit="cover"
           className="rounded-t-xl"
+          onError={() => setImgSrc('/images/default-backdrop.png')}
         />
       </div>
 

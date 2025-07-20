@@ -14,6 +14,7 @@ import { FeedbackContent } from '@type/profile/FeedbackContent';
 const FeedbackPage = () => {
   const router = useRouter();
   const [tab, setTab] = useState<'like' | 'dislike'>('like');
+
   //실제 데이터 연결(로딩, 에러 나중에 추가)
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteFeedbacks({
@@ -21,6 +22,17 @@ const FeedbackPage = () => {
       feedbackType: tab === 'like' ? 'LIKE' : 'DISLIKE',
       feedbackSortType: 'NEWEST',
     });
+
+  const posters = useMemo(
+    () =>
+      (data?.pages.flatMap((page) => page.item) ?? []).filter(
+        (item): item is FeedbackContent => item !== null && item !== undefined,
+      ),
+    [data],
+  );
+
+  //컨텐츠 아예 없을 경우 api 호출을 막음
+  const isEmpty = posters.length === 0;
 
   const observerRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -34,18 +46,7 @@ const FeedbackPage = () => {
       observer.observe(observerRef.current);
     }
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, tab]);
-
-  const posters = useMemo(
-    () =>
-      (data?.pages.flatMap((page) => page.item) ?? []).filter(
-        (item): item is FeedbackContent => item !== null && item !== undefined,
-      ),
-    [data],
-  );
-
-  //컨텐츠 아예 없을 경우 api 호출을 막음
-  const isEmpty = posters.length === 0;
+  }, [hasNextPage, isFetchingNextPage, tab, isEmpty]);
 
   //삭제 모드 및 상세보기 상태를 관리
   const {
@@ -74,7 +75,6 @@ const FeedbackPage = () => {
 
   // 상세 보기용 모달 데이터 연결
   const selectedContentId = selectedPosterData?.contentId ?? null;
-
   const { data: modalMovieData } = useGetStoredContentDetail(selectedContentId);
 
   return (
@@ -128,7 +128,7 @@ const FeedbackPage = () => {
               : 'text-gray-400'
           }`}
         >
-          좋아요 {tab === 'like' ? posters.length : ''}
+          좋아요
         </button>
         <button
           onClick={() => setTab('dislike')}
@@ -138,7 +138,7 @@ const FeedbackPage = () => {
               : 'text-gray-400'
           }`}
         >
-          싫어요 {tab === 'dislike' ? posters.length : ''}
+          싫어요
         </button>
       </div>
 

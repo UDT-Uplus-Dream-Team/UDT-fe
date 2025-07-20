@@ -7,7 +7,10 @@ import { getTypeIcon, getTypeBadgeColor } from '@utils/getContentUtils';
 import type { ContentSummary } from '@type/admin/Content';
 import Image from 'next/image';
 import { memo, useMemo } from 'react';
-import { showInteractiveToast } from '@components/common/Toast';
+import {
+  showInteractiveToast,
+  showSimpleToast,
+} from '@components/common/Toast';
 
 interface ContentCardProps {
   content: ContentSummary;
@@ -18,16 +21,31 @@ interface ContentCardProps {
 
 function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
   const TypeIcon = useMemo(
-    () => getTypeIcon(content.categories[0]?.categoryType || ''),
+    () => getTypeIcon(content.categories[0] || ''),
     [content.categories],
   );
-
   const handleDelete = () => {
     showInteractiveToast.confirm({
       message: '정말로 이 콘텐츠를 삭제하시겠습니까?',
-      onConfirm: () => onDelete(content.contentId),
       confirmText: '삭제',
       cancelText: '취소',
+      className: 'border',
+      onConfirm: async () => {
+        try {
+          await onDelete(content.contentId);
+          showSimpleToast.success({
+            message: '콘텐츠가 삭제되었습니다.',
+            position: 'top-center',
+            className: 'border',
+          });
+        } catch {
+          showSimpleToast.error({
+            message: '삭제 중 문제가 발생했습니다. 다시 시도해주세요.',
+            position: 'top-center',
+            className: 'border',
+          });
+        }
+      },
     });
   };
 
@@ -53,15 +71,11 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
             </div>
 
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-              <span>{content.openDate}</span>
+              <span>{content.openDate?.split('T')[0] || ''}</span>
               <span>•</span>
 
-              <Badge
-                className={getTypeBadgeColor(
-                  content.categories[0]?.categoryType || '',
-                )}
-              >
-                {content.categories[0]?.categoryType}
+              <Badge className={getTypeBadgeColor(content.categories[0] || '')}>
+                {content.categories[0]}
               </Badge>
               <Badge className="bg-white border border-gray-300 text-black rounded-full px-3 py-1 font-bold">
                 {content.rating}
@@ -70,9 +84,9 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
 
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">플랫폼:</span>
-              {content.platforms.slice(0, 3).map((platform) => (
-                <Badge key={platform.platformType} className="text-xs">
-                  {platform.platformType}
+              {content.platforms.slice(0, 3).map((platform, index) => (
+                <Badge key={`${platform}-${index}`} className="text-xs">
+                  {platform}
                 </Badge>
               ))}
               {content.platforms.length > 3 && (

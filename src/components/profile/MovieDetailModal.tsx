@@ -2,12 +2,12 @@
 
 import { X } from 'lucide-react';
 import MovieCard from '@components/profile/MovieCard';
-import { ContentDetail } from '@/types/ContentDetail';
+import { StoredContentDetail } from '@type/profile/StoredContentDetail';
 
 interface MovieDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data: ContentDetail;
+  data: StoredContentDetail;
 }
 
 const MovieDetailModal = ({ isOpen, onClose, data }: MovieDetailModalProps) => {

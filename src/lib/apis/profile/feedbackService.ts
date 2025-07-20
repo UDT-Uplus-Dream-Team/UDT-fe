@@ -1,7 +1,7 @@
 import {
   FeedbackQueryParams,
   GetFeedbackContentsResponse,
-} from '@type/profile/RecommendedContent';
+} from '@type/profile/FeedbackContent';
 import axiosInstance from '../axiosInstance';
 
 // [GET] /api/users/me/feedbacks → 좋아요/싫어요 피드백 콘텐츠 조회

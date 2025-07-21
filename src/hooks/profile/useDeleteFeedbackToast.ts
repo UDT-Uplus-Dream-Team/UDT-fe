@@ -34,10 +34,18 @@ export const useDeleteFeedbackToast = ({
       onConfirm: async () => {
         try {
           await Promise.all(selectedIds.map((id) => deleteFeedbacks(id)));
-          showSimpleToast.success({ message: '삭제가 완료되었습니다.' });
+          showSimpleToast.success({
+            message: '삭제가 완료되었습니다.',
+            position: 'top-center',
+            className: 'w-full text-white bg-black',
+          });
           onDeleteComplete(); // 상태 초기화
         } catch {
-          showSimpleToast.error({ message: '삭제 중 오류가 발생했습니다.' });
+          showSimpleToast.error({
+            message: '삭제 중 오류가 발생했습니다.',
+            position: 'top-center',
+            className: 'w-full text-white bg-black',
+          });
         }
       },
     });

@@ -158,20 +158,14 @@ const FeedbackPage = () => {
             {posters.map((poster) => (
               // TODO: feedbackId 기반으로 복구 예정
               <PosterCard
-                // key={`${poster.feedbackId ?? poster.contentId}-${index}`}
-                key={poster.contentId}
+                key={poster.feedbackId ?? poster.contentId}
                 title={poster.title}
                 image={poster.posterUrl}
                 size="lg"
                 isDeletable={isDeleteMode}
-                // isSelected={
-                //   poster.feedbackId !== undefined &&
-                //   selectedIds.includes(poster.feedbackId)
-                // }
-                // onClick={() => handleCardClick(poster)}
                 isSelected={
-                  // TODO: feedbackId가 백에서 내려오면 아래 조건을 다시 수정
-                  selectedIds.includes(poster.contentId)
+                  poster.feedbackId !== undefined &&
+                  selectedIds.includes(poster.feedbackId)
                 }
                 onClick={() => handleCardClick(poster)}
               />

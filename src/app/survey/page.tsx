@@ -7,23 +7,32 @@ import SurveyComplete from '@components/survey/SurveyComplete';
 import { useState } from 'react';
 import { SurveyProvider } from '@store/SurveyContext';
 import { useSurveyContext } from '@hooks/useSurveyContext';
+import { usePostSurvey } from '@hooks/survey/usePostSurvey';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const { selectedPlatforms, selectedGenres, watchedContents } =
-    useSurveyContext();
+  const { selectedPlatforms, selectedGenres } = useSurveyContext();
+  const { mutate: submitSurvey } = usePostSurvey();
 
   const handleNext = () => {
     if (step < 3) {
       setStep((prev) => (prev + 1) as 1 | 2 | 3 | 4);
     } else {
-      const requestBody = {
-        platforms: selectedPlatforms,
-        genres: selectedGenres,
-        contents: watchedContents,
-      };
-      console.log('설문 조사 제출', JSON.stringify(requestBody, null, 2));
-      setStep(4);
+      submitSurvey(
+        {
+          platforms: selectedPlatforms,
+          genres: selectedGenres,
+        },
+        {
+          onSuccess: () => {
+            setStep(4); // 성공 시 완료 페이지로 이동
+          },
+          onError: (error) => {
+            console.error('설문조사 제출 실패', error);
+            alert('설문조사 제출에 실패했습니다.');
+          },
+        },
+      );
     }
   };
 

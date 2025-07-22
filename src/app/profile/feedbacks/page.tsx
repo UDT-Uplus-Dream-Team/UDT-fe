@@ -156,7 +156,6 @@ const FeedbackPage = () => {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 justify-items-center">
             {posters.map((poster) => (
-              // TODO: feedbackId 기반으로 복구 예정
               <PosterCard
                 key={poster.feedbackId ?? poster.contentId}
                 title={poster.title}

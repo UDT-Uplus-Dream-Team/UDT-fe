@@ -14,10 +14,12 @@ export const useGetContentListByBoxType = (
   const data = isPopular ? popularQuery.data : todayQuery.data; // 포스터 스크롤 박스 타입에 따라 콘텐츠 목록 반환
   const isLoading = isPopular ? popularQuery.isLoading : todayQuery.isLoading; // 포스터 스크롤 박스 타입에 따라 로딩 상태 반환
   const isError = isPopular ? popularQuery.isError : todayQuery.isError; // 포스터 스크롤 박스 타입에 따라 에러 상태 반환
+  const refetch = isPopular ? popularQuery.refetch : todayQuery.refetch; // 다시 불러오기 함수
 
   return {
     data: data || [],
     isLoading,
     isError,
+    refetch,
   };
 };

@@ -3,25 +3,22 @@ import { Ticket } from '@components/Ticket/Ticket';
 import type { TicketComponent } from '@type/recommend/TicketComponent';
 
 const dummyMovie: TicketComponent = {
-  // MovieData 타입 정의에 맞게 필드 채워주세요
   contentId: 1,
-  title: '인셉션',
+  title: '쿵푸팬더 4',
   description:
-    '꿈을 매개로 의식을 조작하는 팀이 마지막 미션을 수행하는 과정을 그린 크리스토퍼 놀란 감독의 대표작.꿈을 매개로 의식을 조작하는 팀이 마지막 미션을 수행하는 과정을 그린 크리스토퍼 놀란 감독의 대표작.',
-  posterUrl: 'poster.webp',
-  backdropUrl: 'snapshot.webp',
-  openDate: '2010-07-16',
-  runningTime: 148,
-  episode: 12,
-  rating: '12세 관람가',
-  categories: {
-    category: '영화',
-    genres: ['SF', '코미디'],
-  },
-  directors: ['크리스토퍼 놀란'],
-  platforms: ['Netflix', 'Amazon Prime', 'Disney+'],
+    '용의 전사로 거듭난 포는 평화의 계곡의 영적 지도자가 되라는 명을 받는다. 하지만 새로운 적 카멜레온이 나타나 과거의 모든 악역들을 되살리려 하자, 포는 새로운 동료와 함께 이에 맞서야 한다.',
+  posterUrl: '/poster.webp',
+  backdropUrl: '/snapshot.webp',
+  openDate: '2024년 3월 28일',
+  runningTime: 94,
+  episode: '1회차',
+  rating: '전체관람가',
+  category: '애니메이션',
+  genres: ['코미디', '액션'],
+  directors: ['마이크 미첼'],
+  casts: ['잭 블랙', '아콰피나', '더스틴 호프만'],
+  platforms: ['넷플릭스', '디즈니+'],
 };
-
 const meta = {
   title: 'Components/Ticket',
   component: Ticket,

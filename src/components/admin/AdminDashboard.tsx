@@ -54,11 +54,11 @@ export default function AdminDashboard() {
         fetchNextPage();
       }
     });
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
+    const element = loadMoreRef.current;
+    if (element) observer.observe(element);
+
     return () => {
-      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
+      if (element) observer.unobserve(element);
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 

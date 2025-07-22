@@ -21,7 +21,7 @@ interface ContentCardProps {
 
 function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
   const TypeIcon = useMemo(
-    () => getTypeIcon(content.categories[0] || ''),
+    () => getTypeIcon(content.categories?.[0] || ''),
     [content.categories],
   );
   const handleDelete = () => {
@@ -74,7 +74,9 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
               <span>{content.openDate?.split('T')[0] || ''}</span>
               <span>•</span>
 
-              <Badge className={getTypeBadgeColor(content.categories[0] || '')}>
+              <Badge
+                className={getTypeBadgeColor(content.categories?.[0] || '')}
+              >
                 {content.categories[0]}
               </Badge>
               <Badge className="bg-white border border-gray-300 text-black rounded-full px-3 py-1 font-bold">

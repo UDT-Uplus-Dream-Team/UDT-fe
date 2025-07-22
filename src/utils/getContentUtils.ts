@@ -34,7 +34,7 @@ export const getTypeBadgeColor = (type: string) => {
 export const generateChartData = (contents: ContentSummary[]) => {
   const chartData = contents.reduce(
     (acc, content) => {
-      const category = content.categories[0] || '기타';
+      const category = content.categories?.[0] || '기타';
       const existing = acc.find((item) => item.name === category);
       if (existing) {
         existing.count += 1;

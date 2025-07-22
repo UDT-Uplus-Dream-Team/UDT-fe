@@ -608,7 +608,7 @@ export default function ContentForm({
         </TabsContent>
 
         <TabsContent value="platforms" className="space-y-6 mt-3">
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle className="mt-5">감독 정보</CardTitle>
             </CardHeader>
@@ -713,7 +713,7 @@ export default function ContentForm({
                 ))}
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </TabsContent>
       </Tabs>
 

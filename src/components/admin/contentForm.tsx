@@ -76,17 +76,14 @@ export default function ContentForm({
     if (!categories.length || !categories[0].categoryType.trim())
       return alert('카테고리는 필수 항목입니다.');
 
-    if (content) {
-      onSave({
-        ...formData,
-        openDate: formData.openDate + 'T00:00:00',
-      });
-    } else {
-      onSave({
-        ...formData,
-        openDate: formData.openDate + 'T00:00:00',
-      });
-    }
+    const normalizedDate = formData.openDate.includes('T00:00:00')
+      ? formData.openDate
+      : formData.openDate + 'T00:00:00';
+
+    onSave({
+      ...formData,
+      openDate: normalizedDate,
+    });
   };
 
   const addGenre = useCallback((selectedGenre: string) => {
@@ -181,24 +178,18 @@ export default function ContentForm({
   }, []);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 ">
-      <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="basic" className="cursor-pointer">
-            기본 정보
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <Tabs defaultValue="contentInfo" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="contentInfo" className="cursor-pointer">
+            콘텐츠 등록
           </TabsTrigger>
-          <TabsTrigger value="details" className="cursor-pointer">
-            상세 정보
-          </TabsTrigger>
-          <TabsTrigger value="people" className="cursor-pointer">
-            인물 정보
-          </TabsTrigger>
+
           <TabsTrigger value="platforms" className="cursor-pointer">
-            플랫폼
+            인물 등록
           </TabsTrigger>
         </TabsList>
-
-        <TabsContent value="basic" className="space-y-4">
+        <TabsContent value="contentInfo" className="space-y-6 mt-3">
           <Card>
             <CardHeader>
               <CardTitle className="mt-5">기본 정보</CardTitle>
@@ -306,9 +297,7 @@ export default function ContentForm({
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="details" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle className="mt-5">상세 정보</CardTitle>
@@ -449,9 +438,7 @@ export default function ContentForm({
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="people" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle className="mt-5">감독 정보</CardTitle>
@@ -558,9 +545,7 @@ export default function ContentForm({
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="platforms" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle className="mt-5">시청 플랫폼</CardTitle>
@@ -612,6 +597,115 @@ export default function ContentForm({
                       className="cursor-pointer"
                       size="sm"
                       onClick={() => removePlatform(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="platforms" className="space-y-6 mt-3">
+          <Card>
+            <CardHeader>
+              <CardTitle className="mt-5">감독 정보</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2 mb-3">
+                <Input
+                  value={newDirector}
+                  onChange={(e) => setNewDirector(e.target.value)}
+                  placeholder="감독 이름 입력"
+                  onKeyDown={(e) =>
+                    e.key === 'Enter' && (e.preventDefault(), addDirector())
+                  }
+                />
+                <Button
+                  type="button"
+                  onClick={addDirector}
+                  className="cursor-pointer"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {formData.directors.map((director) => (
+                  <Badge
+                    key={director}
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
+                    {director}
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      className="h-4 w-4 p-0 cursor-pointer"
+                      onClick={() => removeDirector(director)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="mt-5">출연진 정보</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <Input
+                  value={newCast.castName}
+                  onChange={(e) =>
+                    setNewCast({ ...newCast, castName: e.target.value })
+                  }
+                  placeholder="배우 이름"
+                />
+                <Input
+                  value={newCast.castImageUrl}
+                  onChange={(e) =>
+                    setNewCast({ ...newCast, castImageUrl: e.target.value })
+                  }
+                  placeholder="배우 이미지 URL"
+                />
+              </div>
+              <Button
+                type="button"
+                onClick={addCast}
+                className="w-full cursor-pointer"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                출연진 추가
+              </Button>
+              <div className="space-y-2 mb-5">
+                {formData.casts.map((cast, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 border rounded"
+                  >
+                    <div className="flex items-center gap-2">
+                      {cast.castImageUrl && (
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+                          <Image
+                            src={cast.castImageUrl || '/placeholder.svg'}
+                            alt={cast.castName || '출연진 이미지'}
+                            fill
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <span>{cast.castName}</span>
+                    </div>
+                    <Button
+                      type="button"
+                      className="cursor-pointer"
+                      size="sm"
+                      onClick={() => removeCast(index)}
                     >
                       <X className="h-4 w-4" />
                     </Button>

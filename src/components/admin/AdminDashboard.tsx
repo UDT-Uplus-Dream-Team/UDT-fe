@@ -196,8 +196,7 @@ export default function AdminDashboard() {
                 className="bg-slate-900 hover:bg-slate-800 text-white rounded-lg px-4 py-5 flex items-center font-semibold text-md min-w-[160px] cursor-pointer"
                 onClick={() => setIsAddDialogOpen(true)}
               >
-                <Plus className="mr-2 h-4 w-4" />
-                콘텐츠 추가
+                <Plus className="mr-2 h-4 w-4" />새 항목 추가
               </Button>
             </div>
 
@@ -237,11 +236,11 @@ export default function AdminDashboard() {
         {/* 다이얼로그들 */}
         {isAddDialogOpen && (
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[75vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>새 콘텐츠 추가</DialogTitle>
+                <DialogTitle>새 정보 추가</DialogTitle>
                 <DialogDescription>
-                  새로운 콘텐츠 정보를 입력해주세요.
+                  콘텐츠/인물 정보를 등록해주세요.
                 </DialogDescription>
               </DialogHeader>
               <ContentForm
@@ -254,9 +253,9 @@ export default function AdminDashboard() {
 
         {isEditDialogOpen && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[75vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>콘텐츠 수정</DialogTitle>
+                <DialogTitle>정보 수정</DialogTitle>
                 <DialogDescription>
                   콘텐츠 정보를 수정해주세요.
                 </DialogDescription>

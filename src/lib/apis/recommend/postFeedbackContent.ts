@@ -28,7 +28,7 @@ export const postFeedbackContent = async (
     };
 
     const response = await axiosInstance.post(
-      '/recommend/contents/feedback',
+      '/api/recommend/contents/feedbacks',
       requestData,
     );
 

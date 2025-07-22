@@ -15,7 +15,7 @@ export const getCuratedContents =
   async (): Promise<CuratedContentsResponse> => {
     try {
       const response = await axiosInstance.get<TicketComponent[]>(
-        '/api/recommend/curated',
+        '/api/v1/contents/recommendations/curated',
       );
 
       return {

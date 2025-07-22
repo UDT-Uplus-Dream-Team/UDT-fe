@@ -1,8 +1,3 @@
-export interface Category {
-  category: string;
-  genres: string[];
-}
-
 export interface TicketComponent {
   contentId: number;
   title: string;
@@ -11,9 +6,19 @@ export interface TicketComponent {
   backdropUrl: string;
   openDate: string;
   runningTime: number;
-  episode: number;
+  episode: string;
   rating: string;
-  categories: Category;
+  category: string;
+  genres: string[];
   directors: string[];
+  casts: string[];
   platforms: string[];
 }
+
+export const getMovieCategory = (movie: TicketComponent): string => {
+  return movie.category;
+};
+
+export const getMovieGenres = (movie: TicketComponent): string[] => {
+  return movie.genres;
+};

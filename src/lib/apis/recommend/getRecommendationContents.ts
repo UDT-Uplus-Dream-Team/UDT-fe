@@ -1,4 +1,3 @@
-// src/lib/apis/recommend/getRecommendationContents.ts
 import axiosInstance from '@lib/apis/axiosInstance';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 import { AxiosResponse, AxiosError } from 'axios';
@@ -55,7 +54,7 @@ export const getRecommendationContents = async (
     console.log('추천 콘텐츠 API 요청 시작:', { limit });
 
     const response: AxiosResponse<TicketComponent[]> = await axiosInstance.get(
-      `/v1/contents/recommendations`,
+      `/api/v1/contents/recommendations`,
       {
         params: { limit },
       },

@@ -42,7 +42,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
           <div className="space-y-1 pb-2">
             <h3 className="font-bold text-lg leading-tight">{movie.title}</h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{movie.categories.genres.join(', ')}</span>
+              <span>{movie.genres.join(', ')}</span>
               <span>•</span>
               <span>{movie.rating}</span>
             </div>
@@ -153,7 +153,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
           <div className="space-y-1">
             <h3 className="font-bold text-lg leading-tight">{movie.title}</h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{movie.categories.genres.join(', ')}</span>
+              <span>{movie.genres.join(', ')}</span>
               <span>•</span>
               <span>{movie.rating}</span>
             </div>
@@ -216,7 +216,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
               {movie.title}
             </h3>
             <div className="flex flex-wrap gap-1 pb-5 justify-center">
-              {movie.categories.genres.slice(0, 4).map((genre) => (
+              {movie.genres.slice(0, 4).map((genre) => (
                 <Badge
                   key={genre}
                   variant="outline"
@@ -226,12 +226,12 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
                 </Badge>
               ))}
 
-              {movie.categories.genres.length > 4 && (
+              {movie.genres.length > 4 && (
                 <Badge
                   variant="outline"
                   className="text-xs border-white/30 text-white"
                 >
-                  +{movie.categories.genres.length - 4}
+                  +{movie.genres.length - 4}
                 </Badge>
               )}
             </div>

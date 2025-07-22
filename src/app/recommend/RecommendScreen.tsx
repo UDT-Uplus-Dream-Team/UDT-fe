@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Ticket } from '@components/Ticket/Ticket';
 import { Button } from '@components/ui/button';
 import { showInteractiveToast } from '@components/common/Toast';
-import { fetchMoreContents, getAvailableContents } from './RecommendContent';
 import { postFeedbackContent } from '@lib/apis/recommend/postFeedbackContent';
 import { useRecommendStore } from '@store/useRecommendStore';
+import { useFetchRecommendations } from '@hooks/recommend/useGetRecommendationContents';
 import { FinishScreen } from './FinishScreen';
 
 type SwipeDirection = 'left' | 'right' | 'up';
@@ -33,6 +33,13 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     shouldShowFinish,
   } = useRecommendStore();
 
+  // TanStack Query: 추천 콘텐츠 가져오기
+  const {
+    mutateAsync: fetchRecommendations,
+    isPending: isLoading,
+    error: fetchError,
+  } = useFetchRecommendations();
+
   // 로컬 UI 상태들 (애니메이션 관련은 persist 불필요)
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(
@@ -46,56 +53,62 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     null,
   );
 
-  // ── 초기 데이터 로드 또는 기존 상태 복원 ────────────────────────────
+  // ── 초기 데이터 로드 ────────────────────────────
   useEffect(() => {
-    const initializeContent = async () => {
-      // 이미 영화 데이터가 있다면 복원, 없다면 새로 로드
-      if (moviePool.length === 0) {
-        try {
-          console.log('초기 콘텐츠 로딩 시작...');
-          const initialMovies = getAvailableContents();
-          console.log(
-            `${initialMovies.length}개의 초기 콘텐츠가 로드되었습니다.`,
-          );
-          setMoviePool(initialMovies);
-        } catch (error: unknown) {
-          console.error('초기 콘텐츠 로딩 실패:', error);
-        }
-      } else {
+    const loadInitialMovies = async () => {
+      if (moviePool.length > 0) {
         console.log('기존 진행 상황 복원:', {
           movieCount: moviePool.length,
           currentIndex,
           swipeCount,
         });
+        return;
+      }
+
+      try {
+        console.log('초기 콘텐츠 로딩 시작...');
+        const initialMovies = await fetchRecommendations(10);
+        console.log(
+          `${initialMovies.length}개의 초기 콘텐츠가 로드되었습니다.`,
+        );
+        setMoviePool(initialMovies);
+      } catch (error) {
+        console.error('초기 콘텐츠 로딩 실패:', error);
       }
     };
 
-    initializeContent();
+    loadInitialMovies();
   }, []); // 빈 의존성 배열 - 한 번만 실행
 
   // 현재 영화 정보
   const currentMovie = getCurrentMovie();
   const nextMovie = getNextMovie();
 
-  // ── currentIndex가 5의 배수일 때마다 새로운 콘텐츠 추가 ───────────────
+  // ── 추가 콘텐츠 로드 (5개마다) ───────────────
   useEffect(() => {
-    const loadMoreContents = async () => {
-      if (shouldLoadMoreContent()) {
-        try {
-          console.log(`currentIndex ${currentIndex}: 추가 콘텐츠 로딩 시작...`);
-          const newMovies = await fetchMoreContents();
-          console.log(`${newMovies.length}개의 새로운 영화가 추가되었습니다.`);
-          addMoviesToPool(newMovies);
-        } catch (error: unknown) {
-          console.error('영화 데이터 추가 실패:', error);
-        }
+    const loadMoreMovies = async () => {
+      if (!shouldLoadMoreContent()) return;
+
+      try {
+        console.log(`currentIndex ${currentIndex}: 추가 콘텐츠 로딩 시작...`);
+        const newMovies = await fetchRecommendations(5);
+        console.log(`${newMovies.length}개의 새로운 영화가 추가되었습니다.`);
+        addMoviesToPool(newMovies);
+      } catch (error) {
+        console.error('추가 영화 로드 실패:', error);
+        // 추가 로드 실패는 조용히 처리 (사용자 방해하지 않음)
       }
     };
 
-    loadMoreContents();
-  }, [currentIndex, shouldLoadMoreContent, addMoviesToPool]);
+    loadMoreMovies();
+  }, [
+    currentIndex,
+    shouldLoadMoreContent,
+    addMoviesToPool,
+    fetchRecommendations,
+  ]);
 
-  // ── 즉시 피드백 전송 함수 ──────────────────────────────────────────
+  // ── 즉시 피드백 전송 함수 ──────────────────────
   const sendFeedbackImmediately = async (
     contentId: number,
     feedbackType: FeedbackType,
@@ -132,7 +145,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     }
   };
 
-  // ── 스와이프 처리 ─────────────────────────────────────────────────
+  // ── 스와이프 처리 ─────────────────────────────
   const handleSwipe = async (
     direction: SwipeDirection,
     feedbackType?: FeedbackType,
@@ -163,13 +176,14 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     setTimeout(() => {
       setIsAnimating(false);
     }, 1000);
+    console.log(moviePool);
   };
 
-  // ── 10번 스와이프 후 토스트 표시 ──────────────────────────────────────
+  // ── 일정 횟수 스와이프 후 토스트 표시 ──────────────
   useEffect(() => {
-    const SWIPE_THRESHOLD = 3;
+    const SWIPE_THRESHOLD = 5;
 
-    if (swipeCount >= SWIPE_THRESHOLD && !resultReady && !toastShown) {
+    if (swipeCount >= SWIPE_THRESHOLD && !shouldShowFinish() && !toastShown) {
       setToastShown(true);
 
       showInteractiveToast.action({
@@ -189,9 +203,9 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         },
       });
     }
-  }, [swipeCount, resultReady, toastShown, onComplete]);
+  }, [swipeCount, resultReady, toastShown, onComplete, resetSwipeCount]);
 
-  // ── 키보드 이벤트 처리 ────────────────────────────────────────────
+  // ── 키보드 이벤트 처리 ────────────────────────
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent): void => {
       if (isAnimating || isFlipped) return;
@@ -213,7 +227,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [isAnimating, isFlipped, currentIndex]);
 
-  // ── 터치/마우스 이벤트 처리 ───────────────────────────────────────────
+  // ── 터치/마우스 이벤트 처리 ───────────────────
   const onPointerDown = (e: React.PointerEvent): void => {
     if (isAnimating) return;
     setStartPoint({ x: e.clientX, y: e.clientY });
@@ -235,7 +249,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     }
   };
 
-  // ── transform 클래스 계산 ──────────────────────────────────────────
+  // ── transform 클래스 계산 ──────────────────────
   const getCardTransform = (): string => {
     if (!swipeDirection) return '';
     switch (swipeDirection) {
@@ -248,11 +262,48 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     }
   };
 
+  // ── 에러 처리 ─────────────────────────────────
+  const handleRetry = async () => {
+    try {
+      const movies = await fetchRecommendations(5);
+      setMoviePool(movies);
+    } catch (error) {
+      console.error('재시도 실패:', error);
+    }
+  };
+
   if (shouldShowFinish()) {
     return <FinishScreen />;
   }
 
-  // ── 렌더링 ─────────────────────────────────────────────────────────
+  // ── 로딩 상태 ─────────────────────────────────
+  if (isLoading && moviePool.length === 0) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="text-white text-lg">콘텐츠를 로딩 중...</div>
+      </div>
+    );
+  }
+
+  // ── 에러 상태 ─────────────────────────────────
+  if (fetchError && moviePool.length === 0) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="text-white text-lg mb-4">
+          콘텐츠를 불러올 수 없습니다
+        </div>
+        <Button
+          onClick={handleRetry}
+          variant="outline"
+          className="text-white border-white"
+        >
+          다시 시도
+        </Button>
+      </div>
+    );
+  }
+
+  // ── 콘텐츠 없음 ───────────────────────────────
   if (!currentMovie) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center">
@@ -261,6 +312,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     );
   }
 
+  // ── 렌더링 ─────────────────────────────────────
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
       <div className="my-8 flex w-full justify-center">
@@ -355,10 +407,16 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         <Button
           onClick={() => setIsFlipped((f: boolean) => !f)}
           variant="outline"
-          className=" bg-white/20 border-white/20 text-white px-5 py-2 text-sm hover:bg-white/20 backdrop-blur-sm"
+          className="bg-white/20 border-white/20 text-white px-5 py-2 text-sm hover:bg-white/20 backdrop-blur-sm"
         >
           {isFlipped ? '돌아가기' : '상세보기'}
         </Button>
+
+        {/* 진행률 표시 */}
+        <div className="text-white/70 text-sm">
+          진행률: {swipeCount}/5
+          {isLoading && <span className="ml-2">(추가 로딩 중...)</span>}
+        </div>
       </div>
     </div>
   );

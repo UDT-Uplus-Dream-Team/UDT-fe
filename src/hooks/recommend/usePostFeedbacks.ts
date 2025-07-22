@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 
-// MovieSwipePage 쪽과 동일한 타입
 export type FeedbackType = 'liked' | 'unliked' | 'neutral';
 
 interface FeedbackStore {

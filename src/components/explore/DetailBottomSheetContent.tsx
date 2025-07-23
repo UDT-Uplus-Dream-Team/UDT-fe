@@ -47,7 +47,7 @@ export const DetailBottomSheetContent = ({
   const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false); // 시놉시스(줄거리) 부분에 대해서 더 자세하게 보여주기 여부
   const [hasValidTrailer, setHasValidTrailer] = useState(true); // 트레일러 주소가 유효한지 여부
   const [isTextOverflowing, setIsTextOverflowing] = useState(false); // 텍스트가 5줄을 넘는지 여부
-  const [imgSrc, setImgSrc] = useState<string>(contentData.backdropUrl); // 백드랍 이미지 소스
+  const [imgSrc, setImgSrc] = useState<string>(contentData?.backdropUrl || ''); // 백드랍 이미지 소스
 
   if (isLoading) {
     return <div>로딩 중입니다.</div>;
@@ -220,40 +220,50 @@ export const DetailBottomSheetContent = ({
         {/* 배우들 */}
         <div className="flex flex-col space-y-3">
           <span className="text-lg font-semibold text-white">출연진</span>
-          <div className="flex space-x-4 overflow-x-auto">
-            {contentData.casts.map((actor, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center space-y-2 min-w-[60px]"
-              >
-                <Avatar className="w-15 h-15 rounded-full overflow-hidden">
-                  <AvatarImage
-                    src={actor.image || '/placeholder.svg'}
-                    alt={actor.name}
-                    className="object-cover w-full h-full"
-                  />
-                  <AvatarFallback className="bg-gray-700 text-white">
-                    {actor.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-xs text-gray-300 text-center leading-tight">
-                  {actor.name}
-                </span>
-              </div>
-            ))}
-          </div>
+          {/* 출연진 정보가 있는 경우에만 표시 */}
+          {contentData.casts && contentData.casts.length > 0 ? (
+            <div className="flex space-x-4 overflow-x-auto">
+              {contentData.casts.map((actor, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center space-y-2 min-w-[60px]"
+                >
+                  <Avatar className="w-15 h-15 rounded-full overflow-hidden">
+                    <AvatarImage
+                      src={actor.castImage || '/placeholder.svg'}
+                      alt={actor.castName}
+                      className="object-cover w-full h-full"
+                    />
+                    <AvatarFallback className="bg-gray-700 text-2xl text-white size-full rounded-full flex items-center justify-center">
+                      {actor.castName.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-xs text-gray-300 text-center leading-tight">
+                    {actor.castName}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <span className="text-sm text-gray-300">정보가 없습니다</span>
+          )}
         </div>
 
         {/* 감독 */}
         <div className="flex flex-col space-y-3">
           <span className="text-lg font-semibold text-white">감독</span>
-          <div className="flex flex-row items-center space-x-3">
-            {contentData.directors.map((director, index) => (
-              <span key={index} className="text-xs text-gray-300 text-center">
-                {director.name}
-              </span>
-            ))}
-          </div>
+          {/* 감독 정보가 있는 경우에만 표시 */}
+          {contentData.directors && contentData.directors.length > 0 ? (
+            <div className="flex flex-row items-center space-x-3">
+              {contentData.directors.map((director, index) => (
+                <span key={index} className="text-xs text-gray-300 text-center">
+                  {director.name}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <span className="text-sm text-gray-300">정보가 없습니다</span>
+          )}
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ import { getPopularContents } from '@lib/apis/explore/getPopularContents';
 export const useGetPopularContents = (enabled: boolean) => {
   return useQuery<SimpleContentData[]>({
     queryKey: ['popularContents'],
-    queryFn: getPopularContents,
+    queryFn: () => getPopularContents(10),
     staleTime: 0, // 바로 stale
     enabled: enabled, // 해당 쿼리 호출 여부 결정
     gcTime: 0, // 캐시 즉시 삭제

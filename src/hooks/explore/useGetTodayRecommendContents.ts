@@ -6,7 +6,7 @@ import { getTodayContents } from '@lib/apis/explore/getTodayContents';
 export const useGetTodayRecommendContents = (enabled: boolean) => {
   return useQuery<SimpleContentData[]>({
     queryKey: ['todayRecommendContents'],
-    queryFn: getTodayContents,
+    queryFn: () => getTodayContents(10),
     staleTime: 0, // 바로 stale
     enabled: enabled, // 해당 쿼리 호출 여부 결정
     gcTime: 0, // 캐시 즉시 삭제

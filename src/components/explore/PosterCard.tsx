@@ -1,10 +1,10 @@
+import { checkImgSrcValidity } from '@utils/checkImgSrcValidity';
 import Image from 'next/image';
-import type { StaticImageData } from 'next/image';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 interface PosterCardProps {
   title: string | undefined;
-  image: string | StaticImageData;
+  image: string;
   isTitleVisible?: boolean;
   onClick: () => void;
   size?: 'sm' | 'lg';
@@ -22,7 +22,8 @@ export const PosterCard = ({
   isDeletable = false,
   isSelected = false,
 }: PosterCardProps) => {
-  const [imgSrc, setImgSrc] = useState<string | StaticImageData>(image);
+  const [hasError, setHasError] = useState(false); // 이미지 로딩 오류 여부 상태 관리
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   // 사이즈별 width/height 설정
   const dimensions =
@@ -30,6 +31,29 @@ export const PosterCard = ({
 
   const titleClass =
     size === 'lg' ? 'text-base max-w-[160px]' : 'text-sm max-w-[120px]';
+
+  // 이미지가 유효한 지 렌더 타임에 검증하는 메소드 validSrc
+  const validSrc = useMemo(() => {
+    if (hasError) {
+      // 에러가 있다면
+      return '/images/default-poster.png';
+    }
+
+    if (checkImgSrcValidity(image)) {
+      // 이미지 경로를 검증했을 때, 유효한지 여부 탐색
+      return image;
+    } else {
+      return '/images/default-poster.png';
+    }
+  }, [image, hasError]);
+
+  // onError 핸들러 (한 번만 호출돼도 hasError=true)
+  const handleError = useCallback(() => {
+    setHasError(true);
+  }, []);
+
+  // 로드가 다 되었는지 확인하는 handleLoadComplete
+  const handleLoadComplete = useCallback(() => setHasLoaded(true), []);
 
   return (
     <div
@@ -41,18 +65,34 @@ export const PosterCard = ({
         maxWidth: `${dimensions.width}px`,
       }}
     >
+      {/* 이미지 로딩 전: 스켈레톤 */}
+      {!hasLoaded && (
+        <div
+          className={`inset-0 bg-gray-100 animate-pulse rounded-lg transition-opacity duration-500 ease-in-out ${
+            hasLoaded ? 'opacity-0' : 'opacity-100'
+          }`}
+          style={{
+            width: `${dimensions.width}px`,
+            height: `${dimensions.height}px`,
+            backgroundColor: '#a4a9b0', // Tailwind의 bg-gray-300
+          }}
+        />
+      )}
+
       {/* 포스터 이미지 (오류 나면 default-poster.png 로 대체)*/}
       <Image
-        src={imgSrc}
+        src={validSrc}
         alt={title || '포스터'}
         width={dimensions.width}
         height={dimensions.height}
-        onError={() => setImgSrc('/images/default-poster.png')}
+        onError={handleError}
+        onLoadingComplete={handleLoadComplete}
         style={{
+          position: hasLoaded ? 'static' : 'absolute',
           width: `${dimensions.width}px`,
           height: `${dimensions.height}px`,
         }}
-        className={`object-cover rounded-lg transition-opacity duration-200 ${
+        className={`object-cover rounded-lg transition-opacity duration-500 ease-in-out delay-100 ${
           isDeletable && isSelected ? 'opacity-60' : 'opacity-100'
         }`}
       />

@@ -10,7 +10,7 @@ import { PosterCard } from '@components/explore/PosterCard';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
 import { useDeleteMode } from '@hooks/profile/useDeleteMode';
 import { useDeleteCurated } from '@hooks/profile/useDeleteCurated';
-import { useDeleteFeedbackToast } from '@hooks/profile/useDeleteFeedbackToast';
+import { useDeleteToast } from '@/hooks/profile/useDeleteToast';
 
 const RecommendPage = () => {
   const router = useRouter();
@@ -62,7 +62,7 @@ const RecommendPage = () => {
       handleSelectAll,
       handleCancelDeleteMode,
     },
-  } = useDeleteMode(posters);
+  } = useDeleteMode(posters, (item) => item.contentId);
 
   const handleCardClick = (poster: (typeof posters)[number]) => {
     if (isDeleteMode) {
@@ -75,7 +75,7 @@ const RecommendPage = () => {
   // 삭제 api 연동
   const { mutateAsync: deleteCurated } = useDeleteCurated();
 
-  const { handleDelete } = useDeleteFeedbackToast({
+  const { handleDelete } = useDeleteToast({
     selectedIds,
     onDeleteComplete: handleCancelDeleteMode,
     deleteFn: deleteCurated,
@@ -137,6 +137,8 @@ const RecommendPage = () => {
                 title={poster.title}
                 image={poster.posterUrl}
                 size="lg"
+                isDeletable={isDeleteMode}
+                isSelected={selectedIds.includes(poster.contentId)}
                 onClick={() => handleCardClick(poster)}
               />
             ))}

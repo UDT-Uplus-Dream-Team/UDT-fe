@@ -13,7 +13,7 @@ interface UseDeleteToastProps {
   isBatch?: boolean; //배열인지 안닌지 확인
 }
 
-export const useDeleteFeedbackToast = ({
+export const useDeleteToast = ({
   selectedIds,
   onDeleteComplete,
   deleteFn,
@@ -24,7 +24,8 @@ export const useDeleteFeedbackToast = ({
       showSimpleToast.error({
         message: '삭제할 콘텐츠를 선택해주세요.',
         position: 'top-center',
-        className: 'w-full bg-black/80 shadow-lg',
+        className:
+          'bg-black/80 text-white px-4 py-2 rounded-md mx-auto shadow-lg',
       });
       return;
     }
@@ -54,14 +55,16 @@ export const useDeleteFeedbackToast = ({
           showSimpleToast.success({
             message: '삭제가 완료되었습니다.',
             position: 'top-center',
-            className: 'w-full text-white bg-black',
+            className:
+              'bg-black text-white px-4 py-2 rounded-md mx-auto shadow-lg',
           });
           onDeleteComplete(); // 상태 초기화
         } catch {
           showSimpleToast.error({
             message: '삭제 중 오류가 발생했습니다.',
             position: 'top-center',
-            className: 'w-full text-white bg-black',
+            className:
+              'bg-black text-white px-4 py-2 rounded-md mx-auto shadow-lg',
           });
         }
       },

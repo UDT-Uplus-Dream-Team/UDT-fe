@@ -2,12 +2,6 @@
 
 export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
 
-export const pageview = (url: string) => {
-  window.gtag('config', GA_TRACKING_ID, {
-    page_path: url,
-  });
-};
-
 // 커스텀 이벤트 전송 함수
 export const sendAnalyticsEvent = (
   event: string,

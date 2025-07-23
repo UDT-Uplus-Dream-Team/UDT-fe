@@ -30,8 +30,8 @@ export default function RootLayout({
           <Toaster position="top-center" />
           <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />
       </body>
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />
     </html>
   );
 }

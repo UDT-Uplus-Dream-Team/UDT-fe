@@ -1,7 +1,7 @@
 import axiosInstance from '@/lib/apis/axiosInstance';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 
-interface CuratedContentsResponse {
+export interface CuratedContentsResponse {
   success: boolean;
   data: TicketComponent[];
   message?: string;

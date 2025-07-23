@@ -47,7 +47,7 @@ export const DetailBottomSheetContent = ({
   const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false); // 시놉시스(줄거리) 부분에 대해서 더 자세하게 보여주기 여부
   const [hasValidTrailer, setHasValidTrailer] = useState(true); // 트레일러 주소가 유효한지 여부
   const [isTextOverflowing, setIsTextOverflowing] = useState(false); // 텍스트가 5줄을 넘는지 여부
-  const [imgSrc, setImgSrc] = useState<string>(contentData.backdropUrl); // 백드랍 이미지 소스
+  const [imgSrc, setImgSrc] = useState<string>(contentData?.backdropUrl || ''); // 백드랍 이미지 소스
 
   if (isLoading) {
     return <div>로딩 중입니다.</div>;

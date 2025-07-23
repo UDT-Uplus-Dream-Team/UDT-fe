@@ -120,7 +120,7 @@ export default function EditPreferencePage() {
         </Button>
       </div>
 
-      <div className="bg-primary-900/40 rounded-[20px] p-4 md:p-8 shadow-[0_0_10px_rgba(255,255,255,0.4)]">
+      <div className="bg-primary-900/40 rounded-[20px] p-4 md:p-8  shadow-[0_0_10px_rgba(255,255,255,0.4)] relative">
         <Carousel className="w-full">
           <CarouselContent>
             {[0, 1].map((page) => (
@@ -148,8 +148,8 @@ export default function EditPreferencePage() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="left-[-16px] md:left-[-30px] top-1/2 -translate-y-1/2 z-10" />
+          <CarouselNext className="right-[-16px] md:right-[-30px] top-1/2 -translate-y-1/2 z-10" />
         </Carousel>
       </div>
     </div>

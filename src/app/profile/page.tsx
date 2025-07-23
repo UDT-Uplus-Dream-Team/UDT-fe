@@ -139,7 +139,7 @@ const ProfilePage = () => {
         />
 
         {/* 추천 콘텐츠 카드 영역 - ShadCN Carousel 적용 */}
-        <div className="w-full max-w-[500px]">
+        <div className="w-full max-w-[500px] relative">
           <Carousel opts={{ align: 'center', loop: false }} className="w-full">
             <CarouselContent>
               {recommendData.map((card, index) => (
@@ -148,8 +148,8 @@ const ProfilePage = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="left-1 top-1/2 -translate-y-1/2 z-10" />
+            <CarouselNext className="right-1  top-1/2 -translate-y-1/2 z-10" />
           </Carousel>
         </div>
       </div>

@@ -16,3 +16,13 @@ export const getCuratedContents = async (
 
   return response.data;
 };
+
+//[DELETE] api/users/me/curated/contents 리스트 형태로 삭제
+//현재 api 모름 임의로 작성
+export const deleteCuratedContents = async (
+  contentIds: number[],
+): Promise<void> => {
+  await axiosInstance.delete('/api/users/me/curated/contents/delete', {
+    data: { contentIds },
+  });
+};

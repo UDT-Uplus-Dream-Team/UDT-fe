@@ -2,20 +2,23 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Pencil } from 'lucide-react';
 import { usePosterModal } from '@/hooks/usePosterModal';
 import { useInfiniteCuratedContents } from '@hooks/profile/useInfiniteCuratedContents';
 import { useGetStoredContentDetail } from '@hooks/profile/useGetStoredContentDetail';
 import { PosterCard } from '@components/explore/PosterCard';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
+import { useDeleteMode } from '@hooks/profile/useDeleteMode';
+import { useDeleteCurated } from '@hooks/profile/useDeleteCurated';
+import { useDeleteFeedbackToast } from '@hooks/profile/useDeleteFeedbackToast';
 
 const RecommendPage = () => {
   const router = useRouter();
 
   // 상세보기 모달 관련 상태 및 액션 훅
   const {
-    state: { selectedPosterData }, // 모달에 표시할 포스터 데이터
-    actions: { openModal, closeModal }, // 모달 열기/닫기 액션
+    state: { selectedPosterData },
+    actions: { openModal, closeModal },
   } = usePosterModal();
 
   // 무한스크롤 API 호출
@@ -46,26 +49,78 @@ const RecommendPage = () => {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, isEmpty]);
 
-  const handleCardClick = (poster: (typeof posters)[number]) => {
-    openModal(poster);
-  };
-
   // 상세보기 데이터 contentid로 찾아서 데이터 보여줌
   const selectedContentId = selectedPosterData?.contentId ?? null;
   const { data: modalMovieData } = useGetStoredContentDetail(selectedContentId);
 
+  //삭제 모드 및 상세보기 상태를 관리
+  const {
+    state: { isDeleteMode, isAllSelected, selectedIds },
+    actions: {
+      setIsDeleteMode,
+      handleCardClickInDeleteMode,
+      handleSelectAll,
+      handleCancelDeleteMode,
+    },
+  } = useDeleteMode(posters);
+
+  const handleCardClick = (poster: (typeof posters)[number]) => {
+    if (isDeleteMode) {
+      handleCardClickInDeleteMode(poster);
+    } else {
+      openModal(poster);
+    }
+  };
+
+  // 삭제 api 연동
+  const { mutateAsync: deleteCurated } = useDeleteCurated();
+
+  const { handleDelete } = useDeleteFeedbackToast({
+    selectedIds,
+    onDeleteComplete: handleCancelDeleteMode,
+    deleteFn: deleteCurated,
+    isBatch: true,
+  });
+
   return (
     <div className="h-[calc(100vh-80px)] w-full flex flex-col items-center px-4 py-6 overflow-y-auto">
       {/* 헤더 */}
-      <div className="relative w-full max-w-screen-md flex items-center justify-center mb-6 h-10">
-        <button
-          onClick={() => router.push('/profile')}
-          className="absolute left-0 pl-2 text-white"
-        >
-          <ChevronLeft size={24} />
-        </button>
-
+      <div className="relative w-full max-w-screen-md flex items-center justify-center mb-2 h-10">
+        {isDeleteMode ? (
+          <button
+            onClick={handleSelectAll}
+            className="absolute left-0 pl-2 text-white text-sm"
+          >
+            {isAllSelected ? '선택해제' : '모두선택'}
+          </button>
+        ) : (
+          <button
+            onClick={() => router.push('/profile')}
+            className="absolute left-0 pl-2 text-white"
+            aria-label="뒤로가기"
+          >
+            <ChevronLeft size={24} />
+          </button>
+        )}
         <h1 className="text-lg font-bold text-white">추천 콘텐츠</h1>
+        <div className="absolute right-0 pr-2">
+          {isDeleteMode ? (
+            <button
+              onClick={handleCancelDeleteMode}
+              className="text-white text-sm"
+            >
+              취소
+            </button>
+          ) : (
+            <button
+              onClick={() => setIsDeleteMode(true)}
+              className="text-white"
+              aria-label="편집"
+            >
+              <Pencil size={20} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 카드 영역 */}
@@ -89,6 +144,27 @@ const RecommendPage = () => {
           </div>
         )}
       </div>
+
+      {/* 삭제 바 */}
+      {isDeleteMode && (
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 bg-gray-700 h-[80px] px-4 flex items-center justify-between z-[100] w-full max-w-160">
+          <p className="text-white text-sm">삭제할 콘텐츠를 선택하세요.</p>
+          <button
+            onClick={() => {
+              if (selectedIds.length > 0) {
+                handleDelete();
+              }
+            }}
+            className={`text-2xl ${
+              selectedIds.length > 0
+                ? 'text-white'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            🗑️
+          </button>
+        </div>
+      )}
 
       {modalMovieData && (
         <MovieDetailModal

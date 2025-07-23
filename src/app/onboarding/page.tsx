@@ -12,8 +12,12 @@ import Step6 from './Step6';
 import Step7 from './Step7';
 import { useRouter } from 'next/navigation';
 import Step8 from './Step8';
+import { usePageStayTracker } from '@hooks/usePageStayTracker';
 
 export default function OnboardingPage() {
+  // 페이지 머무르는 시간 추적 (온보딩 페이지 추적 / Google Analytics 연동을 위함)
+  usePageStayTracker('onboarding');
+
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(0);
 

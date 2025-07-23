@@ -12,8 +12,12 @@ import { useGetStoredContentDetail } from '@hooks/profile/useGetStoredContentDet
 import { FeedbackContent } from '@type/profile/FeedbackContent';
 import { useDeleteFeedbackToast } from '@hooks/profile/useDeleteFeedbackToast';
 import { useDeleteFeedback } from '@hooks/profile/useDeleteFeedback';
+import { usePageStayTracker } from '@/hooks/usePageStayTracker';
 
 const FeedbackPage = () => {
+  // 페이지 머무르는 시간 추적 (피드백 페이지 추적 / Google Analytics 연동을 위함)
+  usePageStayTracker('profile_feedback');
+
   const router = useRouter();
   const [tab, setTab] = useState<'like' | 'dislike'>('like');
 

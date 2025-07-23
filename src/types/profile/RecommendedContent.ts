@@ -2,20 +2,6 @@ export interface RecommendedContent {
   contentId: number;
   title: string;
   posterUrl: string;
-  rating: string;
-  countries: string[];
-  platforms: string[];
-  categories: {
-    category: string;
-    genres: string[];
-  }[];
-}
-
-export interface FeedbackContent {
-  feedbackId?: number;
-  contentId: number;
-  title: string;
-  posterUrl: string;
   openDate?: string;
   runningTime?: number;
   episode?: number;
@@ -23,15 +9,13 @@ export interface FeedbackContent {
   directors?: string[];
 }
 
-export interface FeedbackQueryParams {
-  cursor: number | null;
-  size: number;
-  feedbackType: 'LIKE' | 'DISLIKE';
-  feedbackSortType: 'NEWEST' | 'OLDEST';
+export interface GetRecommendedContentsResponse {
+  item: RecommendedContent[];
+  nextCursor: string | null;
+  hasNext: boolean;
 }
 
-export interface GetFeedbackContentsResponse {
-  contents: FeedbackContent[];
-  nextCursor: number | null;
-  hasNext: boolean;
+export interface RecommendedQueryParams {
+  cursor: number | null;
+  size: number;
 }

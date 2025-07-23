@@ -15,7 +15,7 @@ import { recommendData } from './profileData';
 import Image from 'next/image';
 import { useGetUserProfile } from '@hooks/useGetUserProfile';
 import { Skeleton } from '@components/ui/skeleton';
-import { authService } from '@/lib/apis/authService';
+import { useLogoutHandler } from '@hooks/profile/useLogoutHandler';
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -26,22 +26,7 @@ const ProfilePage = () => {
     router.push('/profile/edit');
   };
 
-  const handleLogout = async () => {
-    try {
-      await authService.logout(); // 서버 로그아웃
-    } catch (error) {
-      console.warn('로그아웃 API 실패:', error);
-    }
-
-    // 상태 초기화
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // 로그인 페이지로 이동
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
-    }
-  };
+  const { handleLogout } = useLogoutHandler();
 
   if (isLoading) {
     return (
@@ -154,7 +139,7 @@ const ProfilePage = () => {
         />
 
         {/* 추천 콘텐츠 카드 영역 - ShadCN Carousel 적용 */}
-        <div className="w-full max-w-[500px]">
+        <div className="w-full max-w-[500px] relative">
           <Carousel opts={{ align: 'center', loop: false }} className="w-full">
             <CarouselContent>
               {recommendData.map((card, index) => (
@@ -163,8 +148,8 @@ const ProfilePage = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="left-1 top-1/2 -translate-y-1/2 z-10" />
+            <CarouselNext className="right-1  top-1/2 -translate-y-1/2 z-10" />
           </Carousel>
         </div>
       </div>

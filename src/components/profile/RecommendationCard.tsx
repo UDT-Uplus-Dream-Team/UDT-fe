@@ -18,7 +18,7 @@ const RecommendationCard = ({
   };
 
   return (
-    <div className="relative w-full max-w-[500px] max-h-[310px] aspect-[5/4] rounded-[20px] overflow-hidden shadow-md">
+    <div className="relative w-full max-w-[500px] max-h-[320px] aspect-[5/4] rounded-[20px] overflow-hidden shadow-md">
       {/* 배경 이미지 */}
       <Image src={imageUrl} alt={title} fill className="object-cover" />
 

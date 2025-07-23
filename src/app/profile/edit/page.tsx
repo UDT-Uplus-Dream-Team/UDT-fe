@@ -15,8 +15,8 @@ import {
   CarouselPrevious,
 } from '@components/ui/carousel';
 import { usePreferenceHandler } from '@hooks/profile/usePreferenceHandler';
-import { useGetUserProfile } from '@/hooks/useGetUserProfile';
-// import { useGetUserProfile } from '@hooks/useGetUserProfile';
+import { useGetUserProfile } from '@hooks/useGetUserProfile';
+import { showSimpleToast } from '@components/common/Toast';
 
 export default function EditPreferencePage() {
   const [selectedOtt, setSelectedOtt] = useState<string[]>([]);
@@ -32,6 +32,14 @@ export default function EditPreferencePage() {
     }
   }, [userProfile]);
 
+  const showLimit = (message: string) => {
+    showSimpleToast.error({
+      message,
+      position: 'top-center',
+      className: 'w-full bg-black/80 shadow-lg text-white',
+    });
+  };
+
   const toggleSelection = (
     value: string,
     setFn: React.Dispatch<React.SetStateAction<string[]>>,
@@ -40,6 +48,10 @@ export default function EditPreferencePage() {
     if (selectedList.includes(value)) {
       setFn(selectedList.filter((v) => v !== value));
     } else {
+      if (selectedList.length >= 3) {
+        showLimit('장르는 최대 3개까지 선택할 수 있어요.');
+        return;
+      }
       setFn([...selectedList, value]);
     }
   };
@@ -63,7 +75,7 @@ export default function EditPreferencePage() {
         <Button
           size="sm"
           className="bg-white/30 text-white px-4 py-1 rounded-md"
-          onClick={handleSave}
+          onClick={() => handleSave('platform')}
         >
           확인
         </Button>
@@ -92,17 +104,23 @@ export default function EditPreferencePage() {
 
       {/* 장르 선택 */}
       <div className="flex justify-between items-center my-4">
-        <h2 className="text-[20px] font-bold ml-3">선호 장르</h2>
+        <h2 className="text-[20px] font-bold ml-3">
+          선호 장르
+          <span className="ml-2 text-sm font-normal text-white/70">
+            (선택: {selectedGenres.length}/3)
+          </span>
+        </h2>
+
         <Button
           size="sm"
           className="bg-white/30 text-white px-4 py-1 rounded-md"
-          onClick={handleSave}
+          onClick={() => handleSave('genre')}
         >
           확인
         </Button>
       </div>
 
-      <div className="bg-primary-900/40 rounded-[20px] p-4 md:p-8 shadow-[0_0_10px_rgba(255,255,255,0.4)]">
+      <div className="bg-primary-900/40 rounded-[20px] p-4 md:p-8  shadow-[0_0_10px_rgba(255,255,255,0.4)] relative">
         <Carousel className="w-full">
           <CarouselContent>
             {[0, 1].map((page) => (
@@ -130,8 +148,8 @@ export default function EditPreferencePage() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="left-[-16px] md:left-[-30px] top-1/2 -translate-y-1/2 z-10" />
+          <CarouselNext className="right-[-16px] md:right-[-30px] top-1/2 -translate-y-1/2 z-10" />
         </Carousel>
       </div>
     </div>

@@ -1,19 +1,29 @@
 import Image from 'next/image';
 import { useState } from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { PLATFORMS } from '@/lib/platforms';
-import { ContentDetail } from '@/types/ContentDetail';
+import { Avatar, AvatarImage, AvatarFallback } from '@components/ui/avatar';
+import { PLATFORMS } from '@lib/platforms';
+import { StoredContentDetail } from '@type/profile/StoredContentDetail';
+
+const fallbackUrls: Record<string, string> = {
+  넷플릭스: 'https://www.netflix.com',
+  티빙: 'https://www.tving.com',
+  쿠팡플레이: 'https://www.coupangplay.com',
+  웨이브: 'https://www.wavve.com',
+  '디즈니+': 'https://www.disneyplus.com',
+  왓챠: 'https://watcha.com',
+  애플티비: 'https://tv.apple.com',
+};
 
 const MovieCard = ({
   title,
-  categories,
+  genres,
   runningTime,
   openDate,
   rating,
   description,
   backdropUrl,
   platforms,
-}: ContentDetail) => {
+}: StoredContentDetail) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleDescription = () => {
@@ -26,20 +36,19 @@ const MovieCard = ({
     return `/images/ott/${matched.id}.png`;
   };
 
-  const genreList = categories.flatMap((cat) => cat.genres);
-
-  const availablePlatforms = platforms.filter((p) => p.isAvailable);
+  const [imgSrc, setImgSrc] = useState(backdropUrl);
 
   return (
     <div className="w-[300px] h-[538px] rounded-xl shadow-md bg-white flex flex-col overflow-hidden">
       {/* 썸네일 */}
       <div className="w-full h-[130px] relative">
         <Image
-          src={backdropUrl}
+          src={imgSrc}
           alt={title}
           layout="fill"
           objectFit="cover"
           className="rounded-t-xl"
+          onError={() => setImgSrc('/images/default-backdrop.png')}
         />
       </div>
 
@@ -51,7 +60,7 @@ const MovieCard = ({
         <h2 className="text-[25px] text-black font-bold">{title}</h2>
 
         <div className="flex gap-2 text-xs text-gray-500 font-bold mt-1">
-          {genreList.map((genre) => (
+          {genres.map((genre) => (
             <span
               key={genre}
               className="bg-gray-200 text-gray-700 rounded px-2 py-[2px]"
@@ -67,12 +76,14 @@ const MovieCard = ({
 
       {/* 플랫폼 아이콘 */}
       <div className="flex gap-2 px-4 mb-2">
-        {availablePlatforms.map((platform) => {
+        {platforms.map((platform) => {
           const iconUrl = getPlatformIconUrl(platform.platformType);
-          return iconUrl ? (
+          const fallbackUrl = fallbackUrls[platform.platformType];
+          const link = platform.watchUrl || fallbackUrl;
+          return iconUrl && link ? (
             <button
               key={platform.platformType}
-              onClick={() => window.open(platform.watchUrl, '_blank')}
+              onClick={() => window.open(link, '_blank')}
               className="w-8 h-8"
             >
               <Avatar className="w-8 h-8 border border-primary-900">

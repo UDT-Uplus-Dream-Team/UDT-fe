@@ -1,7 +1,7 @@
 import {
   FeedbackQueryParams,
   GetFeedbackContentsResponse,
-} from '@type/profile/RecommendedContent';
+} from '@type/profile/FeedbackContent';
 import axiosInstance from '../axiosInstance';
 
 // [GET] /api/users/me/feedbacks → 좋아요/싫어요 피드백 콘텐츠 조회
@@ -14,6 +14,7 @@ export const getFeedbackContents = async (
   return response.data;
 };
 
+//단일 삭제
 export const deleteFeedback = async (feedbackId: number): Promise<void> => {
   await axiosInstance.delete(`/api/users/me/feedbacks/${feedbackId}`, {});
 };

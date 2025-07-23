@@ -19,11 +19,6 @@ export const usePreferenceHandler = (
   const { mutateAsync: patchPlatformsAsync } = usePatchPlatform();
   const { mutateAsync: patchGenresAsync } = usePatchGenre();
 
-  // 변경할 항목이 있는지 확인
-  const validateSelections = () => {
-    return selectedOtt.length > 0 || selectedGenres.length > 0;
-  };
-
   // 성공 토스트 출력
   const showSuccess = (message: string) => {
     showSimpleToast.success({
@@ -42,32 +37,18 @@ export const usePreferenceHandler = (
     });
   };
 
-  // 실제 업데이트 실행
-  const updatePreferences = async () => {
-    try {
-      const tasks: Promise<unknown>[] = [];
+  // 저장 버튼 클릭 시 호출
+  const handleSave = (target: 'platform' | 'genre') => {
+    const isPlatformValid = selectedOtt.length > 0;
+    const isGenreValid = selectedGenres.length > 0;
 
-      if (selectedOtt.length > 0) {
-        tasks.push(patchPlatformsAsync(selectedOtt));
-      }
-
-      if (selectedGenres.length > 0) {
-        tasks.push(patchGenresAsync(selectedGenres));
-      }
-
-      await Promise.all(tasks);
-
-      showSuccess('설정이 성공적으로 변경되었습니다!');
-    } catch (error) {
-      console.error('Update failed:', error);
-      showError('일부 항목 저장에 실패했습니다.');
+    if (target === 'platform' && !isPlatformValid) {
+      showError('변경할 OTT를 선택해주세요.');
+      return;
     }
-  };
 
-  // 저장 버튼 클릭 시 호출될 메인 핸들러
-  const handleSave = () => {
-    if (!validateSelections()) {
-      showError('변경할 항목을 선택해주세요.');
+    if (target === 'genre' && !isGenreValid) {
+      showError('변경할 장르를 선택해주세요.');
       return;
     }
 
@@ -78,7 +59,22 @@ export const usePreferenceHandler = (
       cancelText: '취소',
       position: 'top-center',
       className: 'w-[360px] bg-white shadow-lg',
-      onConfirm: updatePreferences,
+      onConfirm: async () => {
+        try {
+          if (target === 'platform') {
+            console.log('[PATCH PLATFORM] 선택된 플랫폼:', selectedOtt);
+            await patchPlatformsAsync(selectedOtt);
+            showSuccess('OTT 설정이 저장되었습니다.');
+          } else {
+            console.log('[PATCH GENRE] 선택된 장르:', selectedGenres);
+            await patchGenresAsync(selectedGenres);
+            showSuccess('선호 장르가 저장되었습니다.');
+          }
+        } catch (error) {
+          console.error(error);
+          showError('설정 저장에 실패했습니다.');
+        }
+      },
     });
   };
 

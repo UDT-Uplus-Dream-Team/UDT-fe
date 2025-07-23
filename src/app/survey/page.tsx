@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { SurveyProvider } from '@store/SurveyContext';
 import { useSurveyContext } from '@hooks/useSurveyContext';
 import { usePostSurvey } from '@hooks/survey/usePostSurvey';
+import { usePageStayTracker } from '@hooks/usePageStayTracker';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -47,6 +48,9 @@ function SurveyFlow() {
 }
 
 export default function SurveyPage() {
+  // 페이지 머무르는 시간 추적 (설문조사 페이지 추적 / Google Analytics 연동을 위함)
+  usePageStayTracker('survey');
+
   return (
     <SurveyProvider>
       <SurveyFlow />

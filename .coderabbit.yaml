@@ -31,4 +31,7 @@ knowledge_base:
   web_search:
     enabled: true # 웹 검색 기능 활성화
 
+cursor:
+  learn_from: ./cursor # 👈 이 한 줄 추가! (혹은 /cursor)
+
 # 기타 설정은 기본값 유지

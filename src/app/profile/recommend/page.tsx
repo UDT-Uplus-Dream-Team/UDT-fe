@@ -10,9 +10,13 @@ import { PosterCard } from '@components/explore/PosterCard';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
 import { useDeleteMode } from '@hooks/profile/useDeleteMode';
 import { useDeleteCurated } from '@hooks/profile/useDeleteCurated';
+import { usePageStayTracker } from '@hooks/usePageStayTracker';
 import { useDeleteToast } from '@/hooks/profile/useDeleteToast';
 
 const RecommendPage = () => {
+  // 페이지 머무르는 시간 추적 (저장된 엄선된 콘텐츠 조회하는 페이지 추적 / Google Analytics 연동을 위함)
+  usePageStayTracker('profile_recommend');
+
   const router = useRouter();
 
   // 상세보기 모달 관련 상태 및 액션 훅

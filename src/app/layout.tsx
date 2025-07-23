@@ -3,6 +3,7 @@ import Providers from './providers';
 import './globals.css';
 import LayoutWrapper from './layout-wrapper';
 import { Toaster } from 'sonner';
+import { GoogleAnalytics } from '@next/third-parties/google'; // 구글 애널리틱스 추가
 
 export const metadata: Metadata = {
   title: 'Your App Title',
@@ -29,6 +30,7 @@ export default function RootLayout({
           <Toaster position="top-center" />
           <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />
       </body>
     </html>
   );

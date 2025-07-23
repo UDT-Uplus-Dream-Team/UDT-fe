@@ -13,12 +13,19 @@ interface RecommendState {
   swipeCount: number;
   totalSwipeCount: number;
 
+  savedContentIds: boolean[];
+
   setMoviePool: (movies: TicketComponent[]) => void;
   addMoviesToPool: (newMovies: TicketComponent[]) => void;
   setCurrentIndex: (index: number) => void;
   incrementSwipeCount: () => void;
   resetSwipeCount: () => void;
   resetRecommendProgress: () => void;
+
+  addSavedCuratedContent: (index: number) => void;
+  removeSavedCuratedContent: (index: number) => void;
+  isSavedCuratedContent: (index: number) => boolean;
+  initializeSavedContentIds: (length: number) => void;
 
   getCurrentMovie: () => TicketComponent | undefined;
   getNextMovie: () => TicketComponent | undefined;
@@ -34,6 +41,7 @@ export const useRecommendStore = create<RecommendState>()(
       currentIndex: 0,
       swipeCount: 0,
       totalSwipeCount: 0,
+      savedContentIds: [],
 
       setPhase: (phase: Phase) => set({ phase }),
 
@@ -69,7 +77,33 @@ export const useRecommendStore = create<RecommendState>()(
           currentIndex: 0,
           swipeCount: 0,
           totalSwipeCount: 0,
+          savedContentIds: [],
         }),
+
+      addSavedCuratedContent: (index: number) => {
+        set((state) => {
+          const newSavedContentIds = [...state.savedContentIds];
+          newSavedContentIds[index] = true;
+          return { savedContentIds: newSavedContentIds };
+        });
+      },
+
+      removeSavedCuratedContent: (index: number) => {
+        set((state) => {
+          const newSavedContentIds = [...state.savedContentIds];
+          newSavedContentIds[index] = false;
+          return { savedContentIds: newSavedContentIds };
+        });
+      },
+
+      isSavedCuratedContent: (index: number) => {
+        const { savedContentIds } = get();
+        return savedContentIds[index] || false;
+      },
+
+      initializeSavedContentIds: (length: number) => {
+        set({ savedContentIds: new Array(length).fill(false) });
+      },
 
       getCurrentMovie: () => {
         const { moviePool, currentIndex } = get();

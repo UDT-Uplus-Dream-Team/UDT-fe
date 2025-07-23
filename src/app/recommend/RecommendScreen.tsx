@@ -8,6 +8,7 @@ import { postFeedbackContent } from '@lib/apis/recommend/postFeedbackContent';
 import { useRecommendStore } from '@store/useRecommendStore';
 import { useFetchRecommendations } from '@hooks/recommend/useGetRecommendationContents';
 import { FinishScreen } from './FinishScreen';
+import { sendAnalyticsEvent } from '@lib/gtag';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 type FeedbackType = 'liked' | 'unliked' | 'neutral';
@@ -151,6 +152,16 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     feedbackType?: FeedbackType,
   ): Promise<void> => {
     if (isAnimating || isFlipped || !currentMovie) return;
+
+    // GA4로 스와이프 이벤트 전송 (Google Analytics 연동을 위함)
+    sendAnalyticsEvent('swipe_action_in_reels', {
+      direction, // left, right, up
+      feedback: feedbackType ?? 'neutral',
+      content_id: currentMovie.contentId,
+      page: 'recommend_screen',
+      swipe_count: swipeCount + 1, // 0-index면 +1
+      timestamp: new Date().toISOString(),
+    });
 
     setIsAnimating(true);
     setSwipeDirection(direction);

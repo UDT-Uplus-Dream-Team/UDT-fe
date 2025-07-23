@@ -11,7 +11,8 @@ import { usePostSurvey } from '@hooks/survey/usePostSurvey';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const { selectedPlatforms, selectedGenres } = useSurveyContext();
+  const { selectedPlatforms, selectedGenres, watchedContents } =
+    useSurveyContext();
   const { mutate: submitSurvey } = usePostSurvey();
 
   const handleNext = () => {
@@ -22,6 +23,7 @@ function SurveyFlow() {
         {
           platforms: selectedPlatforms,
           genres: selectedGenres,
+          contentIds: watchedContents,
         },
         {
           onSuccess: () => {

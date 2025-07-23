@@ -3,6 +3,6 @@ export type SurveyContextType = {
   setSelectedPlatforms: (platforms: string[]) => void;
   selectedGenres: string[];
   setSelectedGenres: (genres: string[]) => void;
-  watchedContents: string[];
-  setWatchedContents: (contents: string[]) => void;
+  watchedContents: number[];
+  setWatchedContents: (contents: number[]) => void;
 };

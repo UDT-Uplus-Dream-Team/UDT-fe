@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -20,8 +20,7 @@ import {
 import { Plus } from 'lucide-react';
 
 import type { ContentWithoutId } from '@type/admin/Content';
-import { filterContents } from '@utils/getContentUtils';
-import { useAdminContentList } from '@hooks/admin/useGetContentList';
+import { useInfiniteAdminContentList } from '@hooks/admin/useGetContentList';
 import { usePostContent } from '@hooks/admin/usePostContent';
 import { useUpdateContent } from '@hooks/admin/usePatchContent';
 import { useDeleteContent } from '@hooks/admin/useDeleteContent';
@@ -33,26 +32,47 @@ import SearchFilter from './searchFilter';
 import ContentChart from './contentChart';
 
 export default function AdminDashboard() {
-  // API 연동: 목록 조회
-  const { data, isLoading, isError } = useAdminContentList({
-    cursor: 0,
-    size: 20,
-    categoryType: '영화',
-  });
+  // 무한 스크롤용 필터 상태
+  const size = 20;
+  const [categoryType, setCategoryType] = useState<string>('');
+  // 무한 스크롤 쿼리
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteAdminContentList({ size, categoryType });
+
+  // Intersection Observer로 하단 감지
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        fetchNextPage();
+      }
+    });
+    const element = loadMoreRef.current;
+    if (element) observer.observe(element);
+
+    return () => {
+      if (element) observer.unobserve(element);
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   const postContent = usePostContent();
   const updateContent = useUpdateContent();
   const deleteContent = useDeleteContent();
 
-  // 상태 관리
+  // 상태 관리 (상세/수정/추가 등)
   const [selectedContentId, setSelectedContentId] = useState<number | null>(
     null,
   );
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState<string>('all');
-  const [editContent, setEditContent] = useState<ContentWithoutId | null>(null);
 
   // 상세/수정 데이터 fetch (상세 모달에서만 사용)
   const {
@@ -71,22 +91,14 @@ export default function AdminDashboard() {
     isEditDialogOpen ? (selectedContentId ?? undefined) : undefined,
   );
 
-  useEffect(() => {
-    if (editData && isEditDialogOpen) {
-      setEditContent(editData);
-    }
-  }, [editData, isEditDialogOpen]);
-
   // 상세/수정 모달 오픈 핸들러
   const openDetailDialog = useCallback((contentId: number) => {
     setSelectedContentId(contentId);
     setIsDetailDialogOpen(true);
   }, []);
-  const openEditDialog = useCallback((content?: ContentWithoutId) => {
-    if (content) {
-      setEditContent(content);
-      setIsEditDialogOpen(true);
-    }
+  const openEditDialog = useCallback((contentId: number) => {
+    setSelectedContentId(contentId);
+    setIsEditDialogOpen(true);
   }, []);
   const closeDetailDialog = useCallback(() => {
     setIsDetailDialogOpen(false);
@@ -94,15 +106,14 @@ export default function AdminDashboard() {
   }, []);
   const closeEditDialog = useCallback(() => {
     setIsEditDialogOpen(false);
-    setEditContent(null);
   }, []);
 
+  // 필터 변경 시 refetch
+  const handleFilterChange = (type: string) => {
+    setCategoryType(type);
+  };
+
   // 필터링된 콘텐츠 목록 (필터링 api 연동으로 바뀔 예정)
-  const contents = data?.item || [];
-  const filteredContents = useMemo(
-    () => filterContents(contents, searchTerm, filterType),
-    [contents, searchTerm, filterType],
-  );
 
   const handleAddContent = useCallback(
     (contentData: ContentWithoutId) => {
@@ -148,6 +159,9 @@ export default function AdminDashboard() {
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>데이터를 불러오는 중 오류가 발생했습니다.</div>;
 
+  // 모든 페이지의 콘텐츠 합치기
+  const allContents = data?.pages.flatMap((page) => page.item) || [];
+
   return (
     <div className="h-screen overflow-y-auto bg-gray-50 p-6">
       <div className="mx-auto max-w-5xl space-y-6">
@@ -162,7 +176,7 @@ export default function AdminDashboard() {
         {/* 콘텐츠 분포 차트 */}
         <div className="w-full flex justify-center">
           <div className="w-full max-w-5xl">
-            <ContentChart contents={contents} />
+            <ContentChart contents={allContents} />
           </div>
         </div>
 
@@ -175,25 +189,22 @@ export default function AdminDashboard() {
                   등록된 콘텐츠 목록
                 </CardTitle>
                 <CardDescription>
-                  전체 {filteredContents.length}개의 콘텐츠
+                  전체 {allContents.length}개의 콘텐츠
                 </CardDescription>
               </div>
               <Button
                 className="bg-slate-900 hover:bg-slate-800 text-white rounded-lg px-4 py-5 flex items-center font-semibold text-md min-w-[160px] cursor-pointer"
                 onClick={() => setIsAddDialogOpen(true)}
               >
-                <Plus className="mr-2 h-4 w-4" />
-                콘텐츠 추가
+                <Plus className="mr-2 h-4 w-4" />새 항목 추가
               </Button>
             </div>
 
             {/* 검색 및 필터 */}
             <div className="mt-4">
               <SearchFilter
-                searchTerm={searchTerm}
-                filterType={filterType}
-                onSearchChange={setSearchTerm}
-                onFilterChange={setFilterType}
+                filterType={categoryType}
+                onFilterChange={handleFilterChange}
               />
             </div>
           </CardHeader>
@@ -201,28 +212,35 @@ export default function AdminDashboard() {
           <CardContent>
             <ScrollArea className="h-96">
               <div className="space-y-3 mb-3">
-                {filteredContents.map((content) => (
+                {allContents.map((content) => (
                   <ContentCard
                     key={content.contentId}
                     content={content}
                     onView={openDetailDialog}
-                    onEdit={(contentId) => openDetailDialog(contentId)} // 수정도 상세 fetch 후 모달에서 처리
+                    onEdit={openEditDialog}
                     onDelete={handleDeleteContent}
                   />
                 ))}
+                <div ref={loadMoreRef} style={{ height: 1 }} />
               </div>
             </ScrollArea>
+            {isFetchingNextPage && (
+              <div className="text-center py-2">불러오는 중...</div>
+            )}
+            {!hasNextPage && (
+              <div className="text-center py-2">더 이상 데이터가 없습니다.</div>
+            )}
           </CardContent>
         </Card>
 
         {/* 다이얼로그들 */}
         {isAddDialogOpen && (
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[75vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>새 콘텐츠 추가</DialogTitle>
+                <DialogTitle>새 정보 추가</DialogTitle>
                 <DialogDescription>
-                  새로운 콘텐츠 정보를 입력해주세요.
+                  콘텐츠/인물 정보를 등록해주세요.
                 </DialogDescription>
               </DialogHeader>
               <ContentForm
@@ -235,20 +253,20 @@ export default function AdminDashboard() {
 
         {isEditDialogOpen && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[75vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>콘텐츠 수정</DialogTitle>
+                <DialogTitle>정보 수정</DialogTitle>
                 <DialogDescription>
                   콘텐츠 정보를 수정해주세요.
                 </DialogDescription>
               </DialogHeader>
               {isEditLoading ? (
                 <div>불러오는 중...</div>
-              ) : isEditError || !editContent ? (
+              ) : isEditError || !editData ? (
                 <div>수정 정보를 불러오지 못했습니다.</div>
               ) : (
                 <ContentForm
-                  content={editContent}
+                  content={editData}
                   onSave={handleEditContent}
                   onCancel={closeEditDialog}
                 />
@@ -275,7 +293,7 @@ export default function AdminDashboard() {
                   content={{ ...detailData, contentId: selectedContentId }}
                   onEdit={() => {
                     closeDetailDialog();
-                    openEditDialog(detailData);
+                    openEditDialog(selectedContentId);
                   }}
                   onClose={closeDetailDialog}
                 />

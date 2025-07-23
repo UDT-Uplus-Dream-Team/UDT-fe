@@ -8,7 +8,7 @@ export const useDeleteContent = () => {
   return useMutation({
     mutationFn: (contentId: number) => deleteContent(contentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['adminContentList'] });
+      queryClient.invalidateQueries({ queryKey: ['infiniteAdminContentList'] });
     },
   });
 };

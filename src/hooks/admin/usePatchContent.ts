@@ -14,8 +14,16 @@ export const useUpdateContent = () => {
       contentId: number;
       data: ContentWithoutId;
     }) => patchContent(contentId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['adminContentList'] });
+    onSuccess: (_data, variables) => {
+      const { contentId } = variables;
+
+      // 콘텐츠 목록 무효화
+      queryClient.invalidateQueries({ queryKey: ['infiniteAdminContentList'] });
+
+      // 콘텐츠 상세 정보도 무효화
+      queryClient.invalidateQueries({
+        queryKey: ['adminContentDetail', contentId],
+      });
     },
   });
 };

@@ -20,14 +20,14 @@ export default function Step1({ onNext }: Step1Props) {
     }
   };
   return (
-    <div className="h-[calc(100vh-80px)] overflow-y-auto flex flex-col pt-17 pb-10">
-      <div className="flex-1 flex flex-col items-center">
-        <h2 className="text-white font-bold text-[20px] mb-14 text-center">
+    <div className="h-[calc(100vh-80px)] overflow-y-auto flex flex-col">
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <h2 className="text-white font-bold text-[20px] mb-14 text-center mt-8">
           추천 받고 싶은 <span className="text-[#9F8EC5]">서비스</span>를
           선택해주세요
         </h2>
 
-        <div className="grid grid-cols-2 gap-y-6 w-full mx-auto px-10 mb-16">
+        <div className="grid grid-cols-2 gap-y-6 w-full mx-auto px-10 mt-5 mb-15">
           {PLATFORMS.map(({ label, id }) => (
             <CircleOption
               key={label}
@@ -38,14 +38,11 @@ export default function Step1({ onNext }: Step1Props) {
             />
           ))}
         </div>
-      </div>
 
-      <div className="flex justify-center mt-auto">
+        {/* 완료 버튼을 목록 바로 아래에 적당한 위치로 */}
         <Button
           onClick={onNext}
-          className={
-            'min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer'
-          }
+          className="min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer"
         >
           완료
         </Button>

@@ -2,19 +2,23 @@ import {
   showSimpleToast,
   showInteractiveToast,
 } from '@components/common/Toast';
-import { useDeleteFeedback } from './useDeleteFeedback';
 
 interface UseDeleteToastProps {
   selectedIds: number[];
   onDeleteComplete: () => void;
+  // 현재 엄선된 삭제의 경우 배열 / 피드백의 경우 단일처리임(해당 부분의 경우 수정 될 예정) 이에 맞게 분기처리 후 나중에 수정
+  deleteFn:
+    | ((ids: number[]) => Promise<unknown>)
+    | ((id: number) => Promise<unknown>);
+  isBatch?: boolean; //배열인지 안닌지 확인
 }
 
 export const useDeleteFeedbackToast = ({
   selectedIds,
   onDeleteComplete,
+  deleteFn,
+  isBatch = false,
 }: UseDeleteToastProps) => {
-  const { mutateAsync: deleteFeedbacks } = useDeleteFeedback();
-
   const handleDelete = () => {
     if (selectedIds.length === 0) {
       showSimpleToast.error({
@@ -33,7 +37,20 @@ export const useDeleteFeedbackToast = ({
       className: 'w-[360px] bg-white shadow-lg',
       onConfirm: async () => {
         try {
-          await Promise.all(selectedIds.map((id) => deleteFeedbacks(id)));
+          if (isBatch) {
+            //  배열 기반 API
+            await (deleteFn as (ids: number[]) => Promise<unknown>)(
+              selectedIds,
+            );
+          } else {
+            //  단일 기반 API (Promise.all)
+            await Promise.all(
+              selectedIds.map((id) =>
+                (deleteFn as (id: number) => Promise<unknown>)(id),
+              ),
+            );
+          }
+
           showSimpleToast.success({
             message: '삭제가 완료되었습니다.',
             position: 'top-center',

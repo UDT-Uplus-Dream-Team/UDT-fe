@@ -5,18 +5,19 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { PosterCard } from '@components/explore/PosterCard';
 import { ChevronLeft, Pencil } from 'lucide-react';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
-import { useDeleteMode } from '@/hooks/profile/useDeleteMode';
+import { useDeleteMode } from '@hooks/profile/useDeleteMode';
 import { usePosterModal } from '@hooks/usePosterModal';
-import { useInfiniteFeedbacks } from '@/hooks/profile/useInfiniteFeedbacks';
-import { useGetStoredContentDetail } from '@/hooks/profile/useGetStoredContentDetail';
+import { useInfiniteFeedbacks } from '@hooks/profile/useInfiniteFeedbacks';
+import { useGetStoredContentDetail } from '@hooks/profile/useGetStoredContentDetail';
 import { FeedbackContent } from '@type/profile/FeedbackContent';
-import { useDeleteFeedbackToast } from '@/hooks/profile/useDeleteFeedbackToast';
+import { useDeleteFeedbackToast } from '@hooks/profile/useDeleteFeedbackToast';
+import { useDeleteFeedback } from '@hooks/profile/useDeleteFeedback';
 
 const FeedbackPage = () => {
   const router = useRouter();
   const [tab, setTab] = useState<'like' | 'dislike'>('like');
 
-  //실제 데이터 연결(로딩, 에러 나중에 추가)
+  //무한 스크롤을 통한 데이터 연동
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteFeedbacks({
       size: 20,
@@ -35,6 +36,7 @@ const FeedbackPage = () => {
   //컨텐츠 아예 없을 경우 api 호출을 막음
   const isEmpty = posters.length === 0;
 
+  //무한 스크롤
   const observerRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage || isEmpty) return;
@@ -49,7 +51,7 @@ const FeedbackPage = () => {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, tab, isEmpty]);
 
-  //삭제 모드 및 상세보기 상태를 관리
+  //삭제 모드에 대한 관리
   const {
     state: { isDeleteMode, isAllSelected, selectedIds },
     actions: {
@@ -60,16 +62,24 @@ const FeedbackPage = () => {
     },
   } = useDeleteMode(posters);
 
-  const { handleDelete: triggerDelete } = useDeleteFeedbackToast({
+  // 실제 삭제 api 연동 토스토 확인 시 삭제 되도록 구성
+  const { mutateAsync: deleteFeedback } = useDeleteFeedback();
+
+  // 피드백 id의 경우 배열 처리로 수정하는데 시간이 걸린다 하여 우선 단일 처리 진행 후 수정
+  const { handleDelete } = useDeleteFeedbackToast({
     selectedIds,
     onDeleteComplete: handleCancelDeleteMode,
+    deleteFn: deleteFeedback, // 단일 처리 함수
+    isBatch: false, // 명시적으로 단일 호출임을 지정
   });
 
+  //상세보기를 위한 모달 처리
   const {
     state: { selectedPosterData },
     actions: { openModal, closeModal },
   } = usePosterModal();
 
+  //삭제모드 시 클릭하면 삭제 토글, 일반 상태시 선택 상세보기 처리
   const handleCardClick = (poster: (typeof posters)[number]) => {
     if (isDeleteMode) {
       handleCardClickInDeleteMode(poster);
@@ -181,7 +191,7 @@ const FeedbackPage = () => {
           <button
             onClick={() => {
               if (selectedIds.length > 0) {
-                triggerDelete();
+                handleDelete();
               }
             }}
             className={`text-2xl ${

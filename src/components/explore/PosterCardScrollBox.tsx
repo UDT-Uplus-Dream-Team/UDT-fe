@@ -10,6 +10,7 @@ import {
 import { DetailBottomSheetContent } from '@components/explore/DetailBottomSheetContent';
 import { useGetContentListByBoxType } from '@hooks/explore/useGetContentListByBoxType';
 import { FilterRadioButton } from '@components/explore/FilterRadioButton';
+import { PosterScrollSkeleton } from '@components/explore/PosterScrollBoxSkeleton';
 
 export interface PosterCardScrollBoxProps {
   BoxTitle: string;
@@ -27,7 +28,7 @@ export const PosterCardScrollBox = ({
   // 포스터 스크롤 박스 타입에 따라 콘텐츠 목록 조회 API 호출하는 custom Hook 호출
   const {
     data: contentData,
-    isError,
+    status,
     refetch,
   } = useGetContentListByBoxType(BoxType);
 
@@ -40,8 +41,13 @@ export const PosterCardScrollBox = ({
     refetch();
   };
 
+  // 로딩 중인 경우 (Skeleton UI 표시)
+  if (status === 'pending') {
+    return <PosterScrollSkeleton title={BoxTitle} count={8} />;
+  }
+
   // 에러 상태 또는 데이터가 없는 경우
-  if (isError || contentData.length === 0) {
+  if (status === 'error') {
     return (
       <div className="w-full h-fit flex flex-col justify-start items-start gap-2">
         <span className="text-xl text-white font-semibold py-2 ml-6">
@@ -49,9 +55,23 @@ export const PosterCardScrollBox = ({
         </span>
         <div className="w-full h-40 flex flex-col items-center justify-center gap-4 px-6">
           <span className="text-white text-lg text-center">
-            불러올 정보가 없습니다
+            오류가 발생했습니다.
           </span>
           <FilterRadioButton onToggle={handleRefetch} label="다시 불러오기" />
+        </div>
+      </div>
+    );
+  }
+
+  // 로딩은 성공 했으나, 데이터가 없는 경우
+  if (contentData.length === 0) {
+    return (
+      <div className="w-full h-fit flex flex-col justify-start items-start gap-2">
+        <span className="text-xl text-white font-semibold py-2 ml-6">
+          {BoxTitle}
+        </span>
+        <div className="w-full max-w-5xl mx-auto py-12 flex justify-center text-gray-300">
+          표시할 콘텐츠가 없습니다.
         </div>
       </div>
     );

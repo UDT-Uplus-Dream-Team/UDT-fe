@@ -24,7 +24,7 @@ export const usePreferenceHandler = (
     showSimpleToast.success({
       message,
       position: 'top-center',
-      className: 'w-full bg-black/80 shadow-lg text-white',
+      className: 'w-fit mx-auto bg-black text-white  shadow-lg',
     });
   };
 
@@ -33,7 +33,7 @@ export const usePreferenceHandler = (
     showSimpleToast.error({
       message,
       position: 'top-center',
-      className: 'w-full bg-black/80 shadow-lg text-white',
+      className: 'w-fit mx-auto bg-black text-white shadow-lg ',
     });
   };
 
@@ -62,11 +62,9 @@ export const usePreferenceHandler = (
       onConfirm: async () => {
         try {
           if (target === 'platform') {
-            console.log('[PATCH PLATFORM] 선택된 플랫폼:', selectedOtt);
             await patchPlatformsAsync(selectedOtt);
             showSuccess('OTT 설정이 저장되었습니다.');
           } else {
-            console.log('[PATCH GENRE] 선택된 장르:', selectedGenres);
             await patchGenresAsync(selectedGenres);
             showSuccess('선호 장르가 저장되었습니다.');
           }

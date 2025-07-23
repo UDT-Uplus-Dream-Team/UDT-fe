@@ -1,6 +1,13 @@
 import { Button } from '@components/ui/button';
+import { useRouter } from 'next/navigation';
 
 export default function SurveyComplete() {
+  const router = useRouter();
+
+  const handleNextClick = () => {
+    router.push('/');
+  };
+
   return (
     <div className="h-[calc(100vh-80px)] overflow-y-auto flex flex-col items-center pt-17 pb-10">
       {/* 중앙 정렬된 텍스트 */}
@@ -13,7 +20,10 @@ export default function SurveyComplete() {
 
       {/* 아래쪽 버튼 */}
       <div className="pb-4">
-        <Button className="min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer">
+        <Button
+          onClick={handleNextClick}
+          className="min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer"
+        >
           다음
         </Button>
       </div>

@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 import { getCuratedContents } from '@lib/apis/recommend/getCuratedContents';
+import type { CuratedContentsResponse } from '@lib/apis/recommend/getCuratedContents';
 import { dummyMovies } from '@app/recommend/ContentList';
 
 export const useGetCuratedContents = () => {
@@ -23,12 +24,6 @@ export const useGetCuratedContents = () => {
     throwOnError: false,
   });
 };
-
-interface CuratedContentsResponse {
-  success: boolean;
-  data: TicketComponent[];
-  message?: string;
-}
 
 const fetchCuratedContentsWithFallback = async (): Promise<
   TicketComponent[]

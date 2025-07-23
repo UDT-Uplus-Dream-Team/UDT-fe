@@ -68,6 +68,7 @@ export const useRecommendStore = create<RecommendState>()(
           moviePool: [],
           currentIndex: 0,
           swipeCount: 0,
+          totalSwipeCount: 0,
         }),
 
       getCurrentMovie: () => {

@@ -1,7 +1,7 @@
 import axiosInstance from '@/lib/apis/axiosInstance';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 
-interface CuratedContentsResponse {
+export interface CuratedContentsResponse {
   success: boolean;
   data: TicketComponent[];
   message?: string;
@@ -15,7 +15,7 @@ export const getCuratedContents =
   async (): Promise<CuratedContentsResponse> => {
     try {
       const response = await axiosInstance.get<TicketComponent[]>(
-        '/api/recommend/curated',
+        '/api/v1/contents/recommendations/curated',
       );
 
       return {

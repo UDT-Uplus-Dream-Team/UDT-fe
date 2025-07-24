@@ -22,6 +22,10 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
   const cardBaseClass =
     'flex flex-col min-w-[320px] min-h-[570px] md:min-w-[400px] md:min-h-[680px] max-w-[400px] max-h-[680px] border-none rounded-2xl overflow-hidden';
 
+  const [imgSrc, setImgSrc] = useState(
+    movie.backdropUrl || '/images/default-backdrop.png',
+  );
+
   useEffect(() => {
     const el = descRef.current;
     if (el) {
@@ -31,10 +35,6 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
   }, [movie.description]);
 
   if (variant === 'detail') {
-    const [imgSrc, setImgSrc] = useState(
-      movie.backdropUrl || '/images/default-backdrop.png',
-    );
-
     return (
       <Card className={cardBaseClass}>
         <div className="relative w-full min-h-[180px] md:min-h-[220px]">

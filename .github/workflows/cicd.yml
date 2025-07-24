@@ -7,6 +7,9 @@ on:
     branches: ['dev', 'main']
 
 jobs:
+# ─────────────────────────────────────────────────────────────
+# 1. Build & Test
+# ─────────────────────────────────────────────────────────────
   build:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
@@ -31,38 +34,46 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # 환경 변수를 먼저 가져옴
-      - name: Pull Vercel Environment Information (Preview)
+      # ────────── 환경변수 & 프로젝트 설정 가져오기 ──────────
+      - name: Pull Vercel Environment (Preview)
         if: github.ref == 'refs/heads/dev'
         run: vercel pull --yes --environment=preview --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Pull Vercel Environment Information (Production)
+      - name: Pull Vercel Environment (Production)
         if: github.ref == 'refs/heads/main'
         run: vercel pull --yes --environment=production --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Run linting
         run: npm run lint
-        continue-on-error: true # 린트 에러가 있어도 빌드 계속 진행
+        continue-on-error: true
 
-      # 환경 변수를 가져온 후에 빌드
-      - name: Build Next.js application
-        run: npm run build
-        env:
-          NODE_ENV: production
+      # ────────── 핵심: vercel build 실행 → .vercel/output 생성 ──────────
+      - name: Build with Vercel (Preview)            ### NEW
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          vercel build --yes \
+            --scope=udt \
+            --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Upload build artifacts
-        if: matrix.node-version == '22.x' # 한 번만 업로드
+      - name: Build with Vercel (Production)         ### NEW
+        if: github.ref == 'refs/heads/main'
+        run: |
+          vercel build --prod --yes \
+            --scope=udt \
+            --token=${{ secrets.VERCEL_TOKEN }}
+
+      # ────────── .vercel 전체를 아티팩트로 업로드 ──────────
+      - name: Upload build artifacts                 ### CHANGED
         uses: actions/upload-artifact@v4
         with:
-          name: nextjs-build
+          name: vercel-build-output
           path: |
-            .next/
-            public/
-            package.json
-            next.config.ts
+            .vercel/**          # project.json + output 모두 포함
           retention-days: 1
 
-  # Vercel 배포 작업 (빌드가 성공했을 때만 실행)
+# ─────────────────────────────────────────────────────────────
+# 2. Deploy
+# ─────────────────────────────────────────────────────────────
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -72,15 +83,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download build artifacts
+      - name: Download build artifacts               ### CHANGED
         uses: actions/download-artifact@v4
         with:
-          name: nextjs-build
+          name: vercel-build-output
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # 이미 build job에서 환경 정보를 가져왔으므로 제거하거나 간소화
+      # ────────── 업로드된 .vercel/output을 그대로 배포 ──────────
       - name: Deploy to Vercel (Preview)
         if: github.ref == 'refs/heads/dev'
         run: |
@@ -94,37 +105,3 @@ jobs:
           url=$(vercel deploy --prebuilt --prod --yes --scope=udt --token=${{ secrets.VERCEL_TOKEN }})
           echo "Production URL: $url"
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
-
-      - name: Comment PR with preview link
-        if: github.base_ref == 'dev' && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🚀 Preview deployment ready!\n\n👀 Preview: ${process.env.VERCEL_PREVIEW_URL}`
-            })
-
-  # 라이트하우스 성능 테스트 (선택사항)
-  # lighthouse:
-  #   needs: deploy
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
-
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-
-  #     - name: Wait for deployment
-  #       run: sleep 30
-
-  #     - name: Run Lighthouse CI
-  #       uses: treosh/lighthouse-ci-action@v10
-  #       with:
-  #         urls: |
-  #           ${{ needs.deploy.outputs.deployment_url || 'https://your-domain.vercel.app' }}
-  #         configPath: './lighthouserc.js'
-  #         uploadArtifacts: true
-  #         temporaryPublicStorage: true

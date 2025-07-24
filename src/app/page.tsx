@@ -1,61 +1,100 @@
-export default function Home() {
+'use client';
+
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+
+interface StarData {
+  id: number;
+  left: number;
+  top: number;
+  delay: number;
+}
+
+export default function KakaoLoginPage() {
+  const [stars, setStars] = useState<StarData[]>([]);
+
+  const handleKakaoLogin = () => {
+    window.location.href =
+      'https://dev.banditbool.com/oauth2/authorization/kakao';
+  };
+
+  // 클라이언트에서만 별 생성
+  useEffect(() => {
+    const starData: StarData[] = [...Array(50)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: i * 0.1,
+    }));
+    setStars(starData);
+  }, []);
+
   return (
-    <div className="min-h-[calc(100vh-80px)] flex flex-col p-6 pt-8 w-full">
-      {/* Header */}
-      <header className="mb-6">
-        <h2 className="text-sm text-[var(--primary-200)]">테스트 페이지</h2>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col gap-6">
-        <div className="text-center mb-4">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            커스텀 스타일 확인
-          </h1>
-          <p className="text-[var(--primary-200)] text-base leading-relaxed">
-            이 페이지는 설정한 색상, 반경, 그림자, 폰트를 확인하기 위한
-            샘플입니다.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <button className="w-full px-6 py-3 bg-[var(--primary-500)] text-white rounded-[var(--radius-button)] shadow-[var(--shadow-md)] hover:bg-[var(--primary-600)] transition-colors">
-            버튼 스타일
-          </button>
-
-          <div className="p-4 bg-[var(--primary-100)] bg-opacity-20 border border-[var(--primary-300)] border-opacity-30 rounded-[var(--radius-modal)] shadow-[var(--shadow-sm)]">
-            <p className="text-[var(--primary-100)] text-sm leading-relaxed">
-              이 박스를 통해 배경 색상, 테두리, 반경, 그림자가 적용되었는지
-              확인하세요.
-            </p>
-          </div>
-
-          <input
-            className="w-full p-3 bg-[var(--input)] bg-opacity-10 border border-[var(--border)] border-opacity-30 rounded-[var(--radius-input)] text-white placeholder-[var(--primary-200)] focus:ring-2 focus:ring-[var(--ring)] focus:border-transparent transition-all"
-            placeholder="입력 포커스 링 확인"
+    <div className="flex flex-col min-h-full text-white items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0">
+        {stars.map((star) => (
+          <div
+            key={star.id}
+            className="absolute w-1 h-1 bg-white rounded-full opacity-0 animate-star-appear"
+            style={{
+              left: `${star.left}%`,
+              top: `${star.top}%`,
+              animationDelay: `${star.delay}s`,
+            }}
           />
-
-          {/* 추가 컨텐츠로 스크롤 테스트 */}
-          <div className="space-y-3 mt-8">
-            <div className="h-20 bg-[var(--primary-200)] bg-opacity-20 rounded-[var(--radius-modal)] flex items-center justify-center">
-              <span className="text-[var(--primary-100)]">컨텐츠 블록 1</span>
-            </div>
-            <div className="h-20 bg-[var(--primary-200)] bg-opacity-20 rounded-[var(--radius-modal)] flex items-center justify-center">
-              <span className="text-[var(--primary-100)]">컨텐츠 블록 2</span>
-            </div>
-            <div className="h-20 bg-[var(--primary-200)] bg-opacity-20 rounded-[var(--radius-modal)] flex items-center justify-center">
-              <span className="text-[var(--primary-100)]">컨텐츠 블록 3</span>
-            </div>
-          </div>
+        ))}
+      </div>
+      {/* Content - 모든 요소를 중앙에 모아서 배치 */}
+      <div className="flex flex-col items-center justify-center text-center w-full space-y-5">
+        {/* 3D Package illustration */}
+        <div className="relative animate-fade-in-up glow-effect">
+          <Image
+            src="/icons/FireFlyLogo.png"
+            alt="biglogo"
+            width={720}
+            height={720}
+            style={{
+              width: '280px',
+              height: '280px',
+            }}
+            className="object-cover"
+          />
         </div>
-      </main>
 
-      {/* Footer */}
-      <footer className="mt-8 text-center">
-        <span className="text-sm text-[var(--primary-200)]">
-          © {new Date().getFullYear()} Your Company
-        </span>
-      </footer>
+        {/* 텍스트 부분 */}
+        <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <h1 className="text-2xl font-bold mb-2 text-logo leading-tight">
+            반딧불에 오신 걸 환영해요!
+          </h1>
+          <h2 className="text-lg text-white leading-tight">
+            당신을 위한 컨텐츠를 찾아보세요
+          </h2>
+        </div>
+
+        {/* KakaoTalk login button - 텍스트와 더 가깝게 */}
+        <div
+          className="w-full max-w-70 py-5 animate-fade-in-up"
+          style={{ animationDelay: '1.0s' }}
+        >
+          <Button
+            onClick={handleKakaoLogin}
+            className="w-full bg-transparent border-none transition-all duration-200 cursor-pointer hover:bg-transparent"
+          >
+            <Image
+              src="/icons/kakaologin-icon.png"
+              alt="kakao"
+              width={300}
+              height={45}
+            />
+          </Button>
+        </div>
+      </div>
+
+      {/* Desktop-only decorative elements */}
+      <div className="hidden lg:block absolute top-10 left-10 w-20 h-20 bg-yellow-100 rounded-full opacity-50 blur-xl" />
+      <div className="hidden lg:block absolute bottom-20 right-10 w-32 h-32 bg-amber-100 rounded-full opacity-30 blur-2xl" />
+      <div className="hidden xl:block absolute top-1/3 right-20 w-16 h-16 bg-yellow-200 rounded-full opacity-40 blur-lg" />
     </div>
   );
 }

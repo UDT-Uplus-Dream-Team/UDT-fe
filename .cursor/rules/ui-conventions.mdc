@@ -1,0 +1,10 @@
+---
+description: UDT UI/컴포넌트 작성 규칙
+alwaysApply: false
+---
+
+- 컴포넌트는 하나의 책임만 갖도록 작성합니다.
+- 2회 이상 재사용되는 로직은 추출합니다.
+- 재사용 가능한 컴포넌트는 ui/ 하위에 둡니다.
+- 내부 작성 순서는 상태 → 변수 → 훅 → 함수 → JSX 순.
+- Tailwind CSS 클래스는 Layout → Spacing → Typography → Color → State 순.

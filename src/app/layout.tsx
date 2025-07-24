@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import Providers from './providers';
 import './globals.css';
-import BottomNavbar from '@/components/bottom-navbar';
+import LayoutWrapper from './layout-wrapper';
+import { Toaster } from 'sonner';
+import { GoogleAnalytics } from '@next/third-parties/google'; // 구글 애널리틱스 추가
 
 export const metadata: Metadata = {
   title: 'Your App Title',
@@ -22,18 +24,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className="dark">
-      <body className="bg-gray-100 min-h```-screen">
+    <html lang="ko">
+      <body className="w-full flex justify-center bg-gray-100 min-h-screen overflow-x-hidden">
         <Providers>
-          {/* 외부 컨테이너 - 큰 화면에서 다른 배경색 */}
-          <div className="min-h-screen bg-gray-100 flex justify-center">
-            {/* 앱 컨테이너 - 고정 너비 */}
-            <div className="w-full max-w-160 bg-primary-800 text-white min-h-screen relative">
-              <main className="pb-20 min-h-screen">{children}</main>
-              <BottomNavbar />
-            </div>
-          </div>
+          <Toaster
+            position="top-center"
+            toastOptions={{ className: 'w-full' }}
+          />
+          <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />
       </body>
     </html>
   );

@@ -19,14 +19,17 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"], // fallback 전체 경로
-      "@components/*": ["./src/components/*"], // 도메인 컴포넌트
-      "@ui/*": ["./src/components/ui/*"], // shadcn 컴포넌트
+      "@/*": ["./src/*"],
+      "@app/*": ["./src/app/*"],
+      "@components/*": ["./src/components/*"],
+      "@ui/*": ["./src/components/ui/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@lib/*": ["./src/lib/*"],
       "@utils/*": ["./src/utils/*"],
-      "@types/*": ["./src/types/*"],
-      "@styles/*": ["./src/styles/*"]
+      "@type/*": ["./src/types/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@store/*": ["./src/store/*"],
+      "@constants/*": ["./src/constants/*"]
     }
   },
   "include": [
@@ -34,7 +37,9 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/stories/**/*.ts",
+    "src/stories/**/*.tsx"
   ],
   "exclude": ["node_modules"]
 }

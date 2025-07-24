@@ -1,0 +1,12 @@
+---
+description: UDT 함수 및 상태 네이밍 규칙
+alwaysApply: false
+---
+
+- Boolean 상태는 is, has 접두사 사용.
+- 배열/데이터 상태는 의미 있는 이름 사용.
+- 함수 이름:
+  - 이벤트 핸들러: handle 접두사
+  - 일반 함수: 동사 시작
+  - API 함수: get/post 등 HTTP 메서드
+  - 커스텀 훅: use 접두사 필수

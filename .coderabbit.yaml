@@ -1,0 +1,37 @@
+# .coderabbit.yaml
+language: 'ko-KR' # 한국어 리뷰
+tone_instructions: |
+  당신은 숙련된 코드 리뷰어입니다.
+  팀원이 남겨주는 것처럼 짧고 간결하게 피드백하세요.
+  문제와 해결 방안을 명확히 언급하며,
+  "이러한 이유 때문에 이렇게 고치면 좋을 것 같습니다" 형식으로 작성해 주세요.
+early_access: false # 얼리 액세스 기능 비활성화
+enable_free_tier: true # 무료 플랜 기능 활성화
+
+reviews:
+  profile: 'chill' # 부드러운 톤
+  request_changes_workflow: false
+  high_level_summary: false # 상위 요약 비활성화
+  high_level_summary_in_walkthrough: false
+  changed_files_summary: false
+  sequence_diagrams: false # 시퀀스 다이어그램 비활성화
+  collapse_walkthrough: false
+  poem: false # 시(poem) 비활성화
+  estimate_code_review_effort: false
+  assess_linked_issues: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  auto_apply_labels: false
+
+chat:
+  auto_reply: true # 태그 없이도 자동 응답
+
+knowledge_base:
+  web_search:
+    enabled: true # 웹 검색 기능 활성화
+
+cursor:
+  learn_from: ./cursor # 👈 이 한 줄 추가! (혹은 /cursor)
+
+# 기타 설정은 기본값 유지

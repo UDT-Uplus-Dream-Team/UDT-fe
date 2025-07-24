@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { LoadingScreen } from './LoadingScreen';
 import { RefreshCw, Plus, Eye, EyeOff, Undo2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
@@ -14,6 +14,9 @@ import { usePostCuratedContent } from '@hooks/recommend/usePostCuratedContents';
 
 export const ResultScreen: React.FC = () => {
   const queryClient = useQueryClient();
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [dist, setDist] = useState(136);
 
   // Zustand: UI 상태만
   const {
@@ -70,6 +73,21 @@ export const ResultScreen: React.FC = () => {
     const cachedData = queryClient.getQueryData(['curatedContents']);
     return !cachedData;
   });
+
+  useEffect(() => {
+    if (showLoadingScreen) return; // 로딩 중이면 패스
+    if (!containerRef.current) return; // div 아직 없음
+
+    const update = () => {
+      if (containerRef.current) {
+        setDist(containerRef.current.offsetWidth * 0.4);
+      }
+    };
+
+    update(); // 최초 1회
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [showLoadingScreen]);
 
   // 큐레이션 데이터가 로드되면 contents 설정
   useEffect(() => {
@@ -153,10 +171,10 @@ export const ResultScreen: React.FC = () => {
       setCurrentIndex((i) => i + 1);
   };
 
-  const getCardPosition = (idx: number) => {
+  const getCardPosition = (idx: number, dist: number) => {
     const diff = idx - currentIndex;
     return {
-      x: diff * 300,
+      x: diff * dist,
       scale: diff === 0 ? 1 : 0.8,
       opacity: diff === 0 ? 1 : 0.6,
       zIndex: diff === 0 ? 10 : 1,
@@ -165,7 +183,12 @@ export const ResultScreen: React.FC = () => {
 
   // 로딩 중이거나 최소 3초 대기 중인 경우
   if (isLoading || showLoadingScreen) {
-    return <LoadingScreen />;
+    return (
+      <LoadingScreen
+        message="추천 컨텐츠를 선별하고 있어요!"
+        submessage="조금만 기다려주세요.."
+      />
+    );
   }
 
   // 에러 발생 시 에러 화면
@@ -230,167 +253,161 @@ export const ResultScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-full items-center justify-center">
-      <div className="w-full">
-        <div className="text-center mb-4">
-          <h1 className="text-3xl font-bold mb-2">추천 결과</h1>
-          <p className="text-gray-600">마음에 드는 콘텐츠를 선택해보세요</p>
+    <div className="flex min-h-full flex-col items-center justify-center">
+      {/* 제목 섹션 */}
+      <div className="text-center my-5">
+        <h1 className="text-3xl font-bold mb-2">추천 결과</h1>
+        <p className="text-gray-600">마음에 드는 콘텐츠를 선택해보세요</p>
+      </div>
 
-          {/* 데이터 소스 표시 (디버깅용, 나중에 제거 가능) */}
-          {/* {curatedContents.length > 0 && (
-            <p className="text-xs text-gray-400 mt-2">
-              {curatedContents.length >= 6 ? 'API' : 'Mock'} 데이터 (
-              {curatedContents.length}개)
-            </p>
-          )} */}
-        </div>
-
-        {/* Carousel Container */}
-        <div className="relative h-[600px] py-5 flex items-center justify-center">
-          {contents.map((content, idx) => {
-            const pos = getCardPosition(idx);
-            const isCenter = idx === currentIndex;
-            return (
-              <motion.div
-                key={content.contentId}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0}
-                onDragEnd={handleDragEnd}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{
-                  x: pos.x,
-                  scale: pos.scale,
-                  opacity: pos.opacity,
-                  zIndex: pos.zIndex,
-                }}
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="absolute w-80 h-full flex flex-col items-center"
-              >
-                {isCenter ? (
-                  <div className="relative w-full h-full">
-                    {/* 리롤 애니메이션용 AnimatePresence */}
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={`reroll-${content.contentId}-${rerollCount[idx]}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="w-full h-full"
-                      >
-                        {/* 플립 애니메이션용 AnimatePresence */}
-                        <AnimatePresence mode="wait">
-                          <motion.div
-                            key={`flip-${content.contentId}-${
-                              isFlipped[idx] ? 'back' : 'front'
-                            }`}
-                            initial={{ rotateY: isFlipped[idx] ? 90 : -90 }}
-                            animate={{ rotateY: 0 }}
-                            exit={{ rotateY: isFlipped[idx] ? -90 : 90 }}
-                            transition={{ duration: 0.2 }}
-                            className="w-full h-full"
-                            style={{ transformStyle: 'preserve-3d' }}
-                          >
-                            <Ticket
-                              movie={content}
-                              variant={isFlipped[idx] ? 'detail' : 'result'}
-                              feedback="neutral"
-                            />
-                          </motion.div>
-                        </AnimatePresence>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <div className="relative w-full h-full">
-                    <Ticket
-                      movie={content}
-                      variant="result"
-                      feedback="neutral"
-                    />
-                  </div>
-                )}
-
-                {isCenter && (
-                  <div className="absolute -top-2 -right-2 flex gap-2 z-50">
-                    {/* 상세보기 버튼 */}
-                    <motion.div whileTap={{ scale: 0.9 }}>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleFlip(idx)}
-                      >
-                        {isFlipped[idx] ? (
-                          <EyeOff className="w-4 h-4 text-black" />
-                        ) : (
-                          <Eye className="w-4 h-4 text-black" />
-                        )}
-                      </Button>
-                    </motion.div>
-
-                    {/* 리롤 버튼 */}
-                    <motion.div whileTap={{ scale: 0.9 }}>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleReroll(idx)}
-                        disabled={rerollUsed[idx] || curatedContents.length < 6}
-                        title={
-                          curatedContents.length < 6
-                            ? '리롤할 추가 콘텐츠가 없습니다'
-                            : rerollUsed[idx]
-                              ? '이미 리롤을 사용했습니다'
-                              : '다른 콘텐츠로 바꾸기'
-                        }
-                      >
-                        <RefreshCw
-                          className={`w-4 h-4 ${
-                            rerollUsed[idx] || curatedContents.length < 6
-                              ? 'text-gray-400'
-                              : 'text-black'
+      {/* Carousel Container */}
+      <div
+        ref={containerRef}
+        className="relative h-[60%] w-[70%] min-w-70 min-h-130 flex items-center justify-center"
+      >
+        {contents.map((content, idx) => {
+          const pos = getCardPosition(idx, dist);
+          const isCenter = idx === currentIndex;
+          return (
+            <motion.div
+              key={content.contentId}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0}
+              onDragEnd={handleDragEnd}
+              initial={{ opacity: 0 }}
+              animate={{
+                x: pos.x,
+                scale: pos.scale,
+                opacity: pos.opacity,
+                zIndex: pos.zIndex,
+              }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="
+                  absolute my-4
+                  min-w-[280px] min-h-[480px]
+                  max-w-[400px] max-h-[680px] w-full h-full
+                "
+            >
+              {isCenter ? (
+                <div className="relative w-full h-full">
+                  {/* 리롤 애니메이션용 AnimatePresence */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`reroll-${content.contentId}-${rerollCount[idx]}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full h-full"
+                    >
+                      {/* 플립 애니메이션용 AnimatePresence */}
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={`flip-${content.contentId}-${
+                            isFlipped[idx] ? 'back' : 'front'
                           }`}
-                        />
-                      </Button>
+                          initial={{ rotateY: isFlipped[idx] ? 90 : -90 }}
+                          animate={{ rotateY: 0 }}
+                          exit={{ rotateY: isFlipped[idx] ? -90 : 90 }}
+                          transition={{ duration: 0.2 }}
+                          className="w-full h-full"
+                          style={{ transformStyle: 'preserve-3d' }}
+                        >
+                          <Ticket
+                            movie={content}
+                            variant={isFlipped[idx] ? 'detail' : 'result'}
+                            feedback="neutral"
+                          />
+                        </motion.div>
+                      </AnimatePresence>
                     </motion.div>
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <div className="relative w-full h-[calc(100%-20px)]">
+                  <Ticket movie={content} variant="result" feedback="neutral" />
+                </div>
+              )}
 
-        {/* Action Buttons */}
-        <div className="flex justify-center mt-8 gap-4">
-          <Button
-            onClick={handleAddContent}
-            disabled={isCurrentContentSaved() || isPending}
-            className={`px-8 py-3 rounded-full shadow-lg flex items-center gap-2 ${
-              isCurrentContentSaved()
-                ? 'bg-gray-400 text-gray-200 cursor-not-allowed' // 저장된 상태
-                : isPending
-                  ? 'bg-primary-300 text-white' // 로딩 중
-                  : 'bg-primary-500 text-white hover:bg-primary-600' // 정상 상태
-            }`}
-          >
-            <Plus className="w-5 h-5" />
-            <span className="font-medium">
-              {isCurrentContentSaved()
-                ? '저장 완료'
-                : isPending
-                  ? '저장 중...'
-                  : '이 콘텐츠 추가하기'}
-            </span>
-          </Button>
+              {isCenter && (
+                <div className="absolute -top-2 -right-2 flex gap-x-2 z-50">
+                  {/* 상세보기 버튼 */}
+                  <motion.div whileTap={{ scale: 0.9 }}>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleFlip(idx)}
+                    >
+                      {isFlipped[idx] ? (
+                        <EyeOff className="w-4 h-4 text-black" />
+                      ) : (
+                        <Eye className="w-4 h-4 text-black" />
+                      )}
+                    </Button>
+                  </motion.div>
 
-          <Button
-            onClick={handleStartNewRecommendation}
-            className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2"
-          >
-            <Undo2 className="w-5 h-5" />
-            다시 추천받기
-          </Button>
-        </div>
+                  {/* 리롤 버튼 */}
+                  <motion.div whileTap={{ scale: 0.9 }}>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleReroll(idx)}
+                      disabled={rerollUsed[idx] || curatedContents.length < 6}
+                      title={
+                        curatedContents.length < 6
+                          ? '리롤할 추가 콘텐츠가 없습니다'
+                          : rerollUsed[idx]
+                            ? '이미 리롤을 사용했습니다'
+                            : '다른 콘텐츠로 바꾸기'
+                      }
+                    >
+                      <RefreshCw
+                        className={`w-4 h-4 ${
+                          rerollUsed[idx] || curatedContents.length < 6
+                            ? 'text-gray-400'
+                            : 'text-black'
+                        }`}
+                      />
+                    </Button>
+                  </motion.div>
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-center gap-4 my-5">
+        <Button
+          onClick={handleAddContent}
+          disabled={isCurrentContentSaved() || isPending}
+          className={`px-8 py-3 rounded-full shadow-lg flex items-center gap-2 ${
+            isCurrentContentSaved()
+              ? 'bg-gray-400 text-gray-200 cursor-not-allowed' // 저장된 상태
+              : isPending
+                ? 'bg-primary-300 text-white' // 로딩 중
+                : 'bg-primary-500 text-white hover:bg-primary-600' // 정상 상태
+          }`}
+        >
+          <Plus className="w-5 h-5" />
+          <span className="font-medium">
+            {isCurrentContentSaved()
+              ? '저장 완료'
+              : isPending
+                ? '저장 중...'
+                : '이 콘텐츠 추가하기'}
+          </span>
+        </Button>
+
+        <Button
+          onClick={handleStartNewRecommendation}
+          className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2"
+        >
+          <Undo2 className="w-5 h-5" />
+          다시 추천받기
+        </Button>
       </div>
     </div>
   );

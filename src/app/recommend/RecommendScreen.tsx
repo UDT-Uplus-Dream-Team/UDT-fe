@@ -9,6 +9,7 @@ import { useRecommendStore } from '@store/useRecommendStore';
 import { useFetchRecommendations } from '@hooks/recommend/useGetRecommendationContents';
 import { FinishScreen } from './FinishScreen';
 import { sendAnalyticsEvent } from '@lib/gtag';
+import { LoadingScreen } from './LoadingScreen';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 type FeedbackType = 'liked' | 'unliked' | 'neutral';
@@ -53,6 +54,16 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(
     null,
   );
+  const [loadingDelayOver, setLoadingDelayOver] = useState(false);
+
+  // ── 로딩 지연 상태 관리 ──────────────────────────
+  useEffect(() => {
+    // 기존 데이터가 있으면 로딩 지연 건너뛰기
+    if (moviePool.length > 0) {
+      console.log('기존 데이터 존재, 로딩 지연 건너뛰기');
+      setLoadingDelayOver(true);
+    }
+  }, [moviePool.length]);
 
   // ── 초기 데이터 로드 ────────────────────────────
   useEffect(() => {
@@ -63,23 +74,33 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
           currentIndex,
           swipeCount,
         });
+        setLoadingDelayOver(true); // 기존 데이터 있으면 즉시 완료
         return;
       }
 
       try {
         console.log('초기 콘텐츠 로딩 시작...');
-        const initialMovies = await fetchRecommendations(10);
+
+        // API 호출과 최소 2초 지연을 동시에 실행
+        const [initialMovies] = await Promise.all([
+          fetchRecommendations(10),
+          new Promise((resolve) => setTimeout(resolve, 2000)), // 최소 2초 대기
+        ]);
+
         console.log(
           `${initialMovies.length}개의 초기 콘텐츠가 로드되었습니다.`,
         );
         setMoviePool(initialMovies);
+        setLoadingDelayOver(true); // API 완료 + 2초 지연 후 완료
       } catch (error) {
         console.error('초기 콘텐츠 로딩 실패:', error);
+        // 에러 시에도 2초 후 완료
+        setTimeout(() => setLoadingDelayOver(true), 2000);
       }
     };
 
     loadInitialMovies();
-  }, []); // 빈 의존성 배열 - 한 번만 실행
+  }, []);
 
   // 현재 영화 정보
   const currentMovie = getCurrentMovie();
@@ -168,19 +189,19 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     if (feedbackType) setFeedback(feedbackType);
     setIsFlipped(false);
 
-    // 즉시 피드백 전송
+    // 즉시 피드백 전송 (현재 콘텐츠에 대해)
     if (feedbackType && currentMovie) {
       sendFeedbackImmediately(currentMovie.contentId, feedbackType);
     }
 
-    // Store 업데이트
-    incrementSwipeCount();
-
-    // 애니메이션 → 인덱스 이동
+    // 애니메이션 완료 후 콘텐츠 변경
     setTimeout(() => {
       setSwipeDirection(null);
-      setCurrentIndex(currentIndex + 1);
       setFeedback('neutral');
+
+      // 상태 업데이트를 애니메이션 완료 후로 이동
+      incrementSwipeCount();
+      setCurrentIndex(currentIndex + 1);
     }, 700);
 
     // 애니메이션 잠금 해제
@@ -260,6 +281,31 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     }
   };
 
+  const onTouchStart = (e: React.TouchEvent): void => {
+    if (isAnimating || e.touches.length !== 1) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    setStartPoint({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const onTouchEnd = (e: React.TouchEvent): void => {
+    if (!startPoint || e.changedTouches.length !== 1) return;
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    const dx: number = touch.clientX - startPoint.x;
+    const dy: number = touch.clientY - startPoint.y;
+    setStartPoint(null);
+    const absX: number = Math.abs(dx);
+    const absY: number = Math.abs(dy);
+    const threshold: number = 100; // 모바일에 맞게 임계값 낮춤
+
+    if (absX > absY && absX > threshold) {
+      handleSwipe(dx > 0 ? 'right' : 'left', dx > 0 ? 'liked' : 'unliked');
+    } else if (dy < -threshold) {
+      handleSwipe('up');
+    }
+  };
+
   // ── transform 클래스 계산 ──────────────────────
   const getCardTransform = (): string => {
     if (!swipeDirection) return '';
@@ -288,11 +334,12 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   }
 
   // ── 로딩 상태 ─────────────────────────────────
-  if (isLoading && moviePool.length === 0) {
+  if (!loadingDelayOver || (isLoading && moviePool.length === 0)) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center">
-        <div className="text-white text-lg">콘텐츠를 로딩 중...</div>
-      </div>
+      <LoadingScreen
+        message="컨텐츠 목록을 불러오고 있어요!"
+        submessage="잠시만 기다려주세요...."
+      />
     );
   }
 
@@ -332,9 +379,18 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
           className={`relative inline-block mx-10 w-full select-none ${
             isFlipped ? 'touch-action-auto' : 'touch-action-none'
           }`}
+          style={{
+            touchAction: isFlipped ? 'auto' : 'none',
+            WebkitTouchCallout: 'none',
+            WebkitUserSelect: 'none',
+            userSelect: 'none',
+          }}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
           onPointerCancel={() => setStartPoint(null)}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+          onTouchCancel={() => setStartPoint(null)}
         >
           {/* 자리 채우기 티켓 */}
           <div className="relative flex w-full aspect-[75/135] max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
@@ -422,12 +478,6 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         >
           {isFlipped ? '돌아가기' : '상세보기'}
         </Button>
-
-        {/* 진행률 표시 */}
-        <div className="text-white/70 text-sm">
-          진행률: {swipeCount}/5
-          {isLoading && <span className="ml-2">(추가 로딩 중...)</span>}
-        </div>
       </div>
     </div>
   );

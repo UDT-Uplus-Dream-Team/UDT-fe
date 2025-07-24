@@ -20,10 +20,14 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
 
   //카드 크기 고정을 위한 값지정
   const cardBaseClass =
-    'flex flex-col min-w-[320px] min-h-[570px] md:min-w-[400px] md:min-h-[680px] max-w-[400px] max-h-[680px] border-none rounded-2xl overflow-hidden';
+    'flex flex-col min-w-[280px] min-h-[480px] max-w-[400px] max-h-[680px] w-full h-full border-none rounded-2xl overflow-hidden';
 
-  const [imgSrc, setImgSrc] = useState(
+  const [backdropSrc, setBackdropSrc] = useState(
     movie.backdropUrl || '/images/default-backdrop.png',
+  );
+
+  const [posterSrc, setPosterSrc] = useState(
+    movie.posterUrl || '/images/default-poster.png',
   );
 
   useEffect(() => {
@@ -39,21 +43,19 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
       <Card className={cardBaseClass}>
         <div className="relative w-full min-h-[180px] md:min-h-[220px]">
           <Image
-            src={imgSrc}
+            src={backdropSrc}
             alt={movie.title}
             fill
             className="object-cover"
             priority
-            onError={() => setImgSrc('/images/default-backdrop.png')}
+            onError={() => setBackdropSrc('/images/default-backdrop.png')}
           />
         </div>
         <CardHeader>
           <div className="space-y-1 pb-2">
             <h3 className="font-bold text-2xl leading-tight">{movie.title}</h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{movie.genres.join(', ')}</span>
-              <span>•</span>
-              <span>{movie.rating}</span>
+              <div>{movie.genres.join(', ')}</div>
             </div>
           </div>
 
@@ -77,7 +79,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
           </div>
         </CardHeader>
 
-        <CardContent className="relative flex flex-col space-y-3 py-2 flex-1">
+        <CardContent className="relative flex flex-col space-y-3 py-3 flex-1">
           {!expanded ? (
             <>
               {/* 일반 정보 */}
@@ -155,11 +157,12 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
       <Card className={cardBaseClass}>
         <div className="relative flex-grow">
           <Image
-            src={movie.posterUrl || '/images/default-poster.png'}
+            src={posterSrc}
             alt={movie.title}
             fill
             className="object-cover"
             priority
+            onError={() => setPosterSrc('/images/default-poster.png')}
           />
         </div>
         <CardHeader>
@@ -167,13 +170,13 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             <h3 className="font-bold text-lg leading-tight">{movie.title}</h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{movie.genres.join(', ')}</span>
-              <span>•</span>
-              <span>{movie.rating}</span>
+              {/* <span>•</span>
+              <span>{movie.rating}</span> */}
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="flex flex-col space-y-3">
+        <CardContent className="flex flex-col py-3 space-y-3">
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
               <span className="text-gray-60">감독</span>
@@ -194,11 +197,12 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
       <Card className={cardBaseClass}>
         <div className="relative flex-grow">
           <Image
-            src={movie.posterUrl || '/images/default-poster.png'}
+            src={posterSrc}
             alt={movie.title}
             fill
             className="object-cover"
             priority
+            onError={() => setPosterSrc('/images/default-poster.png')}
           />
           {feedback === 'liked' && (
             <div className="absolute inset-0 z-20 flex justify-start items-center bg-like/70">

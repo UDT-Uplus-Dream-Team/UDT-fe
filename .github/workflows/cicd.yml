@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
 
     strategy:
       matrix:
@@ -27,16 +28,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      # 환경 변수를 먼저 가져옴
+      - name: Pull Vercel Environment Information (Preview)
+        if: github.ref == 'refs/heads/dev'
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Pull Vercel Environment Information (Production)
+        if: github.ref == 'refs/heads/main'
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Run linting
         run: npm run lint
         continue-on-error: true # 린트 에러가 있어도 빌드 계속 진행
 
+      # 환경 변수를 가져온 후에 빌드
       - name: Build Next.js application
         run: npm run build
         env:
           NODE_ENV: production
-          # 환경 변수를 빌드 시점에 직접 주입
-          NEXT_PUBLIC_API_BASE_URL: https://api.banditbool.com
 
       - name: Upload build artifacts
         if: matrix.node-version == '22.x' # 한 번만 업로드
@@ -60,7 +72,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 빌드된 artifacts 다운로드 (중요!)
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -69,18 +80,7 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # 환경별로 다른 vercel pull 실행
-      - name: Pull Vercel Environment Information (Preview)
-        if: github.ref == 'refs/heads/dev'
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Pull Vercel Environment Information (Production)
-        if: github.ref == 'refs/heads/main'
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      # vercel build 단계 제거 (이미 GitHub Actions에서 빌드됨)
-      # 기존의 "Build Project Artifacts" 단계들 삭제
-
+      # 이미 build job에서 환경 정보를 가져왔으므로 제거하거나 간소화
       - name: Deploy to Vercel (Preview)
         if: github.ref == 'refs/heads/dev'
         run: |

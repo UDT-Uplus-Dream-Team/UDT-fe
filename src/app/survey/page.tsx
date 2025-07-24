@@ -2,7 +2,6 @@
 
 import Step1 from '@components/survey/Step1';
 import Step2 from '@components/survey/Step2';
-import Step3 from '@components/survey/Step3';
 import SurveyComplete from '@components/survey/SurveyComplete';
 import { useState } from 'react';
 import { SurveyProvider } from '@store/SurveyContext';
@@ -39,7 +38,6 @@ function SurveyFlow() {
     <div>
       {step === 1 && <Step1 onNext={handleNext} />}
       {step === 2 && <Step2 onNext={handleNext} />}
-      {step === 3 && <Step3 onNext={handleNext} />}
       {step === 4 && <SurveyComplete />}
     </div>
   );

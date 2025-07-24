@@ -13,8 +13,7 @@ import { usePageStayTracker } from '@hooks/usePageStayTracker';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const { selectedPlatforms, selectedGenres, watchedContents } =
-    useSurveyContext();
+  const { selectedPlatforms, selectedGenres } = useSurveyContext();
 
   const handleNext = async () => {
     if (step < 2) {
@@ -24,7 +23,7 @@ function SurveyFlow() {
         await postSurvey({
           platforms: selectedPlatforms,
           genres: selectedGenres,
-          contentIds: watchedContents,
+          // contentIds: watchedContents,
         });
         setStep(3); // 성공 시 완료 페이지로 이동
       } catch {

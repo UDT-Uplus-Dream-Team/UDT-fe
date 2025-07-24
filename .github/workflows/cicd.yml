@@ -13,7 +13,6 @@ jobs:
     strategy:
       matrix:
         node-version: [22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - name: Checkout code
@@ -36,11 +35,8 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
-
-      # Jest 사용 시 활성화
-      # - name: Run tests
-      #   run: npm test
-      #   continue-on-error: true # 테스트 실패해도 배포는 진행
+          # 환경 변수를 빌드 시점에 직접 주입
+          NEXT_PUBLIC_API_BASE_URL: https://api.banditbool.com
 
       - name: Upload build artifacts
         if: matrix.node-version == '22.x' # 한 번만 업로드
@@ -50,6 +46,8 @@ jobs:
           path: |
             .next/
             public/
+            package.json
+            next.config.ts
           retention-days: 1
 
   # Vercel 배포 작업 (빌드가 성공했을 때만 실행)
@@ -57,35 +55,46 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # 빌드된 artifacts 다운로드 (중요!)
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: nextjs-build
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
+
+      # 환경별로 다른 vercel pull 실행
       - name: Pull Vercel Environment Information (Preview)
         if: github.ref == 'refs/heads/dev'
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Pull Vercel Environment Information (Production)
         if: github.ref == 'refs/heads/main'
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Build Project Artifacts (Preview)
-        if: github.ref == 'refs/heads/dev'
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Build Project Artifacts (Production)
-        if: github.ref == 'refs/heads/main'
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      # vercel build 단계 제거 (이미 GitHub Actions에서 빌드됨)
+      # 기존의 "Build Project Artifacts" 단계들 삭제
+
       - name: Deploy to Vercel (Preview)
         if: github.ref == 'refs/heads/dev'
         run: |
           url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "Preview URL: $url"
           echo "VERCEL_PREVIEW_URL=$url" >> $GITHUB_ENV
+
       - name: Deploy to Vercel (Production)
         if: github.ref == 'refs/heads/main'
         run: |
           url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "Production URL: $url"
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
+
       - name: Comment PR with preview link
         if: github.base_ref == 'dev' && github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -98,7 +107,7 @@ jobs:
               body: `🚀 Preview deployment ready!\n\n👀 Preview: ${process.env.VERCEL_PREVIEW_URL}`
             })
 
-  # # 라이트하우스 성능 테스트 (선택사항)
+  # 라이트하우스 성능 테스트 (선택사항)
   # lighthouse:
   #   needs: deploy
   #   runs-on: ubuntu-latest

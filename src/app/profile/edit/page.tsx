@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { CircleOption } from '@components/common/circleOption';
@@ -18,6 +18,7 @@ import { usePreferenceHandler } from '@hooks/profile/usePreferenceHandler';
 import { useGetUserProfile } from '@hooks/useGetUserProfile';
 import { showSimpleToast } from '@components/common/Toast';
 import { usePageStayTracker } from '@/hooks/usePageStayTracker';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 
 export default function EditPreferencePage() {
   // 페이지 머무르는 시간 추적 (프로필 수정 페이지 추적 / Google Analytics 연동을 위함)
@@ -27,7 +28,13 @@ export default function EditPreferencePage() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const router = useRouter();
   const { handleSave } = usePreferenceHandler(selectedOtt, selectedGenres);
-  const { data: userProfile } = useGetUserProfile();
+  const userQuery = useGetUserProfile(); // 유저 프로필 조회 쿼리 전체 가져오기 (에러 핸들링에서 용이함을 위함)
+
+  // 쿼리에서 에러가 발생했을 경우, 토스트 띄우기
+  useQueryErrorToast(userQuery);
+
+  // userQuery.data가 변경될 때만 새로운 값을 반환하도록 함
+  const userProfile = useMemo(() => userQuery.data, [userQuery.data]);
 
   useEffect(() => {
     if (userProfile) {

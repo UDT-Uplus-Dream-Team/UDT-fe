@@ -14,6 +14,7 @@ import {
 import { PosterCardScrollBox } from '@/components/explore/PosterCardScrollBox';
 import { useFetchTodayRecommendSentence } from '@/hooks/explore/useFetchTodayRecommendSentence';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 
 export default function ExplorePage() {
   // 페이지 머무르는 시간 추적 (탐색 페이지 추적 / Google Analytics 연동을 위함)
@@ -29,12 +30,18 @@ export default function ExplorePage() {
   const filters = appliedFilters.length > 0 ? appliedFilters : undefined;
 
   // 필터링된 콘텐츠 목록 조회 (필터 옵션을 이용해서 request param 생성해서 데이터를 받아온다, filter 비어 있으면 수행 X)
+  const getFilteredContentsQuery = useGetFilteredContents({
+    size: 12,
+    filters: createFilterRequestParam(filters ?? []),
+    enabled: filters !== undefined,
+  });
+
+  // 쿼리에서 에러가 발생했을 경우, 토스트 띄우기
+  useQueryErrorToast(getFilteredContentsQuery);
+
+  // getFilteredContentsQuery 객체에서 필요한 것 추출
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useGetFilteredContents({
-      size: 12,
-      filters: createFilterRequestParam(filters ?? []),
-      enabled: filters !== undefined,
-    });
+    getFilteredContentsQuery;
 
   // 필터링된 콘텐츠 목록 데이터 추출
   const contents = data?.pages.flatMap((page) => page.item) || [];

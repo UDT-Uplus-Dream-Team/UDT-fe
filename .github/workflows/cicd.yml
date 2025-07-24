@@ -7,9 +7,6 @@ on:
     branches: ['dev', 'main']
 
 jobs:
-  # ──────────────
-  # 1) BUILD JOB
-  # ──────────────
   build:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
@@ -21,7 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Node 22.x + npm 11.x 환경 강제 (엔진 경고 방지)
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -31,7 +27,6 @@ jobs:
       - run: npm ci
       - run: npm install -g vercel@latest
 
-      # 환경(prod/preview) 자동 분기 (출력값 GITHUB_ENV로)
       - name: Set VERCEL_ENV
         run: |
           if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
@@ -40,20 +35,25 @@ jobs:
             echo "VERCEL_ENV=preview" >> $GITHUB_ENV
           fi
 
-      # Vercel 환경변수 파일 자동 pull
       - run: |
           vercel pull --yes \
             --environment $VERCEL_ENV \
             --scope udt \
             --token ${{ secrets.VERCEL_TOKEN }}
 
-      # Next.js 빌드 (에러 발생 시 즉시 실패)
       - run: npm run build
 
-      # Prebuilt 아카이브(.next, .vercel/output 모두 포함)
-      - run: tar -czf vercel-prebuilt.tgz .next .vercel/output
+      - name: Archive build output
+        run: |
+          files=""
+          [ -d ".next" ] && files="$files .next"
+          [ -d ".vercel/output" ] && files="$files .vercel/output"
+          if [ -z "$files" ]; then
+            echo "No build output found! (.next or .vercel/output)"
+            exit 1
+          fi
+          tar -czf vercel-prebuilt.tgz $files
 
-      # 업로드
       - uses: actions/upload-artifact@v4
         with:
           name: vercel-prebuilt
@@ -61,9 +61,6 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
-  # ──────────────
-  # 2) DEPLOY JOB
-  # ──────────────
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -76,7 +73,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Node 22.x + npm 11.x 환경 맞추기
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -86,14 +82,12 @@ jobs:
       - run: npm ci
       - run: npm install -g vercel@latest
 
-      # 빌드 산출물 다운로드 및 해제
       - uses: actions/download-artifact@v4
         with:
           name: vercel-prebuilt
 
       - run: tar -xzf vercel-prebuilt.tgz
 
-      # 환경(prod/preview) 자동 분기
       - name: Set VERCEL_ENV
         run: |
           if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
@@ -102,14 +96,12 @@ jobs:
             echo "VERCEL_ENV=preview" >> $GITHUB_ENV
           fi
 
-      # Vercel 환경변수 파일 pull (혹시 빌드 산출물에 필요한 경우)
       - run: |
           vercel pull --yes \
             --environment $VERCEL_ENV \
             --scope udt \
             --token ${{ secrets.VERCEL_TOKEN }}
 
-      # Prebuilt Deploy
       - name: Deploy to Vercel (Preview)
         if: github.ref == 'refs/heads/dev'
         run: |

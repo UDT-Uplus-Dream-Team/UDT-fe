@@ -1,117 +1,46 @@
-name: CI/CD with GitHub Actions
+name: Deploy to Vercel
 
 on:
   push:
-    branches: ['dev', 'main']
+    branches: [ main, dev ]
   pull_request:
-    branches: ['dev', 'main']
+    branches: [ main, dev ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
-
-    strategy:
-      matrix:
-        node-version: [22.x]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
-
-      - run: npm install -g npm@11.3.0
-      - run: npm ci
-      - run: npm install -g vercel@latest
-
-      - name: Set VERCEL_ENV
-        run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            echo "VERCEL_ENV=production" >> $GITHUB_ENV
-          else
-            echo "VERCEL_ENV=preview" >> $GITHUB_ENV
-          fi
-
-      - run: |
-          vercel pull --yes \
-            --environment $VERCEL_ENV \
-            --scope udt \
-            --token ${{ secrets.VERCEL_TOKEN }}
-
-      - run: npm run build
-
-      - name: Archive build output
-        run: |
-          files=""
-          [ -d ".next" ] && files="$files .next"
-          [ -d ".vercel/output" ] && files="$files .vercel/output"
-          if [ -z "$files" ]; then
-            echo "No build output found! (.next or .vercel/output)"
-            exit 1
-          fi
-          tar -czf vercel-prebuilt.tgz $files
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: vercel-prebuilt
-          path: vercel-prebuilt.tgz
-          retention-days: 1
-          if-no-files-found: error
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
-
-    strategy:
-      matrix:
-        node-version: [22.x]
-
+    
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
-
-      - run: npm install -g npm@11.3.0
-      - run: npm ci
-      - run: npm install -g vercel@latest
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: vercel-prebuilt
-
-      - run: tar -xzf vercel-prebuilt.tgz
-
-      - name: Set VERCEL_ENV
-        run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            echo "VERCEL_ENV=production" >> $GITHUB_ENV
-          else
-            echo "VERCEL_ENV=preview" >> $GITHUB_ENV
-          fi
-
-      - run: |
-          vercel pull --yes \
-            --environment $VERCEL_ENV \
-            --scope udt \
-            --token ${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Vercel (Preview)
-        if: github.ref == 'refs/heads/dev'
-        run: |
-          url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
-          echo "Preview URL: $url"
-          echo "VERCEL_PREVIEW_URL=$url" >> $GITHUB_ENV
-
-      - name: Deploy to Vercel (Production)
-        if: github.ref == 'refs/heads/main'
-        run: |
-          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
-          echo "Production URL: $url"
-          echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Deploy to Vercel (Production)
+      if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'pull_request' && github.base_ref == 'main')
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./
+        vercel-args: '--prod'
+        
+    - name: Deploy to Vercel (Preview)
+      if: (github.ref == 'refs/heads/dev' && github.event_name == 'push') || (github.event_name == 'pull_request' && github.base_ref == 'dev')
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./

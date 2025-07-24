@@ -10,18 +10,18 @@ type Step3Props = {
 };
 
 const MOCK_CONTENTS = [
-  { id: 1, title: '귀를 기울이면', image: '/images/default-backdrop.png' },
-  { id: 2, title: '고양이의 보은', image: '/images/default-backdrop.png' },
-  { id: 3, title: '벼랑 위의 포뇨', image: '/images/default-backdrop.png' },
-  { id: 4, title: '귀를 기울이면2', image: '/images/default-backdrop.png' },
-  { id: 5, title: '고양이의 보은2', image: '/images/default-backdrop.png' },
-  { id: 6, title: '벼랑 위의 포뇨2', image: '/images/default-backdrop.png' },
-  { id: 7, title: '귀를 기울이면3', image: '/images/default-backdrop.png' },
-  { id: 8, title: '고양이의 보은3', image: '/images/default-backdrop.png' },
-  { id: 9, title: '벼랑 위의 포뇨3', image: '/images/default-backdrop.png' },
-  { id: 10, title: '귀를 기울이면3', image: '/images/default-backdrop.png' },
-  { id: 11, title: '고양이의 보은3', image: '/images/default-backdrop.png' },
-  { id: 12, title: '벼랑 위의 포뇨3', image: '/images/default-backdrop.png' },
+  { id: 1, title: '귀를 기울이면', image: '/images/default-poster.png' },
+  { id: 2, title: '고양이의 보은', image: '/images/default-poster.png' },
+  { id: 3, title: '벼랑 위의 포뇨', image: '/images/default-poster.png' },
+  { id: 4, title: '귀를 기울이면2', image: '/images/default-poster.png' },
+  { id: 5, title: '고양이의 보은2', image: '/images/default-poster.png' },
+  { id: 6, title: '벼랑 위의 포뇨2', image: '/images/default-poster.png' },
+  { id: 7, title: '귀를 기울이면3', image: '/images/default-poster.png' },
+  { id: 8, title: '고양이의 보은3', image: '/images/default-poster.png' },
+  { id: 9, title: '벼랑 위의 포뇨3', image: '/images/default-poster.png' },
+  { id: 10, title: '귀를 기울이면3', image: '/images/default-poster.png' },
+  { id: 11, title: '고양이의 보은3', image: '/images/default-poster.png' },
+  { id: 12, title: '벼랑 위의 포뇨3', image: '/images/default-poster.png' },
 ];
 
 export default function Step3({ onNext }: Step3Props) {

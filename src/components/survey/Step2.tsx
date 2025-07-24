@@ -49,7 +49,7 @@ export default function Step2({ onNext }: Step2Props) {
   };
 
   return (
-    <div className="h-[calc(100vh-80px)] overflow-y-auto flex flex-col">
+    <div className="h-screen overflow-y-auto flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center">
         <h2 className="text-white font-bold text-[20px] mb-14 text-center mt-18">
           좋아하는 <span className="text-[#9F8EC5]">장르</span>를 선택해주세요

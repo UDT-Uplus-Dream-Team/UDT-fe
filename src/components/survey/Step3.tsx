@@ -37,14 +37,14 @@ export default function Step3({ onNext }: Step3Props) {
   };
 
   return (
-    <div className="h-[calc(100vh-80px)] overflow-y-auto flex flex-col">
+    <div className="h-screen overflow-y-auto flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center">
-        <h2 className="text-white font-bold text-[20px] mb-14 text-center mt-8">
+        <h2 className="text-white font-bold text-[20px] mb-14 text-center mt-18">
           보신 <span className="text-[#9F8EC5]">컨텐츠</span>가 있다면
           선택해주세요!
         </h2>
 
-        <div className="grid grid-cols-3 gap-6 px-10 mb-16 w-full">
+        <div className="grid grid-cols-3 gap-6 px-10 mb-15 w-full">
           {MOCK_CONTENTS.map(({ id, title, image }) => (
             <SurveyPosterCard
               key={id}

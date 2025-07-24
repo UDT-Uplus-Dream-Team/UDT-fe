@@ -1,4 +1,4 @@
-name: CI/CD with Github Actions
+name: CI/CD with GitHub Actions
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
 # ──────────────────────────────────────────────────────
-# 1) BUILD (프리빌트 산출물 생성)
+# 1) BUILD – 프리빌트 산출물(.vercel/output) 생성
 # ──────────────────────────────────────────────────────
   build:
     runs-on: ubuntu-latest
@@ -19,11 +19,9 @@ jobs:
         node-version: [22.x]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -34,44 +32,53 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # ───────── Vercel 프로젝트·ENV 끌어오기 ─────────
+      # ───── Vercel 환경변수 / 프로젝트 파일 가져오기 ─────
       - name: Pull Vercel ENV (preview)
         if: github.ref == 'refs/heads/dev'
-        run: vercel pull --yes --environment=preview    \
-                         --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel pull --yes \
+            --environment preview \
+            --scope udt \
+            --token ${{ secrets.VERCEL_TOKEN }}
 
       - name: Pull Vercel ENV (production)
         if: github.ref == 'refs/heads/main'
-        run: vercel pull --yes --environment=production \
-                         --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel pull --yes \
+            --environment production \
+            --scope udt \
+            --token ${{ secrets.VERCEL_TOKEN }}
 
-      # ───────── Lint (에러 무시) ─────────
-      - name: Run lint
+      - name: Run lint (ignore errors)
         run: npm run lint
         continue-on-error: true
 
-      # ───────── .vercel/output 생성 ─────────
+      # ───── .vercel/output 생성 ─────
       - name: Vercel build (preview)
         if: github.ref == 'refs/heads/dev'
-        run: vercel build --yes                     \
-                          --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel build --yes \
+            --scope udt \
+            --token ${{ secrets.VERCEL_TOKEN }}
 
       - name: Vercel build (production)
         if: github.ref == 'refs/heads/main'
-        run: vercel build --prod --yes              \
-                          --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel build --prod --yes \
+            --scope udt \
+            --token ${{ secrets.VERCEL_TOKEN }}
 
-      # ───────── 산출물 업로드 (.vercel/**) ─────────
+      # ───── 산출물 업로드 (.vercel/**) ─────
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vercel-build-output        # ↓ 반드시 동일 이름
+          name: vercel-build-output
           path: .vercel/**
           retention-days: 1
           if-no-files-found: error
 
 # ──────────────────────────────────────────────────────
-# 2) DEPLOY (프리빌트 직접 업로드)
+# 2) DEPLOY – 프리빌트 그대로 업로드
 # ──────────────────────────────────────────────────────
   deploy:
     needs: build
@@ -79,24 +86,24 @@ jobs:
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: vercel-build-output        # ↑ 업로드 때와 정확히 일치
-          merge-multiple: true             # 파일 조각 자동 병합
+          name: vercel-build-output
+          merge-multiple: true   # 여러 청크 자동 병합
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # ───────── 프리빌트 배포 ─────────
+      # ───── 프리빌트 배포 ─────
       - name: Deploy to Vercel (preview)
         if: github.ref == 'refs/heads/dev'
         run: |
           url=$(vercel deploy --prebuilt --yes \
-                               --scope=udt --token=${{ secrets.VERCEL_TOKEN }})
+                               --scope udt \
+                               --token ${{ secrets.VERCEL_TOKEN }})
           echo "Preview URL: $url"
           echo "VERCEL_PREVIEW_URL=$url" >> $GITHUB_ENV
 
@@ -104,6 +111,20 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           url=$(vercel deploy --prebuilt --prod --yes \
-                               --scope=udt --token=${{ secrets.VERCEL_TOKEN }})
+                               --scope udt \
+                               --token ${{ secrets.VERCEL_TOKEN }})
           echo "Production URL: $url"
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
+
+      # ───── PR 코멘트 (옵션) ─────
+      - name: Comment PR with preview link
+        if: github.base_ref == 'dev' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 Preview deployment ready!\n\n👀 Preview: ${process.env.VERCEL_PREVIEW_URL}`
+            })

@@ -1,4 +1,4 @@
-import { getContentDetail } from '@lib/apis/admin/getContetDetail';
+import { getContentDetail } from '@lib/apis/admin/getContentDetail';
 import { useQuery } from '@tanstack/react-query';
 
 // 콘텐츠 상세 정보를 불러오는 훅

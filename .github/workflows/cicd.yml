@@ -74,9 +74,9 @@ jobs:
         with:
           name: vercel-build-output
           path: .vercel/**
+          include-hidden-files: true      # ← 수정
           retention-days: 1
           if-no-files-found: error
-
 # ──────────────────────────────────────────────────────
 # 2) DEPLOY – 프리빌트 그대로 업로드
 # ──────────────────────────────────────────────────────

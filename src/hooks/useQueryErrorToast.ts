@@ -38,23 +38,22 @@ export function useQueryErrorToast<TData = unknown, TError = AxiosError>(
       } else {
         switch (statusCode) {
           case 400:
-            errorMsg = '잘못된 요청입니다. Error Code: 400';
+            errorMsg = '잘못된 요청입니다.';
             break;
           case 401:
-            errorMsg =
-              '로그인이 만료되었습니다. 다시 로그인 해주세요. Error Code: 401';
+            errorMsg = '로그인이 만료되었습니다. 다시 로그인 해주세요.';
             break;
           case 403:
-            errorMsg = '권한이 없습니다. Error Code: 403';
+            errorMsg = '권한이 없습니다.';
             break;
           case 404:
-            errorMsg = '존재하지 않는 리소스입니다. Error Code: 404';
+            errorMsg = '존재하지 않는 리소스입니다.';
             break;
           case 409:
-            errorMsg = '중복된 요청입니다. Error Code: 409';
+            errorMsg = '중복된 요청입니다.';
             break;
           case 500:
-            errorMsg = '서버 오류가 발생했습니다. Error Code: 500';
+            errorMsg = '서버 오류가 발생했습니다. 운영팀에 문의 바랍니다.';
             break;
           default:
             // 서버에서 내려주는 message 우선 사용, 없으면 기본 메시지
@@ -70,7 +69,10 @@ export function useQueryErrorToast<TData = unknown, TError = AxiosError>(
         duration: 2500,
       });
 
-      toastShown.current = false; // 토스트 띄운 상태 초기화
+      // 2.5초 후에 토스트 띄운 상태 초기화 (같은 에러 계속 발생할 때마다 토스트가 반복해서 뜰 수 있으니, 그것을 방지하기 위함)
+      setTimeout(() => {
+        toastShown.current = false;
+      }, 2500);
     }
   }, [query.isError, query.error, customMsg]);
 }

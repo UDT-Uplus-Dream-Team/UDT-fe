@@ -83,9 +83,9 @@ export const PosterCardScrollBox = ({
         {BoxTitle}
       </span>
       <div className="w-full h-fit flex flex-row gap-3 overflow-x-auto scrollbar-hide px-6">
-        {contentData.map((movie, idx) => (
+        {contentData.map((movie) => (
           <PosterCard
-            key={`${movie.contentId}-${idx}`}
+            key={movie.contentId}
             title={'타이틀없음'}
             image={movie.posterUrl}
             isTitleVisible={false}

@@ -104,7 +104,6 @@ export const DetailBottomSheetContent = ({
     };
   }, [contentDescription]); // description이 변경될 때마다 재확인
 
-  // TODO: 실제 API 호출 시에 contentId에 따른 데이터 fetching 필요 (추후 get 요청을 하는 hook과 contentId를 연동해야 함)
   useEffect(() => {
     setHasValidTrailer(false); // 새로운 콘텐츠 로드 시에 초기화 (video 로딩 중인 상태로 초기화)
 
@@ -114,7 +113,7 @@ export const DetailBottomSheetContent = ({
     } else {
       setHasValidTrailer(false);
     }
-  }, [contentId]);
+  }, [contentTrailerUrl]);
 
   if (status === 'pending') {
     return <div>로딩 중입니다.</div>;

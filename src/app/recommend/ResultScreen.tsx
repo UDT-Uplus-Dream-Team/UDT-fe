@@ -10,12 +10,19 @@ import { TicketComponent } from '@type/recommend/TicketComponent';
 import { useRecommendStore } from '@store/useRecommendStore';
 import { useGetCuratedContents } from '@hooks/recommend/useGetCuratedContents';
 import { useQueryClient } from '@tanstack/react-query';
+import { usePostCuratedContent } from '@hooks/recommend/usePostCuratedContents';
 
 export const ResultScreen: React.FC = () => {
   const queryClient = useQueryClient();
 
   // Zustand: UI 상태만
-  const { setPhase } = useRecommendStore();
+  const {
+    setPhase,
+    addSavedCuratedContent,
+    removeSavedCuratedContent,
+    isSavedCuratedContent,
+    initializeSavedContentIds,
+  } = useRecommendStore();
 
   // TanStack Query: API 상태만
   const {
@@ -26,6 +33,28 @@ export const ResultScreen: React.FC = () => {
     refetch,
     isFetching,
   } = useGetCuratedContents();
+
+  const { mutate: saveCuratedContent, isPending } = usePostCuratedContent({
+    onOptimisticUpdate: (contentId: number) => {
+      const curatedIndex = findCuratedIndex(contentId);
+      if (curatedIndex !== -1) {
+        addSavedCuratedContent(curatedIndex);
+      }
+    },
+
+    onOptimisticRevert: (contentId: number) => {
+      const curatedIndex = findCuratedIndex(contentId);
+      if (curatedIndex !== -1) {
+        removeSavedCuratedContent(curatedIndex);
+      }
+    },
+  });
+
+  const findCuratedIndex = (contentId: number): number => {
+    return curatedContents.findIndex(
+      (content) => content.contentId === contentId,
+    );
+  };
 
   // 로컬 UI 상태들
   const [contents, setContents] = useState<TicketComponent[]>([]);
@@ -47,6 +76,8 @@ export const ResultScreen: React.FC = () => {
     if (curatedContents.length > 0) {
       setContents(curatedContents.slice(0, 3));
 
+      initializeSavedContentIds(curatedContents.length);
+
       // 최소 3초 로딩 화면 표시 (UX 개선)
       if (showLoadingScreen) {
         const timer = setTimeout(() => {
@@ -56,6 +87,14 @@ export const ResultScreen: React.FC = () => {
       }
     }
   }, [curatedContents, showLoadingScreen]);
+
+  const isCurrentContentSaved = (): boolean => {
+    const currentMovie = contents[currentIndex];
+    if (!currentMovie) return false;
+
+    const curatedIndex = findCuratedIndex(currentMovie.contentId);
+    return curatedIndex !== -1 ? isSavedCuratedContent(curatedIndex) : false;
+  };
 
   const handleReroll = (idx: number) => {
     if (rerollUsed[idx] || curatedContents.length < 6) return;
@@ -91,12 +130,10 @@ export const ResultScreen: React.FC = () => {
 
   const handleAddContent = () => {
     const movie = contents[currentIndex];
-    if (movie) {
-      console.log('추가된 콘텐츠:', movie);
-      // TODO: 선택된 콘텐츠를 사용자 관심 목록에 추가하는 API 호출
+    if (movie && !isCurrentContentSaved()) {
+      saveCuratedContent(movie.contentId);
     }
   };
-
   const handleStartNewRecommendation = () => {
     // 큐레이션 캐시 무효화 (새로운 추천을 위해)
     queryClient.invalidateQueries({ queryKey: ['curatedContents'] });
@@ -327,10 +364,23 @@ export const ResultScreen: React.FC = () => {
         <div className="flex justify-center mt-8 gap-4">
           <Button
             onClick={handleAddContent}
-            className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2"
+            disabled={isCurrentContentSaved() || isPending}
+            className={`px-8 py-3 rounded-full shadow-lg flex items-center gap-2 ${
+              isCurrentContentSaved()
+                ? 'bg-gray-400 text-gray-200 cursor-not-allowed' // 저장된 상태
+                : isPending
+                  ? 'bg-primary-300 text-white' // 로딩 중
+                  : 'bg-primary-500 text-white hover:bg-primary-600' // 정상 상태
+            }`}
           >
             <Plus className="w-5 h-5" />
-            <span className="font-medium">이 콘텐츠 추가하기</span>
+            <span className="font-medium">
+              {isCurrentContentSaved()
+                ? '저장 완료'
+                : isPending
+                  ? '저장 중...'
+                  : '이 콘텐츠 추가하기'}
+            </span>
           </Button>
 
           <Button

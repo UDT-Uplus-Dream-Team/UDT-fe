@@ -16,8 +16,12 @@ import Image from 'next/image';
 import { useGetUserProfile } from '@hooks/useGetUserProfile';
 import { Skeleton } from '@components/ui/skeleton';
 import { useLogoutHandler } from '@hooks/profile/useLogoutHandler';
+import { usePageStayTracker } from '@hooks/usePageStayTracker';
 
 const ProfilePage = () => {
+  // 페이지 머무르는 시간 추적 (프로필 페이지 추적 / Google Analytics 연동을 위함)
+  usePageStayTracker('profile_main');
+
   const router = useRouter();
 
   const { data: userProfile, isLoading, isError } = useGetUserProfile();

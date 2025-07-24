@@ -10,10 +10,14 @@ import { usePosterModal } from '@hooks/usePosterModal';
 import { useInfiniteFeedbacks } from '@hooks/profile/useInfiniteFeedbacks';
 import { useGetStoredContentDetail } from '@hooks/profile/useGetStoredContentDetail';
 import { FeedbackContent } from '@type/profile/FeedbackContent';
-import { useDeleteFeedbackToast } from '@hooks/profile/useDeleteFeedbackToast';
 import { useDeleteFeedback } from '@hooks/profile/useDeleteFeedback';
+import { usePageStayTracker } from '@/hooks/usePageStayTracker';
+import { useDeleteToast } from '@hooks/profile/useDeleteToast';
 
 const FeedbackPage = () => {
+  // 페이지 머무르는 시간 추적 (피드백 페이지 추적 / Google Analytics 연동을 위함)
+  usePageStayTracker('profile_feedback');
+
   const router = useRouter();
   const [tab, setTab] = useState<'like' | 'dislike'>('like');
 
@@ -60,13 +64,13 @@ const FeedbackPage = () => {
       handleSelectAll,
       handleCancelDeleteMode,
     },
-  } = useDeleteMode(posters);
+  } = useDeleteMode(posters, (item) => item.feedbackId);
 
   // 실제 삭제 api 연동 토스토 확인 시 삭제 되도록 구성
   const { mutateAsync: deleteFeedback } = useDeleteFeedback();
 
   // 피드백 id의 경우 배열 처리로 수정하는데 시간이 걸린다 하여 우선 단일 처리 진행 후 수정
-  const { handleDelete } = useDeleteFeedbackToast({
+  const { handleDelete } = useDeleteToast({
     selectedIds,
     onDeleteComplete: handleCancelDeleteMode,
     deleteFn: deleteFeedback, // 단일 처리 함수
@@ -160,7 +164,7 @@ const FeedbackPage = () => {
       {/* 카드 리스트 */}
       <div className="w-full max-w-screen-md">
         {isEmpty ? (
-          <div className="text-center text-white/60 text-sm py-10">
+          <div className="flex flex-col items-center justify-center h-[calc(100vh-80px)] text-gray-400 text-sm font-medium">
             현재 저장된 콘텐츠가 없습니다.
           </div>
         ) : (

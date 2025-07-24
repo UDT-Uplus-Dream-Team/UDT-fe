@@ -10,9 +10,13 @@ import { PosterCard } from '@components/explore/PosterCard';
 import MovieDetailModal from '@components/profile/MovieDetailModal';
 import { useDeleteMode } from '@hooks/profile/useDeleteMode';
 import { useDeleteCurated } from '@hooks/profile/useDeleteCurated';
-import { useDeleteFeedbackToast } from '@hooks/profile/useDeleteFeedbackToast';
+import { usePageStayTracker } from '@hooks/usePageStayTracker';
+import { useDeleteToast } from '@/hooks/profile/useDeleteToast';
 
 const RecommendPage = () => {
+  // 페이지 머무르는 시간 추적 (저장된 엄선된 콘텐츠 조회하는 페이지 추적 / Google Analytics 연동을 위함)
+  usePageStayTracker('profile_recommend');
+
   const router = useRouter();
 
   // 상세보기 모달 관련 상태 및 액션 훅
@@ -62,7 +66,7 @@ const RecommendPage = () => {
       handleSelectAll,
       handleCancelDeleteMode,
     },
-  } = useDeleteMode(posters);
+  } = useDeleteMode(posters, (item) => item.contentId);
 
   const handleCardClick = (poster: (typeof posters)[number]) => {
     if (isDeleteMode) {
@@ -75,7 +79,7 @@ const RecommendPage = () => {
   // 삭제 api 연동
   const { mutateAsync: deleteCurated } = useDeleteCurated();
 
-  const { handleDelete } = useDeleteFeedbackToast({
+  const { handleDelete } = useDeleteToast({
     selectedIds,
     onDeleteComplete: handleCancelDeleteMode,
     deleteFn: deleteCurated,
@@ -137,6 +141,8 @@ const RecommendPage = () => {
                 title={poster.title}
                 image={poster.posterUrl}
                 size="lg"
+                isDeletable={isDeleteMode}
+                isSelected={selectedIds.includes(poster.contentId)}
                 onClick={() => handleCardClick(poster)}
               />
             ))}

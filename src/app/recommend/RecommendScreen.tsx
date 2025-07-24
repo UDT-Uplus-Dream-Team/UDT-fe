@@ -281,6 +281,31 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     }
   };
 
+  const onTouchStart = (e: React.TouchEvent): void => {
+    if (isAnimating || e.touches.length !== 1) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    setStartPoint({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const onTouchEnd = (e: React.TouchEvent): void => {
+    if (!startPoint || e.changedTouches.length !== 1) return;
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    const dx: number = touch.clientX - startPoint.x;
+    const dy: number = touch.clientY - startPoint.y;
+    setStartPoint(null);
+    const absX: number = Math.abs(dx);
+    const absY: number = Math.abs(dy);
+    const threshold: number = 100; // 모바일에 맞게 임계값 낮춤
+
+    if (absX > absY && absX > threshold) {
+      handleSwipe(dx > 0 ? 'right' : 'left', dx > 0 ? 'liked' : 'unliked');
+    } else if (dy < -threshold) {
+      handleSwipe('up');
+    }
+  };
+
   // ── transform 클래스 계산 ──────────────────────
   const getCardTransform = (): string => {
     if (!swipeDirection) return '';
@@ -354,9 +379,18 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
           className={`relative inline-block mx-10 w-full select-none ${
             isFlipped ? 'touch-action-auto' : 'touch-action-none'
           }`}
+          style={{
+            touchAction: isFlipped ? 'auto' : 'none',
+            WebkitTouchCallout: 'none',
+            WebkitUserSelect: 'none',
+            userSelect: 'none',
+          }}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
           onPointerCancel={() => setStartPoint(null)}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+          onTouchCancel={() => setStartPoint(null)}
         >
           {/* 자리 채우기 티켓 */}
           <div className="relative flex w-full aspect-[75/135] max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">

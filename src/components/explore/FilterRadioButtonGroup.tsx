@@ -20,6 +20,35 @@ export const FilterRadioButtonGroup = () => {
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
+  // 스크롤 위치 추적을 위한 state, Ref, 함수 정의
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragMoved, setDragMoved] = useState(false);
+  const dragStartX = useRef(0);
+  const dragScrollLeft = useRef(0);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    setDragMoved(false);
+    dragStartX.current = e.pageX;
+    dragScrollLeft.current = scrollRef.current?.scrollLeft ?? 0;
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging || !scrollRef.current) return;
+    const x = e.pageX;
+    const walk = x - dragStartX.current;
+    if (Math.abs(walk) > 5) setDragMoved(true);
+    scrollRef.current.scrollLeft = dragScrollLeft.current - walk;
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(false);
+    setTimeout(() => setDragMoved(false), 100);
+    (e.target as Element).releasePointerCapture?.(e.pointerId);
+  };
+
   const { appliedFilters, displayedOptionsInTop, toggleAppliedFilter } =
     useExploreFilters();
   const {
@@ -73,7 +102,15 @@ export const FilterRadioButtonGroup = () => {
           {/* 필터 버튼 그룹 */}
           {/* TODO: 추후 디자인 변경 시 padding값 수정 필요 */}
           <div className="pt-5 pb-4">
-            <div className="flex flex-row justify-start items-center gap-3 overflow-x-auto scrollbar-hide max-w-full overscroll-x-none px-6">
+            <div
+              ref={scrollRef}
+              className="flex flex-row justify-start items-center gap-3 overflow-x-auto scrollbar-hide max-w-full overscroll-x-none px-6 select-none"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerLeave={handlePointerUp}
+              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+            >
               {/* 필터링 버튼 (누를 시 BottomSheet 표시) */}
               <Sheet
                 open={isBottomSheetOpen}
@@ -148,7 +185,10 @@ export const FilterRadioButtonGroup = () => {
                   key={option}
                   label={option}
                   isSelected={appliedFilters.includes(option)}
-                  onToggle={() => handleFilterToggle(option)}
+                  onToggle={() => {
+                    if (dragMoved) return; // 드래그 중이면 클릭 무시
+                    handleFilterToggle(option);
+                  }}
                 />
               ))}
             </div>

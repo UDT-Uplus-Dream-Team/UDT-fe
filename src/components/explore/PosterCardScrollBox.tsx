@@ -1,6 +1,6 @@
 // 영화(PosterCard) 카드를 모아 놓은 스크롤 박스 컴포넌트
 import { PosterCard } from './PosterCard';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -24,6 +24,45 @@ export const PosterCardScrollBox = ({
 }: PosterCardScrollBoxProps) => {
   const [isDetailBottomSheetOpen, setIsDetailBottomSheetOpen] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragMoved, setDragMoved] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const dragStartX = useRef(0);
+  const dragScrollLeft = useRef(0);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    setDragMoved(false);
+
+    // React에서 pointer event에 touches가 없을 수 있으니,
+    // 터치와 마우스 모두 pageX만 사용 (pointerEvents는 통합 이벤트)
+    dragStartX.current = e.pageX;
+    dragScrollLeft.current = scrollRef.current?.scrollLeft ?? 0;
+
+    // pointer capture로 안전하게 이 div가 포인터 이벤트 독점
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging || !scrollRef.current) return; // <-- 누르고 있을 때만!
+    const x = e.pageX;
+    const walk = x - dragStartX.current;
+    if (Math.abs(walk) > 5) setDragMoved(true);
+    scrollRef.current.scrollLeft = dragScrollLeft.current - walk;
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(false);
+    setTimeout(() => setDragMoved(false), 100); // 클릭 무시 후 해제
+
+    (e.target as Element).releasePointerCapture?.(e.pointerId);
+  };
+
+  const handlePointerLeave = () => {
+    setIsDragging(false);
+    setTimeout(() => setDragMoved(false), 100);
+  };
 
   // 포스터 스크롤 박스 타입에 따라 콘텐츠 목록 조회 API 호출하는 custom Hook 호출
   const {
@@ -82,14 +121,25 @@ export const PosterCardScrollBox = ({
       <span className="text-xl text-white font-semibold py-2 ml-6">
         {BoxTitle}
       </span>
-      <div className="w-full h-fit flex flex-row gap-3 overflow-x-auto scrollbar-hide px-6">
+      <div
+        className="w-full h-fit flex flex-row gap-3 overflow-x-auto scrollbar-hide px-6 select-none"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerLeave}
+        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        ref={scrollRef}
+      >
         {contentData.map((movie) => (
           <PosterCard
             key={movie.contentId}
             title={'타이틀없음'}
             image={movie.posterUrl}
             isTitleVisible={false}
-            onClick={() => handlePosterClick(movie.contentId)}
+            onClick={() => {
+              if (dragMoved) return; // 드래그 중이면 무시
+              handlePosterClick(movie.contentId);
+            }}
           />
         ))}
       </div>

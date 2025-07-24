@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { SurveyProvider } from '@store/SurveyContext';
 import { useSurveyContext } from '@hooks/useSurveyContext';
 import { postSurvey } from '@lib/apis/survey/postSurvey';
+import { showSimpleToast } from '@components/common/Toast';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -26,7 +27,9 @@ function SurveyFlow() {
         });
         setStep(4); // 성공 시 완료 페이지로 이동
       } catch {
-        alert('설문조사 제출에 실패했습니다.');
+        showSimpleToast.error({
+          message: '설문조사 제출에 실패했습니다.',
+        });
       }
     }
   };

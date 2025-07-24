@@ -57,7 +57,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 4000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },
@@ -81,7 +81,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 5000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },
@@ -105,7 +105,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 4000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },
@@ -129,7 +129,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 4000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },
@@ -152,7 +152,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 4000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },

@@ -18,6 +18,14 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
   const [showMore, setShowMore] = useState(false);
   const descRef = useRef<HTMLParagraphElement>(null);
 
+  //카드 크기 고정을 위한 값지정
+  const cardBaseClass =
+    'flex flex-col min-w-[320px] min-h-[570px] md:min-w-[400px] md:min-h-[680px] max-w-[400px] max-h-[680px] border-none rounded-2xl overflow-hidden';
+
+  const [imgSrc, setImgSrc] = useState(
+    movie.backdropUrl || '/images/default-backdrop.png',
+  );
+
   useEffect(() => {
     const el = descRef.current;
     if (el) {
@@ -28,19 +36,20 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
 
   if (variant === 'detail') {
     return (
-      <Card className="flex flex-col w-full h-full min-w-70 min-h-126 max-w-100 max-h-180 border-none rounded-2xl overflow-hidden">
-        <div className="relative flex-grow">
+      <Card className={cardBaseClass}>
+        <div className="relative w-full min-h-[180px] md:min-h-[220px]">
           <Image
-            src={movie.posterUrl || '/placeholder.svg'}
+            src={imgSrc}
             alt={movie.title}
             fill
             className="object-cover"
             priority
+            onError={() => setImgSrc('/images/default-backdrop.png')}
           />
         </div>
         <CardHeader>
           <div className="space-y-1 pb-2">
-            <h3 className="font-bold text-lg leading-tight">{movie.title}</h3>
+            <h3 className="font-bold text-2xl leading-tight">{movie.title}</h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{movie.genres.join(', ')}</span>
               <span>•</span>
@@ -49,89 +58,93 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-medium text-sm">플랫폼</h4>
+            <h4 className="font-medium text-sm md:text-lg">플랫폼</h4>
             <div className="flex flex-wrap gap-2">
-              {movie.platforms
-                .map((platform) => {
-                  const logo = getPlatformLogo(platform);
-                  return logo ? { platform, logo } : null;
-                })
-                .filter(
-                  (item): item is { platform: string; logo: string } => !!item,
-                )
-                .map(({ platform, logo }) => (
+              {movie.platforms.map((platformLabel) => {
+                const imageSrc = getPlatformLogo(platformLabel);
+                return imageSrc ? (
                   <CircleOption
-                    key={platform}
-                    label={platform}
-                    imageSrc={logo}
+                    key={platformLabel}
+                    label={platformLabel}
+                    imageSrc={imageSrc}
                     size="sm"
                     onClick={() => {}}
                     showLabel={false}
                   />
-                ))}
+                ) : null;
+              })}
             </div>
           </div>
         </CardHeader>
 
-        <CardContent
-          className={[
-            'flex flex-col space-y-3 py-2',
-            'flex-1',
-            expanded ? 'overflow-auto' : 'overflow-hidden',
-          ].join(' ')}
-        >
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-60">감독</span>
-              <span className="ml-auto">{movie.directors}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-60">개봉일</span>
-              <span className="ml-auto">{movie.openDate}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-60">러닝타임</span>
-              <span className="ml-auto">{movie.runningTime}분</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-60">연령 등급</span>
-              <span className="ml-auto">{movie.rating}</span>
-            </div>
-          </div>
+        <CardContent className="relative flex flex-col space-y-3 py-2 flex-1">
+          {!expanded ? (
+            <>
+              {/* 일반 정보 */}
+              <div className="space-y-2 text-sm md:text-base">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-60">감독</span>
+                  <span className="ml-auto">{movie.directors}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-60">개봉일</span>
+                  <span className="ml-auto">{movie.openDate}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-60">러닝타임</span>
+                  <span className="ml-auto">{movie.runningTime}분</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-60">연령 등급</span>
+                  <span className="ml-auto">{movie.rating}</span>
+                </div>
+              </div>
 
-          <div className="flex flex-col flex-1">
-            <h4 className="font-medium text-sm mb-2">줄거리</h4>
-            <div
-              ref={descRef}
-              className={[
-                'text-sm text-muted-foreground leading-relaxed',
-                expanded
-                  ? 'overflow-auto' // flex-1 안에서 스크롤
-                  : 'line-clamp-3', // 3줄로 자름
-              ].join(' ')}
-            >
-              {movie.description}
-            </div>
-          </div>
+              {/* 줄거리 요약 */}
+              <div className="relative">
+                <h4 className="font-medium text-sm md:text-lg mb-2">줄거리</h4>
+                <p
+                  ref={descRef}
+                  className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-2 md:line-clamp-3"
+                >
+                  {movie.description}
+                </p>
 
-          <div className="flex justify-end flex-shrink-0">
-            {!expanded && showMore && (
-              <button
-                onClick={() => setExpanded(true)}
-                className="text-xs text-gray-500 hover:underline"
-              >
-                더보기
-              </button>
-            )}
-            {expanded && (
-              <button
-                onClick={() => setExpanded(false)}
-                className="text-xs text-gray-500 hover:underline"
-              >
-                접기
-              </button>
-            )}
-          </div>
+                {showMore && (
+                  <div className="flex justify-end mt-1">
+                    <button
+                      onClick={() => setExpanded(true)}
+                      className="text-xs md:text-sm text-primary-500 hover:underline"
+                    >
+                      더보기 ▲
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* 줄거리 전체 - 기존 정보 사라지고 이거만 */}
+              <div className="flex flex-col justify-between flex-1">
+                <div>
+                  <h4 className="font-medium text-sm md:text-lg mb-2">
+                    줄거리
+                  </h4>
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                    {movie.description}
+                  </p>
+                </div>
+                <div className="flex justify-end mt-4">
+                  <button
+                    onClick={() => setExpanded(false)}
+                    className="text-xs md:text-sm text-primary-500 hover:underline"
+                  >
+                    접기 ▼
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     );
@@ -139,10 +152,10 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
 
   if (variant === 'result') {
     return (
-      <Card className="flex flex-col w-full h-full min-w-70 min-h-126 max-w-100 max-h-180 border-none rounded-2xl overflow-hidden">
+      <Card className={cardBaseClass}>
         <div className="relative flex-grow">
           <Image
-            src={movie.posterUrl || '/placeholder.svg'}
+            src={movie.posterUrl || '/images/default-poster.png'}
             alt={movie.title}
             fill
             className="object-cover"
@@ -178,10 +191,10 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
 
   if (variant === 'initial') {
     return (
-      <Card className="flex flex-col w-full h-full min-w-70 min-h-126 max-w-100 max-h-180 border-none rounded-2xl overflow-hidden">
+      <Card className={cardBaseClass}>
         <div className="relative flex-grow">
           <Image
-            src={movie.posterUrl || '/placeholder.svg'}
+            src={movie.posterUrl || '/images/default-poster.png'}
             alt={movie.title}
             fill
             className="object-cover"

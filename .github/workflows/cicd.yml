@@ -7,16 +7,15 @@ on:
     branches: ['dev', 'main']
 
 jobs:
-# ──────────────────────────────────────────────────────
-# 1) BUILD – 프리빌트 산출물(.vercel/output) 생성
-# ──────────────────────────────────────────────────────
+# ────────────────────────────────────────────────
+# 1) BUILD – .vercel/output 생성 & 압축 업로드
+# ────────────────────────────────────────────────
   build:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
 
     strategy:
-      matrix:
-        node-version: [22.x]
+      matrix: { node-version: [22.x] }
 
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -32,7 +31,7 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # ───── Vercel 환경변수 / 프로젝트 파일 가져오기 ─────
+      # ─── Vercel 환경변수/프로젝트 설정 가져오기 ───
       - name: Pull Vercel ENV (preview)
         if: github.ref == 'refs/heads/dev'
         run: |
@@ -49,37 +48,39 @@ jobs:
             --scope udt \
             --token ${{ secrets.VERCEL_TOKEN }}
 
-      - name: Run lint (ignore errors)
+      - name: Lint (ignore errors)
         run: npm run lint
         continue-on-error: true
 
-      # ───── .vercel/output 생성 ─────
-      - name: Vercel build (preview)
-        if: github.ref == 'refs/heads/dev'
+      # ─── .vercel/output 생성 ───
+      - name: Vercel build
         run: |
           vercel build --yes \
+            ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} \
             --scope udt \
             --token ${{ secrets.VERCEL_TOKEN }}
 
-      - name: Vercel build (production)
-        if: github.ref == 'refs/heads/main'
+      # ─── 디렉터리 확인 (디버그) ───
+      - name: Show .vercel tree
         run: |
-          vercel build --prod --yes \
-            --scope udt \
-            --token ${{ secrets.VERCEL_TOKEN }}
+          echo "=== .vercel 디렉터리 ==="
+          ls -Rla .vercel
 
-      # ───── 산출물 업로드 (.vercel/**) ─────
-      - name: Upload build artifacts
+      # ─── .vercel 전체 tar.gz로 묶어 업로드 ───
+      - name: Archive .vercel folder
+        run: tar -czf vercel-prebuilt.tgz .vercel
+
+      - name: Upload prebuilt artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vercel-build-output
-          path: .vercel/**
-          include-hidden-files: true      # ← 수정
+          name: vercel-prebuilt
+          path: vercel-prebuilt.tgz
           retention-days: 1
           if-no-files-found: error
-# ──────────────────────────────────────────────────────
-# 2) DEPLOY – 프리빌트 그대로 업로드
-# ──────────────────────────────────────────────────────
+
+# ────────────────────────────────────────────────
+# 2) DEPLOY – 압축 해제 후 --prebuilt 배포
+# ────────────────────────────────────────────────
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -88,16 +89,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download build artifacts
+      - name: Download prebuilt artifact
         uses: actions/download-artifact@v4
         with:
-          name: vercel-build-output
-          merge-multiple: true   # 여러 청크 자동 병합
+          name: vercel-prebuilt
+
+      - name: Extract prebuilt
+        run: tar -xzf vercel-prebuilt.tgz
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # ───── 프리빌트 배포 ─────
+      # ─── 프리빌트 배포 ───
       - name: Deploy to Vercel (preview)
         if: github.ref == 'refs/heads/dev'
         run: |
@@ -116,15 +119,3 @@ jobs:
           echo "Production URL: $url"
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
 
-      # ───── PR 코멘트 (옵션) ─────
-      - name: Comment PR with preview link
-        if: github.base_ref == 'dev' && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🚀 Preview deployment ready!\n\n👀 Preview: ${process.env.VERCEL_PREVIEW_URL}`
-            })

@@ -35,7 +35,7 @@ export const useDeleteToast = ({
       confirmText: '삭제',
       cancelText: '취소',
       position: 'top-center',
-      className: 'w-[360px] bg-white shadow-lg',
+      className: 'bg-white shadow-lg',
       onConfirm: async () => {
         try {
           if (isBatch) {
@@ -56,7 +56,7 @@ export const useDeleteToast = ({
             message: '삭제가 완료되었습니다.',
             position: 'top-center',
             className:
-              'bg-black text-white px-4 py-2 rounded-md mx-auto shadow-lg',
+              'bg-primary-300/80 text-white px-4 py-2 rounded-md mx-auto shadow-lg',
           });
           onDeleteComplete(); // 상태 초기화
         } catch {

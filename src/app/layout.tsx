@@ -27,7 +27,10 @@ export default function RootLayout({
     <html lang="ko">
       <body className="w-full flex justify-center bg-gray-100 min-h-screen overflow-x-hidden">
         <Providers>
-          <Toaster position="top-center" />
+          <Toaster
+            position="top-center"
+            toastOptions={{ className: 'w-full' }}
+          />
           <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />

@@ -80,7 +80,7 @@ export const PosterCardsGrid = ({
       >
         <SheetContent
           side="bottom"
-          className="px-0 pb-5 h-[90vh] max-w-full rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
+          className="px-0 pb-5 h-[90vh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
         >
           {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
           <SheetHeader className="p-0">

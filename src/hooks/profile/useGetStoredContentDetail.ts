@@ -7,6 +7,7 @@ export const useGetStoredContentDetail = (contentId: number | null) => {
     queryKey: ['contentDetail', contentId],
     queryFn: () => getStoredContentDetail(contentId as number),
     enabled: contentId !== null,
-    staleTime: 0, // 눌렀을 때 항상 새로운데이터 불러오게 구성 캐싱 노
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 };

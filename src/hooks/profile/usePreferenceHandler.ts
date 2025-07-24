@@ -4,6 +4,7 @@ import {
   showSimpleToast,
   showInteractiveToast,
 } from '@components/common/Toast';
+import { useRef } from 'react';
 
 /**
  * 사용자 선호 OTT 및 장르 설정 저장 핸들러 훅
@@ -18,6 +19,8 @@ export const usePreferenceHandler = (
   // API 호출 훅
   const { mutateAsync: patchPlatformsAsync } = usePatchPlatform();
   const { mutateAsync: patchGenresAsync } = usePatchGenre();
+
+  const isToastOpen = useRef(false);
 
   // 성공 토스트 출력
   const showSuccess = (message: string) => {
@@ -52,6 +55,10 @@ export const usePreferenceHandler = (
       return;
     }
 
+    // 중복 확인 방지
+    if (isToastOpen.current) return;
+    isToastOpen.current = true;
+
     // 사용자 확인 후 업데이트 실행
     showInteractiveToast.confirm({
       message: '정말 변경하시겠습니까?',
@@ -71,7 +78,12 @@ export const usePreferenceHandler = (
         } catch (error) {
           console.error(error);
           showError('설정 저장에 실패했습니다.');
+        } finally {
+          isToastOpen.current = false; // 확인 누른 뒤 상태 복구
         }
+      },
+      onCancel: () => {
+        isToastOpen.current = false;
       },
     });
   };

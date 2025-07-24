@@ -2,6 +2,7 @@ import {
   showSimpleToast,
   showInteractiveToast,
 } from '@components/common/Toast';
+import { useRef } from 'react';
 
 interface UseDeleteToastProps {
   selectedIds: number[];
@@ -19,7 +20,11 @@ export const useDeleteToast = ({
   deleteFn,
   isBatch = false,
 }: UseDeleteToastProps) => {
+  const isToastOpen = useRef(false);
+
   const handleDelete = () => {
+    if (isToastOpen.current) return;
+
     if (selectedIds.length === 0) {
       showSimpleToast.error({
         message: '삭제할 콘텐츠를 선택해주세요.',
@@ -29,6 +34,8 @@ export const useDeleteToast = ({
       });
       return;
     }
+
+    isToastOpen.current = true;
 
     showInteractiveToast.confirm({
       message: '정말 삭제하시겠습니까?',
@@ -66,7 +73,12 @@ export const useDeleteToast = ({
             className:
               'bg-black text-white px-4 py-2 rounded-md mx-auto shadow-lg',
           });
+        } finally {
+          isToastOpen.current = false;
         }
+      },
+      onCancel: () => {
+        isToastOpen.current = false;
       },
     });
   };

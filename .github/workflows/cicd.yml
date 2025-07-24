@@ -34,11 +34,11 @@ jobs:
       # 환경 변수를 먼저 가져옴
       - name: Pull Vercel Environment Information (Preview)
         if: github.ref == 'refs/heads/dev'
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview --scope=UDT --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Pull Vercel Environment Information (Production)
         if: github.ref == 'refs/heads/main'
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --scope=UDT --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Run linting
         run: npm run lint
@@ -62,7 +62,7 @@ jobs:
             next.config.ts
           retention-days: 1
 
-   # Vercel 배포 작업 (빌드가 성공했을 때만 실행)
+  # Vercel 배포 작업 (빌드가 성공했을 때만 실행)
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -84,14 +84,14 @@ jobs:
       - name: Deploy to Vercel (Preview)
         if: github.ref == 'refs/heads/dev'
         run: |
-          url=$(vercel deploy --prebuilt --yes --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --yes --scope=UDT --token=${{ secrets.VERCEL_TOKEN }})
           echo "Preview URL: $url"
           echo "VERCEL_PREVIEW_URL=$url" >> $GITHUB_ENV
 
       - name: Deploy to Vercel (Production)
         if: github.ref == 'refs/heads/main'
         run: |
-          url=$(vercel deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --prod --yes --scope=UDT --token=${{ secrets.VERCEL_TOKEN }})
           echo "Production URL: $url"
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
 
@@ -106,3 +106,25 @@ jobs:
               repo: context.repo.repo,
               body: `🚀 Preview deployment ready!\n\n👀 Preview: ${process.env.VERCEL_PREVIEW_URL}`
             })
+
+  # 라이트하우스 성능 테스트 (선택사항)
+  # lighthouse:
+  #   needs: deploy
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Wait for deployment
+  #       run: sleep 30
+
+  #     - name: Run Lighthouse CI
+  #       uses: treosh/lighthouse-ci-action@v10
+  #       with:
+  #         urls: |
+  #           ${{ needs.deploy.outputs.deployment_url || 'https://your-domain.vercel.app' }}
+  #         configPath: './lighthouserc.js'
+  #         uploadArtifacts: true
+  #         temporaryPublicStorage: true

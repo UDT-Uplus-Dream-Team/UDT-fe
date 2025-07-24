@@ -60,49 +60,31 @@ jobs:
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Download prebuilt artifact
-        uses: actions/download-artifact@v4
-        with: { name: vercel-prebuilt }
+      - name: Install dependencies
+        run: npm ci
 
-      - run: tar -xzf vercel-prebuilt.tgz          # .vercel 복원
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
 
-      # ▶ 의존성 재설치 (prod‑deps만)
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
-      - run: npm ci --omit=dev                     # ← 핵심
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
-      - run: npm install -g vercel@latest
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
-      # 배포
-      - name: Deploy to Vercel (preview)
+      - name: Deploy to Vercel (Preview)
         if: github.ref == 'refs/heads/dev'
         run: |
-          url=$(vercel deploy --prebuilt --yes \
-                               --scope udt \
-                               --token ${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "Preview URL: $url"
           echo "VERCEL_PREVIEW_URL=$url" >> $GITHUB_ENV
 
-      - name: Deploy to Vercel (production)
+      - name: Deploy to Vercel (Production)
         if: github.ref == 'refs/heads/main'
         run: |
-          url=$(vercel deploy --prebuilt --prod --yes \
-                               --scope udt \
-                               --token ${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "Production URL: $url"
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
-
-      # (옵션) PR 코멘트
-      - name: Comment PR with preview link
-        if: github.base_ref == 'dev' && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🚀 Preview deployment ready!\n\n👀 Preview: ${process.env.VERCEL_PREVIEW_URL}`
-            })

@@ -19,6 +19,16 @@ export default function Step2({ onNext }: Step2Props) {
   }, []);
 
   const toggleGenre = (genre: string) => {
+    // 3개 선택 상태에서 새로운 장르를 선택하려 할 때 방지
+    if (!selectedGenres.includes(genre) && selectedGenres.length >= 3) {
+      showSimpleToast.error({
+        message: '선호 장르는 최대 3개까지 선택할 수 있습니다.',
+        position: 'top-center',
+        className: 'w-full bg-black/80 shadow-lg text-white',
+      });
+      return;
+    }
+
     const updated = selectedGenres.includes(genre)
       ? selectedGenres.filter((g) => g !== genre)
       : [...selectedGenres, genre];
@@ -30,15 +40,6 @@ export default function Step2({ onNext }: Step2Props) {
     if (selectedGenres.length === 0) {
       showSimpleToast.error({
         message: '선호 장르는 최소 1개 이상 최대 3개 이하 선택해야 합니다.',
-        position: 'top-center',
-        className: 'w-full bg-black/80 shadow-lg text-white',
-      });
-      return;
-    }
-
-    if (selectedGenres.length > 3) {
-      showSimpleToast.error({
-        message: '선호 장르는 최대 3개까지 선택할 수 있습니다.',
         position: 'top-center',
         className: 'w-full bg-black/80 shadow-lg text-white',
       });

@@ -50,12 +50,13 @@ jobs:
             .next/
             public/
             .vercel/
+            node_modules/.cache/
           retention-days: 1
   
   # Vercel 배포 작업 (빌드가 성공했을 때만 실행)
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
@@ -64,6 +65,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: nextjs-build
+          path: .
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Deploy to Vercel (Preview)
@@ -79,7 +81,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
-          echo "Production URL: $url"
+          echo "Production URL: $url"  
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}

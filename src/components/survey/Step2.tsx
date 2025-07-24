@@ -50,33 +50,41 @@ export default function Step2({ onNext }: Step2Props) {
   };
 
   return (
-    <div className="h-screen overflow-y-auto flex flex-col">
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <h2 className="text-white font-bold text-[20px] mb-14 text-center mt-18">
+    <div className="h-screen flex justify-center items-center">
+      <div
+        className="flex flex-col items-center px-6 w-full max-w-[500px]"
+        style={{ maxHeight: '700px' }}
+      >
+        {/* 고정 제목 */}
+        <h2 className="text-white font-bold text-[20px] text-center mb-10 mt-10">
           좋아하는 <span className="text-[#9F8EC5]">장르</span>를 선택해주세요
         </h2>
 
-        <div className="grid grid-cols-3 gap-y-6 w-full mx-auto px-10 mb-15">
-          {GENRES.map(({ label, id }) => (
-            <CircleOption
-              key={label}
-              label={label}
-              imageSrc={`/images/genre/${id}.png`}
-              selected={selectedGenres.includes(label)}
-              onClick={() => toggleGenre(label)}
-              className="m-1"
-            />
-          ))}
+        {/* 스크롤 가능한 선택 영역 */}
+        <div className="overflow-y-auto w-full" style={{ maxHeight: '500px' }}>
+          <div className="grid grid-cols-3 gap-y-6 px-4">
+            {GENRES.map(({ label, id }) => (
+              <CircleOption
+                key={label}
+                label={label}
+                imageSrc={`/images/genre/${id}.png`}
+                selected={selectedGenres.includes(label)}
+                onClick={() => toggleGenre(label)}
+                className="m-1"
+              />
+            ))}
+          </div>
         </div>
 
-        <Button
-          onClick={handleNext}
-          className={
-            'min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer'
-          }
-        >
-          완료
-        </Button>
+        {/* 고정 버튼 */}
+        <div className="mt-auto pt-10">
+          <Button
+            onClick={handleNext}
+            className="min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer"
+          >
+            완료
+          </Button>
+        </div>
       </div>
     </div>
   );

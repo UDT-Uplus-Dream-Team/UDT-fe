@@ -7,9 +7,9 @@ on:
     branches: ['dev', 'main']
 
 jobs:
-# ─────────────────────────────────────────────────────────────
-# 1. Build & Test
-# ─────────────────────────────────────────────────────────────
+# ──────────────────────────────────────────────────────
+# 1) BUILD (프리빌트 산출물 생성)
+# ──────────────────────────────────────────────────────
   build:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
@@ -34,46 +34,45 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # ────────── 환경변수 & 프로젝트 설정 가져오기 ──────────
-      - name: Pull Vercel Environment (Preview)
+      # ───────── Vercel 프로젝트·ENV 끌어오기 ─────────
+      - name: Pull Vercel ENV (preview)
         if: github.ref == 'refs/heads/dev'
-        run: vercel pull --yes --environment=preview --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview    \
+                         --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Pull Vercel Environment (Production)
+      - name: Pull Vercel ENV (production)
         if: github.ref == 'refs/heads/main'
-        run: vercel pull --yes --environment=production --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production \
+                         --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Run linting
+      # ───────── Lint (에러 무시) ─────────
+      - name: Run lint
         run: npm run lint
         continue-on-error: true
 
-      # ────────── 핵심: vercel build 실행 → .vercel/output 생성 ──────────
-      - name: Build with Vercel (Preview)            ### NEW
+      # ───────── .vercel/output 생성 ─────────
+      - name: Vercel build (preview)
         if: github.ref == 'refs/heads/dev'
-        run: |
-          vercel build --yes \
-            --scope=udt \
-            --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --yes                     \
+                          --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Build with Vercel (Production)         ### NEW
+      - name: Vercel build (production)
         if: github.ref == 'refs/heads/main'
-        run: |
-          vercel build --prod --yes \
-            --scope=udt \
-            --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --yes              \
+                          --scope=udt --token=${{ secrets.VERCEL_TOKEN }}
 
-      # ────────── .vercel 전체를 아티팩트로 업로드 ──────────
-      - name: Upload build artifacts                 ### CHANGED
+      # ───────── 산출물 업로드 (.vercel/**) ─────────
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vercel-build-output
-          path: |
-            .vercel/**          # project.json + output 모두 포함
+          name: vercel-build-output        # ↓ 반드시 동일 이름
+          path: .vercel/**
           retention-days: 1
+          if-no-files-found: error
 
-# ─────────────────────────────────────────────────────────────
-# 2. Deploy
-# ─────────────────────────────────────────────────────────────
+# ──────────────────────────────────────────────────────
+# 2) DEPLOY (프리빌트 직접 업로드)
+# ──────────────────────────────────────────────────────
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -83,25 +82,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download build artifacts               ### CHANGED
+      - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: vercel-build-output
+          name: vercel-build-output        # ↑ 업로드 때와 정확히 일치
+          merge-multiple: true             # 파일 조각 자동 병합
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      # ────────── 업로드된 .vercel/output을 그대로 배포 ──────────
-      - name: Deploy to Vercel (Preview)
+      # ───────── 프리빌트 배포 ─────────
+      - name: Deploy to Vercel (preview)
         if: github.ref == 'refs/heads/dev'
         run: |
-          url=$(vercel deploy --prebuilt --yes --scope=udt --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --yes \
+                               --scope=udt --token=${{ secrets.VERCEL_TOKEN }})
           echo "Preview URL: $url"
           echo "VERCEL_PREVIEW_URL=$url" >> $GITHUB_ENV
 
-      - name: Deploy to Vercel (Production)
+      - name: Deploy to Vercel (production)
         if: github.ref == 'refs/heads/main'
         run: |
-          url=$(vercel deploy --prebuilt --prod --yes --scope=udt --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --prod --yes \
+                               --scope=udt --token=${{ secrets.VERCEL_TOKEN }})
           echo "Production URL: $url"
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV

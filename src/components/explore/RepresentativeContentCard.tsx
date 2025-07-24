@@ -20,6 +20,7 @@ export const RepresentativeContentCard = ({
   content,
 }: RepresentativeContentCardProps) => {
   const [isDetailBottomSheetOpen, setIsDetailBottomSheetOpen] = useState(false);
+  const [posterImgSrc, setPosterImgSrc] = useState(content.posterUrl);
 
   // 동일한 props에 대한 계산 결과 고정, SSR/CSR 불일치 방지 (hydration 이슈 해결)
   const combinedTags = useMemo(() => {
@@ -41,11 +42,12 @@ export const RepresentativeContentCard = ({
     >
       <div className="relative flex-grow">
         <Image
-          src={content.posterUrl || '/placeholder.svg'}
+          src={posterImgSrc}
           alt={content.title || '제목 없음'}
           fill
           className="object-cover"
           priority
+          onError={() => setPosterImgSrc('/images/default-poster.png')}
         />
 
         {/* 그라데이션 오버레이 - 텍스트 가독성을 위한 배경 */}

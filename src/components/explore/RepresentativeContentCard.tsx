@@ -3,23 +3,19 @@ import Image from 'next/image';
 import { Card } from '@components/ui/card';
 import { Badge } from '@components/ui/badge';
 import { RecentContentData } from '@type/explore/Explore';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@components/ui/sheet';
-import { DetailBottomSheetContent } from './DetailBottomSheetContent';
 
 type RepresentativeContentCardProps = {
   content: RecentContentData;
+  onMouseDown: (e: React.MouseEvent | React.TouchEvent) => void;
+  onTouchStart: (e: React.MouseEvent | React.TouchEvent) => void;
 };
 
 // 화면 위에 표시될 엄청 큰 카드 (콘텐츠 정보 표시)
 export const RepresentativeContentCard = ({
   content,
+  onMouseDown,
+  onTouchStart,
 }: RepresentativeContentCardProps) => {
-  const [isDetailBottomSheetOpen, setIsDetailBottomSheetOpen] = useState(false);
   const [posterImgSrc, setPosterImgSrc] = useState(content.posterUrl);
 
   // 동일한 props에 대한 계산 결과 고정, SSR/CSR 불일치 방지 (hydration 이슈 해결)
@@ -29,16 +25,11 @@ export const RepresentativeContentCard = ({
 
   const displayedTags = useMemo(() => combinedTags.slice(0, 4), [combinedTags]);
 
-  // 카드 클릭 시 BottomSheet 열기
-  const handlePosterClick = () => {
-    //TODO: 이것을 네트워크 통신으로 대체해야 함
-    setIsDetailBottomSheetOpen(true);
-  };
-
   return (
     <Card
       className="flex flex-col w-68 h-87 overflow-hidden group cursor-pointer transition-transform duration-200 border-none"
-      onClick={handlePosterClick}
+      onMouseDown={onMouseDown}
+      onTouchStart={onTouchStart}
     >
       <div className="relative flex-grow">
         <Image
@@ -74,23 +65,6 @@ export const RepresentativeContentCard = ({
           </div>
         </div>
       </div>
-
-      {/* 영화 상세 정보 BottomSheet (필요 시 pop-up) */}
-      <Sheet
-        open={isDetailBottomSheetOpen}
-        onOpenChange={setIsDetailBottomSheetOpen}
-      >
-        <SheetContent
-          side="bottom"
-          className="px-0 pb-5 h-[90vh] max-w-full rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
-        >
-          {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
-          <SheetHeader className="p-0">
-            <SheetTitle className="sr-only h-0 p-0">상세정보</SheetTitle>
-          </SheetHeader>
-          <DetailBottomSheetContent contentId={content.contentId} />
-        </SheetContent>
-      </Sheet>
     </Card>
   );
 };

@@ -25,6 +25,11 @@ export const PosterCard = ({
   const [hasError, setHasError] = useState(false); // 이미지 로딩 오류 여부 상태 관리
   const [hasLoaded, setHasLoaded] = useState(false);
 
+  // 드래그(누름) 시 기본 동작 막기
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault(); // 기본 클릭/포커스/이미지 드래그 방지!
+  };
+
   // 사이즈별 width/height 설정
   const dimensions =
     size === 'lg' ? { width: 160, height: 220 } : { width: 110, height: 154 };
@@ -58,6 +63,7 @@ export const PosterCard = ({
   return (
     <div
       onClick={onClick}
+      onPointerDown={handlePointerDown}
       className="relative cursor-pointer flex flex-col items-center"
       style={{
         width: `${dimensions.width}px`,

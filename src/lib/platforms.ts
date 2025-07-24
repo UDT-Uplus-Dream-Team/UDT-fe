@@ -7,5 +7,5 @@ export const PLATFORMS: Platform[] = [
   { label: '웨이브', id: 'wavve' },
   { label: '디즈니+', id: 'disneyPlus' },
   { label: '왓챠', id: 'watcha' },
-  { label: '애플티비', id: 'appleTV' },
+  { label: 'Apple TV', id: 'appleTV' },
 ];

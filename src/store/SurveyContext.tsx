@@ -8,7 +8,7 @@ export const SurveyContext = createContext<SurveyContextType | null>(null);
 export function SurveyProvider({ children }: { children: React.ReactNode }) {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [watchedContents, setWatchedContents] = useState<string[]>([]);
+  const [watchedContents, setWatchedContents] = useState<number[]>([]);
 
   return (
     <SurveyContext.Provider

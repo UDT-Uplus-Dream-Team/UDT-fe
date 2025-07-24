@@ -7,33 +7,31 @@ import SurveyComplete from '@components/survey/SurveyComplete';
 import { useState } from 'react';
 import { SurveyProvider } from '@store/SurveyContext';
 import { useSurveyContext } from '@hooks/useSurveyContext';
-import { usePostSurvey } from '@hooks/survey/usePostSurvey';
+import { postSurvey } from '@lib/apis/survey/postSurvey';
+import { showSimpleToast } from '@components/common/Toast';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const { selectedPlatforms, selectedGenres } = useSurveyContext();
-  const { mutate: submitSurvey } = usePostSurvey();
+  const { selectedPlatforms, selectedGenres, watchedContents } =
+    useSurveyContext();
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 3) {
       setStep((prev) => (prev + 1) as 1 | 2 | 3 | 4);
     } else {
-      submitSurvey(
-        {
+      try {
+        await postSurvey({
           platforms: selectedPlatforms,
           genres: selectedGenres,
-        },
-        {
-          onSuccess: () => {
-            setStep(4); // 성공 시 완료 페이지로 이동
-          },
-          onError: (error) => {
-            console.error('설문조사 제출 실패', error);
-            alert('설문조사 제출에 실패했습니다.');
-          },
-        },
-      );
+          contentIds: watchedContents,
+        });
+        setStep(4); // 성공 시 완료 페이지로 이동
+      } catch {
+        showSimpleToast.error({
+          message: '설문조사 제출에 실패했습니다.',
+        });
+      }
     }
   };
 

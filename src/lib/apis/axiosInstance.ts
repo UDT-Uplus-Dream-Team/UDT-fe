@@ -58,8 +58,7 @@ axiosInstance.interceptors.response.use(
         } else {
           // 토큰 재발급 실패 시 로그아웃 처리
           showSimpleToast.error({
-            message:
-              '로그인이 만료되었습니다. 다시 로그인 해주세요. Error Code: 401',
+            message: '로그인이 만료되었습니다. 다시 로그인 해주세요.',
             position: 'top-center',
             className:
               'bg-red-500/70 text-white px-4 py-2 rounded-md mx-auto shadow-lg',

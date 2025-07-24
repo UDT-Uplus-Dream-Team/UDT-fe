@@ -17,9 +17,9 @@ function SurveyFlow() {
     useSurveyContext();
 
   const handleNext = async () => {
-    if (step < 3) {
-      setStep((prev) => (prev + 1) as 1 | 2 | 3 | 4);
-    } else {
+    if (step === 1) {
+      setStep(2);
+    } else if (step === 2) {
       try {
         await postSurvey({
           platforms: selectedPlatforms,

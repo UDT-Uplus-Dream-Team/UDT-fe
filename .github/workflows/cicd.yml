@@ -14,34 +14,46 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
 
-    strategy: { matrix: { node-version: [22.x] } }
+    strategy:
+      matrix:
+        node-version: [22.x]
 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: ${{ matrix.node-version }}, cache: npm }
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
 
       - run: npm ci
       - run: npm install -g vercel@latest
 
-      # ENV 가져오기
+      # Vercel 환경변수(Pull) 분기 처리
+      - name: Set VERCEL_ENV
+        id: set_env
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "VERCEL_ENV=production" >> $GITHUB_ENV
+          else
+            echo "VERCEL_ENV=preview" >> $GITHUB_ENV
+          fi
+
+      # ENV 가져오기 (환경 분기 적용)
       - run: |
           vercel pull --yes \
-            --environment ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} \
+            --environment $VERCEL_ENV \
             --scope udt \
             --token ${{ secrets.VERCEL_TOKEN }}
 
       # 빌드
       - run: |
-          vercel build --yes ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} \
+          vercel build --yes \
+            $([[ "${GITHUB_REF}" == "refs/heads/main" ]] && echo "--prod") \
             --scope udt \
             --token ${{ secrets.VERCEL_TOKEN }}
 
-      # 결과 확인 (디버그용)
-      - run: ls -Rla .vercel | head -n 50
-
-      # .vercel → tar.gz
-      - run: tar -czf vercel-prebuilt.tgz .vercel
+      # 빌드 결과 압축(.vercel/output만)
+      - run: tar -czf vercel-prebuilt.tgz .vercel/output
 
       # 업로드
       - uses: actions/upload-artifact@v4
@@ -52,7 +64,7 @@ jobs:
           if-no-files-found: error
 
 # ───────────────────────────────────────────
-# 2) DEPLOY – 의존성 설치 후 --prebuilt 배포
+# 2) DEPLOY – 아티팩트 다운로드+해제+의존성+배포
 # ───────────────────────────────────────────
   deploy:
     needs: build
@@ -60,21 +72,37 @@ jobs:
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm ci
+      # 빌드 산출물 다운로드 및 해제
+      - uses: actions/download-artifact@v4
+        with:
+          name: vercel-prebuilt
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+      - run: tar -xzf vercel-prebuilt.tgz
 
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      # 의존성 설치
+      - run: npm ci
+      - run: npm install -g vercel@latest
 
-      - name: Build Project Artifacts
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      # Vercel 환경변수(Pull) 분기 처리
+      - name: Set VERCEL_ENV
+        id: set_env
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "VERCEL_ENV=production" >> $GITHUB_ENV
+          else
+            echo "VERCEL_ENV=preview" >> $GITHUB_ENV
+          fi
 
+      # ENV 가져오기
+      - run: |
+          vercel pull --yes \
+            --environment $VERCEL_ENV \
+            --scope udt \
+            --token ${{ secrets.VERCEL_TOKEN }}
+
+      # Prebuilt 배포
       - name: Deploy to Vercel (Preview)
         if: github.ref == 'refs/heads/dev'
         run: |
@@ -88,3 +116,4 @@ jobs:
           url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "Production URL: $url"
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
+

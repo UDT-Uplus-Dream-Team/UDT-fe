@@ -1,119 +1,97 @@
-name: CI/CD with GitHub Actions
-
+name: CI/CD with Github Actions
 on:
   push:
     branches: ['dev', 'main']
   pull_request:
     branches: ['dev', 'main']
-
 jobs:
-# ───────────────────────────────────────────
-# 1) BUILD – .vercel/output + tar 아카이브
-# ───────────────────────────────────────────
   build:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
-
     strategy:
       matrix:
         node-version: [22.x]
-
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-
-      - run: npm ci
-      - run: npm install -g vercel@latest
-
-      # Vercel 환경변수(Pull) 분기 처리
-      - name: Set VERCEL_ENV
-        id: set_env
-        run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            echo "VERCEL_ENV=production" >> $GITHUB_ENV
-          else
-            echo "VERCEL_ENV=preview" >> $GITHUB_ENV
-          fi
-
-      # ENV 가져오기 (환경 분기 적용)
-      - run: |
-          vercel pull --yes \
-            --environment $VERCEL_ENV \
-            --scope udt \
-            --token ${{ secrets.VERCEL_TOKEN }}
-
-      # 빌드
-      - run: |
-          vercel build --yes \
-            $([[ "${GITHUB_REF}" == "refs/heads/main" ]] && echo "--prod") \
-            --scope udt \
-            --token ${{ secrets.VERCEL_TOKEN }}
-
-      # 빌드 결과 압축(.vercel/output만)
-      - run: tar -czf vercel-prebuilt.tgz .vercel/output
-
-      # 업로드
-      - uses: actions/upload-artifact@v4
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run linting
+        run: npm run lint
+        continue-on-error: true # 린트 에러가 있어도 빌드 계속 진행
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }} --scope=udt
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Build Next.js application with Vercel environment
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          NODE_ENV: production
+      # Jest 사용 시 활성화
+      # - name: Run tests
+      #   run: npm test
+      #   continue-on-error: true # 테스트 실패해도 배포는 진행
+      - name: Upload build artifacts
+        if: matrix.node-version == '22.x' # 한 번만 업로드
+        uses: actions/upload-artifact@v4
         with:
-          name: vercel-prebuilt
-          path: vercel-prebuilt.tgz
+          name: nextjs-build
+          path: |
+            .next/
+            public/
+            .vercel/
           retention-days: 1
-          if-no-files-found: error
-
-# ───────────────────────────────────────────
-# 2) DEPLOY – 아티팩트 다운로드+해제+의존성+배포
-# ───────────────────────────────────────────
+  
+  # Vercel 배포 작업 (빌드가 성공했을 때만 실행)
   deploy:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
-
     steps:
-      - uses: actions/checkout@v4
-
-      # 빌드 산출물 다운로드 및 해제
-      - uses: actions/download-artifact@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
         with:
-          name: vercel-prebuilt
-
-      - run: tar -xzf vercel-prebuilt.tgz
-
-      # 의존성 설치
-      - run: npm ci
-      - run: npm install -g vercel@latest
-
-      # Vercel 환경변수(Pull) 분기 처리
-      - name: Set VERCEL_ENV
-        id: set_env
-        run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            echo "VERCEL_ENV=production" >> $GITHUB_ENV
-          else
-            echo "VERCEL_ENV=preview" >> $GITHUB_ENV
-          fi
-
-      # ENV 가져오기
-      - run: |
-          vercel pull --yes \
-            --environment $VERCEL_ENV \
-            --scope udt \
-            --token ${{ secrets.VERCEL_TOKEN }}
-
-      # Prebuilt 배포
+          name: nextjs-build
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
       - name: Deploy to Vercel (Preview)
         if: github.ref == 'refs/heads/dev'
         run: |
           url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "Preview URL: $url"
           echo "VERCEL_PREVIEW_URL=$url" >> $GITHUB_ENV
-
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Deploy to Vercel (Production)
         if: github.ref == 'refs/heads/main'
         run: |
           url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "Production URL: $url"
           echo "VERCEL_PRODUCTION_URL=$url" >> $GITHUB_ENV
-
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Comment PR with preview link
+        if: github.base_ref == 'dev' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 Preview deployment ready!\n\n👀 Preview: ${process.env.VERCEL_PREVIEW_URL}`
+            })

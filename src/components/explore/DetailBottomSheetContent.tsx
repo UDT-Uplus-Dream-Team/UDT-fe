@@ -17,6 +17,7 @@ import {
 import { DetailedContentData } from '@type/explore/Explore';
 import { VideoPlayer } from '@components/explore/VideoPlayer';
 import { useGetContentDetails } from '@hooks/explore/useGetContentDetails';
+import { formattingOpenDate } from '@utils/formattingOpenDate';
 
 interface DetailBottomSheetContentProps {
   contentId: number;
@@ -154,7 +155,9 @@ export const DetailBottomSheetContent = ({
                 {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData.openDate.split('-')[0]}</span>
+                {contentData.openDate !== null ? (
+                  <span>{contentData.openDate}</span>
+                ) : null}
                 <span>{contentData.rating}</span>
                 <span>{contentData.countries[0]}</span>
               </div>
@@ -185,7 +188,9 @@ export const DetailBottomSheetContent = ({
                 {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData.openDate.split('-')[0]}</span>
+                {contentData.openDate !== null ? (
+                  <span>{formattingOpenDate(contentData.openDate)}</span>
+                ) : null}
                 <span>{contentData.rating}</span>
                 <span>{contentData.countries[0]}</span>
               </div>
@@ -253,7 +258,7 @@ export const DetailBottomSheetContent = ({
                 >
                   <Avatar className="w-15 h-15 rounded-full overflow-hidden">
                     <AvatarImage
-                      src={actor.castImage || '/placeholder.svg'}
+                      src={actor.castImageUrl || '/placeholder.svg'}
                       alt={actor.castName}
                       className="object-cover w-full h-full"
                     />
@@ -277,13 +282,9 @@ export const DetailBottomSheetContent = ({
           <span className="text-lg font-semibold text-white">감독</span>
           {/* 감독 정보가 있는 경우에만 표시 */}
           {contentData.directors && contentData.directors.length > 0 ? (
-            <div className="flex flex-row items-center space-x-3">
-              {contentData.directors.map((director, index) => (
-                <span key={index} className="text-xs text-gray-300 text-center">
-                  {director.name}
-                </span>
-              ))}
-            </div>
+            <span className="text-sm text-gray-300">
+              {contentData.directors.join(', ')}
+            </span>
           ) : (
             <span className="text-sm text-gray-300">정보가 없습니다</span>
           )}

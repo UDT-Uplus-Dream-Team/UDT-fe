@@ -6,8 +6,8 @@ import { Toaster } from 'sonner';
 import { GoogleAnalytics } from '@next/third-parties/google'; // 구글 애널리틱스 추가
 
 export const metadata: Metadata = {
-  title: 'Your App Title',
-  description: 'Your app description',
+  title: '반딧불',
+  description: '30초만에 수많은 OTT 콘텐츠 숲을 밝히는 작은 빛',
 };
 
 export const viewport: Viewport = {

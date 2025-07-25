@@ -5,6 +5,8 @@ import { SurveyPosterCard } from './SurveyPosterCard';
 import { Button } from '@components/ui/button';
 import { useEffect, useState } from 'react';
 import { MOCK_CONTENTS } from './mockContents';
+import { Skeleton } from '../common/Skeleton';
+import Image from 'next/image';
 
 type Step3Props = {
   onNext: () => void;
@@ -18,6 +20,7 @@ function getRandomContents(count: number) {
 export default function Step3({ onNext }: Step3Props) {
   const { watchedContents, setWatchedContents } = useSurveyContext();
   const [randomContents] = useState(() => getRandomContents(9));
+  const [loadedCount, setLoadedCount] = useState(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,6 +32,10 @@ export default function Step3({ onNext }: Step3Props) {
       : [...watchedContents, contentId];
 
     setWatchedContents(updated);
+  };
+
+  const handleImageLoad = () => {
+    setLoadedCount((prev) => prev + 1);
   };
 
   return (
@@ -46,15 +53,32 @@ export default function Step3({ onNext }: Step3Props) {
         {/* 스크롤 가능한 포스터 목록 */}
         <div className="overflow-y-auto w-full" style={{ maxHeight: '500px' }}>
           <div className="grid grid-cols-3 gap-6 px-4">
-            {randomContents.map(({ contentId, title, posterUrl }, idx) => (
-              <SurveyPosterCard
-                key={`${contentId}-${idx}`}
-                title={title}
-                image={posterUrl}
-                selected={watchedContents.includes(contentId)}
-                onClick={() => toggleContent(contentId)}
-              />
-            ))}
+            {randomContents.map(({ contentId, title, posterUrl }, idx) => {
+              const isLoaded = loadedCount > idx;
+
+              return (
+                <div key={`${contentId}-${idx}`}>
+                  {!isLoaded ? (
+                    <Skeleton className="w-[100px] h-[150px]" />
+                  ) : (
+                    <SurveyPosterCard
+                      title={title}
+                      image={posterUrl}
+                      selected={watchedContents.includes(contentId)}
+                      onClick={() => toggleContent(contentId)}
+                    />
+                  )}
+                  <Image
+                    src={posterUrl}
+                    alt=""
+                    width={100}
+                    height={150}
+                    onLoad={handleImageLoad}
+                    className="hidden"
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 

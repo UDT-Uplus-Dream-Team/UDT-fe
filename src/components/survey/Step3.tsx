@@ -3,29 +3,24 @@
 import { useSurveyContext } from '@hooks/useSurveyContext';
 import { SurveyPosterCard } from './SurveyPosterCard';
 import { Button } from '@components/ui/button';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { MOCK_CONTENTS } from './mockContents';
+import { Skeleton } from '../common/Skeleton';
+import Image from 'next/image';
 
 type Step3Props = {
   onNext: () => void;
 };
 
-const MOCK_CONTENTS = [
-  { id: 1, title: '귀를 기울이면', image: '/images/poster1.webp' },
-  { id: 2, title: '고양이의 보은', image: '/images/poster2.webp' },
-  { id: 3, title: '벼랑 위의 포뇨', image: '/images/poster3.webp' },
-  { id: 4, title: '귀를 기울이면2', image: '/images/poster1.webp' },
-  { id: 5, title: '고양이의 보은2', image: '/images/poster2.webp' },
-  { id: 6, title: '벼랑 위의 포뇨2', image: '/images/poster3.webp' },
-  { id: 7, title: '귀를 기울이면3', image: '/images/poster1.webp' },
-  { id: 8, title: '고양이의 보은3', image: '/images/poster2.webp' },
-  { id: 9, title: '벼랑 위의 포뇨3', image: '/images/poster3.webp' },
-  { id: 10, title: '귀를 기울이면3', image: '/images/poster1.webp' },
-  { id: 11, title: '고양이의 보은3', image: '/images/poster2.webp' },
-  { id: 12, title: '벼랑 위의 포뇨3', image: '/images/poster3.webp' },
-];
+function getRandomContents(count: number) {
+  const shuffled = [...MOCK_CONTENTS].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
 
 export default function Step3({ onNext }: Step3Props) {
   const { watchedContents, setWatchedContents } = useSurveyContext();
+  const [randomContents] = useState(() => getRandomContents(9));
+  const [loadedCount, setLoadedCount] = useState(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -37,6 +32,10 @@ export default function Step3({ onNext }: Step3Props) {
       : [...watchedContents, contentId];
 
     setWatchedContents(updated);
+  };
+
+  const handleImageLoad = () => {
+    setLoadedCount((prev) => prev + 1);
   };
 
   return (
@@ -54,15 +53,32 @@ export default function Step3({ onNext }: Step3Props) {
         {/* 스크롤 가능한 포스터 목록 */}
         <div className="overflow-y-auto w-full" style={{ maxHeight: '500px' }}>
           <div className="grid grid-cols-3 gap-6 px-4">
-            {MOCK_CONTENTS.map(({ id, title, image }) => (
-              <SurveyPosterCard
-                key={id}
-                title={title}
-                image={image}
-                selected={watchedContents.includes(id)}
-                onClick={() => toggleContent(id)}
-              />
-            ))}
+            {randomContents.map(({ contentId, title, posterUrl }, idx) => {
+              const isLoaded = loadedCount > idx;
+
+              return (
+                <div key={`${contentId}-${idx}`}>
+                  {!isLoaded ? (
+                    <Skeleton className="w-[100px] h-[150px]" />
+                  ) : (
+                    <SurveyPosterCard
+                      title={title}
+                      image={posterUrl}
+                      selected={watchedContents.includes(contentId)}
+                      onClick={() => toggleContent(contentId)}
+                    />
+                  )}
+                  <Image
+                    src={posterUrl}
+                    alt=""
+                    width={100}
+                    height={150}
+                    onLoad={handleImageLoad}
+                    className="hidden"
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 

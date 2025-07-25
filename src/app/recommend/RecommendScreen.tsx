@@ -172,13 +172,14 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     direction: SwipeDirection,
     feedbackType?: FeedbackType,
   ): Promise<void> => {
-    if (isAnimating || isFlipped || !currentMovie) return;
+    console.log(currentMovie);
+    if (isAnimating || isFlipped) return;
 
     // GA4로 스와이프 이벤트 전송 (Google Analytics 연동을 위함)
     sendAnalyticsEvent('swipe_action_in_reels', {
       direction, // left, right, up
       feedback: feedbackType ?? 'neutral',
-      content_id: currentMovie.contentId,
+      content_id: currentMovie ? currentMovie.contentId : 9999999,
       page: 'recommend_screen',
       swipe_count: swipeCount + 1, // 0-index면 +1
       timestamp: new Date().toISOString(),
@@ -243,14 +244,17 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       if (isAnimating || isFlipped) return;
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
+        console.log('왼쪽');
         handleSwipe('left', 'unliked');
       }
       if (e.key === 'ArrowRight') {
         e.preventDefault();
+        console.log('오른쪽');
         handleSwipe('right', 'liked');
       }
       if (e.key === 'ArrowDown') {
         e.preventDefault();
+        console.log('아래쪽');
         handleSwipe('up');
       }
     };
@@ -282,14 +286,14 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   };
 
   const onTouchStart = (e: React.TouchEvent): void => {
-    if (isAnimating || e.touches.length !== 1) return;
+    if (isAnimating || e.touches.length !== 1 || isFlipped) return;
     e.preventDefault();
     const touch = e.touches[0];
     setStartPoint({ x: touch.clientX, y: touch.clientY });
   };
 
   const onTouchEnd = (e: React.TouchEvent): void => {
-    if (!startPoint || e.changedTouches.length !== 1) return;
+    if (!startPoint || e.changedTouches.length !== 1 || isFlipped) return;
     e.preventDefault();
     const touch = e.changedTouches[0];
     const dx: number = touch.clientX - startPoint.x;
@@ -394,7 +398,12 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         >
           {/* 자리 채우기 티켓 */}
           <div className="relative flex w-full aspect-[75/135] max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
-            <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
+            <Ticket
+              key={currentMovie.contentId}
+              movie={currentMovie}
+              variant="initial"
+              feedback="neutral"
+            />
           </div>
 
           {/* 다음 카드 peek */}
@@ -406,7 +415,12 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
                   : 'translate-y-0 scale-100'
               }`}
             >
-              <Ticket movie={nextMovie} variant="initial" feedback="neutral" />
+              <Ticket
+                key={nextMovie.contentId}
+                movie={nextMovie}
+                variant="initial"
+                feedback="neutral"
+              />
             </div>
           )}
 
@@ -444,6 +458,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
                   style={{ backfaceVisibility: 'hidden' }}
                 >
                   <Ticket
+                    key={currentMovie.contentId}
                     movie={currentMovie}
                     variant="initial"
                     feedback={feedback}
@@ -461,7 +476,11 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
                     zIndex: isFlipped ? 30 : 10,
                   }}
                 >
-                  <Ticket movie={currentMovie} variant="detail" />
+                  <Ticket
+                    key={currentMovie.contentId}
+                    movie={currentMovie}
+                    variant="detail"
+                  />
                 </div>
               </div>
             </div>

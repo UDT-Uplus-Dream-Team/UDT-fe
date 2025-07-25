@@ -18,6 +18,26 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
   const [showMore, setShowMore] = useState(false);
   const descRef = useRef<HTMLParagraphElement>(null);
 
+  const formatInfo = (
+    value: string | number | string[] | null | undefined,
+    fallback = '정보 없음',
+  ): string => {
+    if (Array.isArray(value)) return value.length > 0 ? value[0] : fallback;
+    if (typeof value === 'number') return value > 0 ? `${value}분` : fallback;
+    return value ? value : fallback;
+  };
+
+  const formatDateInfo = (
+    value: string | null | undefined,
+    fallback = '정보 없음',
+  ): string => {
+    if (!value) return fallback;
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return fallback;
+
+    return date.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  };
+
   //카드 크기 고정을 위한 값지정
   const cardBaseClass =
     'flex flex-col min-w-[280px] min-h-[480px] max-w-[400px] max-h-[680px] w-full h-full border-none rounded-2xl overflow-hidden';
@@ -29,6 +49,11 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
   const [posterSrc, setPosterSrc] = useState(
     movie.posterUrl || '/images/default-poster.png',
   );
+
+  //더보기 초기화
+  useEffect(() => {
+    setExpanded(false); // 강제 초기화
+  }, [movie.contentId]);
 
   useEffect(() => {
     const el = descRef.current;
@@ -51,34 +76,37 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             onError={() => setBackdropSrc('/images/default-backdrop.png')}
           />
         </div>
-        <CardHeader>
-          <div className="space-y-1 pb-2">
-            <h3 className="font-bold text-2xl leading-tight">{movie.title}</h3>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div>{movie.genres.join(', ')}</div>
+        {!expanded && (
+          <CardHeader>
+            <div className="space-y-1 pb-2">
+              <h3 className="font-bold text-2xl leading-tight">
+                {movie.title}
+              </h3>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div>{movie.genres.join(', ')}</div>
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <h4 className="font-medium text-sm md:text-lg">플랫폼</h4>
-            <div className="flex flex-wrap gap-2">
-              {movie.platforms.map((platformLabel) => {
-                const imageSrc = getPlatformLogo(platformLabel);
-                return imageSrc ? (
-                  <CircleOption
-                    key={platformLabel}
-                    label={platformLabel}
-                    imageSrc={imageSrc}
-                    size="sm"
-                    onClick={() => {}}
-                    showLabel={false}
-                  />
-                ) : null;
-              })}
+            <div className="space-y-2">
+              <h4 className="font-medium text-sm md:text-lg">플랫폼</h4>
+              <div className="flex flex-wrap gap-2">
+                {movie.platforms.map((platformLabel) => {
+                  const imageSrc = getPlatformLogo(platformLabel);
+                  return imageSrc ? (
+                    <CircleOption
+                      key={platformLabel}
+                      label={platformLabel}
+                      imageSrc={imageSrc}
+                      size="sm"
+                      onClick={() => {}}
+                      showLabel={false}
+                    />
+                  ) : null;
+                })}
+              </div>
             </div>
-          </div>
-        </CardHeader>
-
+          </CardHeader>
+        )}
         <CardContent className="relative flex flex-col space-y-3 py-3 flex-1">
           {!expanded ? (
             <>
@@ -86,19 +114,23 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
               <div className="space-y-2 text-sm md:text-base">
                 <div className="flex items-center gap-2">
                   <span className="text-gray-60">감독</span>
-                  <span className="ml-auto">{movie.directors}</span>
+                  <span className="ml-auto">{formatInfo(movie.directors)}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-gray-60">개봉일</span>
-                  <span className="ml-auto">{movie.openDate}</span>
+                  <span className="ml-auto">
+                    {formatDateInfo(movie.openDate)}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-gray-60">러닝타임</span>
-                  <span className="ml-auto">{movie.runningTime}분</span>
+                  <span className="ml-auto">
+                    {formatInfo(movie.runningTime)}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-gray-60">연령 등급</span>
-                  <span className="ml-auto">{movie.rating}</span>
+                  <span className="ml-auto">{formatInfo(movie.rating)}</span>
                 </div>
               </div>
 
@@ -107,7 +139,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
                 <h4 className="font-medium text-sm md:text-lg mb-2">줄거리</h4>
                 <p
                   ref={descRef}
-                  className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-2 md:line-clamp-3"
+                  className="text-sm md:text-base leading-relaxed line-clamp-3"
                 >
                   {movie.description}
                 </p>
@@ -126,16 +158,15 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             </>
           ) : (
             <>
-              {/* 줄거리 전체 - 기존 정보 사라지고 이거만 */}
-              <div className="flex flex-col justify-between flex-1">
+              {/* 줄거리 전체 보기 */}
+              <div className="flex flex-col justify-between flex-1 px-2">
                 <div>
-                  <h4 className="font-medium text-sm md:text-lg mb-2">
-                    줄거리
-                  </h4>
-                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  <h4 className="font-bold text-lg md:text-xl mb-2">줄거리</h4>
+                  <p className="text-sm md:text-base leading-relaxed overflow-hidden">
                     {movie.description}
                   </p>
                 </div>
+
                 <div className="flex justify-end mt-4">
                   <button
                     onClick={() => setExpanded(false)}
@@ -180,11 +211,11 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
               <span className="text-gray-60">감독</span>
-              <span className="ml-auto">{movie.directors}</span>
+              <span className="ml-auto">{formatInfo(movie.directors)}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-gray-60">러닝타임</span>
-              <span className="ml-auto">{movie.runningTime}분</span>
+              <span className="ml-auto">{formatInfo(movie.runningTime)}</span>
             </div>
           </div>
         </CardContent>

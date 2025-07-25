@@ -17,6 +17,7 @@ import {
 import { DetailedContentData } from '@type/explore/Explore';
 import { VideoPlayer } from '@components/explore/VideoPlayer';
 import { useGetContentDetails } from '@hooks/explore/useGetContentDetails';
+import { formattingOpenDate } from '@utils/formattingOpenDate';
 
 interface DetailBottomSheetContentProps {
   contentId: number;
@@ -154,7 +155,9 @@ export const DetailBottomSheetContent = ({
                 {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData.openDate.split('-')[0]}</span>
+                {contentData.openDate !== null ? (
+                  <span>{contentData.openDate}</span>
+                ) : null}
                 <span>{contentData.rating}</span>
                 <span>{contentData.countries[0]}</span>
               </div>
@@ -185,7 +188,7 @@ export const DetailBottomSheetContent = ({
                 {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData.openDate.split('-')[0]}</span>
+                <span>{formattingOpenDate(contentData.openDate)}</span>
                 <span>{contentData.rating}</span>
                 <span>{contentData.countries[0]}</span>
               </div>
@@ -253,7 +256,7 @@ export const DetailBottomSheetContent = ({
                 >
                   <Avatar className="w-15 h-15 rounded-full overflow-hidden">
                     <AvatarImage
-                      src={actor.castImage || '/placeholder.svg'}
+                      src={actor.castImageUrl || '/placeholder.svg'}
                       alt={actor.castName}
                       className="object-cover w-full h-full"
                     />
@@ -279,9 +282,24 @@ export const DetailBottomSheetContent = ({
           {contentData.directors && contentData.directors.length > 0 ? (
             <div className="flex flex-row items-center space-x-3">
               {contentData.directors.map((director, index) => (
-                <span key={index} className="text-xs text-gray-300 text-center">
-                  {director.name}
-                </span>
+                <div
+                  key={index}
+                  className="flex flex-col items-center space-y-2 min-w-[60px]"
+                >
+                  <Avatar className="w-15 h-15 rounded-full overflow-hidden">
+                    <AvatarImage
+                      src={director.directorImageUrl || '/placeholder.svg'}
+                      alt={director.directorName}
+                      className="object-cover w-full h-full"
+                    />
+                    <AvatarFallback className="bg-gray-700 text-2xl text-white size-full rounded-full flex items-center justify-center">
+                      {director.directorName.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-xs text-gray-300 text-center leading-tight">
+                    {director.directorName}
+                  </span>
+                </div>
               ))}
             </div>
           ) : (

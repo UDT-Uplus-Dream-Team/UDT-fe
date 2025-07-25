@@ -35,8 +35,8 @@ export interface DetailedContentData {
   genres: string[]; // 예: ["SF", "코미디"]
 
   countries: string[]; // 예: ["미국", "영국"]
-  directors: { name: string }[];
-  casts: { castName: string; castImage: string }[];
+  directors: { directorName: string; directorImageUrl: string }[];
+  casts: { castName: string; castImageUrl: string }[];
 
   platforms: {
     platformType: string; // 예: "넷플릭스"

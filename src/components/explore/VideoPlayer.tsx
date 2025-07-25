@@ -105,7 +105,9 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
             {contentData.title}
           </span>
           <div className="flex items-center space-x-5 text-sm text-gray-200">
-            <span>{formattingOpenDate(contentData.openDate)}</span>
+            {contentData.openDate !== null ? (
+              <span>{formattingOpenDate(contentData.openDate)}</span>
+            ) : null}
             <span>{contentData.rating}</span>
             <span>{contentData.countries[0]}</span>
           </div>

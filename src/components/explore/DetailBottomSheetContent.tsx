@@ -188,7 +188,9 @@ export const DetailBottomSheetContent = ({
                 {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{formattingOpenDate(contentData.openDate)}</span>
+                {contentData.openDate !== null ? (
+                  <span>{formattingOpenDate(contentData.openDate)}</span>
+                ) : null}
                 <span>{contentData.rating}</span>
                 <span>{contentData.countries[0]}</span>
               </div>
@@ -280,28 +282,9 @@ export const DetailBottomSheetContent = ({
           <span className="text-lg font-semibold text-white">감독</span>
           {/* 감독 정보가 있는 경우에만 표시 */}
           {contentData.directors && contentData.directors.length > 0 ? (
-            <div className="flex flex-row items-center space-x-3">
-              {contentData.directors.map((director, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center space-y-2 min-w-[60px]"
-                >
-                  <Avatar className="w-15 h-15 rounded-full overflow-hidden">
-                    <AvatarImage
-                      src={director.directorImageUrl || '/placeholder.svg'}
-                      alt={director.directorName}
-                      className="object-cover w-full h-full"
-                    />
-                    <AvatarFallback className="bg-gray-700 text-2xl text-white size-full rounded-full flex items-center justify-center">
-                      {director.directorName.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-xs text-gray-300 text-center leading-tight">
-                    {director.directorName}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <span className="text-sm text-gray-300">
+              {contentData.directors.join(', ')}
+            </span>
           ) : (
             <span className="text-sm text-gray-300">정보가 없습니다</span>
           )}

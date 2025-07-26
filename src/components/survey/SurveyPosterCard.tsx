@@ -31,7 +31,13 @@ export function SurveyPosterCard({
       }
     >
       <div className="relative w-full aspect-[2/3]">
-        <Image src={image} alt={title} fill className="object-cover" />
+        <Image
+          src={image}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover"
+        />
       </div>
     </div>
   );

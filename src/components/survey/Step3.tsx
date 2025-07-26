@@ -58,7 +58,10 @@ export default function Step3({ onNext }: Step3Props) {
         </h2>
 
         {/* 스크롤 가능한 포스터 목록 */}
-        <div className="overflow-y-auto w-full" style={{ maxHeight: '500px' }}>
+        <div
+          className="overflow-y-auto w-full visible-scroll"
+          style={{ maxHeight: '500px' }}
+        >
           <div className="grid grid-cols-3 gap-6 px-4">
             {isLoaded
               ? randomContents.map(({ contentId, title, posterUrl }, idx) => (

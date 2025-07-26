@@ -55,42 +55,51 @@ export const PosterCardsGrid = ({
   }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
 
   return (
-    <div className="grid grid-cols-3 sm:grid-cols-4 gap-5 px-4 py-6 mx-auto transition-opacity duration-300">
-      {contents.map((item, idx) => (
-        <PosterCard
-          key={idx}
-          title={item.title}
-          image={item.posterUrl}
-          onClick={() => handlePosterClick(item.contentId)}
-        />
-      ))}
+    <>
+      {contents.length > 0 ? (
+        <>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-5 px-4 py-6 mx-auto transition-opacity duration-300">
+            {contents.map((item, idx) => (
+              <PosterCard
+                key={idx}
+                title={item.title}
+                image={item.posterUrl}
+                onClick={() => handlePosterClick(item.contentId)}
+              />
+            ))}
 
-      {/* 로딩 중 표시 */}
-      {isFetchingNextPage && (
-        <div className="col-span-3 text-center py-4">불러오는 중...</div>
-      )}
+            {/* 무한스크롤 트리거용 빈 div */}
+            <div ref={loadMoreRef} className="col-span-3 h-1" />
 
-      {/* 무한스크롤 트리거용 빈 div */}
-      <div ref={loadMoreRef} className="col-span-3 h-1" />
-
-      {/* 영화 상세 정보 BottomSheet (필요 시 pop-up) */}
-      <Sheet
-        open={isDetailBottomSheetOpen}
-        onOpenChange={setIsDetailBottomSheetOpen}
-      >
-        <SheetContent
-          side="bottom"
-          className="px-0 pb-5 h-[90vh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
-        >
-          {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
-          <SheetHeader className="p-0">
-            <SheetTitle className="sr-only h-0 p-0">상세정보</SheetTitle>
-          </SheetHeader>
-          {selectedMovieId && (
-            <DetailBottomSheetContent contentId={selectedMovieId} />
+            {/* 영화 상세 정보 BottomSheet (필요 시 pop-up) */}
+            <Sheet
+              open={isDetailBottomSheetOpen}
+              onOpenChange={setIsDetailBottomSheetOpen}
+            >
+              <SheetContent
+                side="bottom"
+                className="px-0 pb-5 h-[90vh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
+              >
+                {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
+                <SheetHeader className="p-0">
+                  <SheetTitle className="sr-only h-0 p-0">상세정보</SheetTitle>
+                </SheetHeader>
+                {selectedMovieId && (
+                  <DetailBottomSheetContent contentId={selectedMovieId} />
+                )}
+              </SheetContent>
+            </Sheet>
+          </div>
+          {/* 로딩 중 표시 */}
+          {isFetchingNextPage && (
+            <div className="col-span-3 text-center py-4">불러오는 중...</div>
           )}
-        </SheetContent>
-      </Sheet>
-    </div>
+        </>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-white">
+          검색 결과가 없습니다.
+        </div>
+      )}
+    </>
   );
 };

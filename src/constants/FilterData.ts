@@ -7,8 +7,8 @@ export const CONTENT_CATEGORIES = [
 
 export const RATING_OPTIONS = [
   '전체 관람가',
-  '12세 이상',
-  '15세 이상',
+  '12세 이상 관람가',
+  '15세 이상 관람가',
   '청소년 관람불가',
 ] as const;
 

@@ -445,7 +445,7 @@ export const MOCK_CONTENTS = [
     genre: 'FANTASY',
     title: '올드 가드 2',
     posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%86%AF%E1%84%83%E1%85%B3+%E1%84%80%E1%85%A1%E1%84%83%E1%85%B3+2_poster.webpp',
+      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%86%AF%E1%84%83%E1%85%B3+%E1%84%80%E1%85%A1%E1%84%83%E1%85%B3+2_poster.webp',
   },
   {
     contentId: 776,

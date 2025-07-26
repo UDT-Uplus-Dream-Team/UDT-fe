@@ -21,10 +21,17 @@ export default function Step3({ onNext }: Step3Props) {
   const { watchedContents, setWatchedContents } = useSurveyContext();
   const [randomContents] = useState(() => getRandomContents(9));
   const [loadedCount, setLoadedCount] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    if (loadedCount === randomContents.length) {
+      setIsLoaded(true);
+    }
+  }, [loadedCount, randomContents.length]);
 
   const toggleContent = (contentId: number) => {
     const updated = watchedContents.includes(contentId)
@@ -51,38 +58,42 @@ export default function Step3({ onNext }: Step3Props) {
         </h2>
 
         {/* 스크롤 가능한 포스터 목록 */}
-        <div className="overflow-y-auto w-full" style={{ maxHeight: '500px' }}>
+        <div
+          className="overflow-y-auto w-full visible-scroll"
+          style={{ maxHeight: '500px' }}
+        >
           <div className="grid grid-cols-3 gap-6 px-4">
-            {randomContents.map(({ contentId, title, posterUrl }, idx) => {
-              const isLoaded = loadedCount > idx;
-
-              return (
-                <div key={`${contentId}-${idx}`}>
-                  {!isLoaded ? (
-                    <Skeleton className="w-[100px] h-[150px]" />
-                  ) : (
-                    <SurveyPosterCard
-                      title={title}
-                      image={posterUrl}
-                      selected={watchedContents.includes(contentId)}
-                      onClick={() => toggleContent(contentId)}
-                    />
-                  )}
-                  <Image
-                    src={posterUrl}
-                    alt=""
-                    width={100}
-                    height={150}
-                    onLoad={handleImageLoad}
-                    className="hidden"
+            {isLoaded
+              ? randomContents.map(({ contentId, title, posterUrl }, idx) => (
+                  <SurveyPosterCard
+                    key={`${contentId}-${idx}`}
+                    title={title}
+                    image={posterUrl}
+                    selected={watchedContents.includes(contentId)}
+                    onClick={() => toggleContent(contentId)}
                   />
-                </div>
-              );
-            })}
+                ))
+              : Array.from({ length: 9 }).map((_, idx) => (
+                  <Skeleton key={idx} className="w-[100px] h-[150px]" />
+                ))}
+
+            {/* 이미지 preload (invisible로 로드 트리거) */}
+            {!isLoaded &&
+              randomContents.map(({ posterUrl }, idx) => (
+                <Image
+                  key={`preload-${idx}`}
+                  src={posterUrl}
+                  alt=""
+                  width={100}
+                  height={150}
+                  onLoad={handleImageLoad}
+                  className="invisible absolute w-[1px] h-[1px]"
+                />
+              ))}
           </div>
         </div>
 
-        {/* 하단 버튼 두 개 - 아래 고정 + 간격 확보 */}
+        {/* 하단 버튼 */}
         <div className="mt-auto pt-10 flex justify-center gap-6">
           <Button
             onClick={onNext}

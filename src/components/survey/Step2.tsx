@@ -61,7 +61,10 @@ export default function Step2({ onNext }: Step2Props) {
         </h2>
 
         {/* 스크롤 가능한 선택 영역 */}
-        <div className="overflow-y-auto w-full" style={{ maxHeight: '500px' }}>
+        <div
+          className="overflow-y-auto w-full visible-scroll"
+          style={{ maxHeight: '500px' }}
+        >
           <div className="grid grid-cols-3 gap-y-6 px-4">
             {GENRES.map(({ label, id }) => (
               <CircleOption

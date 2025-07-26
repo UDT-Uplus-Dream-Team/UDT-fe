@@ -7,7 +7,6 @@ interface SurveyPosterCardProps {
   image: string;
   selected?: boolean;
   onClick: () => void;
-  onImageLoad?: () => void;
 }
 
 export function SurveyPosterCard({
@@ -15,7 +14,6 @@ export function SurveyPosterCard({
   image,
   selected = false,
   onClick,
-  onImageLoad,
 }: SurveyPosterCardProps) {
   return (
     <div
@@ -33,13 +31,7 @@ export function SurveyPosterCard({
       }
     >
       <div className="relative w-full aspect-[2/3]">
-        <Image
-          src={image}
-          alt={title}
-          onLoad={onImageLoad}
-          fill
-          className="object-cover"
-        />
+        <Image src={image} alt={title} fill className="object-cover" />
       </div>
     </div>
   );

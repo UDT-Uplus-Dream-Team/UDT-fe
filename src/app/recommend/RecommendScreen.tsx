@@ -172,7 +172,6 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     direction: SwipeDirection,
     feedbackType?: FeedbackType,
   ): Promise<void> => {
-    console.log(currentMovie);
     if (isAnimating || isFlipped) return;
 
     // GA4로 스와이프 이벤트 전송 (Google Analytics 연동을 위함)
@@ -244,17 +243,14 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       if (isAnimating || isFlipped) return;
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        console.log('왼쪽');
         handleSwipe('left', 'unliked');
       }
       if (e.key === 'ArrowRight') {
         e.preventDefault();
-        console.log('오른쪽');
         handleSwipe('right', 'liked');
       }
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        console.log('아래쪽');
         handleSwipe('up');
       }
     };

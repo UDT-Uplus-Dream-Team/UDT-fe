@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StoredContentDetail } from '@type/profile/StoredContentDetail';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { CircleOption } from '../common/circleOption';
@@ -35,6 +35,31 @@ const MovieCard = ({
     if (url) window.open(url, '_blank');
   };
 
+  const formatInfo = (
+    value: string | number | string[] | null | undefined,
+    fallback = '정보 없음',
+  ): string => {
+    if (Array.isArray(value)) return value.length > 0 ? value[0] : fallback;
+    if (typeof value === 'number') return value > 0 ? `${value}분` : fallback;
+    return value ? value : fallback;
+  };
+
+  const formatDateInfo = (
+    value: string | null | undefined,
+    fallback = '정보 없음',
+  ): string => {
+    if (!value) return fallback;
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return fallback;
+
+    return date.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  };
+
+  //더보기 초기화
+  useEffect(() => {
+    setExpanded(false); // 강제 초기화
+  }, [title]);
+
   const cardBaseClass =
     'flex flex-col min-w-[300px] min-h-[540px] md:min-w-[400px] md:min-h-[680px] max-w-[400px] max-h-[680px] border-none rounded-2xl overflow-hidden';
 
@@ -50,47 +75,48 @@ const MovieCard = ({
           onError={() => setImgSrc('/images/default-backdrop.png')}
         />
       </div>
-      <CardHeader>
-        <div className="space-y-1 pb-2">
-          <h3 className="font-bold text-2xl leading-tight">{title}</h3>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>{genres.join(', ')}</span>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <h4 className="font-medium text-sm md:text-lg">플랫폼</h4>
-            <span className="text-xs text-muted-foreground">
-              (플랫폼 클릭 바로 보러가기)
-            </span>
+      {!expanded && (
+        <CardHeader>
+          <div className="space-y-1 pb-2">
+            <h3 className="font-bold text-2xl leading-tight">{title}</h3>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{genres.join(', ')}</span>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {platforms.map((platform) => {
-              const imageSrc = getPlatformLogo(platform.platformType);
-              if (!imageSrc) return null;
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <h4 className="font-medium text-sm md:text-lg">플랫폼</h4>
+              <span className="text-xs text-muted-foreground">
+                (플랫폼 클릭 바로 보러가기)
+              </span>
+            </div>
 
-              return (
-                <CircleOption
-                  key={platform.platformType}
-                  label={platform.platformType}
-                  imageSrc={imageSrc}
-                  size="sm"
-                  onClick={() =>
-                    handlePlatformClick(
-                      platform.platformType,
-                      platform.watchUrl,
-                    )
-                  }
-                  showLabel={false}
-                />
-              );
-            })}
+            <div className="flex flex-wrap gap-2">
+              {platforms.map((platform) => {
+                const imageSrc = getPlatformLogo(platform.platformType);
+                if (!imageSrc) return null;
+
+                return (
+                  <CircleOption
+                    key={platform.platformType}
+                    label={platform.platformType}
+                    imageSrc={imageSrc}
+                    size="sm"
+                    onClick={() =>
+                      handlePlatformClick(
+                        platform.platformType,
+                        platform.watchUrl,
+                      )
+                    }
+                    showLabel={false}
+                  />
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </CardHeader>
-
+        </CardHeader>
+      )}
       <CardContent className="relative flex flex-col space-y-3 py-2 flex-1">
         {!expanded ? (
           <>
@@ -98,19 +124,19 @@ const MovieCard = ({
             <div className="space-y-2 text-sm md:text-base">
               <div className="flex items-center gap-2">
                 <span className="text-gray-60">감독</span>
-                <span className="ml-auto">{directors}</span>
+                <span className="ml-auto">{formatInfo(directors)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-gray-60">개봉일</span>
-                <span className="ml-auto">{openDate}</span>
+                <span className="ml-auto"> {formatDateInfo(openDate)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-gray-60">러닝타임</span>
-                <span className="ml-auto">{runningTime}분</span>
+                <span className="ml-auto">{formatInfo(runningTime)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-gray-60">연령 등급</span>
-                <span className="ml-auto">{rating}</span>
+                <span className="ml-auto">{formatInfo(rating)}</span>
               </div>
             </div>
             {/* 줄거리 요약 */}

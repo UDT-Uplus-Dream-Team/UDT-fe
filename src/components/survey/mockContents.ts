@@ -70,25 +70,11 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%97%98%EB%A6%AC%EC%98%A4+_+%ED%8A%B9%EB%B3%84+%EC%98%81%EC%83%81_poster.webp',
   },
   {
-    contentId: 252,
-    genre: 'ADVENTURE',
-    title: '드래곤 길들이기',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%83%E1%85%B3%E1%84%85%E1%85%A2%E1%84%80%E1%85%A9%E1%86%AB+%E1%84%80%E1%85%B5%E1%86%AF%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B5%E1%84%80%E1%85%B5_poster.webp',
-  },
-  {
     contentId: 102,
     genre: 'ADVENTURE',
     title: '극장판 닌자보이 란타로: 도쿠타케 닌자대 최강의 군사',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EA%B7%B9%EC%9E%A5%ED%8C%90+%EB%8B%8C%EC%9E%90%EB%B3%B4%EC%9D%B4+%EB%9E%80%ED%83%80%EB%A1%9C_+%EB%8F%84%EC%BF%A0%ED%83%80%EC%BC%80+%EB%8B%8C%EC%9E%90%EB%8C%80+%EC%B5%9C%EA%B0%95%EC%9D%98+%EA%B5%B0%EC%82%AC_poster.webp',
-  },
-  {
-    contentId: 101,
-    genre: 'ADVENTURE',
-    title: '극장판 닌자보이 란타로: 도쿠타케 닌자대 최강의 군사',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%80%E1%85%B3%E1%86%A8%E1%84%8C%E1%85%A1%E1%86%BC%E1%84%91%E1%85%A1%E1%86%AB%E1%84%82%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%A1%E1%84%87%E1%85%A9%E1%84%8B%E1%85%B5%E1%84%85%E1%85%A1%E1%86%AB%E1%84%90%E1%85%A1%E1%84%85%E1%85%A9-%E1%84%83%E1%85%A9%E1%84%8F%E1%85%AE%E1%84%90%E1%85%A1%E1%84%8F%E1%85%A6%E1%84%82%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%A1%E1%84%83%E1%85%A2%E1%84%8E%E1%85%AC%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8B%E1%85%B4%E1%84%80%E1%85%AE%E1%86%AB%E1%84%89%E1%85%A1_poster.webp',
   },
   {
     contentId: 520,
@@ -126,27 +112,6 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%86%E1%85%B5%E1%84%8F%E1%85%B5+17_poster.webp',
   },
   {
-    contentId: 776,
-    genre: 'ANIMATION',
-    title: '케이팝 데몬 헌터스',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8F%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%91%E1%85%A1%E1%86%B8+%E1%84%83%E1%85%A6%E1%84%86%E1%85%A9%E1%86%AB+%E1%84%92%E1%85%A5%E1%86%AB%E1%84%90%E1%85%A5%E1%84%89%E1%85%B3_poster.webp',
-  },
-  {
-    contentId: 101,
-    genre: 'ANIMATION',
-    title: '극장판 닌자보이 란타로: 도쿠타케 닌자대 최강의 군사',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%80%E1%85%B3%E1%86%A8%E1%84%8C%E1%85%A1%E1%86%BC%E1%84%91%E1%85%A1%E1%86%AB%E1%84%82%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%A1%E1%84%87%E1%85%A9%E1%84%8B%E1%85%B5%E1%84%85%E1%85%A1%E1%86%AB%E1%84%90%E1%85%A1%E1%84%85%E1%85%A9-%E1%84%83%E1%85%A9%E1%84%8F%E1%85%AE%E1%84%90%E1%85%A1%E1%84%8F%E1%85%A6%E1%84%82%E1%85%B5%E1%86%AB%E1%84%8C%E1%85%A1%E1%84%83%E1%85%A2%E1%84%8E%E1%85%AC%E1%84%80%E1%85%A1%E1%86%BC%E1%84%8B%E1%85%B4%E1%84%80%E1%85%AE%E1%86%AB%E1%84%89%E1%85%A1_poster.webp',
-  },
-  {
-    contentId: 102,
-    genre: 'ANIMATION',
-    title: '극장판 닌자보이 란타로: 도쿠타케 닌자대 최강의 군사',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EA%B7%B9%EC%9E%A5%ED%8C%90+%EB%8B%8C%EC%9E%90%EB%B3%B4%EC%9D%B4+%EB%9E%80%ED%83%80%EB%A1%9C_+%EB%8F%84%EC%BF%A0%ED%83%80%EC%BC%80+%EB%8B%8C%EC%9E%90%EB%8C%80+%EC%B5%9C%EA%B0%95%EC%9D%98+%EA%B5%B0%EC%82%AC_poster.webp',
-  },
-  {
     contentId: 72,
     genre: 'ANIMATION',
     title: '괴수 8호: 미션 리컨',
@@ -166,13 +131,6 @@ export const MOCK_CONTENTS = [
     title: '화성특급',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%ED%99%94%EC%84%B1%ED%8A%B9%EA%B8%89_poster.webp',
-  },
-  {
-    contentId: 844,
-    genre: 'ANIMATION',
-    title: '플로우',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%ED%94%8C%EB%A1%9C%EC%9A%B0_poster.webp',
   },
   {
     contentId: 60,
@@ -231,13 +189,6 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%89%E1%85%A1%E1%86%AF%E1%84%85%E1%85%A9%E1%86%BC+%E1%84%83%E1%85%B3+%E1%84%92%E1%85%A9%E1%86%B7%E1%84%8C%E1%85%B3_poster.webp',
   },
   {
-    contentId: 76,
-    genre: 'COMEDY',
-    title: '굿보이',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%80%E1%85%AE%E1%86%BA%E1%84%87%E1%85%A9%E1%84%8B%E1%85%B5_poster.webp',
-  },
-  {
     contentId: 176,
     genre: 'COMEDY',
     title: '노무사 노무진',
@@ -266,32 +217,11 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EB%B0%A9%ED%8C%90%EB%AE%A4%EC%A7%81+%EC%96%B4%EB%94%94%EB%93%A0+%EA%B0%80%EC%9A%94_poster.webp',
   },
   {
-    contentId: 798,
-    genre: 'CRIME',
-    title: '탐욕에 눈먼 자들',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%90%E1%85%A1%E1%86%B7%E1%84%8B%E1%85%AD%E1%86%A8%E1%84%8B%E1%85%A6%E1%84%82%E1%85%AE%E1%86%AB%E1%84%86%E1%85%A5%E1%86%AB%E1%84%8C%E1%85%A1%E1%84%83%E1%85%B3%E1%86%AF_poster.webp',
-  },
-  {
     contentId: 301,
     genre: 'CRIME',
     title: '메스를 든 사냥꾼',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%86%E1%85%A6%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF+%E1%84%83%E1%85%B3%E1%86%AB+%E1%84%89%E1%85%A1%E1%84%82%E1%85%A3%E1%86%BC%E1%84%81%E1%85%AE%E1%86%AB_poster.webp',
-  },
-  {
-    contentId: 65,
-    genre: 'CRIME',
-    title: '광장',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%80%E1%85%AA%E1%86%BC%E1%84%8C%E1%85%A1%E1%86%BC_poster.webp',
-  },
-  {
-    contentId: 27,
-    genre: 'CRIME',
-    title: 'ONE-하이스쿨 히어로즈',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/ONE-%E1%84%92%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%89%E1%85%B3%E1%84%8F%E1%85%AE%E1%86%AF+%E1%84%92%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B3_poster.webp',
   },
   {
     contentId: 408,
@@ -320,13 +250,6 @@ export const MOCK_CONTENTS = [
     title: '샤크: 더 스톰',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%89%E1%85%A3%E1%84%8F%E1%85%B3_+%E1%84%83%E1%85%A5+%E1%84%89%E1%85%B3%E1%84%90%E1%85%A9%E1%86%B7_poster.webp',
-  },
-  {
-    contentId: 520,
-    genre: 'CRIME',
-    title: '썬더볼츠*',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8A%E1%85%A5%E1%86%AB%E1%84%83%E1%85%A5%E1%84%87%E1%85%A9%E1%86%AF%E1%84%8E%E1%85%B3*_poster.webp',
   },
   {
     contentId: 767,
@@ -378,20 +301,6 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EA%B0%80%EC%A7%9C%EC%82%AC%EB%82%98%EC%9D%B4+2+%EB%8D%94+%EB%A9%94%EC%9D%B4%ED%82%B9_poster.webp',
   },
   {
-    contentId: 610,
-    genre: 'DRAMA',
-    title: '옥스퍼드에서의 날들',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%86%A8%E1%84%89%E1%85%B3%E1%84%91%E1%85%A5%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5%E1%84%8B%E1%85%B4%E1%84%82%E1%85%A1%E1%86%AF%E1%84%83%E1%85%B3%E1%86%AF_poster.webp',
-  },
-  {
-    contentId: 874,
-    genre: 'DRAMA',
-    title: '향기로운 꽃은 늠름하게 핀다',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%ED%96%A5%EA%B8%B0%EB%A1%9C%EC%9A%B4+%EA%BD%83%EC%9D%80+%EB%8A%A0%EB%A6%84%ED%95%98%EA%B2%8C+%ED%95%80%EB%8B%A4_poster.webp',
-  },
-  {
     contentId: 902,
     genre: 'DRAMA',
     title: '히카루가 죽은 여름',
@@ -411,13 +320,6 @@ export const MOCK_CONTENTS = [
     title: '오징어 게임 시즌 3',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%B5%E1%86%BC%E1%84%8B%E1%85%A5+%E1%84%80%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%B7+%E1%84%89%E1%85%B5%E1%84%8C%E1%85%B3%E1%86%AB+3_poster.webp',
-  },
-  {
-    contentId: 208,
-    genre: 'DRAMA',
-    title: '더 베어 시즌 4',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%83%E1%85%A5+%E1%84%87%E1%85%A6%E1%84%8B%E1%85%A5+%E1%84%89%E1%85%B5%E1%84%8C%E1%85%B3%E1%86%AB+4_poster.webp',
   },
   {
     contentId: 534,
@@ -441,67 +343,11 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EA%B8%B0%EB%B9%97%EC%98%AC_+%EC%9A%B0%EB%A6%AC%EB%93%A4%EC%9D%98+%EC%8D%B8%EB%A8%B8_poster.webp',
   },
   {
-    contentId: 613,
-    genre: 'FANTASY',
-    title: '올드 가드 2',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%86%AF%E1%84%83%E1%85%B3+%E1%84%80%E1%85%A1%E1%84%83%E1%85%B3+2_poster.webp',
-  },
-  {
-    contentId: 776,
-    genre: 'FANTASY',
-    title: '케이팝 데몬 헌터스',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8F%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%91%E1%85%A1%E1%86%B8+%E1%84%83%E1%85%A6%E1%84%86%E1%85%A9%E1%86%AB+%E1%84%92%E1%85%A5%E1%86%AB%E1%84%90%E1%85%A5%E1%84%89%E1%85%B3_poster.webp',
-  },
-  {
     contentId: 153,
     genre: 'FANTASY',
     title: '남주의 첫날밤을 가져버렸다',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%82%E1%85%A1%E1%86%B7%E1%84%8C%E1%85%AE%E1%84%8B%E1%85%B4+%E1%84%8E%E1%85%A5%E1%86%BA%E1%84%82%E1%85%A1%E1%86%AF%E1%84%87%E1%85%A1%E1%86%B7%E1%84%8B%E1%85%B3%E1%86%AF+%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%87%E1%85%A5%E1%84%85%E1%85%A7%E1%86%BB%E1%84%83%E1%85%A1_poster.webp',
-  },
-  {
-    contentId: 584,
-    genre: 'FANTASY',
-    title: '엘리오 | 특별 영상',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%97%98%EB%A6%AC%EC%98%A4+_+%ED%8A%B9%EB%B3%84+%EC%98%81%EC%83%81_poster.webp',
-  },
-  {
-    contentId: 252,
-    genre: 'FANTASY',
-    title: '드래곤 길들이기',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%83%E1%85%B3%E1%84%85%E1%85%A2%E1%84%80%E1%85%A9%E1%86%AB+%E1%84%80%E1%85%B5%E1%86%AF%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B5%E1%84%80%E1%85%B5_poster.webp',
-  },
-  {
-    contentId: 176,
-    genre: 'FANTASY',
-    title: '노무사 노무진',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%82%E1%85%A9%E1%84%86%E1%85%AE%E1%84%89%E1%85%A1+%E1%84%82%E1%85%A9%E1%84%86%E1%85%AE%E1%84%8C%E1%85%B5%E1%86%AB_poster.webp',
-  },
-  {
-    contentId: 860,
-    genre: 'FANTASY',
-    title: '하이파이브',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%92%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%91%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%87%E1%85%B3_poster.webp',
-  },
-  {
-    contentId: 520,
-    genre: 'FANTASY',
-    title: '썬더볼츠*',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8A%E1%85%A5%E1%86%AB%E1%84%83%E1%85%A5%E1%84%87%E1%85%A9%E1%86%AF%E1%84%8E%E1%85%B3*_poster.webp',
-  },
-  {
-    contentId: 15,
-    genre: 'FANTASY',
-    title: 'A MINECRAFT MOVIE 마인크래프트 무비',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/A+MINECRAFT+MOVIE+%E1%84%86%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%8F%E1%85%B3%E1%84%85%E1%85%A2%E1%84%91%E1%85%B3%E1%84%90%E1%85%B3+%E1%84%86%E1%85%AE%E1%84%87%E1%85%B5_poster.webp',
   },
   {
     contentId: 796,
@@ -567,27 +413,6 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%84%8B%E1%85%A1%E1%84%89%E1%85%B5%E1%84%89%E1%85%B3_poster.webp',
   },
   {
-    contentId: 902,
-    genre: 'HORROR',
-    title: '히카루가 죽은 여름',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%ED%9E%88%EC%B9%B4%EB%A3%A8%EA%B0%80+%EC%A3%BD%EC%9D%80+%EC%97%AC%EB%A6%84_poster.webp',
-  },
-  {
-    contentId: 606,
-    genre: 'HORROR',
-    title: '오징어 게임 시즌 3',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%B5%E1%86%BC%E1%84%8B%E1%85%A5+%E1%84%80%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%B7+%E1%84%89%E1%85%B5%E1%84%8C%E1%85%B3%E1%86%AB+3_poster.webp',
-  },
-  {
-    contentId: 523,
-    genre: 'HORROR',
-    title: '씨너스: 죄인들',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8A%E1%85%B5%E1%84%82%E1%85%A5%E1%84%89%E1%85%B3%3A+%E1%84%8C%E1%85%AC%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF_poster.webp',
-  },
-  {
     contentId: 828,
     genre: 'HORROR',
     title: '파이널 데스티네이션 블러드라인',
@@ -609,13 +434,6 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%80%E1%85%A8%E1%84%89%E1%85%B5%E1%84%85%E1%85%A9%E1%86%A8_poster.webp',
   },
   {
-    contentId: 47,
-    genre: 'HORROR',
-    title: '간니발 시즌 2',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%80%E1%85%A1%E1%86%AB%E1%84%82%E1%85%B5%E1%84%87%E1%85%A1%E1%86%AF+%E1%84%89%E1%85%B5%E1%84%8C%E1%85%B3%E1%86%AB+2_poster.webp',
-  },
-  {
     contentId: 813,
     genre: 'HORROR',
     title: '퇴마록',
@@ -628,20 +446,6 @@ export const MOCK_CONTENTS = [
     title: '오징어 게임 시즌 2',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%B5%E1%86%BC%E1%84%8B%E1%85%A5+%E1%84%80%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%B7+%E1%84%89%E1%85%B5%E1%84%8C%E1%85%B3%E1%86%AB+2_poster.webp',
-  },
-  {
-    contentId: 60,
-    genre: 'KIDS',
-    title: '고스트캣 앙주',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%80%E1%85%A9%E1%84%89%E1%85%B3%E1%84%90%E1%85%B3%E1%84%8F%E1%85%A2%E1%86%BA+%E1%84%8B%E1%85%A1%E1%86%BC%E1%84%8C%E1%85%AE_poster.webp',
-  },
-  {
-    contentId: 403,
-    genre: 'KIDS',
-    title: '뽀로로 극장판 바닷속 대모험',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%88%E1%85%A9%E1%84%85%E1%85%A9%E1%84%85%E1%85%A9+%E1%84%80%E1%85%B3%E1%86%A8%E1%84%8C%E1%85%A1%E1%86%BC%E1%84%91%E1%85%A1%E1%86%AB+%E1%84%87%E1%85%A1%E1%84%83%E1%85%A1%E1%86%BA%E1%84%89%E1%85%A9%E1%86%A8+%E1%84%83%E1%85%A2%E1%84%86%E1%85%A9%E1%84%92%E1%85%A5%E1%86%B7_poster.webp',
   },
   {
     contentId: 404,
@@ -663,13 +467,6 @@ export const MOCK_CONTENTS = [
     title: '극장판 헬로카봇: 수상한 마술단의 비밀',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%80%E1%85%B3%E1%86%A8%E1%84%8C%E1%85%A1%E1%86%BC%E1%84%91%E1%85%A1%E1%86%AB+%E1%84%92%E1%85%A6%E1%86%AF%E1%84%85%E1%85%A9%E1%84%8F%E1%85%A1%E1%84%87%E1%85%A9%E1%86%BA-+%E1%84%89%E1%85%AE%E1%84%89%E1%85%A1%E1%86%BC%E1%84%92%E1%85%A1%E1%86%AB+%E1%84%86%E1%85%A1%E1%84%89%E1%85%AE%E1%86%AF%E1%84%83%E1%85%A1%E1%86%AB%E1%84%8B%E1%85%B4+%E1%84%87%E1%85%B5%E1%84%86%E1%85%B5%E1%86%AF_poster.webp',
-  },
-  {
-    contentId: 776,
-    genre: 'MUSICAL',
-    title: '케이팝 데몬 헌터스',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8F%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%91%E1%85%A1%E1%86%B8+%E1%84%83%E1%85%A6%E1%84%86%E1%85%A9%E1%86%AB+%E1%84%92%E1%85%A5%E1%86%AB%E1%84%90%E1%85%A5%E1%84%89%E1%85%B3_poster.webp',
   },
   {
     contentId: 328,
@@ -721,13 +518,6 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8A%E1%85%B5%E1%86%BC2%E1%84%80%E1%85%A6%E1%84%83%E1%85%A5_poster.webp',
   },
   {
-    contentId: 322,
-    genre: 'MYSTERY',
-    title: '목요일 살인 클럽',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%86%E1%85%A9%E1%86%A8%E1%84%8B%E1%85%AD%E1%84%8B%E1%85%B5%E1%86%AF%E1%84%89%E1%85%A1%E1%86%AF%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A5%E1%86%B8_poster.webp',
-  },
-  {
     contentId: 387,
     genre: 'MYSTERY',
     title: '브릭',
@@ -735,53 +525,11 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%87%E1%85%B3%E1%84%85%E1%85%B5%E1%86%A8_poster.webp',
   },
   {
-    contentId: 902,
-    genre: 'MYSTERY',
-    title: '히카루가 죽은 여름',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%ED%9E%88%EC%B9%B4%EB%A3%A8%EA%B0%80+%EC%A3%BD%EC%9D%80+%EC%97%AC%EB%A6%84_poster.webp',
-  },
-  {
-    contentId: 798,
-    genre: 'MYSTERY',
-    title: '탐욕에 눈먼 자들',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%90%E1%85%A1%E1%86%B7%E1%84%8B%E1%85%AD%E1%86%A8%E1%84%8B%E1%85%A6%E1%84%82%E1%85%AE%E1%86%AB%E1%84%86%E1%85%A5%E1%86%AB%E1%84%8C%E1%85%A1%E1%84%83%E1%85%B3%E1%86%AF_poster.webp',
-  },
-  {
-    contentId: 427,
-    genre: 'MYSTERY',
-    title: '살롱 드 홈즈',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%89%E1%85%A1%E1%86%AF%E1%84%85%E1%85%A9%E1%86%BC+%E1%84%83%E1%85%B3+%E1%84%92%E1%85%A9%E1%86%B7%E1%84%8C%E1%85%B3_poster.webp',
-  },
-  {
     contentId: 245,
     genre: 'MYSTERY',
     title: '동지: 너에게 닿은 계절',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%83%E1%85%A9%E1%86%BC%E1%84%8C%E1%85%B5_+%E1%84%82%E1%85%A5%E1%84%8B%E1%85%A6%E1%84%80%E1%85%A6+%E1%84%83%E1%85%A1%E1%87%82%E1%84%8B%E1%85%B3%E1%86%AB+%E1%84%80%E1%85%A8%E1%84%8C%E1%85%A5%E1%86%AF_poster.webp',
-  },
-  {
-    contentId: 408,
-    genre: 'MYSTERY',
-    title: '사건수사대 Q',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%89%E1%85%A1%E1%84%80%E1%85%A5%E1%86%AB%E1%84%89%E1%85%AE%E1%84%89%E1%85%A1%E1%84%83%E1%85%A2+Q_poster.webp',
-  },
-  {
-    contentId: 149,
-    genre: 'MYSTERY',
-    title: '나인 퍼즐',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%82%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AB+%E1%84%91%E1%85%A5%E1%84%8C%E1%85%B3%E1%86%AF_poster.webp',
-  },
-  {
-    contentId: 796,
-    genre: 'MYSTERY',
-    title: '탄금',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%90%E1%85%A1%E1%86%AB%E1%84%80%E1%85%B3%E1%86%B7_poster.webp',
   },
   {
     contentId: 624,
@@ -833,32 +581,11 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EB%82%98%EB%82%98%EB%AF%BC%EB%B0%95+with+%EC%84%B8%EB%B8%90%ED%8B%B4_poster.webp',
   },
   {
-    contentId: 354,
-    genre: 'REALITY',
-    title: '방판뮤직: 어디든 가요',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EB%B0%A9%ED%8C%90%EB%AE%A4%EC%A7%81+%EC%96%B4%EB%94%94%EB%93%A0+%EA%B0%80%EC%9A%94_poster.webp',
-  },
-  {
     contentId: 631,
     genre: 'REALITY',
     title: '월드 오브 스트릿 우먼 파이터',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%9B%94%EB%93%9C+%EC%98%A4%EB%B8%8C+%EC%8A%A4%ED%8A%B8%EB%A6%BF+%EC%9A%B0%EB%A8%BC+%ED%8C%8C%EC%9D%B4%ED%84%B0_poster.jpg',
-  },
-  {
-    contentId: 610,
-    genre: 'ROMANCE',
-    title: '옥스퍼드에서의 날들',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%86%A8%E1%84%89%E1%85%B3%E1%84%91%E1%85%A5%E1%84%83%E1%85%B3%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5%E1%84%8B%E1%85%B4%E1%84%82%E1%85%A1%E1%86%AF%E1%84%83%E1%85%B3%E1%86%AF_poster.webp',
-  },
-  {
-    contentId: 874,
-    genre: 'ROMANCE',
-    title: '향기로운 꽃은 늠름하게 핀다',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%ED%96%A5%EA%B8%B0%EB%A1%9C%EC%9A%B4+%EA%BD%83%EC%9D%80+%EB%8A%A0%EB%A6%84%ED%95%98%EA%B2%8C+%ED%95%80%EB%8B%A4_poster.webp',
   },
   {
     contentId: 625,
@@ -868,39 +595,11 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%AE%E1%84%85%E1%85%B5%E1%84%8B%E1%85%A7%E1%86%BC%E1%84%92%E1%85%AA_poster.webp',
   },
   {
-    contentId: 153,
-    genre: 'ROMANCE',
-    title: '남주의 첫날밤을 가져버렸다',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%82%E1%85%A1%E1%86%B7%E1%84%8C%E1%85%AE%E1%84%8B%E1%85%B4+%E1%84%8E%E1%85%A5%E1%86%BA%E1%84%82%E1%85%A1%E1%86%AF%E1%84%87%E1%85%A1%E1%86%B7%E1%84%8B%E1%85%B3%E1%86%AF+%E1%84%80%E1%85%A1%E1%84%8C%E1%85%A7%E1%84%87%E1%85%A5%E1%84%85%E1%85%A7%E1%86%BB%E1%84%83%E1%85%A1_poster.webp',
-  },
-  {
     contentId: 12,
     genre: 'ROMANCE',
     title: '366일',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/366%E1%84%8B%E1%85%B5%E1%86%AF_poster.webp',
-  },
-  {
-    contentId: 245,
-    genre: 'ROMANCE',
-    title: '동지: 너에게 닿은 계절',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%83%E1%85%A9%E1%86%BC%E1%84%8C%E1%85%B5_+%E1%84%82%E1%85%A5%E1%84%8B%E1%85%A6%E1%84%80%E1%85%A6+%E1%84%83%E1%85%A1%E1%87%82%E1%84%8B%E1%85%B3%E1%86%AB+%E1%84%80%E1%85%A8%E1%84%8C%E1%85%A5%E1%86%AF_poster.webp',
-  },
-  {
-    contentId: 567,
-    genre: 'ROMANCE',
-    title: '어브로드',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A5%E1%84%87%E1%85%B3%E1%84%85%E1%85%A9%E1%84%83%E1%85%B3_poster.webp',
-  },
-  {
-    contentId: 646,
-    genre: 'ROMANCE',
-    title: '이 별에 필요한',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%9D%B4+%EB%B3%84%EC%97%90+%ED%95%84%EC%9A%94%ED%95%9C_poster.webp',
   },
   {
     contentId: 342,
@@ -910,39 +609,11 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5%E1%84%8B%E1%85%B4+%E1%84%89%E1%85%A5%E1%84%8B%E1%85%AE%E1%86%AF_poster.webp',
   },
   {
-    contentId: 387,
-    genre: 'SF',
-    title: '브릭',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%87%E1%85%B3%E1%84%85%E1%85%B5%E1%86%A8_poster.webp',
-  },
-  {
-    contentId: 646,
-    genre: 'SF',
-    title: '이 별에 필요한',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%9D%B4+%EB%B3%84%EC%97%90+%ED%95%84%EC%9A%94%ED%95%9C_poster.webp',
-  },
-  {
-    contentId: 520,
-    genre: 'SF',
-    title: '썬더볼츠*',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8A%E1%85%A5%E1%86%AB%E1%84%83%E1%85%A5%E1%84%87%E1%85%A9%E1%86%AF%E1%84%8E%E1%85%B3*_poster.webp',
-  },
-  {
     contentId: 774,
     genre: 'SF',
     title: '컴패니언',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8F%E1%85%A5%E1%86%B7%E1%84%91%E1%85%A2%E1%84%82%E1%85%B5%E1%84%8B%E1%85%A5%E1%86%AB_poster.webp',
-  },
-  {
-    contentId: 344,
-    genre: 'SF',
-    title: '미키 17',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%86%E1%85%B5%E1%84%8F%E1%85%B5+17_poster.webp',
   },
   {
     contentId: 771,
@@ -978,13 +649,6 @@ export const MOCK_CONTENTS = [
     title: '위대한쇼: 태권',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%9C%84%EB%8C%80%ED%95%9C%EC%87%BC+%ED%83%9C%EA%B6%8C_poster.webp',
-  },
-  {
-    contentId: 631,
-    genre: 'SURVIVAL',
-    title: '월드 오브 스트릿 우먼 파이터',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%9B%94%EB%93%9C+%EC%98%A4%EB%B8%8C+%EC%8A%A4%ED%8A%B8%EB%A6%BF+%EC%9A%B0%EB%A8%BC+%ED%8C%8C%EC%9D%B4%ED%84%B0_poster.jpg',
   },
   {
     contentId: 233,
@@ -1043,20 +707,6 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%8B%AC%EC%95%BC%EA%B4%B4%EB%8B%B4%ED%9A%8C+%EC%8B%9C%EC%A6%8C+5_poster.webp',
   },
   {
-    contentId: 666,
-    genre: 'TALK_SHOW',
-    title: '일타맘',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%9D%BC%ED%83%80%EB%A7%98_poster.webp',
-  },
-  {
-    contentId: 603,
-    genre: 'TALK_SHOW',
-    title: '오은영 스테이',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%98%A4%EC%9D%80%EC%98%81+%EC%8A%A4%ED%85%8C%EC%9D%B4_poster.webp',
-  },
-  {
     contentId: 329,
     genre: 'TALK_SHOW',
     title: '문제적 남자 리부트 수학편',
@@ -1099,27 +749,6 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EB%AF%B8%EC%B9%9C%EB%A7%9B%EC%A7%91+%EB%AF%B8%EC%8B%9D%EA%B0%80+%EC%B9%9C%EA%B5%AC%EC%9D%98+%EB%A7%9B%EC%A7%91_poster.webp',
   },
   {
-    contentId: 322,
-    genre: 'THRILLER',
-    title: '목요일 살인 클럽',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%86%E1%85%A9%E1%86%A8%E1%84%8B%E1%85%AD%E1%84%8B%E1%85%B5%E1%86%AF%E1%84%89%E1%85%A1%E1%86%AF%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%8F%E1%85%B3%E1%86%AF%E1%84%85%E1%85%A5%E1%86%B8_poster.webp',
-  },
-  {
-    contentId: 387,
-    genre: 'THRILLER',
-    title: '브릭',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%87%E1%85%B3%E1%84%85%E1%85%B5%E1%86%A8_poster.webp',
-  },
-  {
-    contentId: 606,
-    genre: 'THRILLER',
-    title: '오징어 게임 시즌 3',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%B5%E1%86%BC%E1%84%8B%E1%85%A5+%E1%84%80%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%B7+%E1%84%89%E1%85%B5%E1%84%8C%E1%85%B3%E1%86%AB+3_poster.webp',
-  },
-  {
     contentId: 542,
     genre: 'THRILLER',
     title: '악의 도시',
@@ -1127,32 +756,11 @@ export const MOCK_CONTENTS = [
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A1%E1%86%A8%E1%84%8B%E1%85%B4+%E1%84%83%E1%85%A9%E1%84%89%E1%85%B5_poster.webp',
   },
   {
-    contentId: 301,
-    genre: 'THRILLER',
-    title: '메스를 든 사냥꾼',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%86%E1%85%A6%E1%84%89%E1%85%B3%E1%84%85%E1%85%B3%E1%86%AF+%E1%84%83%E1%85%B3%E1%86%AB+%E1%84%89%E1%85%A1%E1%84%82%E1%85%A3%E1%86%BC%E1%84%81%E1%85%AE%E1%86%AB_poster.webp',
-  },
-  {
-    contentId: 567,
-    genre: 'THRILLER',
-    title: '어브로드',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8B%E1%85%A5%E1%84%87%E1%85%B3%E1%84%85%E1%85%A9%E1%84%83%E1%85%B3_poster.webp',
-  },
-  {
     contentId: 367,
     genre: 'THRILLER',
     title: '벼랑 끝에 서서',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%87%E1%85%A7%E1%84%85%E1%85%A1%E1%86%BC%E1%84%81%E1%85%B3%E1%87%80%E1%84%8B%E1%85%A6%E1%84%89%E1%85%A5%E1%84%89%E1%85%A5_poster.webp',
-  },
-  {
-    contentId: 523,
-    genre: 'THRILLER',
-    title: '씨너스: 죄인들',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%E1%84%8A%E1%85%B5%E1%84%82%E1%85%A5%E1%84%89%E1%85%B3%3A+%E1%84%8C%E1%85%AC%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%83%E1%85%B3%E1%86%AF_poster.webp',
   },
   {
     contentId: 703,
@@ -1167,13 +775,6 @@ export const MOCK_CONTENTS = [
     title: '왔수다 만물트럭',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EC%99%94%EC%88%98%EB%8B%A4+%EB%A7%8C%EB%AC%BC%ED%8A%B8%EB%9F%AD_poster.webp',
-  },
-  {
-    contentId: 136,
-    genre: 'VARIETY',
-    title: '나나민박 with 세븐틴',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EB%82%98%EB%82%98%EB%AF%BC%EB%B0%95+with+%EC%84%B8%EB%B8%90%ED%8B%B4_poster.webp',
   },
   {
     contentId: 594,
@@ -1202,13 +803,6 @@ export const MOCK_CONTENTS = [
     title: '틈만나면, 시즌 3',
     posterUrl:
       'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%ED%8B%88%EB%A7%8C%EB%82%98%EB%A9%B4%2C+%EC%8B%9C%EC%A6%8C+3_poster.webp',
-  },
-  {
-    contentId: 233,
-    genre: 'VARIETY',
-    title: '데블스 플랜: 데스룸',
-    posterUrl:
-      'https://s3-udt-dev.s3.ap-northeast-2.amazonaws.com/poster/%EB%8D%B0%EB%B8%94%EC%8A%A4+%ED%94%8C%EB%9E%9C+%EB%8D%B0%EC%8A%A4%EB%A3%B8_poster.webp',
   },
   {
     contentId: 626,

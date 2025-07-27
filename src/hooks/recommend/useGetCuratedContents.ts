@@ -6,7 +6,7 @@ import type { CuratedContentsResponse } from '@lib/apis/recommend/getCuratedCont
 import { dummyMovies } from '@app/recommend/ContentList';
 
 export const useGetCuratedContents = () => {
-  return useQuery<TicketComponent[], Error>({
+  const queryResult = useQuery<TicketComponent[], Error>({
     queryKey: ['curatedContents'],
     queryFn: fetchCuratedContentsWithFallback,
 
@@ -23,6 +23,12 @@ export const useGetCuratedContents = () => {
 
     throwOnError: false,
   });
+
+  return {
+    ...queryResult,
+    // refetch 함수를 명시적으로 노출
+    refetchCuratedContents: queryResult.refetch,
+  };
 };
 
 const fetchCuratedContentsWithFallback = async (): Promise<

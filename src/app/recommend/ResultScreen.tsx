@@ -73,6 +73,7 @@ export const ResultScreen: React.FC = () => {
     const cachedData = queryClient.getQueryData(['curatedContents']);
     return !cachedData;
   });
+  const [forceLoading, setForceLoading] = useState(false);
 
   useEffect(() => {
     if (showLoadingScreen) return; // 로딩 중이면 패스
@@ -93,8 +94,12 @@ export const ResultScreen: React.FC = () => {
   useEffect(() => {
     if (curatedContents.length > 0) {
       setContents(curatedContents.slice(0, 3));
-
       initializeSavedContentIds(curatedContents.length);
+
+      // forceLoading 해제
+      if (forceLoading) {
+        setForceLoading(false);
+      }
 
       // 최소 3초 로딩 화면 표시 (UX 개선)
       if (showLoadingScreen) {
@@ -104,7 +109,7 @@ export const ResultScreen: React.FC = () => {
         return () => clearTimeout(timer);
       }
     }
-  }, [curatedContents, showLoadingScreen]);
+  }, [curatedContents, showLoadingScreen, forceLoading]);
 
   const isCurrentContentSaved = (): boolean => {
     const currentMovie = contents[currentIndex];
@@ -154,9 +159,10 @@ export const ResultScreen: React.FC = () => {
   };
   const handleStartNewRecommendation = () => {
     // 큐레이션 캐시 무효화 (새로운 추천을 위해)
-    queryClient.invalidateQueries({ queryKey: ['curatedContents'] });
-
+    setForceLoading(true);
+    setShowLoadingScreen(true);
     // 시작 화면으로 이동
+    queryClient.removeQueries({ queryKey: ['curatedContents'] });
     setPhase('start');
   };
 
@@ -182,7 +188,7 @@ export const ResultScreen: React.FC = () => {
   };
 
   // 로딩 중이거나 최소 3초 대기 중인 경우
-  if (isLoading || showLoadingScreen) {
+  if (isLoading || showLoadingScreen || forceLoading) {
     return (
       <LoadingScreen
         message="추천 컨텐츠를 선별하고 있어요!"
@@ -263,7 +269,7 @@ export const ResultScreen: React.FC = () => {
       {/* Carousel Container */}
       <div
         ref={containerRef}
-        className="relative h-[60%] w-[70%] min-w-70 min-h-130 flex items-center justify-center"
+        className="relative h-[70%] md:h-[80%] w-[80%] min-w-70 min-h-130 flex items-center justify-center"
       >
         {contents.map((content, idx) => {
           const pos = getCardPosition(idx, dist);

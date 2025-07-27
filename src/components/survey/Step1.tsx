@@ -23,7 +23,7 @@ export default function Step1({ onNext }: Step1Props) {
 
   const handleComplete = () => {
     if (selectedPlatforms.length === 0) {
-      showSimpleToast.warning({
+      showSimpleToast.error({
         message: '1개 이상 선택해주세요',
         className: 'w-full bg-black/80 shadow-lg text-white',
       });

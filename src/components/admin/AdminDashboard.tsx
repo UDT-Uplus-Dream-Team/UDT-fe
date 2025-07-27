@@ -35,15 +35,10 @@ export default function AdminDashboard() {
   // 무한 스크롤용 필터 상태
   const size = 20;
   const [categoryType, setCategoryType] = useState<string>('');
+
   // 무한 스크롤 쿼리
-  const {
-    data,
-    isLoading,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteAdminContentList({ size, categoryType });
+  const { data, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteAdminContentList({ size, categoryType });
 
   // Intersection Observer로 하단 감지
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -66,46 +61,47 @@ export default function AdminDashboard() {
   const updateContent = useUpdateContent();
   const deleteContent = useDeleteContent();
 
-  // 상태 관리 (상세/수정/추가 등)
+  // 모달 상태 관리 (독립적으로 관리)
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  // 선택된 콘텐츠 ID (상세/수정 모달에서 공유)
   const [selectedContentId, setSelectedContentId] = useState<number | null>(
     null,
   );
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  // 상세/수정 데이터 fetch (상세 모달에서만 사용)
+  // 단일 데이터 fetch (상세/수정 모달에서 공유)
   const {
-    data: detailData,
-    isLoading: isDetailLoading,
-    isError: isDetailError,
+    data: contentDetailData,
+    isLoading: isContentDetailLoading,
+    isError: isContentDetailError,
   } = useGetContentDetail(
-    isDetailDialogOpen ? (selectedContentId ?? undefined) : undefined,
+    isDetailDialogOpen || isEditDialogOpen
+      ? (selectedContentId ?? undefined)
+      : undefined,
   );
 
-  const {
-    data: editData,
-    isLoading: isEditLoading,
-    isError: isEditError,
-  } = useGetContentDetail(
-    isEditDialogOpen ? (selectedContentId ?? undefined) : undefined,
-  );
-
-  // 상세/수정 모달 오픈 핸들러
+  // 모달 오픈 핸들러
   const openDetailDialog = useCallback((contentId: number) => {
     setSelectedContentId(contentId);
     setIsDetailDialogOpen(true);
   }, []);
+
   const openEditDialog = useCallback((contentId: number) => {
     setSelectedContentId(contentId);
     setIsEditDialogOpen(true);
   }, []);
+
+  // 모달 클로즈 핸들러
   const closeDetailDialog = useCallback(() => {
     setIsDetailDialogOpen(false);
     setSelectedContentId(null);
   }, []);
+
   const closeEditDialog = useCallback(() => {
     setIsEditDialogOpen(false);
+    setSelectedContentId(null);
   }, []);
 
   // 필터 변경 시 refetch
@@ -113,8 +109,7 @@ export default function AdminDashboard() {
     setCategoryType(type);
   };
 
-  // 필터링된 콘텐츠 목록 (필터링 api 연동으로 바뀔 예정)
-
+  // 콘텐츠 추가 핸들러
   const handleAddContent = useCallback(
     (contentData: ContentWithoutId) => {
       postContent.mutate(contentData, {
@@ -124,7 +119,7 @@ export default function AdminDashboard() {
     [postContent],
   );
 
-  // 수정
+  // 콘텐츠 수정 핸들러
   const handleEditContent = useCallback(
     (contentData: ContentWithoutId) => {
       if (selectedContentId) {
@@ -142,7 +137,7 @@ export default function AdminDashboard() {
     [updateContent, selectedContentId],
   );
 
-  // 삭제
+  // 콘텐츠 삭제 핸들러
   const handleDeleteContent = useCallback(
     (contentId: number) => {
       deleteContent.mutate(contentId, {
@@ -155,8 +150,12 @@ export default function AdminDashboard() {
     [deleteContent],
   );
 
-  // 로딩/에러 처리
-  if (isLoading) return <div>로딩 중...</div>;
+  // 상세에서 수정으로 전환 핸들러
+  const handleDetailToEdit = useCallback(() => {
+    setIsDetailDialogOpen(false);
+    setIsEditDialogOpen(true);
+  }, []);
+
   if (isError) return <div>데이터를 불러오는 중 오류가 발생했습니다.</div>;
 
   // 모든 페이지의 콘텐츠 합치기
@@ -251,7 +250,7 @@ export default function AdminDashboard() {
           </Dialog>
         )}
 
-        {isEditDialogOpen && (
+        {isEditDialogOpen && selectedContentId && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
             <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[75vh] overflow-y-auto">
               <DialogHeader>
@@ -260,13 +259,13 @@ export default function AdminDashboard() {
                   콘텐츠 정보를 수정해주세요.
                 </DialogDescription>
               </DialogHeader>
-              {isEditLoading ? (
+              {isContentDetailLoading ? (
                 <div>불러오는 중...</div>
-              ) : isEditError || !editData ? (
+              ) : isContentDetailError || !contentDetailData ? (
                 <div>수정 정보를 불러오지 못했습니다.</div>
               ) : (
                 <ContentForm
-                  content={editData}
+                  content={contentDetailData}
                   onSave={handleEditContent}
                   onCancel={closeEditDialog}
                 />
@@ -284,17 +283,17 @@ export default function AdminDashboard() {
               <DialogHeader>
                 <DialogTitle>콘텐츠 상세 정보</DialogTitle>
               </DialogHeader>
-              {isDetailLoading ? (
+              {isContentDetailLoading ? (
                 <div>상세 정보를 불러오는 중...</div>
-              ) : isDetailError || !detailData ? (
+              ) : isContentDetailError || !contentDetailData ? (
                 <div>상세 정보를 불러오지 못했습니다.</div>
               ) : (
                 <ContentDetail
-                  content={{ ...detailData, contentId: selectedContentId }}
-                  onEdit={() => {
-                    closeDetailDialog();
-                    openEditDialog(selectedContentId);
+                  content={{
+                    ...contentDetailData,
+                    contentId: selectedContentId,
                   }}
+                  onEdit={handleDetailToEdit}
                   onClose={closeDetailDialog}
                 />
               )}

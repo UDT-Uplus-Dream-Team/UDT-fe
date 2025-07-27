@@ -20,6 +20,7 @@ import {
   SheetTitle,
 } from '@components/ui/sheet';
 import { DetailBottomSheetContent } from './DetailBottomSheetContent';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 
 interface CarouselProps {
   autoPlayInterval?: number;
@@ -53,7 +54,11 @@ export const ExplorePageCarousel = ({
 
   const draggedContentRef = useRef<RecentContentData | null>(null);
 
-  const { data: contents, status, refetch } = useGetLatestContents();
+  const getLatestContentsQuery = useGetLatestContents();
+  const { data: contents, status, refetch } = getLatestContentsQuery;
+
+  // 에러 발생 시 토스트 띄우기
+  useQueryErrorToast(getLatestContentsQuery);
 
   const extendedMovies = useMemo(() => {
     if (!contents || contents.length === 0) return [];

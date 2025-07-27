@@ -14,18 +14,18 @@ export default function Step4({ onNext }: StepProps4) {
   const currentMovie = MockMovies[0];
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen px-6 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
+    <div className="relative flex flex-col items-center justify-center min-h-screen px-6 -mb-20 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
       <div className="text-center space-y-4 mb-6">
         <h2 className="text-xl font-semibold leading-relaxed">
           앗! 이건 도대체 뭐야?
           <br />
-          언제든지 상세보기 클릭으로 내용 확인 가능합니다
+          상세보기 클릭으로 내용 확인 가능합니다
         </h2>
       </div>
 
       {/* 카드 영역 */}
       <div
-        className="relative w-full max-w-[320px] aspect-[75/135] mb-6"
+        className="relative w-full max-w-[320px] aspect-[75/135] max-h-[72vh] sm:max-w-[400px] sm:aspect-[75/127]"
         style={{ perspective: '1000px' }}
         onClick={() => {
           if (!flipped) setFlipped(true);
@@ -41,7 +41,7 @@ export default function Step4({ onNext }: StepProps4) {
         >
           {/* 앞면 */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
             style={{ backfaceVisibility: 'hidden' }}
           >
             <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
@@ -49,10 +49,12 @@ export default function Step4({ onNext }: StepProps4) {
 
           {/* 뒷면 */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
             style={{
               backfaceVisibility: 'hidden',
               transform: 'rotateY(180deg)',
+              pointerEvents: flipped ? 'auto' : 'none',
+              zIndex: flipped ? 30 : 10,
             }}
           >
             <Ticket movie={currentMovie} variant="detail" />
@@ -63,7 +65,7 @@ export default function Step4({ onNext }: StepProps4) {
       {/* 버튼 */}
       <Button
         variant="ghost"
-        className="text-white border border-white/30 hover:bg-white/10"
+        className="text-white border border-white/30 hover:bg-white/10 mt-5"
         onClick={() => {
           if (flipped) {
             onNext();

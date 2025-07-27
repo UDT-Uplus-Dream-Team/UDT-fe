@@ -39,7 +39,7 @@ export default function Step6({ onNext }: Step6Props) {
   const currentMovie = MockMovies[1];
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen px-6 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
+    <div className="relative flex flex-col items-center justify-center min-h-screen px-6 -mb-20 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
       {/* 검정 반투명 오버레이 + 설명 */}
       <div className="absolute inset-0 bg-black/70 z-20 flex flex-col items-center justify-center text-center px-4">
         <svg
@@ -57,18 +57,18 @@ export default function Step6({ onNext }: Step6Props) {
         </svg>
         <p className="text-lg font-semibold leading-relaxed">
           <span className="text-purple-100  text-xl font-bold">
-            10개 이상 넘어가면
+            5개 이상 넘어가면
           </span>
           <br />
           사용자님의 취향을 확인하여 <br />
           완전 맞춤형 컨텐츠를 추천 드립니다! <br />
           <br />
-          상단의 <strong>결과 보기</strong>를 클릭해 보세요~
+          상단의 결과 보기를 클릭해 보세요~
         </p>
       </div>
 
       {/* 카드 - 중앙 정렬 */}
-      <div className="relative w-full max-w-[320px] aspect-[75/135] mb-6 z-10">
+      <div className="relative w-full max-w-[320px] aspect-[75/135] max-h-[72vh] sm:max-w-[400px] sm:aspect-[75/127]">
         <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
       </div>
     </div>

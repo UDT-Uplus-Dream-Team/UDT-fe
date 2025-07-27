@@ -3,6 +3,7 @@
 import type React from 'react';
 
 import { useCallback, useState } from 'react';
+
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
@@ -18,7 +19,8 @@ import { Badge } from '@components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 import { X, Plus } from 'lucide-react';
-import type { ContentWithoutId } from '@type/admin/Content';
+import type { ContentWithoutId, Cast, Platform } from '@type/admin/Content';
+import { showSimpleToast } from '@components/common/Toast';
 import {
   RATING_OPTIONS,
   CONTENT_CATEGORIES,
@@ -33,49 +35,71 @@ interface ContentFormProps {
   onCancel: () => void;
 }
 
+// 폼 데이터 초기값
+const getInitialFormData = (content?: ContentWithoutId): ContentWithoutId => ({
+  title: content?.title || '',
+  description: content?.description || '',
+  posterUrl: content?.posterUrl || '',
+  backdropUrl: content?.backdropUrl || '',
+  trailerUrl: content?.trailerUrl || '',
+  openDate: content?.openDate || '',
+  runningTime: content?.runningTime || 0,
+  episode: content?.episode || 1,
+  rating: content?.rating || '',
+  categories: content?.categories || [{ categoryType: '영화', genres: [] }],
+  countries: content?.countries || [],
+  directors: content?.directors || [],
+  casts: content?.casts || [],
+  platforms: content?.platforms || [],
+});
+
+// 유효성 검사 함수
+const validateFormData = (formData: ContentWithoutId): string | null => {
+  if (!formData.title.trim()) return '제목은 필수 항목입니다.';
+  if (!formData.rating.trim()) return '관람등급은 필수 항목입니다.';
+  if (!formData.openDate.trim()) return '개봉일은 필수 항목입니다.';
+  if (!formData.runningTime || formData.runningTime <= 0)
+    return '상영시간을 입력해주세요.';
+  if (
+    !formData.categories.length ||
+    !formData.categories[0].categoryType.trim()
+  ) {
+    return '카테고리는 필수 항목입니다.';
+  }
+  return null;
+};
+
 export default function ContentForm({
   content,
   onSave,
   onCancel,
 }: ContentFormProps) {
-  const [formData, setFormData] = useState<ContentWithoutId>(() => ({
-    title: content?.title || '',
-    description: content?.description || '',
-    posterUrl: content?.posterUrl || '',
-    backdropUrl: content?.backdropUrl || '',
-    trailerUrl: content?.trailerUrl || '',
-    openDate: content?.openDate || '',
-    runningTime: content?.runningTime || 0,
-    episode: content?.episode || 1,
-    rating: content?.rating || '',
-    categories: content?.categories || [{ categoryType: '영화', genres: [] }],
-    countries: content?.countries || [],
-    directors: content?.directors || [],
-    casts: content?.casts || [],
-    platforms: content?.platforms || [],
-  }));
+  const [formData, setFormData] = useState<ContentWithoutId>(() =>
+    getInitialFormData(content),
+  );
 
+  // 입력 필드 상태
   const [newDirector, setNewDirector] = useState('');
-  const [newCast, setNewCast] = useState({ castName: '', castImageUrl: '' });
-  const [newPlatform, setNewPlatform] = useState({
+  const [newCast, setNewCast] = useState<Cast>({
+    castName: '',
+    castImageUrl: '',
+  });
+  const [newPlatform, setNewPlatform] = useState<Platform>({
     platformType: '',
     watchUrl: '',
   });
 
+  // 폼 제출 핸들러
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { title, rating, openDate, runningTime, categories } = formData;
+    const errorMessage = validateFormData(formData);
+    if (errorMessage) {
+      showSimpleToast.error({ message: errorMessage });
+      return;
+    }
 
-    // 필수 항목 검사
-    if (!title.trim()) return alert('제목은 필수 항목입니다.');
-    if (!rating.trim()) return alert('관람등급은 필수 항목입니다.');
-    if (!openDate.trim()) return alert('개봉일은 필수 항목입니다.');
-    if (!runningTime || runningTime <= 0)
-      return alert('상영시간을 입력해주세요.');
-    if (!categories.length || !categories[0].categoryType.trim())
-      return alert('카테고리는 필수 항목입니다.');
-
+    // 날짜 형식 정규화
     const normalizedDate = formData.openDate.includes('T00:00:00')
       ? formData.openDate
       : formData.openDate + 'T00:00:00';
@@ -86,49 +110,77 @@ export default function ContentForm({
     });
   };
 
-  const addGenre = useCallback((selectedGenre: string) => {
-    if (!selectedGenre.trim()) return;
+  // 폼 데이터 업데이트 헬퍼 함수
+  const updateFormData = useCallback(
+    (updater: (prev: ContentWithoutId) => ContentWithoutId) => {
+      setFormData(updater);
+    },
+    [],
+  );
 
-    setFormData((prev) => {
-      const currentGenres = prev.categories[0]?.genres || [];
-      if (currentGenres.includes(selectedGenre)) return prev;
-      const updatedCategories = prev.categories.map((cat, index) =>
-        index === 0 ? { ...cat, genres: [...cat.genres, selectedGenre] } : cat,
-      );
-      return { ...prev, categories: updatedCategories };
-    });
-  }, []);
+  // 장르 관리
+  const addGenre = useCallback(
+    (selectedGenre: string) => {
+      if (!selectedGenre.trim()) return;
 
-  const removeGenre = useCallback((genreToRemove: string) => {
-    setFormData((prev) => {
-      const updatedCategories = prev.categories.map((cat, index) =>
-        index === 0
-          ? { ...cat, genres: cat.genres.filter((g) => g !== genreToRemove) }
-          : cat,
-      );
-      return { ...prev, categories: updatedCategories };
-    });
-  }, []);
+      updateFormData((prev) => {
+        const currentGenres = prev.categories[0]?.genres || [];
+        if (currentGenres.includes(selectedGenre)) return prev;
 
-  const addCountry = useCallback((selected: string) => {
-    setFormData((prev) => {
-      if (!prev.countries.includes(selected)) {
-        return { ...prev, countries: [...prev.countries, selected] };
-      }
-      return prev;
-    });
-  }, []);
+        const updatedCategories = prev.categories.map((cat, index) =>
+          index === 0
+            ? { ...cat, genres: [...cat.genres, selectedGenre] }
+            : cat,
+        );
+        return { ...prev, categories: updatedCategories };
+      });
+    },
+    [updateFormData],
+  );
 
-  const removeCountry = useCallback((countryToRemove: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      countries: prev.countries.filter((c) => c !== countryToRemove),
-    }));
-  }, []);
+  const removeGenre = useCallback(
+    (genreToRemove: string) => {
+      updateFormData((prev) => {
+        const updatedCategories = prev.categories.map((cat, index) =>
+          index === 0
+            ? { ...cat, genres: cat.genres.filter((g) => g !== genreToRemove) }
+            : cat,
+        );
+        return { ...prev, categories: updatedCategories };
+      });
+    },
+    [updateFormData],
+  );
 
+  // 국가 관리
+  const addCountry = useCallback(
+    (selected: string) => {
+      updateFormData((prev) => {
+        if (!prev.countries.includes(selected)) {
+          return { ...prev, countries: [...prev.countries, selected] };
+        }
+        return prev;
+      });
+    },
+    [updateFormData],
+  );
+
+  const removeCountry = useCallback(
+    (countryToRemove: string) => {
+      updateFormData((prev) => ({
+        ...prev,
+        countries: prev.countries.filter((c) => c !== countryToRemove),
+      }));
+    },
+    [updateFormData],
+  );
+
+  // 감독 관리
   const addDirector = useCallback(() => {
-    setFormData((prev) => {
-      if (newDirector.trim() && !prev.directors.includes(newDirector.trim())) {
+    if (!newDirector.trim()) return;
+
+    updateFormData((prev) => {
+      if (!prev.directors.includes(newDirector.trim())) {
         return {
           ...prev,
           directors: [...prev.directors, newDirector.trim()],
@@ -137,45 +189,57 @@ export default function ContentForm({
       return prev;
     });
     setNewDirector('');
-  }, [newDirector]);
+  }, [newDirector, updateFormData]);
 
-  const removeDirector = useCallback((directorToRemove: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      directors: prev.directors.filter((d) => d !== directorToRemove),
-    }));
-  }, []);
-
-  const addCast = useCallback(() => {
-    if (newCast.castName.trim()) {
-      setFormData((prev) => ({ ...prev, casts: [...prev.casts, newCast] }));
-      setNewCast({ castName: '', castImageUrl: '' });
-    }
-  }, [newCast]);
-
-  const removeCast = useCallback((index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      casts: prev.casts.filter((_, i) => i !== index),
-    }));
-  }, []);
-
-  const addPlatform = useCallback(() => {
-    if (newPlatform.platformType.trim() && newPlatform.watchUrl.trim()) {
-      setFormData((prev) => ({
+  const removeDirector = useCallback(
+    (directorToRemove: string) => {
+      updateFormData((prev) => ({
         ...prev,
-        platforms: [...prev.platforms, newPlatform],
+        directors: prev.directors.filter((d) => d !== directorToRemove),
       }));
-      setNewPlatform({ platformType: '', watchUrl: '' });
-    }
-  }, [newPlatform]);
+    },
+    [updateFormData],
+  );
 
-  const removePlatform = useCallback((index: number) => {
-    setFormData((prev) => ({
+  // 출연진 관리
+  const addCast = useCallback(() => {
+    if (!newCast.castName.trim()) return;
+
+    updateFormData((prev) => ({ ...prev, casts: [...prev.casts, newCast] }));
+    setNewCast({ castName: '', castImageUrl: '' });
+  }, [newCast, updateFormData]);
+
+  const removeCast = useCallback(
+    (index: number) => {
+      updateFormData((prev) => ({
+        ...prev,
+        casts: prev.casts.filter((_, i) => i !== index),
+      }));
+    },
+    [updateFormData],
+  );
+
+  // 플랫폼 관리
+  const addPlatform = useCallback(() => {
+    if (!newPlatform.platformType.trim() || !newPlatform.watchUrl.trim())
+      return;
+
+    updateFormData((prev) => ({
       ...prev,
-      platforms: prev.platforms.filter((_, i) => i !== index),
+      platforms: [...prev.platforms, newPlatform],
     }));
-  }, []);
+    setNewPlatform({ platformType: '', watchUrl: '' });
+  }, [newPlatform, updateFormData]);
+
+  const removePlatform = useCallback(
+    (index: number) => {
+      updateFormData((prev) => ({
+        ...prev,
+        platforms: prev.platforms.filter((_, i) => i !== index),
+      }));
+    },
+    [updateFormData],
+  );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -184,12 +248,13 @@ export default function ContentForm({
           <TabsTrigger value="contentInfo" className="cursor-pointer">
             콘텐츠 등록
           </TabsTrigger>
-
           <TabsTrigger value="platforms" className="cursor-pointer">
             인물 등록
           </TabsTrigger>
         </TabsList>
+
         <TabsContent value="contentInfo" className="space-y-6 mt-3">
+          {/* 기본 정보 */}
           <Card>
             <CardHeader>
               <CardTitle className="mt-5">기본 정보</CardTitle>
@@ -204,7 +269,10 @@ export default function ContentForm({
                     id="title"
                     value={formData.title}
                     onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
+                      updateFormData((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
                     }
                     required
                   />
@@ -216,7 +284,7 @@ export default function ContentForm({
                   <Select
                     value={formData.rating}
                     onValueChange={(value) =>
-                      setFormData({ ...formData, rating: value })
+                      updateFormData((prev) => ({ ...prev, rating: value }))
                     }
                   >
                     <SelectTrigger className="cursor-pointer">
@@ -249,7 +317,10 @@ export default function ContentForm({
                   id="description"
                   value={formData.description}
                   onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
+                    updateFormData((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
                   }
                   rows={4}
                 />
@@ -264,7 +335,10 @@ export default function ContentForm({
                     id="posterUrl"
                     value={formData.posterUrl}
                     onChange={(e) =>
-                      setFormData({ ...formData, posterUrl: e.target.value })
+                      updateFormData((prev) => ({
+                        ...prev,
+                        posterUrl: e.target.value,
+                      }))
                     }
                   />
                 </div>
@@ -276,7 +350,10 @@ export default function ContentForm({
                     id="backdropUrl"
                     value={formData.backdropUrl}
                     onChange={(e) =>
-                      setFormData({ ...formData, backdropUrl: e.target.value })
+                      updateFormData((prev) => ({
+                        ...prev,
+                        backdropUrl: e.target.value,
+                      }))
                     }
                   />
                 </div>
@@ -290,7 +367,10 @@ export default function ContentForm({
                   id="trailerUrl"
                   value={formData.trailerUrl}
                   onChange={(e) =>
-                    setFormData({ ...formData, trailerUrl: e.target.value })
+                    updateFormData((prev) => ({
+                      ...prev,
+                      trailerUrl: e.target.value,
+                    }))
                   }
                   className="mb-5"
                 />
@@ -298,6 +378,7 @@ export default function ContentForm({
             </CardContent>
           </Card>
 
+          {/* 상세 정보 */}
           <Card>
             <CardHeader>
               <CardTitle className="mt-5">상세 정보</CardTitle>
@@ -313,7 +394,10 @@ export default function ContentForm({
                     type="date"
                     value={formData.openDate?.split('T')[0] || ''}
                     onChange={(e) =>
-                      setFormData({ ...formData, openDate: e.target.value })
+                      updateFormData((prev) => ({
+                        ...prev,
+                        openDate: e.target.value,
+                      }))
                     }
                     className="dark:bg-gray-700 dark:text-black"
                   />
@@ -324,12 +408,14 @@ export default function ContentForm({
                   </Label>
                   <Input
                     id="runningTime"
+                    type="number"
+                    min="0"
                     value={formData.runningTime}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        runningTime: Number(e.target.value),
-                      })
+                      updateFormData((prev) => ({
+                        ...prev,
+                        runningTime: Number(e.target.value) || 0,
+                      }))
                     }
                   />
                 </div>
@@ -339,12 +425,14 @@ export default function ContentForm({
                   </Label>
                   <Input
                     id="episode"
+                    type="number"
+                    min="1"
                     value={formData.episode}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        episode: Number(e.target.value),
-                      })
+                      updateFormData((prev) => ({
+                        ...prev,
+                        episode: Number(e.target.value) || 1,
+                      }))
                     }
                   />
                 </div>
@@ -357,16 +445,18 @@ export default function ContentForm({
                 <Select
                   value={formData.categories[0]?.categoryType || ''}
                   onValueChange={(value) => {
-                    const updatedCategories = [...formData.categories];
-                    if (updatedCategories[0]) {
-                      updatedCategories[0].categoryType = value;
-                    } else {
-                      updatedCategories[0] = {
-                        categoryType: value,
-                        genres: [],
-                      };
-                    }
-                    setFormData({ ...formData, categories: updatedCategories });
+                    updateFormData((prev) => {
+                      const updatedCategories = [...prev.categories];
+                      if (updatedCategories[0]) {
+                        updatedCategories[0].categoryType = value;
+                      } else {
+                        updatedCategories[0] = {
+                          categoryType: value,
+                          genres: [],
+                        };
+                      }
+                      return { ...prev, categories: updatedCategories };
+                    });
                   }}
                 >
                   <SelectTrigger className="cursor-pointer">
@@ -439,6 +529,7 @@ export default function ContentForm({
             </CardContent>
           </Card>
 
+          {/* 감독 정보 */}
           <Card>
             <CardHeader>
               <CardTitle className="mt-5">감독 정보</CardTitle>
@@ -484,6 +575,7 @@ export default function ContentForm({
             </CardContent>
           </Card>
 
+          {/* 출연진 정보 */}
           <Card>
             <CardHeader>
               <CardTitle className="mt-5">출연진 정보</CardTitle>
@@ -546,6 +638,7 @@ export default function ContentForm({
             </CardContent>
           </Card>
 
+          {/* 시청 플랫폼 */}
           <Card>
             <CardHeader>
               <CardTitle className="mt-5">시청 플랫폼</CardTitle>

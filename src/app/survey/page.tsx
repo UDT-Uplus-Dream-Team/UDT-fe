@@ -8,13 +8,14 @@ import { useState } from 'react';
 import { SurveyProvider } from '@store/SurveyContext';
 import { useSurveyContext } from '@hooks/useSurveyContext';
 import { postSurvey } from '@lib/apis/survey/postSurvey';
-import { showSimpleToast } from '@components/common/Toast';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
+import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const { selectedPlatforms, selectedGenres, watchedContents } =
     useSurveyContext();
+  const showErrorToast = useErrorToastOnce();
 
   const handleNext = async () => {
     if (step < 3) {
@@ -28,10 +29,7 @@ function SurveyFlow() {
         });
         setStep(4); // 성공 시 완료 페이지로 이동
       } catch {
-        showSimpleToast.error({
-          message: '설문조사 제출에 실패했습니다.',
-          className: 'w-full bg-black/80 shadow-lg text-white',
-        });
+        showErrorToast('설문조사 제출에 실패했습니다.');
       }
     }
   };

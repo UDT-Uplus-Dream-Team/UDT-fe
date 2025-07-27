@@ -7,8 +7,7 @@ import { showInteractiveToast } from '@components/common/Toast';
 import { postFeedbackContent } from '@lib/apis/recommend/postFeedbackContent';
 import { useRecommendStore } from '@store/useRecommendStore';
 import { useFetchRecommendations } from '@hooks/recommend/useGetRecommendationContents';
-import { useGetCuratedContents } from '@hooks/recommend/useGetCuratedContents';
-import { useQueryClient } from '@tanstack/react-query'; // 추가
+import { useRefreshCuratedContents } from '@hooks/recommend/useGetCuratedContents';
 import { FinishScreen } from './FinishScreen';
 import { sendAnalyticsEvent } from '@lib/gtag';
 import { LoadingScreen } from './LoadingScreen';
@@ -45,8 +44,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     error: fetchError,
   } = useFetchRecommendations();
 
-  const { refetchCuratedContents } = useGetCuratedContents();
-  const queryClient = useQueryClient();
+  const { forceRefresh } = useRefreshCuratedContents();
 
   // 로컬 UI 상태들 (애니메이션 관련은 persist 불필요)
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
@@ -227,11 +225,8 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
           try {
             console.log('큐레이션 콘텐츠 강제 새로고침 시작...');
 
-            // type: 'active' 제거 - 모든 쿼리 대상
-            await queryClient.refetchQueries({
-              queryKey: ['curatedContents'],
-              // type: 'active' 제거
-            });
+            // 새로운 강제 refresh 사용
+            await forceRefresh();
 
             console.log('큐레이션 콘텐츠 강제 새로고침 완료');
 
@@ -256,7 +251,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     toastShown,
     onComplete,
     resetSwipeCount,
-    refetchCuratedContents,
+    forceRefresh,
   ]);
 
   // ── 키보드 이벤트 처리 ────────────────────────

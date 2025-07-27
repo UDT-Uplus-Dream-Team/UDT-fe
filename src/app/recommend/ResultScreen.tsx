@@ -269,7 +269,7 @@ export const ResultScreen: React.FC = () => {
       {/* Carousel Container */}
       <div
         ref={containerRef}
-        className="relative h-[70%] md:h-[80%] w-[80%] min-w-70 min-h-130 flex items-center justify-center"
+        className="relative h-[70%] md:h-[80%] w-[80%] min-w-70 min-h-130 max-w-100 max-h-175 flex items-center justify-center"
       >
         {contents.map((content, idx) => {
           const pos = getCardPosition(idx, dist);

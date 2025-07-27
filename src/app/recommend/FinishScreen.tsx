@@ -5,9 +5,11 @@ import { CheckCircle, RotateCcw, Eye } from 'lucide-react';
 import React from 'react';
 import { useRecommendStore } from '@store/useRecommendStore';
 import { useQueryClient } from '@tanstack/react-query'; // 추가
+import { useRefreshCuratedContents } from '@/hooks/recommend/useGetCuratedContents';
 
 export const FinishScreen: React.FC = () => {
   const { setPhase } = useRecommendStore();
+  const { forceRefresh } = useRefreshCuratedContents();
   const queryClient = useQueryClient(); // 추가
 
   const handleViewResults = async () => {
@@ -15,9 +17,7 @@ export const FinishScreen: React.FC = () => {
       console.log('FinishScreen에서 큐레이션 콘텐츠 새로고침 시작...');
 
       // 캐시 무효화 + 강제 refetch
-      await queryClient.refetchQueries({
-        queryKey: ['curatedContents'],
-      });
+      await forceRefresh();
 
       console.log('FinishScreen에서 큐레이션 콘텐츠 새로고침 완료');
 

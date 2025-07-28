@@ -297,7 +297,7 @@ export const ResultScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-full flex-col items-center justify-center">
+    <div className="flex w-full h-full flex-col items-center justify-center">
       {/* 제목 섹션 */}
       <div className="text-center my-5">
         <h1 className="text-3xl font-bold mb-2">추천 결과</h1>
@@ -307,7 +307,7 @@ export const ResultScreen: React.FC = () => {
       {/* Carousel Container */}
       <div
         ref={containerRef}
-        className="relative h-[70%] md:h-[80%] w-[80%] min-w-70 min-h-130 max-w-100 max-h-175 flex items-center justify-center"
+        className="relative h-[60%] md:h-[80%] w-[80%] min-w-70 min-h-120 max-w-100 max-h-175 flex items-center justify-center"
       >
         {contents.map((content, idx) => {
           const pos = getCardPosition(idx, dist);

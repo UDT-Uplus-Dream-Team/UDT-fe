@@ -32,7 +32,7 @@ export const FinishScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-full flex items-center justify-center relative overflow-hidden">
+    <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
       {/* Animated stars background */}
       <div className="absolute inset-0">
         {[...Array(50)].map((_, i) => (

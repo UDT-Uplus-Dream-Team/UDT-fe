@@ -29,7 +29,11 @@ export default function LayoutWrapper({
     <div className="w-full min-h-screen bg-gray-100 flex justify-center overflow-hidden">
       {/* 앱 컨테이너 - 고정 너비 */}
       <div className="w-full max-w-160 bg-gradient-to-b from-primary-900 via-purple-900 to-indigo-900 text-white min-h-screen relative overflow-hidden">
-        <main className="pb-15 flex flex-col justify-center h-screen">
+        <main
+          className={`flex flex-col justify-center h-screen ${
+            shouldHideBottomNavbar ? '' : 'pb-15'
+          }`}
+        >
           {children}
         </main>
         {!shouldHideBottomNavbar && <BottomNavbar />}

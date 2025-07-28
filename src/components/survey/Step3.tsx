@@ -86,6 +86,7 @@ export default function Step3({ onNext }: Step3Props) {
                   alt=""
                   width={100}
                   height={150}
+                  unoptimized
                   onLoad={handleImageLoad}
                   className="invisible absolute w-[1px] h-[1px]"
                 />

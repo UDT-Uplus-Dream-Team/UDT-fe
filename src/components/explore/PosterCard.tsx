@@ -93,6 +93,7 @@ export const PosterCard = ({
         height={dimensions.height}
         onError={handleError}
         onLoadingComplete={handleLoadComplete}
+        unoptimized
         style={{
           position: hasLoaded ? 'static' : 'absolute',
           width: `${dimensions.width}px`,

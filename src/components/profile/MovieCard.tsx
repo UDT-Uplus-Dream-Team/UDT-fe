@@ -70,6 +70,7 @@ const MovieCard = ({
           src={imgSrc}
           alt={title}
           fill
+          unoptimized
           className="object-cover"
           priority
           onError={() => setImgSrc('/images/default-backdrop.png')}

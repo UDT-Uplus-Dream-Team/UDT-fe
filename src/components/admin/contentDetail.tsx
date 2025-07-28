@@ -58,6 +58,7 @@ export default function ContentDetail({
               alt={content.title}
               width={400}
               height={600}
+              unoptimized
               className="w-full rounded-lg shadow-lg"
             />
           )}
@@ -168,6 +169,7 @@ export default function ContentDetail({
                               src={cast.castImageUrl}
                               alt={cast.castName || '출연진 이미지'}
                               fill
+                              unoptimized
                               className="object-cover"
                             />
                           </div>

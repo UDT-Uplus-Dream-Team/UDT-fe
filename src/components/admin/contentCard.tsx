@@ -59,6 +59,7 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
               alt={content.title}
               width={64}
               height={80}
+              unoptimized
               className="object-cover rounded text-black"
             />
           )}

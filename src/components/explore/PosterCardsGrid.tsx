@@ -11,10 +11,12 @@ import {
   SheetTitle,
 } from '@components/ui/sheet';
 import { DetailBottomSheetContent } from '@components/explore/DetailBottomSheetContent';
+import { X } from 'lucide-react';
 
 interface PosterCardsGridProps {
   contents: SimpleContentData[];
   fetchNextPage: () => void;
+  status: 'pending' | 'success' | 'error'; // 데이터 로딩 상태
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
 }
@@ -22,6 +24,7 @@ interface PosterCardsGridProps {
 // 필터 선택 시 표시할 그리드 방식 카드 목록 컴포넌트
 export const PosterCardsGrid = ({
   contents,
+  status,
   fetchNextPage,
   hasNextPage,
   isFetchingNextPage,
@@ -78,8 +81,17 @@ export const PosterCardsGrid = ({
             >
               <SheetContent
                 side="bottom"
+                hideDefaultClose={true} // 기본 닫기 버튼 제거
                 className="px-0 pb-5 h-[90vh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
               >
+                {/* 커스텀 X 버튼 (z-index로 위에 배치) */}
+                <button
+                  onClick={() => setIsDetailBottomSheetOpen(false)}
+                  className="absolute top-4 right-4 w-8 h-8 z-50 flex items-center justify-center rounded-full bg-white/60 hover:bg-white/80 transition"
+                  aria-label="닫기"
+                >
+                  <X className="w-4 h-4 text-gray-800" />
+                </button>
                 {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
                 <SheetHeader className="p-0">
                   <SheetTitle className="sr-only h-0 p-0">상세정보</SheetTitle>
@@ -96,8 +108,9 @@ export const PosterCardsGrid = ({
           )}
         </>
       ) : (
+        // 로딩 중인 것인지의 여부에 따라 나오는 텍스트가 달라야 함
         <div className="w-full h-full flex items-center justify-center text-white">
-          검색 결과가 없습니다.
+          {status === 'pending' ? '불러오는 중...' : '검색 결과가 없습니다.'}
         </div>
       )}
     </>

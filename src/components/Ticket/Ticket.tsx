@@ -71,6 +71,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             src={backdropSrc}
             alt={movie.title}
             fill
+            unoptimized
             className="object-cover"
             priority
             onError={() => setBackdropSrc('/images/default-backdrop.png')}
@@ -191,6 +192,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             src={posterSrc}
             alt={movie.title}
             fill
+            unoptimized
             className="object-cover"
             priority
             onError={() => setPosterSrc('/images/default-poster.png')}
@@ -214,8 +216,14 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
               <span className="ml-auto">{formatInfo(movie.directors)}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-gray-60">러닝타임</span>
-              <span className="ml-auto">{formatInfo(movie.runningTime)}</span>
+              <span className="text-gray-60">
+                {movie.category === '드라마' ? '회차' : '러닝타임'}
+              </span>
+              <span className="ml-auto">
+                {movie.category === '드라마'
+                  ? movie.episode
+                  : formatInfo(movie.runningTime)}
+              </span>
             </div>
           </div>
         </CardContent>
@@ -231,6 +239,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             src={posterSrc}
             alt={movie.title}
             fill
+            unoptimized
             className="object-cover"
             priority
             onError={() => setPosterSrc('/images/default-poster.png')}

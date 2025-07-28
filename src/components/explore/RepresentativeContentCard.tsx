@@ -36,6 +36,7 @@ export const RepresentativeContentCard = ({
           src={posterImgSrc}
           alt={content.title || '제목 없음'}
           fill
+          unoptimized
           className="object-cover"
           priority
           onError={() => setPosterImgSrc('/images/default-poster.png')}

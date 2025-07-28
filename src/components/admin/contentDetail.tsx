@@ -175,6 +175,7 @@ export default function ContentDetail({
                               src={cast.castImageUrl}
                               alt={cast.castName || '출연진 이미지'}
                               fill
+                              sizes="48px"
                               className="object-cover"
                             />
                           </div>

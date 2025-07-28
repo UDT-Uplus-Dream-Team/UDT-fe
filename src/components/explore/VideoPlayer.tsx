@@ -93,6 +93,7 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
           src={imgSrc}
           alt={contentData.title}
           fill
+          unoptimized
           className="object-cover"
           onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
         />
@@ -125,6 +126,7 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
             src={imgSrc}
             alt={contentData.title}
             fill
+            unoptimized
             className="object-cover"
             onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
             priority

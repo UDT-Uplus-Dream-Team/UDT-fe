@@ -143,6 +143,7 @@ export const DetailBottomSheetContent = ({
               src={backdropImgSrc}
               alt={contentData.title || '썸네일'}
               fill
+              unoptimized
               className="object-cover"
               onError={handleImageError}
             />
@@ -176,6 +177,7 @@ export const DetailBottomSheetContent = ({
               src={backdropImgSrc}
               alt={contentData.title || ''}
               fill
+              unoptimized
               className="object-cover"
               onError={handleImageError}
             />

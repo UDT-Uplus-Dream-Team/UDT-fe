@@ -21,6 +21,7 @@ import {
 } from '@components/ui/sheet';
 import { DetailBottomSheetContent } from './DetailBottomSheetContent';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
+import { X } from 'lucide-react'; // 커스텀 닫기 버튼에 사용할 아이콘
 
 interface CarouselProps {
   autoPlayInterval?: number;
@@ -320,10 +321,21 @@ export const ExplorePageCarousel = ({
           if (!open) setSelectedContent(null);
         }}
       >
+        {/* 커스텀 닫기 버튼 추가 */}
         <SheetContent
           side="bottom"
+          hideDefaultClose={true} // 기본 닫기 버튼 제거
           className="px-0 pb-5 h-[90vh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
         >
+          {/* 커스텀 X 버튼 (z-index로 위에 배치) */}
+          <button
+            onClick={() => setSelectedContent(null)}
+            className="absolute top-4 right-4 w-8 h-8 z-50 flex items-center justify-center rounded-full bg-white/60 hover:bg-white/80 transition"
+            aria-label="닫기"
+          >
+            <X className="w-4 h-4 text-gray-800" />
+          </button>
+
           {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
           <SheetHeader className="p-0">
             <SheetTitle className="sr-only h-0 p-0">상세정보</SheetTitle>

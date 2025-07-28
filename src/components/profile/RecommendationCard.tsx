@@ -20,7 +20,13 @@ const RecommendationCard = ({
   return (
     <div className="relative w-full max-w-[500px] max-h-[320px] aspect-[5/4] rounded-[20px] overflow-hidden shadow-md">
       {/* 배경 이미지 */}
-      <Image src={imageUrl} alt={title} fill className="object-cover" />
+      <Image
+        src={imageUrl}
+        alt={title}
+        fill
+        unoptimized
+        className="object-cover"
+      />
 
       {/* 그라데이션 배경 (하단 어둡게) */}
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/0 z-10" />

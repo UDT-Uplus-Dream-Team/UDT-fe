@@ -71,6 +71,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             src={backdropSrc}
             alt={movie.title}
             fill
+            unoptimized
             className="object-cover"
             priority
             onError={() => setBackdropSrc('/images/default-backdrop.png')}
@@ -191,6 +192,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             src={posterSrc}
             alt={movie.title}
             fill
+            unoptimized
             className="object-cover"
             priority
             onError={() => setPosterSrc('/images/default-poster.png')}
@@ -231,6 +233,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             src={posterSrc}
             alt={movie.title}
             fill
+            unoptimized
             className="object-cover"
             priority
             onError={() => setPosterSrc('/images/default-poster.png')}

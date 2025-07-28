@@ -35,6 +35,7 @@ export function SurveyPosterCard({
           src={image}
           alt={title}
           fill
+          unoptimized
           sizes="(max-width: 768px) 100vw, 33vw"
           className="object-cover"
         />

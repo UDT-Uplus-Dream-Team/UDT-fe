@@ -54,6 +54,7 @@ export default function KakaoLoginPage() {
             alt="biglogo"
             width={720}
             height={720}
+            unoptimized
             style={{
               width: '280px',
               height: '280px',
@@ -86,6 +87,7 @@ export default function KakaoLoginPage() {
               alt="kakao"
               width={300}
               height={45}
+              unoptimized
             />
           </Button>
         </div>

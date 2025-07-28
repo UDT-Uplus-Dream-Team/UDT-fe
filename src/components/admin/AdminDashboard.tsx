@@ -211,9 +211,9 @@ export default function AdminDashboard() {
           <CardContent>
             <ScrollArea className="h-96">
               <div className="space-y-3 mb-3">
-                {allContents.map((content) => (
+                {allContents.map((content, idx) => (
                   <ContentCard
-                    key={content.contentId}
+                    key={`${content.contentId}-${idx}`}
                     content={content}
                     onView={openDetailDialog}
                     onEdit={openEditDialog}
@@ -279,7 +279,10 @@ export default function AdminDashboard() {
             open={isDetailDialogOpen}
             onOpenChange={setIsDetailDialogOpen}
           >
-            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[90vh] overflow-y-auto">
+            <DialogContent
+              aria-describedby={undefined}
+              className="w-full max-w-none sm:max-w-[1000px] max-h-[90vh] overflow-y-auto"
+            >
               <DialogHeader>
                 <DialogTitle>콘텐츠 상세 정보</DialogTitle>
               </DialogHeader>

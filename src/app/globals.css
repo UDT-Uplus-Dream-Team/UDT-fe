@@ -186,6 +186,8 @@
   --color-card: var(--card);
 
   --radius-xl: calc(var(--radius) + 4px);
+
+  --breakpoint-md: 640px;
 }
 
 @layer base {

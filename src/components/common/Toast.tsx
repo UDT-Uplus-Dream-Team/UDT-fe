@@ -2,6 +2,7 @@
 
 import { toast } from 'sonner';
 import { Button } from '@components/ui/button';
+
 import {
   X,
   Check,
@@ -43,7 +44,7 @@ export const showSimpleToast = {
       () => (
         <div
           className={[
-            'flex items-center gap-2',
+            'flex items-center justify-center gap-2',
             'text-sm font-medium rounded-lg py-2 px-4',
             opts.className,
             'animate-enter',
@@ -57,7 +58,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 4000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },
@@ -67,7 +68,7 @@ export const showSimpleToast = {
       () => (
         <div
           className={[
-            'flex items-center gap-2',
+            'flex items-center justify-center gap-2',
             'text-sm font-medium rounded-lg py-2 px-4',
             opts.className,
             'animate-enter',
@@ -81,7 +82,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 5000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },
@@ -91,7 +92,7 @@ export const showSimpleToast = {
       () => (
         <div
           className={[
-            'flex items-center gap-2',
+            'flex items-center justify-center gap-2',
             'text-sm font-medium rounded-lg py-2 px-4',
             opts.className,
             'animate-enter',
@@ -105,7 +106,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 4000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },
@@ -115,7 +116,7 @@ export const showSimpleToast = {
       () => (
         <div
           className={[
-            'flex items-center gap-2',
+            'flex items-center justify-center gap-2',
             'text-sm font-medium rounded-lg py-2 px-4',
             opts.className,
             'animate-enter',
@@ -129,7 +130,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 4000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },
@@ -139,7 +140,7 @@ export const showSimpleToast = {
       () => (
         <div
           className={[
-            'text-sm font-medium rounded-lg py-2 px-4',
+            'text-sm font-medium justify-center rounded-lg py-2 px-4',
             'bg-gray-600 text-white',
             opts.className,
             'animate-enter',
@@ -152,7 +153,7 @@ export const showSimpleToast = {
       ),
       {
         duration: opts.duration ?? 4000,
-        position: opts.position ?? 'top-right',
+        position: opts.position ?? 'top-center',
       },
     );
   },
@@ -215,7 +216,7 @@ export const showInteractiveToast = {
           className={[
             'flex flex-col justify-between',
             'rounded-lg p-4',
-            'w-[340px] mx-auto',
+            'mx-auto',
             'shadow-sm',
             opts.className,
             'animate-enter',

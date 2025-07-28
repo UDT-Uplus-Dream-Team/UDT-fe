@@ -7,8 +7,8 @@ export const CONTENT_CATEGORIES = [
 
 export const RATING_OPTIONS = [
   '전체 관람가',
-  '12세 이상',
-  '15세 이상',
+  '12세 이상 관람가',
+  '15세 이상 관람가',
   '청소년 관람불가',
 ] as const;
 
@@ -34,7 +34,6 @@ export const GENRES = [
   '서부극',
   '멜로/로맨스',
   '서사/드라마',
-  '애니메이션',
   '공포(호러)',
   '다큐멘터리',
   '범죄',

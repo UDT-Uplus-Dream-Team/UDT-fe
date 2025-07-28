@@ -4,6 +4,7 @@ import {
   showSimpleToast,
   showInteractiveToast,
 } from '@components/common/Toast';
+import { useRef } from 'react';
 
 /**
  * 사용자 선호 OTT 및 장르 설정 저장 핸들러 훅
@@ -19,12 +20,15 @@ export const usePreferenceHandler = (
   const { mutateAsync: patchPlatformsAsync } = usePatchPlatform();
   const { mutateAsync: patchGenresAsync } = usePatchGenre();
 
+  const isToastOpen = useRef(false);
+
   // 성공 토스트 출력
   const showSuccess = (message: string) => {
     showSimpleToast.success({
       message,
       position: 'top-center',
-      className: 'w-full bg-black/80 shadow-lg text-white',
+      className:
+        'bg-primary-300/80 text-white px-4 py-2 rounded-md mx-auto shadow-lg',
     });
   };
 
@@ -33,7 +37,8 @@ export const usePreferenceHandler = (
     showSimpleToast.error({
       message,
       position: 'top-center',
-      className: 'w-full bg-black/80 shadow-lg text-white',
+      className:
+        'bg-black/80 text-white px-4 py-2 rounded-md mx-auto shadow-lg',
     });
   };
 
@@ -52,6 +57,10 @@ export const usePreferenceHandler = (
       return;
     }
 
+    // 중복 확인 방지
+    if (isToastOpen.current) return;
+    isToastOpen.current = true;
+
     // 사용자 확인 후 업데이트 실행
     showInteractiveToast.confirm({
       message: '정말 변경하시겠습니까?',
@@ -62,18 +71,21 @@ export const usePreferenceHandler = (
       onConfirm: async () => {
         try {
           if (target === 'platform') {
-            console.log('[PATCH PLATFORM] 선택된 플랫폼:', selectedOtt);
             await patchPlatformsAsync(selectedOtt);
             showSuccess('OTT 설정이 저장되었습니다.');
           } else {
-            console.log('[PATCH GENRE] 선택된 장르:', selectedGenres);
             await patchGenresAsync(selectedGenres);
             showSuccess('선호 장르가 저장되었습니다.');
           }
         } catch (error) {
           console.error(error);
           showError('설정 저장에 실패했습니다.');
+        } finally {
+          isToastOpen.current = false; // 확인 누른 뒤 상태 복구
         }
+      },
+      onCancel: () => {
+        isToastOpen.current = false;
       },
     });
   };

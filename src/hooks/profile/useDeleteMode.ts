@@ -1,49 +1,51 @@
 'use client';
 
 import { useState } from 'react';
-import { FeedbackContent } from '@/types/profile/FeedbackContent';
 
-export const useDeleteMode = (posters: FeedbackContent[]) => {
+export const useDeleteMode = <T>(
+  items: T[],
+  getId: (item: T) => number | undefined,
+) => {
   const [isDeleteMode, setIsDeleteMode] = useState(false);
-  const [selectedFeedbackIds, setSelectedFeedbackIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
 
-  const handleCardClickInDeleteMode = (poster: FeedbackContent) => {
-    const id = poster.feedbackId;
+  const handleCardClickInDeleteMode = (item: T) => {
+    const id = getId(item);
     if (id === undefined) return;
 
-    setSelectedFeedbackIds((prev) =>
+    setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id],
     );
   };
 
   const handleSelectAll = () => {
-    const allIds = posters
-      .map((poster) => poster.feedbackId)
+    const allIds = items
+      .map(getId)
       .filter((id): id is number => id !== undefined);
 
-    setSelectedFeedbackIds(isAllSelected ? [] : allIds);
+    setSelectedIds(isAllSelected ? [] : allIds);
     setIsAllSelected(!isAllSelected);
   };
 
   const handleCancelDeleteMode = () => {
     setIsDeleteMode(false);
     setIsAllSelected(false);
-    setSelectedFeedbackIds([]);
+    setSelectedIds([]);
   };
 
   return {
     state: {
       isDeleteMode,
       isAllSelected,
-      selectedIds: selectedFeedbackIds,
+      selectedIds,
     },
     actions: {
       setIsDeleteMode,
       handleCardClickInDeleteMode,
       handleSelectAll,
       handleCancelDeleteMode,
-      setSelectedFeedbackIds,
+      setSelectedIds,
     },
   };
 };

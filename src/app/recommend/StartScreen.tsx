@@ -5,6 +5,7 @@ import { Play, Film } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@components/ui/button';
 import { useRecommendStore } from '@store/useRecommendStore';
+import SparkleBackground from '@/components/common/sparkle_background';
 
 interface StartScreenProps {
   onStart: () => void;
@@ -40,29 +41,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
   return (
     <div className="flex flex-col min-h-screen items-center justify-center relative overflow-hidden">
       {/* Animated background stars */}
-      <div className="absolute inset-0">
-        {[...Array(50)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-              opacity: [0, 1, 0.8, 1],
-              scale: [0, 1.2, 1, 1.2],
-            }}
-            transition={{
-              duration: 3,
-              delay: i * 0.05,
-              repeat: Number.POSITIVE_INFINITY,
-              repeatType: 'reverse',
-            }}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-          />
-        ))}
-      </div>
+      <SparkleBackground />
 
       {/* Floating movie icons */}
       {/* <div className="absolute inset-0 pointer-events-none">
@@ -156,7 +135,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
               추천을 시작해볼까요?
             </h2>
             <p className="text-purple-100 text-lg leading-relaxed">
-              컨텐츠들에 대해서 사용자님의 생각을 알려주시면
+              주어진 컨텐츠들에 대한 생각을 알려주시면
               <br />
               가장 적합한 컨텐츠를 추천해드려요!
             </p>

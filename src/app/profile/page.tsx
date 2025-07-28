@@ -17,6 +17,8 @@ import { useGetUserProfile } from '@hooks/useGetUserProfile';
 import { Skeleton } from '@components/ui/skeleton';
 import { useLogoutHandler } from '@hooks/profile/useLogoutHandler';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
+import { useMemo } from 'react';
 
 const ProfilePage = () => {
   // 페이지 머무르는 시간 추적 (프로필 페이지 추적 / Google Analytics 연동을 위함)
@@ -24,7 +26,13 @@ const ProfilePage = () => {
 
   const router = useRouter();
 
-  const { data: userProfile, isLoading, isError } = useGetUserProfile();
+  const userQuery = useGetUserProfile(); // 유저 프로필 조회 쿼리 전체 가져오기 (에러 핸들링에서 용이함을 위함)
+
+  // 쿼리에서 에러가 발생했을 경우, 토스트 띄우기
+  useQueryErrorToast(userQuery);
+
+  // userQuery.data가 변경될 때만 새로운 값을 반환하도록 함
+  const userProfile = useMemo(() => userQuery.data, [userQuery.data]);
 
   const handleEditClick = () => {
     router.push('/profile/edit');
@@ -32,7 +40,7 @@ const ProfilePage = () => {
 
   const { handleLogout } = useLogoutHandler();
 
-  if (isLoading) {
+  if (userQuery.status === 'pending') {
     return (
       <div className="h-[calc(100vh-80px)] overflow-y-auto w-full mx-auto px-4 pt-6 text-white flex flex-col items-center">
         <div className="w-full flex justify-center mb-16 h-10">
@@ -67,7 +75,7 @@ const ProfilePage = () => {
     );
   }
 
-  if (isError || !userProfile) {
+  if (userQuery.status === 'error' || !userProfile) {
     return (
       <p className="text-red-500 text-center mt-10">
         유저 정보를 불러오지 못했습니다.
@@ -90,10 +98,17 @@ const ProfilePage = () => {
           {/* 프로필 이미지 + 이름/이메일 수평 정렬 */}
           <div className="flex flex-row items-center justify-start gap-4 mb-2">
             {/* 프로필 이미지 */}
-            <img
-              src={profileImageUrl || '/images/default-profile.png'}
+            <Image
+              src={
+                profileImageUrl
+                  ? profileImageUrl.replace(/^http:\/\//, 'https://')
+                  : '/images/default-profile.png'
+              }
               alt="프로필 이미지"
-              className="w-[60px] h-[60px] rounded-full object-cover"
+              width={60}
+              height={60}
+              className="rounded-full object-cover"
+              style={{ aspectRatio: '1 / 1' }}
             />
 
             {/* 이름 + 이메일 */}

@@ -3,74 +3,111 @@
 import { useSurveyContext } from '@hooks/useSurveyContext';
 import { SurveyPosterCard } from './SurveyPosterCard';
 import { Button } from '@components/ui/button';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { MOCK_CONTENTS } from './mockContents';
+import { Skeleton } from '../common/Skeleton';
+import Image from 'next/image';
 
 type Step3Props = {
   onNext: () => void;
 };
 
-const MOCK_CONTENTS = [
-  { title: '귀를 기울이면', image: '/images/poster1.webp' },
-  { title: '고양이의 보은', image: '/images/poster2.webp' },
-  { title: '벼랑 위의 포뇨', image: '/images/poster3.webp' },
-  { title: '귀를 기울이면2', image: '/images/poster1.webp' },
-  { title: '고양이의 보은2', image: '/images/poster2.webp' },
-  { title: '벼랑 위의 포뇨2', image: '/images/poster3.webp' },
-  { title: '귀를 기울이면3', image: '/images/poster1.webp' },
-  { title: '고양이의 보은3', image: '/images/poster2.webp' },
-  { title: '벼랑 위의 포뇨3', image: '/images/poster3.webp' },
-];
+function getRandomContents(count: number) {
+  const shuffled = [...MOCK_CONTENTS].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
 
 export default function Step3({ onNext }: Step3Props) {
   const { watchedContents, setWatchedContents } = useSurveyContext();
+  const [randomContents] = useState(() => getRandomContents(9));
+  const [loadedCount, setLoadedCount] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const toggleContent = (title: string) => {
-    const updated = watchedContents.includes(title)
-      ? watchedContents.filter((t) => t !== title)
-      : [...watchedContents, title];
+  useEffect(() => {
+    if (loadedCount === randomContents.length) {
+      setIsLoaded(true);
+    }
+  }, [loadedCount, randomContents.length]);
+
+  const toggleContent = (contentId: number) => {
+    const updated = watchedContents.includes(contentId)
+      ? watchedContents.filter((id) => id !== contentId)
+      : [...watchedContents, contentId];
 
     setWatchedContents(updated);
   };
 
-  return (
-    <div className="h-[calc(100vh-80px)] overflow-y-auto flex flex-col items-center pt-17 pb-10">
-      <h2 className="text-white font-bold text-[20px] mb-14 text-center">
-        보신 <span className="text-[#9F8EC5]">컨텐츠</span>가 있다면
-        선택해주세요!
-      </h2>
+  const handleImageLoad = () => {
+    setLoadedCount((prev) => prev + 1);
+  };
 
-      <div className="grid grid-cols-3 gap-6 px-10 mb-16 w-full">
-        {MOCK_CONTENTS.map(({ title, image }) => (
-          <SurveyPosterCard
-            key={title}
-            title={title}
-            image={image}
-            selected={watchedContents.includes(title)}
-            onClick={() => toggleContent(title)}
-          />
-        ))}
-      </div>
-      <div className="flex gap-10">
-        <Button
-          onClick={onNext}
-          className={
-            'min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer'
-          }
+  return (
+    <div className="h-screen flex justify-center items-center">
+      <div
+        className="flex flex-col items-center px-6 w-full max-w-[500px]"
+        style={{ maxHeight: '700px' }}
+      >
+        {/* 고정 제목 */}
+        <h2 className="text-white font-bold text-[20px] text-center mb-10 mt-10">
+          보신 <span className="text-[#9F8EC5]">컨텐츠</span>가 있다면
+          선택해주세요!
+        </h2>
+
+        {/* 스크롤 가능한 포스터 목록 */}
+        <div
+          className="overflow-y-auto w-full visible-scroll"
+          style={{ maxHeight: '500px' }}
         >
-          건너뛰기
-        </Button>
-        <Button
-          onClick={onNext}
-          className={
-            'min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer'
-          }
-        >
-          완료
-        </Button>
+          <div className="grid grid-cols-3 gap-6 px-4">
+            {isLoaded
+              ? randomContents.map(({ contentId, title, posterUrl }, idx) => (
+                  <SurveyPosterCard
+                    key={`${contentId}-${idx}`}
+                    title={title}
+                    image={posterUrl}
+                    selected={watchedContents.includes(contentId)}
+                    onClick={() => toggleContent(contentId)}
+                  />
+                ))
+              : Array.from({ length: 9 }).map((_, idx) => (
+                  <Skeleton key={idx} className="w-[100px] h-[150px]" />
+                ))}
+
+            {/* 이미지 preload (invisible로 로드 트리거) */}
+            {!isLoaded &&
+              randomContents.map(({ posterUrl }, idx) => (
+                <Image
+                  key={`preload-${idx}`}
+                  src={posterUrl}
+                  alt=""
+                  width={100}
+                  height={150}
+                  onLoad={handleImageLoad}
+                  className="invisible absolute w-[1px] h-[1px]"
+                />
+              ))}
+          </div>
+        </div>
+
+        {/* 하단 버튼 */}
+        <div className="mt-auto pt-10 flex justify-center gap-6">
+          <Button
+            onClick={onNext}
+            className="min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer"
+          >
+            건너뛰기
+          </Button>
+          <Button
+            onClick={onNext}
+            className="min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer"
+          >
+            완료
+          </Button>
+        </div>
       </div>
     </div>
   );

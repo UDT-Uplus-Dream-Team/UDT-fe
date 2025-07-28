@@ -6,8 +6,8 @@ import { Toaster } from 'sonner';
 import { GoogleAnalytics } from '@next/third-parties/google'; // 구글 애널리틱스 추가
 
 export const metadata: Metadata = {
-  title: 'Your App Title',
-  description: 'Your app description',
+  title: '반딧불',
+  description: '30초만에 수많은 OTT 콘텐츠 숲을 밝히는 작은 빛',
 };
 
 export const viewport: Viewport = {
@@ -27,7 +27,10 @@ export default function RootLayout({
     <html lang="ko">
       <body className="w-full flex justify-center bg-gray-100 min-h-screen overflow-x-hidden">
         <Providers>
-          <Toaster position="top-center" />
+          <Toaster
+            position="top-center"
+            toastOptions={{ className: 'w-full' }}
+          />
           <LayoutWrapper>{children}</LayoutWrapper>
         </Providers>
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />

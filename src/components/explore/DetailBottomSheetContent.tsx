@@ -12,10 +12,12 @@ import {
   useState,
   useCallback,
   useRef,
+  useMemo,
 } from 'react';
 import { DetailedContentData } from '@type/explore/Explore';
 import { VideoPlayer } from '@components/explore/VideoPlayer';
 import { useGetContentDetails } from '@hooks/explore/useGetContentDetails';
+import { formattingOpenDate } from '@utils/formattingOpenDate';
 
 interface DetailBottomSheetContentProps {
   contentId: number;
@@ -38,33 +40,37 @@ export const DetailBottomSheetContent = ({
   contentId,
 }: DetailBottomSheetContentProps) => {
   const synopsisRef = useRef<HTMLSpanElement>(null); // 시놉시스 텍스트 요소 참조
-  const {
-    data: contentData,
-    isLoading,
-    isError,
-  } = useGetContentDetails(contentId); // 콘텐츠 상세 정보 데이터 조회
+  const { data: contentData, status } = useGetContentDetails(contentId); // 콘텐츠 상세 정보 데이터 조회
 
   const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false); // 시놉시스(줄거리) 부분에 대해서 더 자세하게 보여주기 여부
   const [hasValidTrailer, setHasValidTrailer] = useState(true); // 트레일러 주소가 유효한지 여부
   const [isTextOverflowing, setIsTextOverflowing] = useState(false); // 텍스트가 5줄을 넘는지 여부
-  const [imgSrc, setImgSrc] = useState<string>(contentData?.backdropUrl || ''); // 백드랍 이미지 소스
+  const [backdropImgSrc, setBackdropImgSrc] = useState<string>(
+    '/images/default-backdrop.png',
+  ); // 백드랍 이미지 소스
 
-  if (isLoading) {
-    return <div>로딩 중입니다.</div>;
-  }
+  // contentData 관련 값들을 useMemo로 메모이제이션
+  const contentDescription = useMemo(() => {
+    return contentData?.description || '';
+  }, [contentData]);
 
-  if (isError) {
-    return <div>에러가 발생했습니다, 관리자에게 문의 바랍니다.</div>;
-  }
+  const contentBackdropUrl = useMemo(() => {
+    return contentData?.backdropUrl || '/images/default-backdrop.png';
+  }, [contentData]);
 
-  // contentData가 없는 경우 처리
-  if (!contentData) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-white">콘텐츠 정보가 없습니다.</div>
-      </div>
-    );
-  }
+  const contentTrailerUrl = useMemo(() => {
+    return contentData?.trailerUrl || '';
+  }, [contentData]);
+
+  // 실제 이미지가 로드되면 교체
+  useEffect(() => {
+    setBackdropImgSrc(contentBackdropUrl);
+  }, [contentBackdropUrl]);
+
+  // 이미지 로딩 실패 시 기본 이미지로 fallback
+  const handleImageError = useCallback(() => {
+    setBackdropImgSrc('/images/default-backdrop.png');
+  }, []);
 
   // 비디오 정보를 불러 오다가 에러가 났을 경우, isVideoLoaded 상태를 false로 변경
   const handleVideoError = useCallback(() => {
@@ -86,6 +92,8 @@ export const DetailBottomSheetContent = ({
       }
     };
 
+    if (!contentDescription) return; // Description이 없으면 텍스트 오버플로우 확인 안함
+
     // 컴포넌트 마운트 후 확인
     checkTextOverflow();
 
@@ -95,19 +103,35 @@ export const DetailBottomSheetContent = ({
     return () => {
       window.removeEventListener('resize', checkTextOverflow);
     };
-  }, [contentData.description]); // description이 변경될 때마다 재확인
+  }, [contentDescription]); // description이 변경될 때마다 재확인
 
-  // TODO: 실제 API 호출 시에 contentId에 따른 데이터 fetching 필요 (추후 get 요청을 하는 hook과 contentId를 연동해야 함)
   useEffect(() => {
     setHasValidTrailer(false); // 새로운 콘텐츠 로드 시에 초기화 (video 로딩 중인 상태로 초기화)
 
-    if (contentData?.trailerUrl) {
+    if (contentTrailerUrl) {
       setHasValidTrailer(true);
       console.log('지금 트레일러 영상 있음!, contentId: ', contentId);
     } else {
       setHasValidTrailer(false);
     }
-  }, [contentId]);
+  }, [contentTrailerUrl]);
+
+  if (status === 'pending') {
+    return <div>로딩 중입니다.</div>;
+  }
+
+  if (status === 'error') {
+    return <div>에러가 발생했습니다, 관리자에게 문의 바랍니다.</div>;
+  }
+
+  // contentData가 없는 경우 처리
+  if (!contentData) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-white">콘텐츠 정보가 없습니다.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 scrollbar-hide">
@@ -116,11 +140,11 @@ export const DetailBottomSheetContent = ({
         fallback={
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
-              src={imgSrc}
+              src={backdropImgSrc}
               alt={contentData.title || '썸네일'}
               fill
               className="object-cover"
-              onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
+              onError={handleImageError}
             />
             {/* 그라데이션 오버레이 */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
@@ -131,7 +155,9 @@ export const DetailBottomSheetContent = ({
                 {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData.openDate.split('-')[0]}</span>
+                {contentData.openDate !== null ? (
+                  <span>{contentData.openDate}</span>
+                ) : null}
                 <span>{contentData.rating}</span>
                 <span>{contentData.countries[0]}</span>
               </div>
@@ -147,11 +173,11 @@ export const DetailBottomSheetContent = ({
         ) : (
           <div className="relative w-full h-90 rounded-t-lg overflow-hidden">
             <Image
-              src={imgSrc}
+              src={backdropImgSrc}
               alt={contentData.title || ''}
               fill
               className="object-cover"
-              onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
+              onError={handleImageError}
             />
             {/* 그라데이션 오버레이 */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
@@ -162,7 +188,9 @@ export const DetailBottomSheetContent = ({
                 {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
-                <span>{contentData.openDate.split('-')[0]}</span>
+                {contentData.openDate !== null ? (
+                  <span>{formattingOpenDate(contentData.openDate)}</span>
+                ) : null}
                 <span>{contentData.rating}</span>
                 <span>{contentData.countries[0]}</span>
               </div>
@@ -230,7 +258,7 @@ export const DetailBottomSheetContent = ({
                 >
                   <Avatar className="w-15 h-15 rounded-full overflow-hidden">
                     <AvatarImage
-                      src={actor.castImage || '/placeholder.svg'}
+                      src={actor.castImageUrl || '/placeholder.svg'}
                       alt={actor.castName}
                       className="object-cover w-full h-full"
                     />
@@ -254,13 +282,9 @@ export const DetailBottomSheetContent = ({
           <span className="text-lg font-semibold text-white">감독</span>
           {/* 감독 정보가 있는 경우에만 표시 */}
           {contentData.directors && contentData.directors.length > 0 ? (
-            <div className="flex flex-row items-center space-x-3">
-              {contentData.directors.map((director, index) => (
-                <span key={index} className="text-xs text-gray-300 text-center">
-                  {director.name}
-                </span>
-              ))}
-            </div>
+            <span className="text-sm text-gray-300">
+              {contentData.directors.join(', ')}
+            </span>
           ) : (
             <span className="text-sm text-gray-300">정보가 없습니다</span>
           )}

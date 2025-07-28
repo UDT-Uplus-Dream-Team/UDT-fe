@@ -2,6 +2,7 @@ import {
   showSimpleToast,
   showInteractiveToast,
 } from '@components/common/Toast';
+import { useRef } from 'react';
 
 interface UseDeleteToastProps {
   selectedIds: number[];
@@ -13,28 +14,35 @@ interface UseDeleteToastProps {
   isBatch?: boolean; //배열인지 안닌지 확인
 }
 
-export const useDeleteFeedbackToast = ({
+export const useDeleteToast = ({
   selectedIds,
   onDeleteComplete,
   deleteFn,
   isBatch = false,
 }: UseDeleteToastProps) => {
+  const isToastOpen = useRef(false);
+
   const handleDelete = () => {
+    if (isToastOpen.current) return;
+
     if (selectedIds.length === 0) {
       showSimpleToast.error({
         message: '삭제할 콘텐츠를 선택해주세요.',
         position: 'top-center',
-        className: 'w-full bg-black/80 shadow-lg',
+        className:
+          'bg-black/80 text-white px-4 py-2 rounded-md mx-auto shadow-lg',
       });
       return;
     }
+
+    isToastOpen.current = true;
 
     showInteractiveToast.confirm({
       message: '정말 삭제하시겠습니까?',
       confirmText: '삭제',
       cancelText: '취소',
       position: 'top-center',
-      className: 'w-[360px] bg-white shadow-lg',
+      className: 'bg-white shadow-lg',
       onConfirm: async () => {
         try {
           if (isBatch) {
@@ -54,16 +62,23 @@ export const useDeleteFeedbackToast = ({
           showSimpleToast.success({
             message: '삭제가 완료되었습니다.',
             position: 'top-center',
-            className: 'w-full text-white bg-black',
+            className:
+              'bg-primary-300/80 text-white px-4 py-2 rounded-md mx-auto shadow-lg',
           });
           onDeleteComplete(); // 상태 초기화
         } catch {
           showSimpleToast.error({
             message: '삭제 중 오류가 발생했습니다.',
             position: 'top-center',
-            className: 'w-full text-white bg-black',
+            className:
+              'bg-black text-white px-4 py-2 rounded-md mx-auto shadow-lg',
           });
+        } finally {
+          isToastOpen.current = false;
         }
+      },
+      onCancel: () => {
+        isToastOpen.current = false;
       },
     });
   };

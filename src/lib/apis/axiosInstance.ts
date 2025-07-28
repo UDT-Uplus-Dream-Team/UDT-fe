@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -11,6 +11,10 @@ const axiosInstance: AxiosInstance = axios.create({
   },
 });
 
+// 토큰 재발급 중 중복 호출 방지
+let isReissueTokenInProgress = false;
+
+// 토큰 재발급 로직
 const reissueToken = async (): Promise<boolean> => {
   try {
     const response = await axios.post(
@@ -31,42 +35,37 @@ axiosInstance.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config;
 
-    // 401 에러 && 재시도하지 않은 요청
+    // 각 오류에 대해서 사용자 UI(Toast 등) 처리는 각 api 함수,
+    // TanStack Query를 사용한 경우엔 useQueryErrorToast 훅에서 처리해야 함
     if (
-      error.response?.status === 401 &&
+      error.response?.status === 401 && // 401: 인증 만료, 재발급 시도
       originalRequest &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !isReissueTokenInProgress // 토큰 재발급 중 중복 호출 방지
     ) {
       originalRequest._retry = true;
+      isReissueTokenInProgress = true;
 
       try {
         const reissueSuccess = await reissueToken();
 
         if (reissueSuccess) {
-          // 토큰 재발급 성공 시 원본 요청 재시도
-          return axiosInstance(originalRequest);
+          isReissueTokenInProgress = false; // 토큰 재발급 완료 후 중복 호출 방지 해제
+          return axiosInstance(originalRequest); // 재요청
         } else {
-          // 토큰 재발급 실패 시 로그아웃 처리
-          handleLogout();
-          return Promise.reject(error);
+          // 토큰 재발급 실패 시 에러 발생
+          throw new Error('토큰 재발급 실패');
         }
       } catch (reissueError) {
-        console.log(reissueError);
-        handleLogout();
-        return Promise.reject(error);
+        isReissueTokenInProgress = false; // 토큰 재발급 중 중복 호출 방지 해제
+        console.error('[Token Reissue Fatal]', reissueError);
+        throw new Error('토큰 재발급 중 예상치 못한 오류 발생');
       }
     }
+
     return Promise.reject(error);
   },
 );
-
-// 로그아웃 처리 함수
-const handleLogout = () => {
-  // 필요한 경우 store 클리어, 캐시 클리어 등
-  if (typeof window !== 'undefined') {
-    window.location.href = '/login';
-  }
-};
 
 export default axiosInstance;
 

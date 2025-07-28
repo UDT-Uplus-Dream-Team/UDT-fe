@@ -1,8 +1,9 @@
 import Image from 'next/image';
-import { useState } from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from '@components/ui/avatar';
-import { PLATFORMS } from '@lib/platforms';
+import { useEffect, useRef, useState } from 'react';
 import { StoredContentDetail } from '@type/profile/StoredContentDetail';
+import { Card, CardContent, CardHeader } from '../ui/card';
+import { CircleOption } from '../common/circleOption';
+import { getPlatformLogo } from '@/utils/getPlatformLogo';
 
 const fallbackUrls: Record<string, string> = {
   넷플릭스: 'https://www.netflix.com',
@@ -23,116 +24,164 @@ const MovieCard = ({
   description,
   backdropUrl,
   platforms,
+  directors,
 }: StoredContentDetail) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const toggleDescription = () => {
-    setIsExpanded((prev) => !prev);
-  };
-
-  const getPlatformIconUrl = (platformName: string): string | null => {
-    const matched = PLATFORMS.find((p) => p.label === platformName);
-    if (!matched) return null;
-    return `/images/ott/${matched.id}.png`;
-  };
-
+  const [expanded, setExpanded] = useState(false);
   const [imgSrc, setImgSrc] = useState(backdropUrl);
+  const descRef = useRef<HTMLParagraphElement>(null);
+
+  const handlePlatformClick = (platformType: string, watchUrl?: string) => {
+    const url = watchUrl ?? fallbackUrls[platformType];
+    if (url) window.open(url, '_blank');
+  };
+
+  const formatInfo = (
+    value: string | number | string[] | null | undefined,
+    fallback = '정보 없음',
+  ): string => {
+    if (Array.isArray(value)) return value.length > 0 ? value[0] : fallback;
+    if (typeof value === 'number') return value > 0 ? `${value}분` : fallback;
+    return value ? value : fallback;
+  };
+
+  const formatDateInfo = (
+    value: string | null | undefined,
+    fallback = '정보 없음',
+  ): string => {
+    if (!value) return fallback;
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return fallback;
+
+    return date.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  };
+
+  //더보기 초기화
+  useEffect(() => {
+    setExpanded(false); // 강제 초기화
+  }, [title]);
+
+  const cardBaseClass =
+    'flex flex-col min-w-[300px] min-h-[540px] md:min-w-[400px] md:min-h-[680px] max-w-[400px] max-h-[680px] border-none rounded-2xl overflow-hidden';
 
   return (
-    <div className="w-[300px] h-[538px] rounded-xl shadow-md bg-white flex flex-col overflow-hidden">
-      {/* 썸네일 */}
-      <div className="w-full h-[130px] relative">
+    <Card className={cardBaseClass}>
+      <div className="relative w-full min-h-[180px] md:min-h-[220px]">
         <Image
           src={imgSrc}
           alt={title}
-          layout="fill"
-          objectFit="cover"
-          className="rounded-t-xl"
+          fill
+          className="object-cover"
+          priority
           onError={() => setImgSrc('/images/default-backdrop.png')}
         />
       </div>
-
-      {/* 썸네일 아래 점선 */}
-      <div className="border-t-2 border-dashed border-primary-900 my-2" />
-
-      {/* 제목, 장르 블럭 */}
-      <div className="px-4">
-        <h2 className="text-[25px] text-black font-bold">{title}</h2>
-
-        <div className="flex gap-2 text-xs text-gray-500 font-bold mt-1">
-          {genres.map((genre) => (
-            <span
-              key={genre}
-              className="bg-gray-200 text-gray-700 rounded px-2 py-[2px]"
-            >
-              {genre}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* 장르 아래 점선 */}
-      <div className="border-t-2 border-dashed border-primary-900 my-4" />
-
-      {/* 플랫폼 아이콘 */}
-      <div className="flex gap-2 px-4 mb-2">
-        {platforms.map((platform) => {
-          const iconUrl = getPlatformIconUrl(platform.platformType);
-          const fallbackUrl = fallbackUrls[platform.platformType];
-          const link = platform.watchUrl || fallbackUrl;
-          return iconUrl && link ? (
-            <button
-              key={platform.platformType}
-              onClick={() => window.open(link, '_blank')}
-              className="w-8 h-8"
-            >
-              <Avatar className="w-8 h-8 border border-primary-900">
-                <AvatarImage src={iconUrl} alt={platform.platformType} />
-                <AvatarFallback className="text-[10px]">
-                  {platform.platformType[0]}
-                </AvatarFallback>
-              </Avatar>
-            </button>
-          ) : null;
-        })}
-      </div>
-
-      {/* 콘텐츠 상세 정보 */}
-      <div className="flex flex-col gap-2 px-4 py-2 flex-grow mt-2">
-        <div className="grid grid-cols-[auto_1fr] gap-x-4 text-sm text-gray-400">
-          <span>러닝타임</span>
-          <span className="text-black">{runningTime}분</span>
-
-          <span>개봉일</span>
-          <span className="text-black">{openDate}</span>
-
-          <span>연령 등급</span>
-          <span className="text-black">{rating}</span>
-        </div>
-
-        {/* 설명 */}
-        <div className="flex flex-col mt-1">
-          <h3 className="text-sm text-gray-400">줄거리</h3>
-
-          <div
-            className={`text-sm text-gray-700 transition-all duration-300 ${
-              isExpanded
-                ? 'max-h-[150px] overflow-y-auto pr-1'
-                : 'line-clamp-4 overflow-hidden'
-            }`}
-          >
-            {description}
+      {!expanded && (
+        <CardHeader>
+          <div className="space-y-1 pb-2">
+            <h3 className="font-bold text-2xl leading-tight">{title}</h3>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{genres.join(', ')}</span>
+            </div>
           </div>
 
-          <button
-            className="text-xs text-primary-500 mt-1"
-            onClick={toggleDescription}
-          >
-            {isExpanded ? '접기 ▲' : '더보기 ▼'}
-          </button>
-        </div>
-      </div>
-    </div>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <h4 className="font-medium text-sm md:text-lg">플랫폼</h4>
+              <span className="text-xs text-muted-foreground">
+                (플랫폼 클릭 바로 보러가기)
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {platforms.map((platform) => {
+                const imageSrc = getPlatformLogo(platform.platformType);
+                if (!imageSrc) return null;
+
+                return (
+                  <CircleOption
+                    key={platform.platformType}
+                    label={platform.platformType}
+                    imageSrc={imageSrc}
+                    size="sm"
+                    onClick={() =>
+                      handlePlatformClick(
+                        platform.platformType,
+                        platform.watchUrl,
+                      )
+                    }
+                    showLabel={false}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </CardHeader>
+      )}
+      <CardContent className="relative flex flex-col space-y-3 py-2 flex-1">
+        {!expanded ? (
+          <>
+            {/* 일반 정보 */}
+            <div className="space-y-2 text-sm md:text-base">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-60">감독</span>
+                <span className="ml-auto">{formatInfo(directors)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-60">개봉일</span>
+                <span className="ml-auto"> {formatDateInfo(openDate)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-60">러닝타임</span>
+                <span className="ml-auto">{formatInfo(runningTime)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-60">연령 등급</span>
+                <span className="ml-auto">{formatInfo(rating)}</span>
+              </div>
+            </div>
+            {/* 줄거리 요약 */}
+            <div className="relative">
+              <h4 className="font-medium text-sm md:text-lg mb-2">줄거리</h4>
+              <p
+                ref={descRef}
+                className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-2 md:line-clamp-3"
+              >
+                {description}
+              </p>
+
+              <div className="flex justify-end mt-1">
+                <button
+                  onClick={() => setExpanded(true)}
+                  className="text-xs md:text-sm text-primary-500 hover:underline"
+                >
+                  더보기 ▲
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* 줄거리 전체 - 기존 정보 사라지고 이거만 */}
+            <div className="flex flex-col justify-between flex-1">
+              <div>
+                <h4 className="font-medium text-sm md:text-lg mb-2">줄거리</h4>
+                <p className="text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  {description}
+                </p>
+              </div>
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={() => setExpanded(false)}
+                  className="text-xs md:text-sm text-primary-500 hover:underline"
+                >
+                  접기 ▼
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

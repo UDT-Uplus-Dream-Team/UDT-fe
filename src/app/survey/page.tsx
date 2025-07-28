@@ -2,38 +2,34 @@
 
 import Step1 from '@components/survey/Step1';
 import Step2 from '@components/survey/Step2';
-import Step3 from '@components/survey/Step3';
 import SurveyComplete from '@components/survey/SurveyComplete';
 import { useState } from 'react';
 import { SurveyProvider } from '@store/SurveyContext';
 import { useSurveyContext } from '@hooks/useSurveyContext';
-import { usePostSurvey } from '@hooks/survey/usePostSurvey';
+import { postSurvey } from '@lib/apis/survey/postSurvey';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
+import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 
 function SurveyFlow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const { selectedPlatforms, selectedGenres } = useSurveyContext();
-  const { mutate: submitSurvey } = usePostSurvey();
+  const { selectedPlatforms, selectedGenres, watchedContents } =
+    useSurveyContext();
+  const showErrorToast = useErrorToastOnce();
 
-  const handleNext = () => {
-    if (step < 3) {
-      setStep((prev) => (prev + 1) as 1 | 2 | 3 | 4);
+  const handleNext = async () => {
+    if (step < 2) {
+      setStep((prev) => (prev + 1) as 1 | 2 | 3);
     } else {
-      submitSurvey(
-        {
+      try {
+        await postSurvey({
           platforms: selectedPlatforms,
           genres: selectedGenres,
-        },
-        {
-          onSuccess: () => {
-            setStep(4); // 성공 시 완료 페이지로 이동
-          },
-          onError: (error) => {
-            console.error('설문조사 제출 실패', error);
-            alert('설문조사 제출에 실패했습니다.');
-          },
-        },
-      );
+          contentIds: watchedContents,
+        });
+        setStep(3); // 성공 시 완료 페이지로 이동
+      } catch {
+        showErrorToast('설문조사 제출에 실패했습니다.');
+      }
     }
   };
 
@@ -41,8 +37,8 @@ function SurveyFlow() {
     <div>
       {step === 1 && <Step1 onNext={handleNext} />}
       {step === 2 && <Step2 onNext={handleNext} />}
-      {step === 3 && <Step3 onNext={handleNext} />}
-      {step === 4 && <SurveyComplete />}
+      {/* {step === 3 && <Step3 onNext={handleNext} />} */}
+      {step === 3 && <SurveyComplete />}
     </div>
   );
 }

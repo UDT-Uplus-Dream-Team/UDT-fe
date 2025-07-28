@@ -11,6 +11,7 @@ import { DetailBottomSheetContent } from '@components/explore/DetailBottomSheetC
 import { useGetContentListByBoxType } from '@hooks/explore/useGetContentListByBoxType';
 import { FilterRadioButton } from '@components/explore/FilterRadioButton';
 import { PosterScrollSkeleton } from '@components/explore/PosterScrollBoxSkeleton';
+import { useQueryErrorToast } from '@hooks/useQueryErrorToast';
 
 export interface PosterCardScrollBoxProps {
   BoxTitle: string;
@@ -65,11 +66,11 @@ export const PosterCardScrollBox = ({
   };
 
   // 포스터 스크롤 박스 타입에 따라 콘텐츠 목록 조회 API 호출하는 custom Hook 호출
-  const {
-    data: contentData,
-    status,
-    refetch,
-  } = useGetContentListByBoxType(BoxType);
+  const getContentListByBoxTypeQuery = useGetContentListByBoxType(BoxType);
+  const { data: contentData, status, refetch } = getContentListByBoxTypeQuery;
+
+  // 에러 발생 시 토스트 띄우기
+  useQueryErrorToast(getContentListByBoxTypeQuery);
 
   const handlePosterClick = (movieId: number) => {
     setSelectedMovieId(movieId);

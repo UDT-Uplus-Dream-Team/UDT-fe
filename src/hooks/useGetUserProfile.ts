@@ -8,8 +8,7 @@ export const useGetUserProfile = () => {
     queryKey: ['userProfile'],
     queryFn: authService.getCurrentUser,
     staleTime: 1000 * 60 * 5, // 5분간 fresh
-    retry: (failureCount: number, error: Error) => {
-      if (error) console.log(error);
+    retry: (failureCount: number) => {
       return failureCount < 3;
     },
   });

@@ -44,9 +44,8 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
       if (data.event === 'onReady' || data.event === 'onStateChange') {
         setIsVideoReady(true);
       }
-    } catch (error) {
+    } catch {
       // JSON 파싱 에러는 무시 (다른 메시지일 수 있음)
-      console.log(error);
     }
   }, []);
 

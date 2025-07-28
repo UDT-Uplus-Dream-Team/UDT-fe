@@ -48,8 +48,6 @@ export const useRefreshCuratedContents = () => {
 
   const forceRefresh = async () => {
     try {
-      console.log('강제 큐레이션 새로고침 시작...');
-
       // 1. 기존 모든 curatedContents 관련 쿼리 제거
       queryClient.removeQueries({
         queryKey: ['curatedContents'],
@@ -58,7 +56,6 @@ export const useRefreshCuratedContents = () => {
 
       // 2. 새로운 timestamp 생성
       const newTimestamp = generateNewCuratedContentKey();
-      console.log('새로운 쿼리 키 생성:', newTimestamp);
 
       // 3. 새로운 키로 데이터 fetch
       const newData = await queryClient.fetchQuery({
@@ -66,10 +63,8 @@ export const useRefreshCuratedContents = () => {
         queryFn: fetchCuratedContentsWithFallback,
       });
 
-      console.log('강제 큐레이션 새로고침 완료:', newData);
       return newData;
     } catch (error) {
-      console.error('강제 큐레이션 새로고침 실패:', error);
       throw error;
     }
   };
@@ -86,14 +81,10 @@ const fetchCuratedContentsWithFallback = async (): Promise<
 > => {
   try {
     const timestamp = Date.now();
-    console.log(`큐레이션 API 호출 시작 (${timestamp})`);
 
     const response: CuratedContentsResponse = await getCuratedContents();
 
     if (response.success && response.data && response.data.length > 0) {
-      console.log(
-        `큐레이션 API 성공 (${timestamp}): ${response.data.length}개 콘텐츠 로드`,
-      );
       return response.data;
     }
 

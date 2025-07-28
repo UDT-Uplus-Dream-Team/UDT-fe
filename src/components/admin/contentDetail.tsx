@@ -29,10 +29,17 @@ export default function ContentDetail({
               <Calendar className="h-4 w-4" />
               <span>{content.openDate?.split('T')[0] || ''}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              {content.runningTime}분
-            </div>
+            {content.runningTime > 0 && (
+              <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                {content.runningTime}분
+              </div>
+            )}
+            {content.episode > 0 && (
+              <div className="flex items-center gap-1">
+                <span>{content.episode}화</span>
+              </div>
+            )}
             <Badge>{content.rating}</Badge>
           </div>
         </div>

@@ -51,16 +51,12 @@ export const getRecommendationContents = async (
   limit: number = 10,
 ): Promise<TicketComponent[]> => {
   try {
-    console.log('추천 콘텐츠 API 요청 시작:', { limit });
-
     const response: AxiosResponse<TicketComponent[]> = await axiosInstance.get(
       `/api/v1/contents/recommendations`,
       {
         params: { limit },
       },
     );
-
-    console.log('추천 콘텐츠 API 응답:', response.data);
 
     if (!Array.isArray(response.data)) {
       console.error('API 응답이 배열 형태가 아닙니다:', response.data);

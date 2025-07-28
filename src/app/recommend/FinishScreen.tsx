@@ -14,12 +14,8 @@ export const FinishScreen: React.FC = () => {
 
   const handleViewResults = async () => {
     try {
-      console.log('FinishScreen에서 큐레이션 콘텐츠 새로고침 시작...');
-
       // 캐시 무효화 + 강제 refetch
       await forceRefresh();
-
-      console.log('FinishScreen에서 큐레이션 콘텐츠 새로고침 완료');
 
       setPhase('result');
     } catch (error) {

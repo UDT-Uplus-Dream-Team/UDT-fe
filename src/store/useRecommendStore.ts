@@ -117,12 +117,12 @@ export const useRecommendStore = create<RecommendState>()(
 
       shouldLoadMoreContent: () => {
         const { currentIndex } = get();
-        return currentIndex > 0 && currentIndex % 5 === 0;
+        return currentIndex > 0 && currentIndex % 10 === 1;
       },
 
       shouldShowFinish: () => {
         const { totalSwipeCount } = get();
-        return totalSwipeCount >= 20; // 5번 스와이프하면 결과 화면으로
+        return totalSwipeCount >= 60; // 5번 스와이프하면 결과 화면으로
       },
     })),
     { name: 'recommend-storage' },

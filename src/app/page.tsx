@@ -16,7 +16,7 @@ export default function KakaoLoginPage() {
 
   const handleKakaoLogin = () => {
     window.location.href =
-      'https://dev.banditbool.com/oauth2/authorization/kakao';
+      'https://api.banditbool.com/oauth2/authorization/kakao';
   };
 
   // 클라이언트에서만 별 생성

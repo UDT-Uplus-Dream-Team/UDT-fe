@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { DetailedContentData } from '@type/explore/Explore';
 import Image from 'next/image';
+import { getYouTubeEmbedUrl } from '@utils/getYouTubeEmbedUrl';
+import { formattingOpenDate } from '@utils/formattingOpenDate';
 
 // 트레일러 영상 재생 컴포넌트에 사용할 props 타입
 interface VideoPlayerProps {
@@ -103,7 +105,9 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
             {contentData.title}
           </span>
           <div className="flex items-center space-x-5 text-sm text-gray-200">
-            <span>{contentData.openDate.split('-')[0]}</span>
+            {contentData.openDate !== null ? (
+              <span>{formattingOpenDate(contentData.openDate)}</span>
+            ) : null}
             <span>{contentData.rating}</span>
             <span>{contentData.countries[0]}</span>
           </div>
@@ -134,7 +138,9 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
               {contentData.title}
             </span>
             <div className="flex items-center space-x-5 text-sm text-gray-200">
-              <span>{contentData.openDate.split('-')[0]}</span>
+              {contentData.openDate !== null ? (
+                <span>{formattingOpenDate(contentData.openDate)}</span>
+              ) : null}
               <span>{contentData.rating}</span>
               <span>{contentData.countries[0]}</span>
             </div>
@@ -150,7 +156,7 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
       >
         <iframe
           ref={iframeRef}
-          src={`${contentData.trailerUrl}&enablejsapi=1`} // JS API 활성화
+          src={`${getYouTubeEmbedUrl(contentData.trailerUrl)}&enablejsapi=1`} // JS API 활성화
           title={`${contentData.title} trailer`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"

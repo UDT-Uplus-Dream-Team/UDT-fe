@@ -221,6 +221,21 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .visible-scroll {
+    scrollbar-width: auto; /* Firefox */
+    -ms-overflow-style: auto; /* IE 10+ */
+  }
+
+  .visible-scroll::-webkit-scrollbar {
+    display: block;
+    width: 6px; /* 원하는 너비 */
+  }
+
+  .visible-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.4); /* 스크롤 색상 */
+    border-radius: 6px;
+  }
 }
 
 @layer utilities {

@@ -7,9 +7,11 @@ import { showInteractiveToast } from '@components/common/Toast';
 import { postFeedbackContent } from '@lib/apis/recommend/postFeedbackContent';
 import { useRecommendStore } from '@store/useRecommendStore';
 import { useFetchRecommendations } from '@hooks/recommend/useGetRecommendationContents';
+import { useRefreshCuratedContents } from '@hooks/recommend/useGetCuratedContents';
 import { FinishScreen } from './FinishScreen';
 import { sendAnalyticsEvent } from '@lib/gtag';
 import { LoadingScreen } from './LoadingScreen';
+import { toast } from 'sonner';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 type FeedbackType = 'liked' | 'unliked' | 'neutral';
@@ -41,6 +43,8 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     isPending: isLoading,
     error: fetchError,
   } = useFetchRecommendations();
+
+  const { forceRefresh } = useRefreshCuratedContents();
 
   // 로컬 UI 상태들 (애니메이션 관련은 persist 불필요)
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
@@ -172,13 +176,13 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     direction: SwipeDirection,
     feedbackType?: FeedbackType,
   ): Promise<void> => {
-    if (isAnimating || isFlipped || !currentMovie) return;
+    if (isAnimating || isFlipped) return;
 
     // GA4로 스와이프 이벤트 전송 (Google Analytics 연동을 위함)
     sendAnalyticsEvent('swipe_action_in_reels', {
       direction, // left, right, up
       feedback: feedbackType ?? 'neutral',
-      content_id: currentMovie.contentId,
+      content_id: currentMovie ? currentMovie.contentId : 9999999,
       page: 'recommend_screen',
       swipe_count: swipeCount + 1, // 0-index면 +1
       timestamp: new Date().toISOString(),
@@ -194,21 +198,14 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       sendFeedbackImmediately(currentMovie.contentId, feedbackType);
     }
 
-    // 애니메이션 완료 후 콘텐츠 변경
+    // 애니메이션 정리는 기존대로
     setTimeout(() => {
-      setSwipeDirection(null);
-      setFeedback('neutral');
-
-      // 상태 업데이트를 애니메이션 완료 후로 이동
       incrementSwipeCount();
       setCurrentIndex(currentIndex + 1);
-    }, 700);
-
-    // 애니메이션 잠금 해제
-    setTimeout(() => {
+      setSwipeDirection(null);
+      setFeedback('neutral');
       setIsAnimating(false);
-    }, 1000);
-    console.log(moviePool);
+    }, 700);
   };
 
   // ── 일정 횟수 스와이프 후 토스트 표시 ──────────────
@@ -224,9 +221,22 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         duration: Infinity,
         position: 'top-center',
         className: 'bg-gray-500',
-        onAction: () => {
-          setResultReady(true);
-          onComplete();
+        onAction: async () => {
+          try {
+            console.log('큐레이션 콘텐츠 강제 새로고침 시작...');
+
+            // 새로운 강제 refresh 사용
+            await forceRefresh();
+
+            console.log('큐레이션 콘텐츠 강제 새로고침 완료');
+
+            setResultReady(true);
+            onComplete();
+          } catch (error) {
+            console.error('큐레이션 콘텐츠 새로고침 실패:', error);
+            setResultReady(true);
+            onComplete();
+          }
         },
         onClose: () => {
           resetSwipeCount();
@@ -235,7 +245,14 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         },
       });
     }
-  }, [swipeCount, resultReady, toastShown, onComplete, resetSwipeCount]);
+  }, [
+    swipeCount,
+    resultReady,
+    toastShown,
+    onComplete,
+    resetSwipeCount,
+    forceRefresh,
+  ]);
 
   // ── 키보드 이벤트 처리 ────────────────────────
   useEffect(() => {
@@ -251,7 +268,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       }
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        handleSwipe('up');
+        handleSwipe('up', 'neutral');
       }
     };
 
@@ -277,19 +294,19 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     if (absX > absY && absX > threshold) {
       handleSwipe(dx > 0 ? 'right' : 'left', dx > 0 ? 'liked' : 'unliked');
     } else if (dy < -threshold) {
-      handleSwipe('up');
+      handleSwipe('up', 'neutral');
     }
   };
 
   const onTouchStart = (e: React.TouchEvent): void => {
-    if (isAnimating || e.touches.length !== 1) return;
+    if (isAnimating || e.touches.length !== 1 || isFlipped) return;
     e.preventDefault();
     const touch = e.touches[0];
     setStartPoint({ x: touch.clientX, y: touch.clientY });
   };
 
   const onTouchEnd = (e: React.TouchEvent): void => {
-    if (!startPoint || e.changedTouches.length !== 1) return;
+    if (!startPoint || e.changedTouches.length !== 1 || isFlipped) return;
     e.preventDefault();
     const touch = e.changedTouches[0];
     const dx: number = touch.clientX - startPoint.x;
@@ -302,7 +319,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     if (absX > absY && absX > threshold) {
       handleSwipe(dx > 0 ? 'right' : 'left', dx > 0 ? 'liked' : 'unliked');
     } else if (dy < -threshold) {
-      handleSwipe('up');
+      handleSwipe('up', 'neutral');
     }
   };
 
@@ -330,6 +347,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   };
 
   if (shouldShowFinish()) {
+    toast.dismiss();
     return <FinishScreen />;
   }
 
@@ -394,7 +412,12 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         >
           {/* 자리 채우기 티켓 */}
           <div className="relative flex w-full aspect-[75/135] max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
-            <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
+            <Ticket
+              key={currentMovie.contentId}
+              movie={currentMovie}
+              variant="initial"
+              feedback="neutral"
+            />
           </div>
 
           {/* 다음 카드 peek */}
@@ -406,11 +429,17 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
                   : 'translate-y-0 scale-100'
               }`}
             >
-              <Ticket movie={nextMovie} variant="initial" feedback="neutral" />
+              <Ticket
+                key={nextMovie.contentId}
+                movie={nextMovie}
+                variant="initial"
+                feedback="neutral"
+              />
             </div>
           )}
 
           {/* 현재 카드 */}
+
           <div
             className={`absolute inset-0 z-20 flex items-center justify-center transition-transform ${
               swipeDirection
@@ -444,6 +473,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
                   style={{ backfaceVisibility: 'hidden' }}
                 >
                   <Ticket
+                    key={currentMovie.contentId}
                     movie={currentMovie}
                     variant="initial"
                     feedback={feedback}
@@ -461,7 +491,11 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
                     zIndex: isFlipped ? 30 : 10,
                   }}
                 >
-                  <Ticket movie={currentMovie} variant="detail" />
+                  <Ticket
+                    key={currentMovie.contentId}
+                    movie={currentMovie}
+                    variant="detail"
+                  />
                 </div>
               </div>
             </div>

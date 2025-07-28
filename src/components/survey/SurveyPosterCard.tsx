@@ -1,11 +1,10 @@
 import Image from 'next/image';
-import type { StaticImageData } from 'next/image';
 import { cn } from '@lib/utils';
 import React from 'react';
 
 interface SurveyPosterCardProps {
   title: string;
-  image: string | StaticImageData;
+  image: string;
   selected?: boolean;
   onClick: () => void;
 }
@@ -32,7 +31,13 @@ export function SurveyPosterCard({
       }
     >
       <div className="relative w-full aspect-[2/3]">
-        <Image src={image} alt={title} fill className="object-cover" />
+        <Image
+          src={image}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover"
+        />
       </div>
     </div>
   );

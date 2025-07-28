@@ -98,10 +98,17 @@ const ProfilePage = () => {
           {/* 프로필 이미지 + 이름/이메일 수평 정렬 */}
           <div className="flex flex-row items-center justify-start gap-4 mb-2">
             {/* 프로필 이미지 */}
-            <img
-              src={profileImageUrl || '/images/default-profile.png'}
+            <Image
+              src={
+                profileImageUrl
+                  ? profileImageUrl.replace(/^http:\/\//, 'https://')
+                  : '/images/default-profile.png'
+              }
               alt="프로필 이미지"
-              className="w-[60px] h-[60px] rounded-full object-cover"
+              width={60}
+              height={60}
+              className="rounded-full object-cover"
+              style={{ aspectRatio: '1 / 1' }}
             />
 
             {/* 이름 + 이메일 */}

@@ -4,6 +4,7 @@ import { useSurveyContext } from '@hooks/useSurveyContext';
 import { CircleOption } from '@components/common/circleOption';
 import { PLATFORMS } from '@lib/platforms';
 import { Button } from '@components/ui/button';
+import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 
 type Step1Props = {
   onNext: () => void;
@@ -11,6 +12,7 @@ type Step1Props = {
 
 export default function Step1({ onNext }: Step1Props) {
   const { selectedPlatforms, setSelectedPlatforms } = useSurveyContext();
+  const showErrorToast = useErrorToastOnce();
 
   const togglePlatforms = (label: string) => {
     if (selectedPlatforms.includes(label)) {
@@ -19,6 +21,15 @@ export default function Step1({ onNext }: Step1Props) {
       setSelectedPlatforms([...selectedPlatforms, label]);
     }
   };
+
+  const handleComplete = () => {
+    if (selectedPlatforms.length === 0) {
+      showErrorToast('1개 이상 선택해주세요');
+      return;
+    }
+    onNext();
+  };
+
   return (
     <div className="h-screen flex justify-center items-center">
       <div
@@ -49,7 +60,7 @@ export default function Step1({ onNext }: Step1Props) {
         {/* 고정 버튼 */}
         <div className="mt-auto pt-10">
           <Button
-            onClick={onNext}
+            onClick={handleComplete}
             className="min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer"
           >
             완료

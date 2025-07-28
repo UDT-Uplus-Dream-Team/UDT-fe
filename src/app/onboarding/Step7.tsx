@@ -70,10 +70,10 @@ export default function Step7({ onNext }: Step7Props) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white px-4 relative">
+    <div className="min-h-screen flex flex-col -mb-20 items-center justify-center bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white px-4 relative">
       {/* 안내 멘트 */}
       <div className="absolute top-4 text-center z-20">
-        <p className="md:text-lg  text-[16px] font-semibold leading-relaxed text-white mt-8">
+        <p className="md:text-lg  text-[16px] font-semibold leading-relaxed text-white ">
           👀 <strong>눈 버튼</strong>을 눌러 상세 정보를 확인하고 <br />
           🔄 <strong>리롤 버튼(1회)</strong>으로 다른 콘텐츠도 확인해보세요!
         </p>
@@ -81,7 +81,7 @@ export default function Step7({ onNext }: Step7Props) {
       </div>
 
       {/* 카드 슬라이더 */}
-      <div className="relative h-[600px] mt-20 py-5 flex items-center justify-center w-full">
+      <div className="relative h-[70%] md:h-[80%] w-[80%] min-w-70 min-h-130 flex items-center justify-center mt-10">
         {movies.map((movie, idx) => {
           const pos = getCardPosition(idx);
           const isCenter = idx === currentIndex;
@@ -99,52 +99,61 @@ export default function Step7({ onNext }: Step7Props) {
                 zIndex: pos.zIndex,
               }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="absolute w-80 h-full flex flex-col items-center"
+              className="
+                  absolute my-4
+                  min-w-[280px] min-h-[480px]
+                  max-w-[400px] max-h-[680px]  w-[80vw] h-[65vh] md:w-full md:h-full
+                "
             >
-              <motion.div className="relative w-full h-full">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`flip-${movie.contentId}-${isFlipped[idx]}`}
-                    initial={{ rotateY: isFlipped[idx] ? 90 : -90 }}
-                    animate={{ rotateY: 0 }}
-                    exit={{ rotateY: isFlipped[idx] ? -90 : 90 }}
-                    transition={{ duration: 0.2 }}
-                    className="w-full h-full"
-                    style={{ transformStyle: 'preserve-3d' }}
-                  >
-                    <Ticket
-                      movie={movie}
-                      variant={isFlipped[idx] ? 'detail' : 'result'}
-                      feedback="neutral"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </motion.div>
+              {isCenter ? (
+                <div className="relative w-full h-full">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`flip-${movie.contentId}-${isFlipped[idx]}`}
+                      initial={{ rotateY: isFlipped[idx] ? 90 : -90 }}
+                      animate={{ rotateY: 0 }}
+                      exit={{ rotateY: isFlipped[idx] ? -90 : 90 }}
+                      transition={{ duration: 0.2 }}
+                      className="w-full h-full"
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
+                      <Ticket
+                        movie={movie}
+                        variant={isFlipped[idx] ? 'detail' : 'result'}
+                        feedback="neutral"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <div className="relative w-full h-[calc(100%-20px)]">
+                  <Ticket movie={movie} variant="result" feedback="neutral" />
+                </div>
+              )}
 
               {isCenter && (
                 <div className="absolute -top-2 -right-2 flex gap-2 z-50">
                   {/* 상세보기 버튼 */}
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => handleFlip(idx)}
-                  >
-                    <Button variant="outline" size="icon">
+                  <motion.div whileTap={{ scale: 0.9 }}>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleFlip(idx)}
+                    >
                       {isFlipped[idx] ? (
                         <EyeOff className="w-4 h-4 text-black" />
                       ) : (
                         <Eye className="w-4 h-4 text-black" />
                       )}
                     </Button>
-                  </motion.button>
+                  </motion.div>
 
                   {/* 리롤 버튼 */}
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => handleReroll(idx)}
-                  >
+                  <motion.div whileTap={{ scale: 0.9 }}>
                     <Button
                       variant="outline"
                       size="icon"
+                      onClick={() => handleReroll(idx)}
                       disabled={rerollUsed[idx]}
                     >
                       <RefreshCw
@@ -153,7 +162,7 @@ export default function Step7({ onNext }: Step7Props) {
                         }`}
                       />
                     </Button>
-                  </motion.button>
+                  </motion.div>
                 </div>
               )}
             </motion.div>
@@ -162,7 +171,7 @@ export default function Step7({ onNext }: Step7Props) {
       </div>
 
       {/* 콘텐츠 추가 버튼 */}
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center mt-2">
         <Button
           onClick={() => {
             onNext();

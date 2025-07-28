@@ -4,7 +4,7 @@ import { useSurveyContext } from '@hooks/useSurveyContext';
 import { CircleOption } from '@components/common/circleOption';
 import { PLATFORMS } from '@lib/platforms';
 import { Button } from '@components/ui/button';
-import { showSimpleToast } from '@components/common/Toast';
+import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 
 type Step1Props = {
   onNext: () => void;
@@ -12,6 +12,7 @@ type Step1Props = {
 
 export default function Step1({ onNext }: Step1Props) {
   const { selectedPlatforms, setSelectedPlatforms } = useSurveyContext();
+  const showErrorToast = useErrorToastOnce();
 
   const togglePlatforms = (label: string) => {
     if (selectedPlatforms.includes(label)) {
@@ -23,10 +24,7 @@ export default function Step1({ onNext }: Step1Props) {
 
   const handleComplete = () => {
     if (selectedPlatforms.length === 0) {
-      showSimpleToast.warning({
-        message: '1개 이상 선택해주세요',
-        className: 'w-full bg-black/80 shadow-lg text-white',
-      });
+      showErrorToast('1개 이상 선택해주세요');
       return;
     }
     onNext();

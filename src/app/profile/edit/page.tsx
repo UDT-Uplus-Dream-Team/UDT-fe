@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { CircleOption } from '@components/common/circleOption';
@@ -36,6 +36,8 @@ export default function EditPreferencePage() {
   // userQuery.data가 변경될 때만 새로운 값을 반환하도록 함
   const userProfile = useMemo(() => userQuery.data, [userQuery.data]);
 
+  const toastVisibleRef = useRef(false);
+
   useEffect(() => {
     if (userProfile) {
       setSelectedOtt(userProfile.platforms || []);
@@ -44,11 +46,20 @@ export default function EditPreferencePage() {
   }, [userProfile]);
 
   const showLimit = (message: string) => {
+    if (toastVisibleRef.current) return;
+
+    toastVisibleRef.current = true;
+
     showSimpleToast.error({
       message,
       position: 'top-center',
-      className: 'w-full bg-black/80 shadow-lg text-white',
+      className:
+        'bg-black/80 text-white px-4 py-2 rounded-md mx-auto shadow-lg',
+      duration: 2000, // 지속시간 설정 (ms)
     });
+    setTimeout(() => {
+      toastVisibleRef.current = false;
+    }, 2000);
   };
 
   const toggleSelection = (

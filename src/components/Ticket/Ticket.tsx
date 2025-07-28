@@ -139,7 +139,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
                 <h4 className="font-medium text-sm md:text-lg mb-2">줄거리</h4>
                 <p
                   ref={descRef}
-                  className="text-sm md:text-base leading-relaxed line-clamp-3"
+                  className="text-sm md:text-base leading-relaxed line-clamp-2"
                 >
                   {movie.description}
                 </p>
@@ -150,7 +150,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
                       onClick={() => setExpanded(true)}
                       className="text-xs md:text-sm text-primary-500 hover:underline"
                     >
-                      더보기 ▲
+                      더보기
                     </button>
                   </div>
                 )}
@@ -172,7 +172,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
                     onClick={() => setExpanded(false)}
                     className="text-xs md:text-sm text-primary-500 hover:underline"
                   >
-                    접기 ▼
+                    접기
                   </button>
                 </div>
               </div>
@@ -186,7 +186,7 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
   if (variant === 'result') {
     return (
       <Card className={cardBaseClass}>
-        <div className="relative flex-grow">
+        <div className="relative flex-grow pointer-events-none">
           <Image
             src={posterSrc}
             alt={movie.title}

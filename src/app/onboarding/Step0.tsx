@@ -12,7 +12,7 @@ export default function Step0({ onNext }: StepProps) {
   const currentMovie = MockMovies[0];
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen px-6 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
+    <div className="relative flex flex-col items-center justify-center min-h-screen px-6 -mb-20 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
       <div className="text-center space-y-4 mb-6">
         <h2 className="text-xl font-semibold leading-relaxed">
           간단한 스와이프 몇번으로 <br />
@@ -20,13 +20,13 @@ export default function Step0({ onNext }: StepProps) {
         </h2>
       </div>
 
-      <div className="relative w-full max-w-[320px] aspect-[75/135] mb-6">
+      <div className="relative w-full max-w-[320px] aspect-[75/135] sm:max-w-[400px] sm:aspect-[75/127] max-h-[70vh]">
         <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
       </div>
 
       <Button
         variant="ghost"
-        className="text-white border border-white/30 hover:bg-white/10"
+        className="text-white border border-white/30 hover:bg-white/10 mt-5"
         onClick={onNext}
       >
         계속

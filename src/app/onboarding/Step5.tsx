@@ -122,7 +122,7 @@ export default function Step5({ onNext }: StepProps5) {
   if (currentIndex >= MockMovies.length) return null;
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen pt-10 px-4 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1]">
+    <div className="flex flex-col items-center justify-start min-h-screen pt-10 px-4 -mb-20 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1]">
       {/* 카드 위 문구 */}
       <div className="text-center space-y-2 mb-2">
         <p className="text-sm text-white/80">{`${currentIndex + 1} / 2`}</p>
@@ -131,12 +131,26 @@ export default function Step5({ onNext }: StepProps5) {
         </h2>
       </div>
 
+      {/* 카드 아래 안내 문구 */}
+      <div className="text-center space-y-2 z-30">
+        <p className="text-sm text-white/80">
+          좌 우 아래 스와이프로 취향 반영 <br />
+          카드를 직접 끌거나 키보드 방향키로 직접 해보아요!!
+        </p>
+      </div>
+
       <div className="my-8 flex w-full justify-center">
         <div></div>
         <div
-          className={`relative inline-block mx-10 w-full max-w-[320px] aspect-[75/135] select-none ${
+          className={`relative w-full max-w-[320px] aspect-[75/135] max-h-[72vh] sm:max-w-[400px] sm:aspect-[75/127] select-none ${
             isFlipped ? 'touch-action-auto' : 'touch-action-none'
           }`}
+          style={{
+            touchAction: isFlipped ? 'auto' : 'none',
+            WebkitTouchCallout: 'none',
+            WebkitUserSelect: 'none',
+            userSelect: 'none',
+          }}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
           onPointerCancel={() => (startPoint.current = null)}
@@ -216,14 +230,6 @@ export default function Step5({ onNext }: StepProps5) {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* 카드 아래 안내 문구 */}
-      <div className="mt-4 text-center space-y-2 z-30">
-        <p className="text-sm text-white/80">
-          좌 우 아래 스와이프로 취향 반영 <br />
-          카드를 직접 끌거나 키보드 방향키로 직접 해보아요!!
-        </p>
       </div>
     </div>
   );

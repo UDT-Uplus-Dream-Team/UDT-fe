@@ -39,7 +39,7 @@ export default function Step6({ onNext }: Step6Props) {
   const currentMovie = MockMovies[1];
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen px-6 -mb-20 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
+    <div className="relative flex flex-col items-center justify-center h-full w-full px-6 text-white">
       {/* 검정 반투명 오버레이 + 설명 */}
       <div className="absolute inset-0 bg-black/70 z-20 flex flex-col items-center justify-center text-center px-4">
         <svg
@@ -68,7 +68,7 @@ export default function Step6({ onNext }: Step6Props) {
       </div>
 
       {/* 카드 - 중앙 정렬 */}
-      <div className="relative w-full max-w-[320px] aspect-[75/135] max-h-[72vh] sm:max-w-[400px] sm:aspect-[75/127]">
+      <div className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70vh]">
         <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
       </div>
     </div>

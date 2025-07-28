@@ -31,6 +31,14 @@ export default function OnboardingPage() {
     setStep((prev) => prev + 1);
   };
 
+  const handleComplete = () => {
+    // isNewUser 쿠키 제거 (만료 시간을 과거로 설정)
+    document.cookie =
+      'isNewUser=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    // 추천 페이지로 이동
+    router.push('/recommend');
+  };
+
   if (!started) return <StartScreen onStart={handleStart} />;
 
   const steps = [
@@ -42,7 +50,7 @@ export default function OnboardingPage() {
     <Step5 onNext={handleNext} key={5} />, // Step5: 실제 좋아요/싫어요 2회 시도 + 자동 전환
     <Step6 onNext={handleNext} key={6} />, // Step6: 확인 토스트 반환
     <Step7 onNext={handleNext} key={7} />, // Step7: 결과 창
-    <Step8 onNext={() => router.push('/recommend')} key={7} />, // Step8: 마이페이지 확인
+    <Step8 onNext={handleComplete} key={7} />, // Step8: 마이페이지 확인
   ];
 
   return steps[step];

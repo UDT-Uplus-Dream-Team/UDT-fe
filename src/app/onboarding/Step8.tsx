@@ -11,7 +11,7 @@ interface Step8Props {
 
 export default function Step8({ onNext }: Step8Props) {
   return (
-    <div className="min-h-screen flex flex-col items-center -mb-20 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white px-4 pt-12">
+    <div className="relative flex flex-col items-center justify-center h-full w-full px-4 text-white pt-2">
       {/* 안내 텍스트 */}
       <div className="text-center mb-6">
         <p className="text-base font-semibold leading-relaxed whitespace-pre-line">
@@ -23,7 +23,7 @@ export default function Step8({ onNext }: Step8Props) {
       </div>
 
       {/* 카드 영역 */}
-      <div className="flex flex-col gap-6 items-center w-full max-w-[550px] max-h-[560px] md:max-h-[620px] ">
+      <div className="flex flex-col gap-6 items-center w-full max-w-[80vw] max-h-[60vh] md:max-h-[620px] ">
         {recommendData.map((card, index) => (
           <RecommendationCard key={index} {...card} disabled />
         ))}
@@ -35,7 +35,7 @@ export default function Step8({ onNext }: Step8Props) {
         className="text-white border border-white/30 hover:bg-white/10 mt-4"
         onClick={onNext}
       >
-        추천 받으러 가기
+        반딧불 시작하기!
       </Button>
     </div>
   );

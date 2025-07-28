@@ -143,12 +143,6 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // 루트 경로 접근 시 역할별 기본 페이지로 리다이렉트
-  if (pathname === '/') {
-    const defaultPath = getDefaultPath(payload.ROLE);
-    return NextResponse.redirect(new URL(defaultPath, request.url));
-  }
-
   // 역할별 권한 확인
   if (!hasPermission(payload.ROLE, pathname)) {
     const defaultPath = getDefaultPath(payload.ROLE);

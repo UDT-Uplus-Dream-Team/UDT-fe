@@ -110,7 +110,6 @@ export const DetailBottomSheetContent = ({
 
     if (contentTrailerUrl) {
       setHasValidTrailer(true);
-      console.log('지금 트레일러 영상 있음!, contentId: ', contentId);
     } else {
       setHasValidTrailer(false);
     }
@@ -143,6 +142,7 @@ export const DetailBottomSheetContent = ({
               src={backdropImgSrc}
               alt={contentData.title || '썸네일'}
               fill
+              unoptimized
               className="object-cover"
               onError={handleImageError}
             />
@@ -176,6 +176,7 @@ export const DetailBottomSheetContent = ({
               src={backdropImgSrc}
               alt={contentData.title || ''}
               fill
+              unoptimized
               className="object-cover"
               onError={handleImageError}
             />

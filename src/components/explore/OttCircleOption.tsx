@@ -32,7 +32,6 @@ export function OttCircleOption({
   const imageSrc = getPlatformLogo(label);
 
   const handleClick = () => {
-    console.log('imageSrc: ', imageSrc); // 확인용
     onToggle(label, !isSelected);
   };
 

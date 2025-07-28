@@ -129,6 +129,7 @@ export const FilterRadioButtonGroup = () => {
                       alt="필터"
                       width={24}
                       height={24}
+                      unoptimized
                     />
                   </button>
                 </SheetTrigger>
@@ -164,6 +165,7 @@ export const FilterRadioButtonGroup = () => {
                         alt="reset"
                         width={12}
                         height={12}
+                        unoptimized
                         src="/icons/reset-icon.svg"
                       />
                       <span className="pl-2">초기화</span>

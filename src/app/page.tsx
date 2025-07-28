@@ -15,7 +15,7 @@ export default function KakaoLoginPage() {
   const [stars, setStars] = useState<StarData[]>([]);
 
   const handleKakaoLogin = () => {
-    window.location.href =
+    window.location.replace =
       'https://api.banditbool.com/oauth2/authorization/kakao';
   };
 

@@ -307,7 +307,7 @@ export const ResultScreen: React.FC = () => {
       {/* Carousel Container */}
       <div
         ref={containerRef}
-        className="relative h-[60%] md:h-[80%] w-[80%] min-w-70 min-h-120 max-w-100 max-h-175 flex items-center justify-center"
+        className="relative h-[60%] md:h-[80%] w-[80%] min-w-70 min-h-110 max-w-100 max-h-175 flex items-center justify-center"
       >
         {contents.map((content, idx) => {
           const pos = getCardPosition(idx, dist);
@@ -329,7 +329,7 @@ export const ResultScreen: React.FC = () => {
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               className="
                   absolute my-4
-                  min-w-[280px] min-h-[480px]
+                  min-w-[280px] min-h-[440px]
                   max-w-[400px] max-h-[680px] w-full h-full
                 "
             >

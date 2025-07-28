@@ -16,6 +16,7 @@ import { X } from 'lucide-react';
 interface PosterCardsGridProps {
   contents: SimpleContentData[];
   fetchNextPage: () => void;
+  status: 'pending' | 'success' | 'error'; // 데이터 로딩 상태
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
 }
@@ -23,6 +24,7 @@ interface PosterCardsGridProps {
 // 필터 선택 시 표시할 그리드 방식 카드 목록 컴포넌트
 export const PosterCardsGrid = ({
   contents,
+  status,
   fetchNextPage,
   hasNextPage,
   isFetchingNextPage,
@@ -106,8 +108,9 @@ export const PosterCardsGrid = ({
           )}
         </>
       ) : (
+        // 로딩 중인 것인지의 여부에 따라 나오는 텍스트가 달라야 함
         <div className="w-full h-full flex items-center justify-center text-white">
-          검색 결과가 없습니다.
+          {status === 'pending' ? '불러오는 중...' : '검색 결과가 없습니다.'}
         </div>
       )}
     </>

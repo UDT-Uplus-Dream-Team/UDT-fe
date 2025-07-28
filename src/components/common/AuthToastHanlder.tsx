@@ -18,11 +18,8 @@ export function AuthToastHandler() {
       const authMessage = urlParams.get('auth_msg');
       const encodedText = urlParams.get('auth_text');
 
-      console.log('🔍 URL params:', { authMessage, encodedText });
-
       if (authMessage && encodedText) {
         const authMessageText = decodeMessage(encodedText);
-        console.log('🎯 Decoded message:', authMessageText);
 
         // URL에서 파라미터 제거 (히스토리에 남지 않게)
         const newUrl = new URL(window.location.href);
@@ -32,7 +29,6 @@ export function AuthToastHandler() {
 
         switch (authMessage) {
           case 'auth-expired':
-            console.log('🚨 Showing auth-expired toast');
             showSimpleToast.error({
               message: authMessageText,
               duration: 5000,
@@ -41,7 +37,6 @@ export function AuthToastHandler() {
             break;
 
           case 'auth-required':
-            console.log('ℹ️ Showing auth-required toast');
             showSimpleToast.error({
               message: authMessageText,
               duration: 4000,
@@ -50,7 +45,6 @@ export function AuthToastHandler() {
             break;
 
           case 'access-denied':
-            console.log('⚠️ Showing access-denied toast');
             showSimpleToast.error({
               message: authMessageText,
               duration: 4000,

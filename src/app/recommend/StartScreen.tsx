@@ -24,8 +24,6 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
 
   // 추천 시작 시 이전 상태 초기화 후 phase 변경
   const handleStartRecommendation = () => {
-    console.log('🔄 추천 진행 상황 초기화 중...');
-
     // 1. 이전 추천 진행 상황 모두 초기화
     resetRecommendProgress();
 
@@ -34,8 +32,6 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
 
     // 3. 부모 컴포넌트의 onStart 콜백 실행 (호환성 유지)
     onStart();
-
-    console.log('✅ 새로운 추천 세션 시작');
   };
 
   return (

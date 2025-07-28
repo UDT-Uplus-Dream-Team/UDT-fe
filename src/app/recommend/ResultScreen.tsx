@@ -16,8 +16,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { usePostCuratedContent } from '@hooks/recommend/usePostCuratedContents';
 
 export const ResultScreen: React.FC = () => {
-  const queryClient = useQueryClient();
   const { forceRefresh } = useRefreshCuratedContents();
+  const queryClient = useQueryClient();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [dist, setDist] = useState(136);
@@ -104,15 +104,17 @@ export const ResultScreen: React.FC = () => {
         setForceLoading(false);
       }
 
-      // 최소 3초 로딩 화면 표시 (UX 개선)
+      // showLoadingScreen 해제 (setTimeout 제거)
       if (showLoadingScreen) {
-        const timer = setTimeout(() => {
-          setShowLoadingScreen(false);
-        }, 3000);
-        return () => clearTimeout(timer);
+        setShowLoadingScreen(false);
       }
     }
-  }, [curatedContents, showLoadingScreen, forceLoading]);
+  }, [
+    curatedContents,
+    showLoadingScreen,
+    forceLoading,
+    initializeSavedContentIds,
+  ]);
 
   const isCurrentContentSaved = (): boolean => {
     const currentMovie = contents[currentIndex];
@@ -175,9 +177,7 @@ export const ResultScreen: React.FC = () => {
       setIsFlipped([false, false, false]);
 
       // 3. 새로운 timestamp로 완전히 새로운 쿼리 생성
-      const newData = await forceRefresh();
-
-      console.log('다시 추천받기: 새로운 큐레이션 데이터 로드 완료', newData);
+      await forceRefresh();
 
       // 4. 시작 화면으로 이동 (새로운 데이터가 자동으로 로드됨)
       setPhase('start');
@@ -221,7 +221,7 @@ export const ResultScreen: React.FC = () => {
     };
   };
 
-  // 로딩 중이거나 최소 3초 대기 중인 경우
+  // 로딩 중이거나 수동 로딩 상태인 경우
   if (isLoading || showLoadingScreen || forceLoading || isFetching) {
     return (
       <LoadingScreen

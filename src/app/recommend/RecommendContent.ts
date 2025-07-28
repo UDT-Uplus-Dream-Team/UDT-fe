@@ -306,12 +306,9 @@ export const getAvailableContents = async (): Promise<TicketComponent[]> => {
   if (contentDataPool.length === 0 && !isLoadingFromApi) {
     try {
       isLoadingFromApi = true;
-      console.log('Pool이 비어있어서 API에서 데이터를 가져옵니다...');
 
       const newContents = await fetchContents();
       addContentDataPool(newContents);
-
-      console.log(`API에서 ${newContents.length}개의 콘텐츠를 가져왔습니다.`);
     } catch (error) {
       console.error('API 호출 실패:', error);
       // API 실패 시 기본 목데이터라도 사용할 수 있도록 처리
@@ -342,14 +339,8 @@ export const fetchMoreContents = async (
   limit: number = 10,
 ): Promise<TicketComponent[]> => {
   try {
-    console.log(`추가 콘텐츠 ${limit}개를 API에서 가져옵니다...`);
-
     const newContents = await fetchContents(limit);
     addContentDataPool(newContents);
-
-    console.log(
-      `${newContents.length}개의 추가 콘텐츠를 성공적으로 가져왔습니다.`,
-    );
     return newContents;
   } catch (error) {
     console.error('추가 콘텐츠 가져오기 실패:', error);

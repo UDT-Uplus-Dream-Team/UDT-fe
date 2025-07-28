@@ -40,8 +40,6 @@ async function verifyToken(token: string): Promise<CustomJWTPayload | null> {
     const secret = new TextEncoder().encode(JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
 
-    console.log('JWT PAYLOAD:', payload);
-
     if (
       typeof payload.sub === 'string' &&
       typeof payload.ROLE === 'string' &&
@@ -154,9 +152,6 @@ export async function middleware(request: NextRequest) {
   // 역할별 권한 확인
   if (!hasPermission(payload.ROLE, pathname)) {
     const defaultPath = getDefaultPath(payload.ROLE);
-    console.log(
-      `🚫 NO PERMISSION - ROLE: ${payload.ROLE}, PATH: ${pathname}, REDIRECTING TO: ${defaultPath}`,
-    );
     const redirectUrl = addMessageToUrl(
       new URL(defaultPath, request.url),
       'access-denied',
@@ -164,8 +159,6 @@ export async function middleware(request: NextRequest) {
     );
     return NextResponse.redirect(redirectUrl);
   }
-
-  console.log('✅ ACCESS GRANTED');
   return NextResponse.next();
 }
 

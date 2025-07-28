@@ -1,15 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Ticket } from '@components/Ticket/Ticket';
 import { Button } from '@components/ui/button';
 import { showInteractiveToast } from '@components/common/Toast';
 import { postFeedbackContent } from '@lib/apis/recommend/postFeedbackContent';
 import { useRecommendStore } from '@store/useRecommendStore';
 import { useFetchRecommendations } from '@hooks/recommend/useGetRecommendationContents';
+import { useRefreshCuratedContents } from '@hooks/recommend/useGetCuratedContents';
 import { FinishScreen } from './FinishScreen';
 import { sendAnalyticsEvent } from '@lib/gtag';
 import { LoadingScreen } from './LoadingScreen';
+import { toast } from 'sonner';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 type FeedbackType = 'liked' | 'unliked' | 'neutral';
@@ -42,6 +44,9 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     error: fetchError,
   } = useFetchRecommendations();
 
+  const { forceRefresh } = useRefreshCuratedContents();
+  const hasInitialized = useRef(false);
+
   // 로컬 UI 상태들 (애니메이션 관련은 persist 불필요)
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(
@@ -60,7 +65,6 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   useEffect(() => {
     // 기존 데이터가 있으면 로딩 지연 건너뛰기
     if (moviePool.length > 0) {
-      console.log('기존 데이터 존재, 로딩 지연 건너뛰기');
       setLoadingDelayOver(true);
     }
   }, [moviePool.length]);
@@ -68,33 +72,25 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   // ── 초기 데이터 로드 ────────────────────────────
   useEffect(() => {
     const loadInitialMovies = async () => {
-      if (moviePool.length > 0) {
-        console.log('기존 진행 상황 복원:', {
-          movieCount: moviePool.length,
-          currentIndex,
-          swipeCount,
-        });
-        setLoadingDelayOver(true); // 기존 데이터 있으면 즉시 완료
+      // 이미 초기화되었거나 기존 데이터가 있으면 스킵
+      if (hasInitialized.current || moviePool.length > 0) {
+        setLoadingDelayOver(true);
         return;
       }
 
-      try {
-        console.log('초기 콘텐츠 로딩 시작...');
+      hasInitialized.current = true; // 초기화 플래그 설정
 
-        // API 호출과 최소 2초 지연을 동시에 실행
+      try {
         const [initialMovies] = await Promise.all([
           fetchRecommendations(10),
-          new Promise((resolve) => setTimeout(resolve, 2000)), // 최소 2초 대기
+          new Promise((resolve) => setTimeout(resolve, 2000)),
         ]);
 
-        console.log(
-          `${initialMovies.length}개의 초기 콘텐츠가 로드되었습니다.`,
-        );
         setMoviePool(initialMovies);
-        setLoadingDelayOver(true); // API 완료 + 2초 지연 후 완료
+        setLoadingDelayOver(true);
       } catch (error) {
         console.error('초기 콘텐츠 로딩 실패:', error);
-        // 에러 시에도 2초 후 완료
+        hasInitialized.current = false; // 실패 시 플래그 리셋
         setTimeout(() => setLoadingDelayOver(true), 2000);
       }
     };
@@ -106,15 +102,12 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   const currentMovie = getCurrentMovie();
   const nextMovie = getNextMovie();
 
-  // ── 추가 콘텐츠 로드 (5개마다) ───────────────
   useEffect(() => {
     const loadMoreMovies = async () => {
       if (!shouldLoadMoreContent()) return;
 
       try {
-        console.log(`currentIndex ${currentIndex}: 추가 콘텐츠 로딩 시작...`);
-        const newMovies = await fetchRecommendations(5);
-        console.log(`${newMovies.length}개의 새로운 영화가 추가되었습니다.`);
+        const newMovies = await fetchRecommendations(10);
         addMoviesToPool(newMovies);
       } catch (error) {
         console.error('추가 영화 로드 실패:', error);
@@ -154,16 +147,9 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     const feedbackData = [{ contentId, feedback: feedbackValue }];
 
     try {
-      console.log('피드백 즉시 전송:', feedbackData);
-      const result = await postFeedbackContent(feedbackData);
-
-      if (result.success) {
-        console.log('피드백 전송 성공:', result.message);
-      } else {
-        console.warn('피드백 전송 실패:', result.message);
-      }
-    } catch (error: unknown) {
-      console.error('피드백 전송 중 오류:', error);
+      await postFeedbackContent(feedbackData);
+    } catch {
+      // 에러 발생 시에도 사일런트 처리
     }
   };
 
@@ -194,26 +180,19 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       sendFeedbackImmediately(currentMovie.contentId, feedbackType);
     }
 
-    // 애니메이션 완료 후 콘텐츠 변경
+    // 애니메이션 정리는 기존대로
     setTimeout(() => {
-      setSwipeDirection(null);
-      setFeedback('neutral');
-
-      // 상태 업데이트를 애니메이션 완료 후로 이동
       incrementSwipeCount();
       setCurrentIndex(currentIndex + 1);
-    }, 700);
-
-    // 애니메이션 잠금 해제
-    setTimeout(() => {
+      setSwipeDirection(null);
+      setFeedback('neutral');
       setIsAnimating(false);
-    }, 1000);
-    console.log(moviePool);
+    }, 700);
   };
 
   // ── 일정 횟수 스와이프 후 토스트 표시 ──────────────
   useEffect(() => {
-    const SWIPE_THRESHOLD = 5;
+    const SWIPE_THRESHOLD = 20;
 
     if (swipeCount >= SWIPE_THRESHOLD && !shouldShowFinish() && !toastShown) {
       setToastShown(true);
@@ -224,9 +203,17 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         duration: Infinity,
         position: 'top-center',
         className: 'bg-gray-500',
-        onAction: () => {
-          setResultReady(true);
-          onComplete();
+        onAction: async () => {
+          try {
+            // 새로운 강제 refresh 사용
+            await forceRefresh();
+            setResultReady(true);
+            onComplete();
+          } catch (error) {
+            console.error('큐레이션 콘텐츠 새로고침 실패:', error);
+            setResultReady(true);
+            onComplete();
+          }
         },
         onClose: () => {
           resetSwipeCount();
@@ -235,7 +222,14 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
         },
       });
     }
-  }, [swipeCount, resultReady, toastShown, onComplete, resetSwipeCount]);
+  }, [
+    swipeCount,
+    resultReady,
+    toastShown,
+    onComplete,
+    resetSwipeCount,
+    forceRefresh,
+  ]);
 
   // ── 키보드 이벤트 처리 ────────────────────────
   useEffect(() => {
@@ -251,7 +245,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       }
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        handleSwipe('up');
+        handleSwipe('up', 'neutral');
       }
     };
 
@@ -277,7 +271,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     if (absX > absY && absX > threshold) {
       handleSwipe(dx > 0 ? 'right' : 'left', dx > 0 ? 'liked' : 'unliked');
     } else if (dy < -threshold) {
-      handleSwipe('up');
+      handleSwipe('up', 'neutral');
     }
   };
 
@@ -302,7 +296,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     if (absX > absY && absX > threshold) {
       handleSwipe(dx > 0 ? 'right' : 'left', dx > 0 ? 'liked' : 'unliked');
     } else if (dy < -threshold) {
-      handleSwipe('up');
+      handleSwipe('up', 'neutral');
     }
   };
 
@@ -322,7 +316,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   // ── 에러 처리 ─────────────────────────────────
   const handleRetry = async () => {
     try {
-      const movies = await fetchRecommendations(5);
+      const movies = await fetchRecommendations(10);
       setMoviePool(movies);
     } catch (error) {
       console.error('재시도 실패:', error);
@@ -330,6 +324,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   };
 
   if (shouldShowFinish()) {
+    toast.dismiss();
     return <FinishScreen />;
   }
 
@@ -421,6 +416,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
           )}
 
           {/* 현재 카드 */}
+
           <div
             className={`absolute inset-0 z-20 flex items-center justify-center transition-transform ${
               swipeDirection

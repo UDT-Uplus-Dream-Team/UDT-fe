@@ -4,15 +4,30 @@ import { Button } from '@components/ui/button';
 import { CheckCircle, RotateCcw, Eye } from 'lucide-react';
 import React from 'react';
 import { useRecommendStore } from '@store/useRecommendStore';
+import { useQueryClient } from '@tanstack/react-query'; // 추가
+import { useRefreshCuratedContents } from '@/hooks/recommend/useGetCuratedContents';
 
 export const FinishScreen: React.FC = () => {
   const { setPhase } = useRecommendStore();
+  const { forceRefresh } = useRefreshCuratedContents();
+  const queryClient = useQueryClient(); // 추가
 
-  const handleViewResults = () => {
-    setPhase('result');
+  const handleViewResults = async () => {
+    try {
+      // 캐시 무효화 + 강제 refetch
+      await forceRefresh();
+
+      setPhase('result');
+    } catch (error) {
+      console.error('FinishScreen에서 큐레이션 콘텐츠 새로고침 실패:', error);
+      // 에러가 발생해도 결과 화면으로 이동
+      setPhase('result');
+    }
   };
 
   const handleStartAgain = () => {
+    // 다시 시작할 때도 캐시 제거
+    queryClient.removeQueries({ queryKey: ['curatedContents'] });
     setPhase('start');
   };
 

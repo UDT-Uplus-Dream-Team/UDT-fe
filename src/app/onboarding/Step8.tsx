@@ -11,7 +11,7 @@ interface Step8Props {
 
 export default function Step8({ onNext }: Step8Props) {
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white px-4 pt-12">
+    <div className="min-h-screen flex flex-col items-center -mb-20 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white px-4 pt-12">
       {/* 안내 텍스트 */}
       <div className="text-center mb-6">
         <p className="text-base font-semibold leading-relaxed whitespace-pre-line">

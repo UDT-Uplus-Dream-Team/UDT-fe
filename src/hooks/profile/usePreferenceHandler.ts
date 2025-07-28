@@ -27,7 +27,8 @@ export const usePreferenceHandler = (
     showSimpleToast.success({
       message,
       position: 'top-center',
-      className: 'w-fit mx-auto bg-black text-white  shadow-lg',
+      className:
+        'bg-primary-300/80 text-white px-4 py-2 rounded-md mx-auto shadow-lg',
     });
   };
 
@@ -36,7 +37,8 @@ export const usePreferenceHandler = (
     showSimpleToast.error({
       message,
       position: 'top-center',
-      className: 'w-fit mx-auto bg-black text-white shadow-lg ',
+      className:
+        'bg-black/80 text-white px-4 py-2 rounded-md mx-auto shadow-lg',
     });
   };
 

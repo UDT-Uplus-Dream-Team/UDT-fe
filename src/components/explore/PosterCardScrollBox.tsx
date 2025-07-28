@@ -11,6 +11,8 @@ import { DetailBottomSheetContent } from '@components/explore/DetailBottomSheetC
 import { useGetContentListByBoxType } from '@hooks/explore/useGetContentListByBoxType';
 import { FilterRadioButton } from '@components/explore/FilterRadioButton';
 import { PosterScrollSkeleton } from '@components/explore/PosterScrollBoxSkeleton';
+import { useQueryErrorToast } from '@hooks/useQueryErrorToast';
+import { X } from 'lucide-react';
 
 export interface PosterCardScrollBoxProps {
   BoxTitle: string;
@@ -65,11 +67,11 @@ export const PosterCardScrollBox = ({
   };
 
   // 포스터 스크롤 박스 타입에 따라 콘텐츠 목록 조회 API 호출하는 custom Hook 호출
-  const {
-    data: contentData,
-    status,
-    refetch,
-  } = useGetContentListByBoxType(BoxType);
+  const getContentListByBoxTypeQuery = useGetContentListByBoxType(BoxType);
+  const { data: contentData, status, refetch } = getContentListByBoxTypeQuery;
+
+  // 에러 발생 시 토스트 띄우기
+  useQueryErrorToast(getContentListByBoxTypeQuery);
 
   const handlePosterClick = (movieId: number) => {
     setSelectedMovieId(movieId);
@@ -151,8 +153,18 @@ export const PosterCardScrollBox = ({
       >
         <SheetContent
           side="bottom"
+          hideDefaultClose={true} // 기본 닫기 버튼 제거
           className="px-0 pb-5 h-[90vh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
         >
+          {/* 커스텀 X 버튼 (z-index로 위에 배치) */}
+          <button
+            onClick={() => setIsDetailBottomSheetOpen(false)}
+            className="absolute top-4 right-4 w-8 h-8 z-50 flex items-center justify-center rounded-full bg-white/60 hover:bg-white/80 transition"
+            aria-label="닫기"
+          >
+            <X className="w-4 h-4 text-gray-800" />
+          </button>
+
           {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
           <SheetHeader className="p-0">
             <SheetTitle className="sr-only h-0 p-0">상세정보</SheetTitle>

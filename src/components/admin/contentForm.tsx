@@ -618,6 +618,7 @@ export default function ContentForm({
                             src={cast.castImageUrl || '/placeholder.svg'}
                             alt={cast.castName || '출연진 이미지'}
                             fill
+                            unoptimized
                             className="w-8 h-8 rounded-full object-cover"
                           />
                         </div>
@@ -788,6 +789,7 @@ export default function ContentForm({
                             src={cast.castImageUrl || '/placeholder.svg'}
                             alt={cast.castName || '출연진 이미지'}
                             fill
+														unoptimized
                             className="w-8 h-8 rounded-full object-cover"
                           />
                         </div>

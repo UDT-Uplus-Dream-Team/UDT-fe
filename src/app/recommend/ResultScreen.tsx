@@ -8,11 +8,15 @@ import { Ticket } from '@components/Ticket/Ticket';
 import { Button } from '@components/ui/button';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 import { useRecommendStore } from '@store/useRecommendStore';
-import { useGetCuratedContents } from '@hooks/recommend/useGetCuratedContents';
+import {
+  useGetCuratedContents,
+  useRefreshCuratedContents,
+} from '@hooks/recommend/useGetCuratedContents';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePostCuratedContent } from '@hooks/recommend/usePostCuratedContents';
 
 export const ResultScreen: React.FC = () => {
+  const { forceRefresh } = useRefreshCuratedContents();
   const queryClient = useQueryClient();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -33,7 +37,6 @@ export const ResultScreen: React.FC = () => {
     isLoading,
     isError,
     error,
-    refetch,
     isFetching,
   } = useGetCuratedContents();
 
@@ -73,10 +76,11 @@ export const ResultScreen: React.FC = () => {
     const cachedData = queryClient.getQueryData(['curatedContents']);
     return !cachedData;
   });
+  const [forceLoading, setForceLoading] = useState(false);
 
   useEffect(() => {
-    if (showLoadingScreen) return; // 로딩 중이면 패스
-    if (!containerRef.current) return; // div 아직 없음
+    if (showLoadingScreen) return;
+    if (!containerRef.current) return;
 
     const update = () => {
       if (containerRef.current) {
@@ -84,7 +88,7 @@ export const ResultScreen: React.FC = () => {
       }
     };
 
-    update(); // 최초 1회
+    update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, [showLoadingScreen]);
@@ -93,18 +97,24 @@ export const ResultScreen: React.FC = () => {
   useEffect(() => {
     if (curatedContents.length > 0) {
       setContents(curatedContents.slice(0, 3));
-
       initializeSavedContentIds(curatedContents.length);
 
-      // 최소 3초 로딩 화면 표시 (UX 개선)
+      // forceLoading 해제
+      if (forceLoading) {
+        setForceLoading(false);
+      }
+
+      // showLoadingScreen 해제 (setTimeout 제거)
       if (showLoadingScreen) {
-        const timer = setTimeout(() => {
-          setShowLoadingScreen(false);
-        }, 3000);
-        return () => clearTimeout(timer);
+        setShowLoadingScreen(false);
       }
     }
-  }, [curatedContents, showLoadingScreen]);
+  }, [
+    curatedContents,
+    showLoadingScreen,
+    forceLoading,
+    initializeSavedContentIds,
+  ]);
 
   const isCurrentContentSaved = (): boolean => {
     const currentMovie = contents[currentIndex];
@@ -152,17 +162,47 @@ export const ResultScreen: React.FC = () => {
       saveCuratedContent(movie.contentId);
     }
   };
-  const handleStartNewRecommendation = () => {
-    // 큐레이션 캐시 무효화 (새로운 추천을 위해)
-    queryClient.invalidateQueries({ queryKey: ['curatedContents'] });
 
-    // 시작 화면으로 이동
-    setPhase('start');
+  const handleStartNewRecommendation = async () => {
+    try {
+      // 1. 로딩 상태 설정
+      setForceLoading(true);
+      setShowLoadingScreen(true);
+
+      // 2. 기존 상태들 초기화
+      setContents([]);
+      setRerollUsed([false, false, false]);
+      setCurrentIndex(1);
+      setRerollCount([0, 0, 0]);
+      setIsFlipped([false, false, false]);
+
+      // 3. 새로운 timestamp로 완전히 새로운 쿼리 생성
+      await forceRefresh();
+
+      // 4. 시작 화면으로 이동 (새로운 데이터가 자동으로 로드됨)
+      setPhase('start');
+    } catch (error) {
+      console.error('다시 추천받기 실패:', error);
+      // 에러 발생해도 시작 화면으로 이동
+      setForceLoading(false);
+      setShowLoadingScreen(false);
+      setPhase('start');
+    }
   };
 
-  const handleRetry = () => {
-    setShowLoadingScreen(true);
-    refetch();
+  const handleRetry = async () => {
+    try {
+      setShowLoadingScreen(true);
+      setForceLoading(true);
+
+      // 새로운 timestamp로 완전히 새로운 쿼리 생성
+      await forceRefresh();
+    } catch (error) {
+      console.error('재시도 실패:', error);
+      // 실패해도 로딩 상태 해제
+      setForceLoading(false);
+      setShowLoadingScreen(false);
+    }
   };
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
@@ -181,8 +221,8 @@ export const ResultScreen: React.FC = () => {
     };
   };
 
-  // 로딩 중이거나 최소 3초 대기 중인 경우
-  if (isLoading || showLoadingScreen) {
+  // 로딩 중이거나 수동 로딩 상태인 경우
+  if (isLoading || showLoadingScreen || forceLoading || isFetching) {
     return (
       <LoadingScreen
         message="추천 컨텐츠를 선별하고 있어요!"
@@ -207,12 +247,14 @@ export const ResultScreen: React.FC = () => {
             <Button
               onClick={handleRetry}
               className="flex items-center gap-2"
-              disabled={isFetching}
+              disabled={isFetching || forceLoading}
             >
               <RefreshCw
-                className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`}
+                className={`w-4 h-4 ${
+                  isFetching || forceLoading ? 'animate-spin' : ''
+                }`}
               />
-              {isFetching ? '재시도 중...' : '다시 시도'}
+              {isFetching || forceLoading ? '재시도 중...' : '다시 시도'}
             </Button>
             <Button variant="outline" onClick={() => setPhase('start')}>
               처음으로
@@ -236,12 +278,14 @@ export const ResultScreen: React.FC = () => {
             <Button
               onClick={handleRetry}
               className="flex items-center gap-2"
-              disabled={isFetching}
+              disabled={isFetching || forceLoading}
             >
               <RefreshCw
-                className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`}
+                className={`w-4 h-4 ${
+                  isFetching || forceLoading ? 'animate-spin' : ''
+                }`}
               />
-              {isFetching ? '새로고침 중...' : '새로고침'}
+              {isFetching || forceLoading ? '새로고침 중...' : '새로고침'}
             </Button>
             <Button variant="outline" onClick={() => setPhase('start')}>
               다시 추천받기
@@ -263,7 +307,7 @@ export const ResultScreen: React.FC = () => {
       {/* Carousel Container */}
       <div
         ref={containerRef}
-        className="relative h-[60%] w-[70%] min-w-70 min-h-130 flex items-center justify-center"
+        className="relative h-[70%] md:h-[80%] w-[80%] min-w-70 min-h-130 max-w-100 max-h-175 flex items-center justify-center"
       >
         {contents.map((content, idx) => {
           const pos = getCardPosition(idx, dist);
@@ -385,10 +429,10 @@ export const ResultScreen: React.FC = () => {
           disabled={isCurrentContentSaved() || isPending}
           className={`px-8 py-3 rounded-full shadow-lg flex items-center gap-2 ${
             isCurrentContentSaved()
-              ? 'bg-gray-400 text-gray-200 cursor-not-allowed' // 저장된 상태
+              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
               : isPending
-                ? 'bg-primary-300 text-white' // 로딩 중
-                : 'bg-primary-500 text-white hover:bg-primary-600' // 정상 상태
+                ? 'bg-primary-300 text-white'
+                : 'bg-primary-500 text-white hover:bg-primary-600'
           }`}
         >
           <Plus className="w-5 h-5" />
@@ -403,10 +447,15 @@ export const ResultScreen: React.FC = () => {
 
         <Button
           onClick={handleStartNewRecommendation}
-          className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2"
+          disabled={forceLoading || isFetching}
+          className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2 disabled:bg-primary-300"
         >
-          <Undo2 className="w-5 h-5" />
-          다시 추천받기
+          <Undo2
+            className={`w-5 h-5 ${
+              forceLoading || isFetching ? 'animate-spin' : ''
+            }`}
+          />
+          {forceLoading || isFetching ? '로딩 중...' : '다시 추천받기'}
         </Button>
       </div>
     </div>

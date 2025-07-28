@@ -107,6 +107,7 @@ const ProfilePage = () => {
               alt="프로필 이미지"
               width={60}
               height={60}
+              unoptimized
               className="rounded-full object-cover"
               style={{ aspectRatio: '1 / 1' }}
             />
@@ -130,6 +131,7 @@ const ProfilePage = () => {
                 alt="편집"
                 width={20}
                 height={20}
+                unoptimized
               />
               구독/장르 수정
             </Button>
@@ -143,6 +145,7 @@ const ProfilePage = () => {
                 alt="로그아웃"
                 width={16}
                 height={16}
+                unoptimized
               />
               로그아웃
             </Button>

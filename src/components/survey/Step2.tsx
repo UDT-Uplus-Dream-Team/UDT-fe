@@ -4,8 +4,8 @@ import { GENRES } from '@lib/genres';
 import { useSurveyContext } from '@hooks/useSurveyContext';
 import { CircleOption } from '@components/common/circleOption';
 import { Button } from '@components/ui/button';
-import { showSimpleToast } from '@components/common/Toast';
 import { useEffect } from 'react';
+import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 
 type Step2Props = {
   onNext: () => void;
@@ -13,6 +13,7 @@ type Step2Props = {
 
 export default function Step2({ onNext }: Step2Props) {
   const { selectedGenres, setSelectedGenres } = useSurveyContext();
+  const showErrorToast = useErrorToastOnce();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -21,11 +22,7 @@ export default function Step2({ onNext }: Step2Props) {
   const toggleGenre = (genre: string) => {
     // 3개 선택 상태에서 새로운 장르를 선택하려 할 때 방지
     if (!selectedGenres.includes(genre) && selectedGenres.length >= 3) {
-      showSimpleToast.error({
-        message: '선호 장르는 최대 3개까지 선택할 수 있습니다.',
-        position: 'top-center',
-        className: 'w-full bg-black/80 shadow-lg text-white',
-      });
+      showErrorToast('선호 장르는 최대 3개까지 선택할 수 있습니다.');
       return;
     }
 
@@ -38,11 +35,9 @@ export default function Step2({ onNext }: Step2Props) {
 
   const handleNext = () => {
     if (selectedGenres.length === 0) {
-      showSimpleToast.error({
-        message: '선호 장르는 최소 1개 이상 최대 3개 이하 선택해야 합니다.',
-        position: 'top-center',
-        className: 'w-full bg-black/80 shadow-lg text-white',
-      });
+      showErrorToast(
+        '선호 장르는 최소 1개 이상 최대 3개 이하 선택해야 합니다.',
+      );
       return;
     }
 

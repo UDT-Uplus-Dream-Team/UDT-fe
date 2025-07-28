@@ -3,6 +3,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ['jose'],
+
   images: {
     remotePatterns: [
       {
@@ -20,4 +22,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-module.exports = nextConfig;

@@ -40,7 +40,7 @@ export default function ExplorePage() {
   useQueryErrorToast(getFilteredContentsQuery);
 
   // getFilteredContentsQuery 객체에서 필요한 것 추출
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     getFilteredContentsQuery;
 
   // 필터링된 콘텐츠 목록 데이터 추출
@@ -64,6 +64,7 @@ export default function ExplorePage() {
         filters !== undefined ? (
           <PosterCardsGrid
             contents={contents}
+            status={status}
             fetchNextPage={fetchNextPage}
             hasNextPage={hasNextPage ?? false}
             isFetchingNextPage={isFetchingNextPage}

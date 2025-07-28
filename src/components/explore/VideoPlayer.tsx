@@ -44,9 +44,8 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
       if (data.event === 'onReady' || data.event === 'onStateChange') {
         setIsVideoReady(true);
       }
-    } catch (error) {
+    } catch {
       // JSON 파싱 에러는 무시 (다른 메시지일 수 있음)
-      console.log(error);
     }
   }, []);
 
@@ -93,6 +92,7 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
           src={imgSrc}
           alt={contentData.title}
           fill
+          unoptimized
           className="object-cover"
           onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
         />
@@ -125,6 +125,7 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
             src={imgSrc}
             alt={contentData.title}
             fill
+            unoptimized
             className="object-cover"
             onError={() => setImgSrc('/images/default-backdrop.png')} // 이미지 로딩 실패 시 기본 이미지로 대체
             priority

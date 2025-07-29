@@ -25,7 +25,6 @@ export const GENRES: Genre[] = [
   { label: '서바이벌', id: 'survival' },
   { label: '리얼리티', id: 'reality' },
   { label: '스탠드업코미디', id: 'stand-up-comedy' },
-  { label: '음악회', id: 'concert' },
 ];
 
 // 카테고리별 허용 장르
@@ -72,7 +71,6 @@ export const VARIETY_GENRES: string[] = [
   '다큐멘터리',
   '스탠드업코미디',
   '멜로/로맨스',
-  '콘서트',
 ];
 
 export const ANIMATION_GENRES: string[] = [

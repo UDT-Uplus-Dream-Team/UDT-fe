@@ -54,14 +54,15 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-4 flex-1">
           {content.posterUrl && (
-            <Image
-              src={content.posterUrl}
-              alt={content.title}
-              width={64}
-              height={80}
-              unoptimized
-              className="object-cover rounded text-black"
-            />
+            <div className="relative w-[64px] h-[100px]">
+              <Image
+                src={content.posterUrl}
+                alt={content.title}
+                fill
+                sizes="64px"
+                className="object-cover rounded"
+              />
+            </div>
           )}
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">

@@ -153,7 +153,7 @@ const RecommendPage = () => {
 
       {/* 삭제 바 */}
       {isDeleteMode && (
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 bg-gray-700 h-[80px] px-4 flex items-center justify-between z-[100] w-full max-w-160">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 bg-gray-700 h-[80px] px-4 flex items-center justify-between z-50 w-full max-w-160">
           <p className="text-white text-sm">삭제할 콘텐츠를 선택하세요.</p>
           <button
             onClick={() => {

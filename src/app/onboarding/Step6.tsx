@@ -68,7 +68,7 @@ export default function Step6({ onNext }: Step6Props) {
       </div>
 
       {/* 카드 - 중앙 정렬 */}
-      <div className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70vh]">
+      <div className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]">
         <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
       </div>
     </div>

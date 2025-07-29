@@ -236,7 +236,7 @@ export default function AdminDashboard() {
         {/* 다이얼로그들 */}
         {isAddDialogOpen && (
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[75vh] overflow-y-auto">
+            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[75svh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>새 정보 추가</DialogTitle>
                 <DialogDescription>
@@ -253,7 +253,7 @@ export default function AdminDashboard() {
 
         {isEditDialogOpen && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[75vh] overflow-y-auto">
+            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[75svh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>정보 수정</DialogTitle>
                 <DialogDescription>
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
             open={isDetailDialogOpen}
             onOpenChange={setIsDetailDialogOpen}
           >
-            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-full max-w-none sm:max-w-[1000px] max-h-[90svh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>콘텐츠 상세 정보</DialogTitle>
               </DialogHeader>

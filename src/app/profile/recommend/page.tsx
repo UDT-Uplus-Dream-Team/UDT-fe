@@ -87,7 +87,7 @@ const RecommendPage = () => {
   });
 
   return (
-    <div className="h-[calc(100vh-80px)] w-full flex flex-col items-center px-4 py-6 overflow-y-auto">
+    <div className="h-full w-full flex flex-col items-center px-4 py-6 overflow-y-auto">
       {/* 헤더 */}
       <div className="relative w-full max-w-screen-md flex items-center justify-center mb-2 h-10">
         {isDeleteMode ? (
@@ -130,7 +130,7 @@ const RecommendPage = () => {
       {/* 카드 영역 */}
       <div className="w-full max-w-screen-md">
         {isEmpty ? (
-          <div className="flex flex-col items-center justify-center h-[calc(100vh-80px)] text-gray-400 text-sm font-medium">
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 text-sm font-medium">
             현재 저장된 추천 콘텐츠가 없습니다
           </div>
         ) : (

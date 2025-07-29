@@ -137,7 +137,7 @@ export const FilterRadioButtonGroup = () => {
                 {/* Sheet 콘텐츠 (해당 콘텐츠는 FilterBottomSheetContent 컴포넌트로 구현) */}
                 <SheetContent
                   side="bottom"
-                  className="flex flex-col gap-0 h-[60vh] max-h-[60vh] max-w-[640px] w-full mx-auto bg-[#07033E] border-t-0 rounded-t-[20px]"
+                  className="flex flex-col gap-0 h-[60svh] max-h-[60svh] max-w-[640px] w-full mx-auto bg-[#07033E] border-t-0 rounded-t-[20px]"
                 >
                   {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
                   <SheetHeader className="p-0">

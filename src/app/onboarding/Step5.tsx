@@ -114,7 +114,7 @@ export default function Step5({ onNext }: StepProps5) {
       case 'right':
         return 'translate-x-[100vw] rotate-[30deg]';
       case 'up':
-        return 'translate-y-[-100vh]';
+        return 'translate-y-[-100svh]';
     }
   };
 
@@ -142,7 +142,7 @@ export default function Step5({ onNext }: StepProps5) {
       <div className="my-8 flex w-full justify-center">
         <div></div>
         <div
-          className={`relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70vh] select-none ${
+          className={`relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh] select-none ${
             isFlipped ? 'touch-action-auto' : 'touch-action-none'
           }`}
           style={{

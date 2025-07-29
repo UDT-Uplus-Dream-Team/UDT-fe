@@ -90,7 +90,7 @@ function getDefaultPath(role: string, request: NextRequest): string {
     case 'ROLE_ADMIN':
       return '/admin';
     case 'ROLE_USER':
-      const isNewUserCookie = request.cookies.get('isNewUser')?.value;
+      const isNewUserCookie = request.cookies.get('X-New-User')?.value;
       if (isNewUserCookie === 'true') {
         return '/onboarding';
       }

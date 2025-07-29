@@ -14,7 +14,7 @@ export default function Step4({ onNext }: StepProps4) {
   const currentMovie = MockMovies[0];
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen px-6 -mb-20 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
+    <div className="relative flex flex-col items-center justify-center h-full w-full px-6 text-white">
       <div className="text-center space-y-4 mb-6">
         <h2 className="text-xl font-semibold leading-relaxed">
           앗! 이건 도대체 뭐야?
@@ -25,7 +25,7 @@ export default function Step4({ onNext }: StepProps4) {
 
       {/* 카드 영역 */}
       <div
-        className="relative w-full max-w-[320px] aspect-[75/135] max-h-[72vh] sm:max-w-[400px] sm:aspect-[75/127]"
+        className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70vh]"
         style={{ perspective: '1000px' }}
         onClick={() => {
           if (!flipped) setFlipped(true);

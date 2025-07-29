@@ -70,7 +70,7 @@ export default function Step7({ onNext }: Step7Props) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col -mb-20 items-center justify-center bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white px-4 relative">
+    <div className="relative flex flex-col w-full h-full items-center justify-center text-white px-4">
       {/* 안내 멘트 */}
       <div className="absolute top-4 text-center z-20">
         <p className="md:text-lg  text-[16px] font-semibold leading-relaxed text-white ">
@@ -180,7 +180,7 @@ export default function Step7({ onNext }: Step7Props) {
         >
           <Plus className="w-5 h-5" />
           <span className="font-medium">
-            콘텐츠 추가 버튼 눌러 추천 받은 컨텐츠 저장해보기!
+            콘텐츠 추가 버튼으로 컨텐츠 저장하기!
           </span>
         </Button>
       </div>

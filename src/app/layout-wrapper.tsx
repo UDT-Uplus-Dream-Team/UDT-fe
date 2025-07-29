@@ -13,7 +13,14 @@ export default function LayoutWrapper({
   const isAdmin = pathname.startsWith('/admin');
 
   // BottomNavbar를 숨겨야 하는 페이지들
-  const hideBottomNavbarPaths = ['/', '/survey', '/onboarding', '/test'];
+  const hideBottomNavbarPaths = [
+    '/',
+    '/survey',
+    '/onboarding',
+    '/test',
+    '/profile/feedbacks',
+    '/profile/recommend',
+  ];
   const shouldHideBottomNavbar = hideBottomNavbarPaths.includes(pathname);
 
   if (isAdmin) {

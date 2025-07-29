@@ -26,7 +26,7 @@ import { useUpdateContent } from '@hooks/admin/usePatchContent';
 import { useDeleteContent } from '@hooks/admin/useDeleteContent';
 import { useGetContentDetail } from '@hooks/admin/useGetContentDetail';
 import { useMutationErrorToast } from '@hooks/useMutationErrorToast';
-import ContentForm from './ContentForm';
+import ContentForm from '@components/admin/ContentForm';
 import ContentCard from '@components/admin/ContentCard';
 import ContentChart from '@components/admin/ContentChart';
 import ContentDetail from '@components/admin/ContentDetail';

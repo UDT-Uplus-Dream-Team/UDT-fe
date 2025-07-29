@@ -12,9 +12,9 @@ export default function Step3({ onNext }: StepProps3) {
   const currentMovie = MockMovies[0];
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen px-6  -mb-20 bg-gradient-to-b from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
+    <div className="relative flex items-center justify-center h-full w-full px-6 text-white">
       {/* 카드 (배경처럼) */}
-      <div className="relative w-full max-w-[320px] aspect-[75/135] sm:max-w-[400px] sm:aspect-[75/127] max-h-[70vh]">
+      <div className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]">
         <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
       </div>
 
@@ -25,7 +25,7 @@ export default function Step3({ onNext }: StepProps3) {
             딱히...뭐 잘 모르겠다?
           </h2>
           <p className="text-sm md:text-xl text-white/80 animate-pulse">
-            👇 아래로 쭉쭉 스와이프해서 관심없음 처리 가능해요
+            👆 위로 쭉쭉 스와이프해서 관심없음 처리 가능해요
           </p>
         </div>
 

@@ -309,7 +309,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       case 'right':
         return 'translate-x-[100vw] rotate-[30deg]';
       case 'up':
-        return 'translate-y-[-100vh]';
+        return 'translate-y-[-100svh]';
     }
   };
 
@@ -367,8 +367,8 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
 
   // ── 렌더링 ─────────────────────────────────────
   return (
-    <div className="flex flex-1 flex-col items-center justify-center">
-      <div className="my-8 flex w-full justify-center">
+    <div className="flex flex-col w-full h-full items-center justify-center">
+      <div className="my-5 flex w-full justify-center">
         <div></div>
         <div
           className={`relative inline-block mx-10 w-full select-none ${
@@ -388,7 +388,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
           onTouchCancel={() => setStartPoint(null)}
         >
           {/* 자리 채우기 티켓 */}
-          <div className="relative flex w-full aspect-[75/135] max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
+          <div className="relative flex w-full h-[70svh] aspect-[75/135] min-w-70 min-h-110 max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
             <Ticket
               key={currentMovie.contentId}
               movie={currentMovie}

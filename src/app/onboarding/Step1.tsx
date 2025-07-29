@@ -12,9 +12,9 @@ export default function Step1({ onNext }: StepProps) {
   const currentMovie = MockMovies[0];
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen px-6 bg-gradient-to-b  -mb-20 from-[#0b0c32] via-[#4b3381] to-[#a96fd1] text-white">
+    <div className="relative flex items-center justify-center h-full w-full px-6 text-white">
       {/* 카드 (배경처럼) */}
-      <div className="relative w-full max-w-[320px] aspect-[75/135] sm:max-w-[400px] sm:aspect-[75/127] max-h-[70vh]">
+      <div className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]">
         <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
       </div>
 

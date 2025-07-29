@@ -21,7 +21,7 @@ const ROLE_RESTRICTIONS = {
   },
   ROLE_ADMIN: {
     allowed: [],
-    denied: ['/survey'],
+    denied: ['/survey', 'onboarding'],
   },
 } as const;
 
@@ -83,13 +83,18 @@ function hasPermission(role: string, pathname: string): boolean {
   return !isDenied;
 }
 
-function getDefaultPath(role: string): string {
+function getDefaultPath(role: string, request: NextRequest): string {
   switch (role) {
     case 'ROLE_GUEST':
       return '/survey';
     case 'ROLE_ADMIN':
       return '/admin';
     case 'ROLE_USER':
+      const isNewUserCookie = request.cookies.get('isNewUser')?.value;
+      if (isNewUserCookie === 'true') {
+        return '/onboarding';
+      }
+      return '/recommend';
     default:
       return '/recommend';
   }
@@ -116,7 +121,7 @@ export async function middleware(request: NextRequest) {
         return response;
       }
 
-      const defaultPath = getDefaultPath(payload.ROLE);
+      const defaultPath = getDefaultPath(payload.ROLE, request);
       return NextResponse.redirect(new URL(defaultPath, request.url));
     }
   }
@@ -145,7 +150,7 @@ export async function middleware(request: NextRequest) {
 
   // 역할별 권한 확인
   if (!hasPermission(payload.ROLE, pathname)) {
-    const defaultPath = getDefaultPath(payload.ROLE);
+    const defaultPath = getDefaultPath(payload.ROLE, request);
     const redirectUrl = addMessageToUrl(
       new URL(defaultPath, request.url),
       'access-denied',

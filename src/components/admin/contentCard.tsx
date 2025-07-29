@@ -58,6 +58,7 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
               <Image
                 src={content.posterUrl}
                 alt={content.title}
+                unoptimized
                 fill
                 sizes="64px"
                 className="object-cover rounded"

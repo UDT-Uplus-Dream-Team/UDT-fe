@@ -84,7 +84,7 @@ export default function AdminDashboard() {
     isError: isContentDetailError,
   } = useGetContentDetail(
     isDetailDialogOpen || isEditDialogOpen
-      ? (selectedContentId ?? undefined)
+      ? selectedContentId ?? undefined
       : undefined,
   );
 

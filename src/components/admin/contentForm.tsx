@@ -20,7 +20,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 import { X, Plus } from 'lucide-react';
 import type { ContentWithoutId, Cast, Platform } from '@type/admin/Content';
+import { PLATFORMS } from '@/lib/platforms';
 import { showSimpleToast } from '@components/common/Toast';
+import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 import {
   RATING_OPTIONS,
   CONTENT_CATEGORIES,
@@ -44,7 +46,7 @@ const getInitialFormData = (content?: ContentWithoutId): ContentWithoutId => ({
   trailerUrl: content?.trailerUrl || '',
   openDate: content?.openDate || '',
   runningTime: content?.runningTime || 0,
-  episode: content?.episode || 1,
+  episode: content?.episode || 0,
   rating: content?.rating || '',
   categories: content?.categories || [{ categoryType: '영화', genres: [] }],
   countries: content?.countries || [],
@@ -55,17 +57,45 @@ const getInitialFormData = (content?: ContentWithoutId): ContentWithoutId => ({
 
 // 유효성 검사 함수
 const validateFormData = (formData: ContentWithoutId): string | null => {
+  // 제목 검증
   if (!formData.title.trim()) return '제목은 필수 항목입니다.';
-  if (!formData.rating.trim()) return '관람등급은 필수 항목입니다.';
-  if (!formData.openDate.trim()) return '개봉일은 필수 항목입니다.';
-  if (!formData.runningTime || formData.runningTime <= 0)
-    return '상영시간을 입력해주세요.';
+
+  // 개봉일 검증
+  if (!formData.openDate || formData.openDate.trim() === '') {
+    return '개봉일은 필수 항목입니다.';
+  }
+
+  // 카테고리 검증
   if (
-    !formData.categories.length ||
-    !formData.categories[0].categoryType.trim()
+    !formData.categories[0]?.categoryType ||
+    formData.categories[0].categoryType.trim() === ''
   ) {
     return '카테고리는 필수 항목입니다.';
   }
+
+  // 장르 검증 (하나 이상 선택되어야 함)
+  if (
+    !formData.categories[0]?.genres ||
+    formData.categories[0].genres.length === 0
+  ) {
+    return '장르는 하나 이상 선택해야 합니다.';
+  }
+
+  // 플랫폼 검증 (하나 이상 선택되어야 함)
+  if (!formData.platforms || formData.platforms.length === 0) {
+    return '플랫폼은 하나 이상 입력해야 합니다.';
+  }
+
+  // 플랫폼 타입이 허용된 플랫폼 중 하나인지 검증
+  const allowedPlatformLabels = PLATFORMS.map((p) => p.label);
+  for (const platform of formData.platforms) {
+    if (!allowedPlatformLabels.includes(platform.platformType)) {
+      return `플랫폼은 다음 중 하나여야 합니다: ${allowedPlatformLabels.join(
+        ', ',
+      )}`;
+    }
+  }
+
   return null;
 };
 
@@ -77,6 +107,7 @@ export default function ContentForm({
   const [formData, setFormData] = useState<ContentWithoutId>(() =>
     getInitialFormData(content),
   );
+  const showErrorToast = useErrorToastOnce();
 
   // 입력 필드 상태
   const [newDirector, setNewDirector] = useState('');
@@ -100,9 +131,12 @@ export default function ContentForm({
     }
 
     // 날짜 형식 정규화
-    const normalizedDate = formData.openDate.includes('T00:00:00')
-      ? formData.openDate
-      : formData.openDate + 'T00:00:00';
+    let normalizedDate = formData.openDate;
+    if (formData.openDate && formData.openDate.trim() !== '') {
+      normalizedDate = formData.openDate.includes('T00:00:00')
+        ? formData.openDate
+        : formData.openDate + 'T00:00:00';
+    }
 
     onSave({
       ...formData,
@@ -201,13 +235,31 @@ export default function ContentForm({
     [updateFormData],
   );
 
+  // URL 유효성 검사 함수
+  const isValidImageUrl = useCallback((url: string): boolean => {
+    if (!url.trim()) return true; // 빈 URL은 허용 (선택사항)
+
+    try {
+      const urlObj = new URL(url);
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }, []);
+
   // 출연진 관리
   const addCast = useCallback(() => {
     if (!newCast.castName.trim()) return;
 
+    // 이미지 URL이 입력되었지만 유효하지 않은 경우
+    if (newCast.castImageUrl.trim() && !isValidImageUrl(newCast.castImageUrl)) {
+      showErrorToast('올바른 이미지 URL을 입력해주세요');
+      return;
+    }
+
     updateFormData((prev) => ({ ...prev, casts: [...prev.casts, newCast] }));
     setNewCast({ castName: '', castImageUrl: '' });
-  }, [newCast, updateFormData]);
+  }, [newCast, updateFormData, isValidImageUrl, showErrorToast]);
 
   const removeCast = useCallback(
     (index: number) => {
@@ -221,15 +273,25 @@ export default function ContentForm({
 
   // 플랫폼 관리
   const addPlatform = useCallback(() => {
-    if (!newPlatform.platformType.trim() || !newPlatform.watchUrl.trim())
+    if (!newPlatform.platformType.trim() || !newPlatform.watchUrl.trim()) {
+      showErrorToast('플랫폼과 URL을 모두 입력해주세요');
       return;
+    }
+
+    // URL 유효성 검사
+    try {
+      new URL(newPlatform.watchUrl);
+    } catch {
+      showErrorToast('올바른 URL을 입력해주세요');
+      return;
+    }
 
     updateFormData((prev) => ({
       ...prev,
       platforms: [...prev.platforms, newPlatform],
     }));
     setNewPlatform({ platformType: '', watchUrl: '' });
-  }, [newPlatform, updateFormData]);
+  }, [newPlatform, updateFormData, showErrorToast]);
 
   const removePlatform = useCallback(
     (index: number) => {
@@ -387,7 +449,7 @@ export default function ContentForm({
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="openDate" className="mb-3">
-                    개봉일
+                    개봉일 *
                   </Label>
                   <Input
                     id="openDate"
@@ -426,12 +488,12 @@ export default function ContentForm({
                   <Input
                     id="episode"
                     type="number"
-                    min="1"
+                    min="0"
                     value={formData.episode}
                     onChange={(e) =>
                       updateFormData((prev) => ({
                         ...prev,
-                        episode: Number(e.target.value) || 1,
+                        episode: Number(e.target.value) || 0,
                       }))
                     }
                   />
@@ -440,7 +502,7 @@ export default function ContentForm({
 
               <div>
                 <Label htmlFor="category" className="mb-3">
-                  카테고리
+                  카테고리 *
                 </Label>
                 <Select
                   value={formData.categories[0]?.categoryType || ''}
@@ -477,7 +539,7 @@ export default function ContentForm({
               </div>
 
               <div>
-                <Label className="mb-3">장르</Label>
+                <Label className="mb-3">장르 *</Label>
                 <div className="flex flex-wrap gap-2 max-w-full">
                   {GENRES.map((genre) => {
                     const isSelected =
@@ -642,20 +704,34 @@ export default function ContentForm({
           {/* 시청 플랫폼 */}
           <Card>
             <CardHeader>
-              <CardTitle className="mt-5">시청 플랫폼</CardTitle>
+              <CardTitle className="mt-5">시청 플랫폼 *</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 mb-5">
               <div className="grid grid-cols-2 gap-2 mb-2">
-                <Input
+                <Select
                   value={newPlatform.platformType}
-                  onChange={(e) =>
+                  onValueChange={(value) =>
                     setNewPlatform({
                       ...newPlatform,
-                      platformType: e.target.value,
+                      platformType: value,
                     })
                   }
-                  placeholder="플랫폼 이름 (예: 넷플릭스)"
-                />
+                >
+                  <SelectTrigger className="cursor-pointer">
+                    <SelectValue placeholder="플랫폼 선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PLATFORMS.map((platform) => (
+                      <SelectItem
+                        key={platform.id}
+                        value={platform.label}
+                        className="cursor-pointer"
+                      >
+                        {platform.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Input
                   value={newPlatform.watchUrl}
                   onChange={(e) =>

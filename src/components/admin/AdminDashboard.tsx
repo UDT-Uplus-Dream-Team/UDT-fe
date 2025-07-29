@@ -26,11 +26,11 @@ import { useUpdateContent } from '@hooks/admin/usePatchContent';
 import { useDeleteContent } from '@hooks/admin/useDeleteContent';
 import { useGetContentDetail } from '@hooks/admin/useGetContentDetail';
 import { useMutationErrorToast } from '@hooks/useMutationErrorToast';
-import ContentForm from './ContentForm';
-import ContentDetail from './ContentDetail';
-import SearchFilter from './SearchFilter';
-import ContentChart from './ContentChart';
-import ContentCard from './ContentCard';
+import ContentForm from '@components/admin/ContentForm';
+import ContentCard from '@components/admin/ContentCard';
+import ContentChart from '@components/admin/ContentChart';
+import ContentDetail from '@components/admin/ContentDetail';
+import SearchFilter from '@components/admin/SearchFilter';
 
 export default function AdminDashboard() {
   // 무한 스크롤용 필터 상태

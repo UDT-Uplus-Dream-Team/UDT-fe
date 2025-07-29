@@ -27,16 +27,19 @@ export default function LayoutWrapper({
   return (
     // 외부 컨테이너 - 큰 화면에서 다른 배경색
     <div className="w-full min-h-screen bg-gray-100 flex justify-center overflow-hidden">
-      {/* 앱 컨테이너 - 고정 너비 */}
-      <div className="w-full max-w-160 bg-gradient-to-b from-primary-900 via-purple-900 to-indigo-900 text-white min-h-screen relative overflow-hidden">
-        <main
-          className={`flex flex-col justify-center h-[100svh] ${
-            shouldHideBottomNavbar ? '' : 'pb-15'
-          }`}
-        >
+      {/* 앱 컨테이너 - flexbox로 구조화 */}
+      <div className="w-full h-[100svh] max-w-160 bg-gradient-to-b from-primary-900 via-purple-900 to-indigo-900 text-white flex flex-col relative overflow-hidden">
+        {/* 메인 콘텐츠 - 남은 공간 모두 사용 */}
+        <main className="flex-1 flex flex-col justify-center overflow-hidden min-h-0">
           {children}
         </main>
-        {!shouldHideBottomNavbar && <BottomNavbar />}
+
+        {/* 하단 네비게이션 - 고정 높이 */}
+        {!shouldHideBottomNavbar && (
+          <div className="h-15 flex-shrink-0">
+            <BottomNavbar />
+          </div>
+        )}
       </div>
     </div>
   );

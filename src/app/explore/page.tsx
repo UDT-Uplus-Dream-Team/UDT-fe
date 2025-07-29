@@ -50,7 +50,7 @@ export default function ExplorePage() {
   const todayRecommendSentence = useFetchTodayRecommendSentence();
 
   return (
-    <div className="flex flex-col pt-6 min-h-screen overflow-y-auto">
+    <div className="flex flex-col min-h-full overflow-y-auto">
       {/* 상단 제목 영역 */}
       <div className="flex items-center justify-center pt-6">
         <span className="text-2xl font-semibold text-white">작품 탐색하기</span>
@@ -71,7 +71,7 @@ export default function ExplorePage() {
           />
         ) : (
           // 스크롤 가능한 콘텐츠 영역
-          <div className="flex-1 container mx-auto space-y-6 pt-4 pb-24">
+          <div className="flex-1 container mx-auto space-y-6 py-4">
             <div className="w-full">
               <ExplorePageCarousel autoPlayInterval={3000} />
             </div>

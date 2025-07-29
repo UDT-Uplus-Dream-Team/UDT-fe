@@ -34,7 +34,7 @@ export default function BottomNavbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 max-w-160 mx-auto bg-[var(--primary-900)]/50 backdrop-blur-md border-t border-[var(--primary-700)]/50 px-4 safe-area-pb">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 max-w-160 mx-auto bg-[var(--primary-900)]/50 backdrop-blur-md border-t border-[var(--primary-700)]/50 px-4 safe-area-pb">
       <div className="flex justify-around items-center">
         {navItems.map((item) => {
           const Icon = item.icon;

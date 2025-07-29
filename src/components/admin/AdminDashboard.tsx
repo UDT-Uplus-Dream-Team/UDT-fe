@@ -25,6 +25,7 @@ import { usePostContent } from '@hooks/admin/usePostContent';
 import { useUpdateContent } from '@hooks/admin/usePatchContent';
 import { useDeleteContent } from '@hooks/admin/useDeleteContent';
 import { useGetContentDetail } from '@hooks/admin/useGetContentDetail';
+import { useMutationErrorToast } from '@hooks/useMutationErrorToast';
 import ContentForm from './contentForm';
 import ContentDetail from './contentDetail';
 import ContentCard from './contentCard';
@@ -60,6 +61,11 @@ export default function AdminDashboard() {
   const postContent = usePostContent();
   const updateContent = useUpdateContent();
   const deleteContent = useDeleteContent();
+
+  // 에러 토스트 처리
+  useMutationErrorToast(postContent);
+  useMutationErrorToast(updateContent);
+  useMutationErrorToast(deleteContent);
 
   // 모달 상태 관리 (독립적으로 관리)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);

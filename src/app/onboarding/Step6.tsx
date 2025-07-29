@@ -57,7 +57,7 @@ export default function Step6({ onNext }: Step6Props) {
         </svg>
         <p className="text-lg font-semibold leading-relaxed">
           <span className="text-purple-100  text-xl font-bold">
-            5개 이상 넘어가면
+            충분히 스와이프를 진행하면
           </span>
           <br />
           사용자님의 취향을 확인하여 <br />

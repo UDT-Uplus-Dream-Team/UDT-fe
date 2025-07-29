@@ -297,129 +297,135 @@ export const ResultScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-full flex-col items-center justify-center">
+    <div className="flex w-full h-full flex-col overflow-y-auto">
       {/* 제목 섹션 */}
-      <div className="text-center my-5">
-        <h1 className="text-3xl font-bold mb-2">추천 결과</h1>
-        <p className="text-gray-600">마음에 드는 콘텐츠를 선택해보세요</p>
+      <div className="text-center py-5">
+        <h1 className="text-2xl font-bold mb-1">추천 결과</h1>
+        <p className="text-gray-500">마음에 드는 콘텐츠를 선택해보세요</p>
       </div>
 
       {/* Carousel Container */}
-      <div
-        ref={containerRef}
-        className="relative h-[70%] md:h-[80%] w-[80%] min-w-70 min-h-130 max-w-100 max-h-175 flex items-center justify-center"
-      >
-        {contents.map((content, idx) => {
-          const pos = getCardPosition(idx, dist);
-          const isCenter = idx === currentIndex;
-          return (
-            <motion.div
-              key={content.contentId}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0}
-              onDragEnd={handleDragEnd}
-              initial={{ opacity: 0 }}
-              animate={{
-                x: pos.x,
-                scale: pos.scale,
-                opacity: pos.opacity,
-                zIndex: pos.zIndex,
-              }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="
+      <div className="flex-grow flex items-center justify-center px-4">
+        <div
+          ref={containerRef}
+          className="relative h-[60%] md:h-[80%] w-[80%] min-w-70 min-h-110 max-w-100 max-h-175 flex items-center justify-center"
+        >
+          {contents.map((content, idx) => {
+            const pos = getCardPosition(idx, dist);
+            const isCenter = idx === currentIndex;
+            return (
+              <motion.div
+                key={content.contentId}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0}
+                onDragEnd={handleDragEnd}
+                initial={{ opacity: 0 }}
+                animate={{
+                  x: pos.x,
+                  scale: pos.scale,
+                  opacity: pos.opacity,
+                  zIndex: pos.zIndex,
+                }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                className="
                   absolute my-4
-                  min-w-[280px] min-h-[480px]
+                  min-w-[280px] min-h-[440px]
                   max-w-[400px] max-h-[680px] w-full h-full
                 "
-            >
-              {isCenter ? (
-                <div className="relative w-full h-full">
-                  {/* 리롤 애니메이션용 AnimatePresence */}
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={`reroll-${content.contentId}-${rerollCount[idx]}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.3 }}
-                      className="w-full h-full"
-                    >
-                      {/* 플립 애니메이션용 AnimatePresence */}
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={`flip-${content.contentId}-${
-                            isFlipped[idx] ? 'back' : 'front'
-                          }`}
-                          initial={{ rotateY: isFlipped[idx] ? 90 : -90 }}
-                          animate={{ rotateY: 0 }}
-                          exit={{ rotateY: isFlipped[idx] ? -90 : 90 }}
-                          transition={{ duration: 0.2 }}
-                          className="w-full h-full"
-                          style={{ transformStyle: 'preserve-3d' }}
-                        >
-                          <Ticket
-                            movie={content}
-                            variant={isFlipped[idx] ? 'detail' : 'result'}
-                            feedback="neutral"
-                          />
-                        </motion.div>
-                      </AnimatePresence>
+              >
+                {isCenter ? (
+                  <div className="relative w-full h-full">
+                    {/* 리롤 애니메이션용 AnimatePresence */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={`reroll-${content.contentId}-${rerollCount[idx]}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="w-full h-full"
+                      >
+                        {/* 플립 애니메이션용 AnimatePresence */}
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={`flip-${content.contentId}-${
+                              isFlipped[idx] ? 'back' : 'front'
+                            }`}
+                            initial={{ rotateY: isFlipped[idx] ? 90 : -90 }}
+                            animate={{ rotateY: 0 }}
+                            exit={{ rotateY: isFlipped[idx] ? -90 : 90 }}
+                            transition={{ duration: 0.2 }}
+                            className="w-full h-full"
+                            style={{ transformStyle: 'preserve-3d' }}
+                          >
+                            <Ticket
+                              movie={content}
+                              variant={isFlipped[idx] ? 'detail' : 'result'}
+                              feedback="neutral"
+                            />
+                          </motion.div>
+                        </AnimatePresence>
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <div className="relative w-full h-[calc(100%-20px)]">
+                    <Ticket
+                      movie={content}
+                      variant="result"
+                      feedback="neutral"
+                    />
+                  </div>
+                )}
+
+                {isCenter && (
+                  <div className="absolute -top-2 -right-2 flex gap-x-2 z-50">
+                    {/* 상세보기 버튼 */}
+                    <motion.div whileTap={{ scale: 0.9 }}>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleFlip(idx)}
+                      >
+                        {isFlipped[idx] ? (
+                          <EyeOff className="w-4 h-4 text-black" />
+                        ) : (
+                          <Eye className="w-4 h-4 text-black" />
+                        )}
+                      </Button>
                     </motion.div>
-                  </AnimatePresence>
-                </div>
-              ) : (
-                <div className="relative w-full h-[calc(100%-20px)]">
-                  <Ticket movie={content} variant="result" feedback="neutral" />
-                </div>
-              )}
 
-              {isCenter && (
-                <div className="absolute -top-2 -right-2 flex gap-x-2 z-50">
-                  {/* 상세보기 버튼 */}
-                  <motion.div whileTap={{ scale: 0.9 }}>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleFlip(idx)}
-                    >
-                      {isFlipped[idx] ? (
-                        <EyeOff className="w-4 h-4 text-black" />
-                      ) : (
-                        <Eye className="w-4 h-4 text-black" />
-                      )}
-                    </Button>
-                  </motion.div>
-
-                  {/* 리롤 버튼 */}
-                  <motion.div whileTap={{ scale: 0.9 }}>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handleReroll(idx)}
-                      disabled={rerollUsed[idx] || curatedContents.length < 6}
-                      title={
-                        curatedContents.length < 6
-                          ? '리롤할 추가 콘텐츠가 없습니다'
-                          : rerollUsed[idx]
-                            ? '이미 리롤을 사용했습니다'
-                            : '다른 콘텐츠로 바꾸기'
-                      }
-                    >
-                      <RefreshCw
-                        className={`w-4 h-4 ${
-                          rerollUsed[idx] || curatedContents.length < 6
-                            ? 'text-gray-400'
-                            : 'text-black'
-                        }`}
-                      />
-                    </Button>
-                  </motion.div>
-                </div>
-              )}
-            </motion.div>
-          );
-        })}
+                    {/* 리롤 버튼 */}
+                    <motion.div whileTap={{ scale: 0.9 }}>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleReroll(idx)}
+                        disabled={rerollUsed[idx] || curatedContents.length < 6}
+                        title={
+                          curatedContents.length < 6
+                            ? '리롤할 추가 콘텐츠가 없습니다'
+                            : rerollUsed[idx]
+                              ? '이미 리롤을 사용했습니다'
+                              : '다른 콘텐츠로 바꾸기'
+                        }
+                      >
+                        <RefreshCw
+                          className={`w-4 h-4 ${
+                            rerollUsed[idx] || curatedContents.length < 6
+                              ? 'text-gray-400'
+                              : 'text-black'
+                          }`}
+                        />
+                      </Button>
+                    </motion.div>
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Action Buttons */}

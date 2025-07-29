@@ -13,7 +13,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   message,
   submessage,
 }) => (
-  <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+  <div className="h-full w-full flex items-center justify-center relative overflow-hidden">
     <SparkleBackground />
     <div className="text-center text-white z-10">
       <div className="mb-8 animate-fade-in-up" style={{ animationDelay: '1s' }}>

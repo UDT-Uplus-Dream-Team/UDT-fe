@@ -23,12 +23,8 @@ import type { ContentWithoutId, Cast, Platform } from '@type/admin/Content';
 import { PLATFORMS } from '@/lib/platforms';
 import { showSimpleToast } from '@components/common/Toast';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
-import {
-  RATING_OPTIONS,
-  CONTENT_CATEGORIES,
-  GENRES,
-  COUNTRIES,
-} from '@/constants';
+import { RATING_OPTIONS, CONTENT_CATEGORIES, COUNTRIES } from '@/constants';
+import { getGenresByCategory } from '@/lib/genres';
 import Image from 'next/image';
 
 interface ContentFormProps {
@@ -509,12 +505,21 @@ export default function ContentForm({
                   onValueChange={(value) => {
                     updateFormData((prev) => {
                       const updatedCategories = [...prev.categories];
+                      const currentGenres = updatedCategories[0]?.genres || [];
+                      const newAvailableGenres = getGenresByCategory(value);
+
+                      // 새로운 카테고리에서 허용되지 않는 장르 제거
+                      const filteredGenres = currentGenres.filter((genre) =>
+                        newAvailableGenres.includes(genre),
+                      );
+
                       if (updatedCategories[0]) {
                         updatedCategories[0].categoryType = value;
+                        updatedCategories[0].genres = filteredGenres;
                       } else {
                         updatedCategories[0] = {
                           categoryType: value,
-                          genres: [],
+                          genres: filteredGenres,
                         };
                       }
                       return { ...prev, categories: updatedCategories };
@@ -538,30 +543,39 @@ export default function ContentForm({
                 </Select>
               </div>
 
-              <div>
-                <Label className="mb-3">장르 *</Label>
-                <div className="flex flex-wrap gap-2 max-w-full">
-                  {GENRES.map((genre) => {
-                    const isSelected =
-                      formData.categories[0]?.genres.includes(genre);
+              {formData.categories[0]?.categoryType && (
+                <div>
+                  <Label className="mb-3">장르 *</Label>
+                  <div className="flex flex-wrap gap-2 max-w-full">
+                    {(() => {
+                      const selectedCategory =
+                        formData.categories[0]?.categoryType || '';
+                      const availableGenres =
+                        getGenresByCategory(selectedCategory);
 
-                    return (
-                      <Badge
-                        key={genre}
-                        variant={isSelected ? 'default' : 'secondary'}
-                        className={`cursor-pointer select-none ${
-                          isSelected ? 'bg-blue-600 text-white' : ''
-                        }`}
-                        onClick={() =>
-                          isSelected ? removeGenre(genre) : addGenre(genre)
-                        }
-                      >
-                        {genre}
-                      </Badge>
-                    );
-                  })}
+                      return availableGenres.map((genre) => {
+                        const isSelected =
+                          formData.categories[0]?.genres.includes(genre);
+
+                        return (
+                          <Badge
+                            key={genre}
+                            variant={isSelected ? 'default' : 'secondary'}
+                            className={`cursor-pointer select-none ${
+                              isSelected ? 'bg-blue-600 text-white' : ''
+                            }`}
+                            onClick={() =>
+                              isSelected ? removeGenre(genre) : addGenre(genre)
+                            }
+                          >
+                            {genre}
+                          </Badge>
+                        );
+                      });
+                    })()}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <Label className="mb-3">제작 국가</Label>

@@ -21,6 +21,7 @@ export const RATING_OPTIONS = [
   '12세 이상 관람가',
   '15세 이상 관람가',
   '청소년 관람불가',
+  '미정',
 ] as const;
 
 export const PLATFORMS = [

@@ -34,7 +34,7 @@ export default function OnboardingPage() {
   const handleComplete = () => {
     // isNewUser 쿠키 제거 (만료 시간을 과거로 설정)
     document.cookie =
-      'isNewUser=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      'X-New-User=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     // 추천 페이지로 이동
     router.push('/recommend');
   };

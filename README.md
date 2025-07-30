@@ -9,20 +9,21 @@
 ## 🧭 프로젝트 개요
 
 ### 📌 기획 배경
+ 
+OTT 콘텐츠가 넘쳐나는 시대, 아직도 “무엇을 볼지” 30분씩 고민하고 계신가요? <br>
+**반딧불**은 사용자 취향을 바탕으로 빠른 시간 안에 나만을 위한 콘텐츠를 추천해주는,
+직관적이고 사용자 친화적인 콘텐츠 큐레이션 서비스입니다.
 
-OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇을 볼지" 고민하나요?  
-**반딧불**은 사용자 취향 기반으로 단 30초 만에 콘텐츠를 추천해주는 **직관적이고 유쾌한 콘텐츠 큐레이션 서비스**입니다.
-
-- 콘텐츠 과포화 → 선택 피로 (평균 탐색 시간 10~20분)
-- 구독 플랫폼 분산 → 통합 탐색의 어려움
-- 사용자 피드백 부재 → 낮은 추천 정밀도
+- **콘텐츠 과잉**: OTT 서비스에 쏟아지는 수많은 콘텐츠로 선택 피로도 급증 (평균 탐색 시간 10~20분)
+- **구독 플랫폼 분산**: 여러 OTT를 동시에 사용하는 사용자 증가, 통합 탐색의 어려움
+- **피드백 부재**: 사용자 선호를 적극 반영하지 못해 추천의 정밀도가 낮음
 
 ### 🎯 서비스 목표
 
 - **스와이프 기반 인터랙션**으로 콘텐츠 피드백 수집
 - **실시간 개인화 추천**을 통해 탐색 시간 단축
 - **구독 중인 OTT 우선 추천** + **발견 기반 큐레이션**
-- **설문 기반 cold-start 해결** + **빠른 리롤링 캐싱 전략**
+- **초반에 설문을 통해 얻은 정보로 cold-start 해결** + **빠른 리롤링 캐싱 전략**
 
 ---
 
@@ -32,12 +33,10 @@ OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇�
 
 ---
 
-## 🖥️ 주요 화면 및 기능 (FE 중심)
+## 🖥️ 주요 화면 및 기능
 
 ### 1. 설문조사 페이지 (`/survey`)
-
-사용자의 취향을 기반으로 OTT 콘텐츠를 추천하기 위해 진행되는 설문형 페이지입니다.
-
+> 사용자의 취향을 파악하기 위한 설문 진행 및 결과 기반 맞춤 추천이 시작되는 첫 화면입니다.
 - OTT 구독 서비스 선택
 - 선호 장르 선택
 - 관련 콘텐츠 리스트업 (회원들의 좋아요/싫어요 기반 정렬)
@@ -48,18 +47,19 @@ OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇�
 <img width="300" height="778" alt="image" src="https://github.com/user-attachments/assets/1f0cc4dd-b062-43e7-a21f-823aa4707459" />
 
 ### 2. 온보딩 페이지 (`/onboarding`)
-
+> 서비스 이용 방법과 스와이프 인터랙션을 튜토리얼로 안내하는 페이지입니다.
 - 스와이프 인터랙션 튜토리얼
 - 추천 시스템 및 사용 방식 설명
 - 모든 튜토리얼 완료 시 → 메인 페이지 진입
 
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/216c6556-0c80-42c6-b4d4-988f97f1518c" />
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/5dce1473-331c-4f1d-b4e0-94e1c67da1b1" />
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/7113431e-fdd0-4603-b8af-f9fbca5667f9" />
+https://github.com/user-attachments/assets/f72a8e93-0234-4d8f-81cc-bc89ee466c19
+
+https://github.com/user-attachments/assets/62a24579-3ecd-4d47-9bae-574e67a85192
+
 
 
 ### 3. 빠른 콘텐츠 추천 페이지 (`/recommend`)
-
+> 스와이프 기반의 인터랙션으로 실시간 콘텐츠 추천 및 피드백을 제공하는 메인 페이지입니다.
 - 카드 기반 릴스 UI로 콘텐츠 추천
   - 오른쪽 스와이프: 좋아요
   - 왼쪽 스와이프: 싫어요
@@ -68,33 +68,38 @@ OTT 콘텐츠가 넘쳐나는 시대, 당신은 아직도 30분 동안 "무엇�
 - 엄선된 추천 결과가 준비되면 토스트 알림
 - 추천 결과는 한 번씩 리롫이 가능하며, 각 컨텐츠의 상세 정보 조회 및 저장 가능
 
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/17fea270-0837-457f-9435-08bb72123e24" />
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/0a7560c6-e365-4caf-a6ab-8ed46452dd9a" />
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/2c487d04-bead-442c-9467-d6bae8d4912a" />
+
+https://github.com/user-attachments/assets/a630cfd4-4dd1-4d9f-b8a6-7b9defb66c9b
+
+https://github.com/user-attachments/assets/783100d6-4069-4b64-91e7-d955b226acfb
+
+
 
 ### 4. 마이페이지 (`/mypage`)
-
+> 나의 선호, 구독 현황, 추천 및 활동 이력을 한 눈에 관리할 수 있는 개인화 페이지입니다.
 - 사용자 정보, OTT 구독 현황, 선호 장르 수정 가능
 - 좋아요/싫어요한 콘텐츠 및 추천 내역 조회 가능
 - 불필요한 콘텐츠 이력 삭제 가능
 - 콘텐츠 상세 조회 가능 (탭 → 카드 확장)
 
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/88cc0749-651b-4861-91ff-ed9f98c8ba86" />
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/4c806ccf-7c3b-4b0e-81e1-b1da63a8e46d" />
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/b52c0155-b366-418b-b4fc-c65214916c43" />
+https://github.com/user-attachments/assets/ea4ddad5-b91d-453d-acc8-08fc9f1ea69c
+
+https://github.com/user-attachments/assets/4d399b28-f4c9-44a6-bd8d-74f881309bb3
+
 
 ### 5. 리스트 페이지 (`/list`)
-
+> 전체 콘텐츠를 필터링·검색하고 상세 정보를 확인할 수 있는 콘텐츠 탐색 페이지입니다.
 - DB 전체 콘텐츠 필터링 및 검색
 - 콘텐츠 상세 조회 제공
-- 
-<img width="300" height="700" alt="image" src="https://github.com/user-attachments/assets/efe1aa26-4409-4d5d-af76-ff280e76ea11" />
+- 상세 조회에서 해당 콘텐츠를 서비스하는 OTT로의 바로가기 지원
+
+https://github.com/user-attachments/assets/c399b362-cafd-4503-a772-63abbf15b038
+
+https://github.com/user-attachments/assets/591d4065-c45b-446f-ba4c-d041a295e808
 
 
 ### 6. 백오피스 페이지 (`/admin`)
-
-콘텐츠 등록, 수정, 삭제 및 통계 관리가 가능한 백오피스 관리자 페이지입니다.
-
+> 콘텐츠 및 통계를 효율적으로 관리할 수 있는 관리자 전용 백오피스 페이지입니다.
 - 등록된 전체 콘텐츠 리스트 조회
 - 콘텐츠 장르 기반 필터링
 - 개별 콘텐츠 등록, 수정, 삭제 가능

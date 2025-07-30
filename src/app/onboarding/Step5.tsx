@@ -26,6 +26,7 @@ export default function Step5({ onNext }: StepProps5) {
   const startPoint = useRef<{ x: number; y: number } | null>(null);
 
   const currentMovie = MockMovies[currentIndex];
+  const movieList = MockMovies.slice(0, 2);
 
   // ── 스와이프 처리 ──────────────────────────────────────────────────
   const handleSwipe = (
@@ -52,17 +53,15 @@ export default function Step5({ onNext }: StepProps5) {
   };
   // ── 다음페이지로
   useEffect(() => {
-    if (currentIndex >= 2) {
-      onNext();
+    if (currentIndex >= movieList.length) {
+      onNext(); // 다음 스텝으로
     }
   }, [currentIndex, onNext]);
 
   useEffect(() => {
-    if (!isAnimating) {
-      const nextIdx = currentIndex + 1;
-      setNextMovie(MockMovies[nextIdx] ?? null);
-    }
-  }, [isAnimating, currentIndex]);
+    const nextIdx = currentIndex + 1;
+    setNextMovie(MockMovies[nextIdx] ?? null);
+  }, [currentIndex]);
 
   // ── 키보드 스와이프 지원 ────────────────────────────────────────────
   const handleKeyPress = (e: KeyboardEvent) => {
@@ -127,22 +126,21 @@ export default function Step5({ onNext }: StepProps5) {
       <div className="text-center space-y-2 mb-2">
         <p className="text-sm text-white/80">{`${currentIndex + 1} / 2`}</p>
         <h2 className="text-xl font-semibold leading-relaxed">
-          한번 시도해볼까요?
+          직접 스와이프를 진행해 볼까요?
         </h2>
       </div>
 
       {/* 카드 아래 안내 문구 */}
       <div className="text-center space-y-2 z-30">
         <p className="text-sm text-white/80">
-          좌 우 아래 스와이프로 취향 반영 <br />
-          카드를 직접 끌거나 키보드 방향키로 직접 해보아요!!
+          좌 우 아래 스와이프로 취향 반영이 가능해요 <br />
+          카드를 직접 끌거나 키보드 방향키로 직접 시도해 보세요!
         </p>
       </div>
 
-      <div className="my-8 flex w-full justify-center">
-        <div></div>
+      <div className="my-8 flex w-full justify-center  relative">
         <div
-          className={`relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh] select-none ${
+          className={`relative w-[80svw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh] select-none ${
             isFlipped ? 'touch-action-auto' : 'touch-action-none'
           }`}
           style={{

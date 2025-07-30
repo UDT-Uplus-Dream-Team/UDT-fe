@@ -78,12 +78,8 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
             <h2 className="text-2xl md:text-3xl font-semibold mb-6">
               반딧불에 오신 걸 환영해요
             </h2>
-            <p className="text-purple-100 text-lg leading-relaxed">
-              오늘은 무슨 콘텐츠를 볼 지 고민되세요?
-              <br />
-              고민하지 마세요
-              <br />
-              반딧불이 골라 드릴게요!
+            <p className="text-yellow-100 text-xl font-bold mt-4">
+              간단한 튜토리얼을 함께 살펴볼까요?
             </p>
           </motion.div>
 
@@ -101,7 +97,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                 text-white rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105"
             >
               <Play className="w-6 h-6 mr-3" />
-              반딧불 출발하기!
+              튜토리얼 시작히기
             </Button>
           </motion.div>
         </motion.div>

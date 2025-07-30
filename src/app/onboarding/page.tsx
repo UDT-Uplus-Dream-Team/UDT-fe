@@ -13,6 +13,7 @@ import Step7 from './Step7';
 import { useRouter } from 'next/navigation';
 import Step8 from './Step8';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
+import { ProgressDots } from '@components/common/ProgressDots';
 
 export default function OnboardingPage() {
   // 페이지 머무르는 시간 추적 (온보딩 페이지 추적 / Google Analytics 연동을 위함)
@@ -53,5 +54,15 @@ export default function OnboardingPage() {
     <Step8 onNext={handleComplete} key={7} />, // Step8: 마이페이지 확인
   ];
 
-  return steps[step];
+  return (
+    <div className="relative w-full h-full flex flex-col items-center">
+      {/* 진행 바 상단에 고정 */}
+      <div className="w-full max-w-[640px] px-6 pt-6">
+        <ProgressDots currentStep={step} totalSteps={steps.length} />
+      </div>
+
+      {/* 현재 스텝 컴포넌트 */}
+      <div className="flex-1 w-full">{steps[step]}</div>
+    </div>
+  );
 }

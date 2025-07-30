@@ -15,9 +15,9 @@ export default function Step4({ onNext }: StepProps4) {
 
   return (
     <div className="relative flex flex-col items-center justify-center h-full w-full px-6 text-white">
-      <div className="text-center space-y-4 mb-6">
-        <h2 className="text-xl font-semibold leading-relaxed">
-          앗! 이건 도대체 뭐야?
+      <div className="text-center space-y-4 mb-4 mt-1">
+        <h2 className="text-lg md:text-xl font-semibold leading-relaxed">
+          추천 받은 컨텐츠의 상세 내용이 궁금하다면?
           <br />
           상세보기 클릭으로 내용 확인 가능합니다
         </h2>
@@ -25,7 +25,7 @@ export default function Step4({ onNext }: StepProps4) {
 
       {/* 카드 영역 */}
       <div
-        className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]"
+        className="relative w-[80svw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]"
         style={{ perspective: '1000px' }}
         onClick={() => {
           if (!flipped) setFlipped(true);
@@ -64,8 +64,8 @@ export default function Step4({ onNext }: StepProps4) {
 
       {/* 버튼 */}
       <Button
-        variant="ghost"
-        className="text-white border border-white/30 hover:bg-white/10 mt-5"
+        variant="default"
+        className="md:mt-5 mt-3 px-8 py-4  text-sm md:text-lg font-semibold rounded-xl bg-white text-black hover:bg-white/90 transition"
         onClick={() => {
           if (flipped) {
             onNext();
@@ -74,7 +74,7 @@ export default function Step4({ onNext }: StepProps4) {
           }
         }}
       >
-        {flipped ? '계속' : '상세보기'}
+        {flipped ? '계속' : '상세보기 클릭하기!!'}
       </Button>
     </div>
   );

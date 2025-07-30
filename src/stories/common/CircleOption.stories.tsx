@@ -7,7 +7,7 @@ const meta: Meta<typeof CircleOption> = {
   title: 'Components/CircleOption',
   component: CircleOption,
   args: {
-    imageSrc: '/images/ott/netflix.png',
+    imageSrc: '/images/ott/netflix.webp',
     label: '넷플릭스',
     size: 'default',
     selected: false,
@@ -73,25 +73,25 @@ export const Sizes: Story = {
   render: () => (
     <div className="p-10 bg-gray-900 flex justify-center gap-4">
       <CircleOption
-        imageSrc="/images/ott/netflix.png"
+        imageSrc="/images/ott/netflix.webp"
         label="XS"
         size="xs"
         onClick={() => {}}
       />
       <CircleOption
-        imageSrc="/images/ott/netflix.png"
+        imageSrc="/images/ott/netflix.webp"
         label="SM"
         size="sm"
         onClick={() => {}}
       />
       <CircleOption
-        imageSrc="/images/ott/netflix.png"
+        imageSrc="/images/ott/netflix.webp"
         label="MD"
         size="md"
         onClick={() => {}}
       />
       <CircleOption
-        imageSrc="/images/ott/netflix.png"
+        imageSrc="/images/ott/netflix.webp"
         label="LG"
         size="default"
         onClick={() => {}}
@@ -107,7 +107,7 @@ export const ToggleSelection: Story = {
 
     return (
       <CircleOption
-        imageSrc="/images/ott/netflix.png"
+        imageSrc="/images/ott/netflix.webp"
         label="토글 예시"
         selected={selected}
         onClick={() => setSelected((prev) => !prev)}

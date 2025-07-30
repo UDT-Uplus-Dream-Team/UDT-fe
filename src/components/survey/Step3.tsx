@@ -19,7 +19,7 @@ function getRandomContents(count: number) {
 
 export default function Step3({ onNext }: Step3Props) {
   const selectedContentIds = useSurveyStore((state) => state.contentIds);
-  const setselectedContentIds = useSurveyStore((state) => state.setContentIds);
+  const setSelectedContentIds = useSurveyStore((state) => state.setContentIds);
 
   const [randomContents] = useState(() => getRandomContents(9));
   const [loadedCount, setLoadedCount] = useState(0);
@@ -40,7 +40,7 @@ export default function Step3({ onNext }: Step3Props) {
       ? selectedContentIds.filter((id) => id !== contentId)
       : [...selectedContentIds, contentId];
 
-    setselectedContentIds(updated);
+    setSelectedContentIds(updated);
   };
 
   const handleImageLoad = () => {

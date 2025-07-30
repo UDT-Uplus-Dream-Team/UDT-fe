@@ -24,7 +24,7 @@ export const Default: Story = {
 export const Netflix: Story = {
   args: {
     platformName: '넷플릭스',
-    iconUrl: '/images/ott/neflix.webp',
+    iconUrl: '/images/ott/netflix.webp',
     url: 'https://www.netflix.com',
   },
 };

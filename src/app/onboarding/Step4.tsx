@@ -25,7 +25,7 @@ export default function Step4({ onNext }: StepProps4) {
 
       {/* 카드 영역 */}
       <div
-        className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70vh]"
+        className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]"
         style={{ perspective: '1000px' }}
         onClick={() => {
           if (!flipped) setFlipped(true);

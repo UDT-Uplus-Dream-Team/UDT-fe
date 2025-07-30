@@ -79,7 +79,7 @@ export default function EditPreferencePage() {
   };
 
   return (
-    <div className="h-[calc(100vh-80px)] overflow-y-auto px-9 py-4 text-white max-w-[550px] mx-auto">
+    <div className="h-full overflow-y-auto px-9 py-4 text-white max-w-[550px] mx-auto">
       {/* 헤더 */}
       <div className="relative flex items-center justify-center mb-14 h-10">
         <button

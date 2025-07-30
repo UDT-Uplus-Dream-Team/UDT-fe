@@ -23,7 +23,7 @@ export default function Step8({ onNext }: Step8Props) {
       </div>
 
       {/* 카드 영역 */}
-      <div className="flex flex-col gap-6 items-center w-full max-w-[80vw] max-h-[60vh] md:max-h-[620px] ">
+      <div className="flex flex-col gap-6 items-center w-full max-w-[80vw] max-h-[60svh] md:max-h-[620px] ">
         {recommendData.map((card, index) => (
           <RecommendationCard key={index} {...card} disabled />
         ))}

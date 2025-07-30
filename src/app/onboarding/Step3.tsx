@@ -14,7 +14,7 @@ export default function Step3({ onNext }: StepProps3) {
   return (
     <div className="relative flex items-center justify-center h-full w-full px-6 text-white">
       {/* 카드 (배경처럼) */}
-      <div className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70vh]">
+      <div className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]">
         <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
       </div>
 

@@ -46,6 +46,7 @@ export const showSimpleToast = {
           className={[
             'flex items-center justify-center gap-2',
             'text-sm font-medium rounded-lg py-2 px-4',
+            'bg-green-600 text-white',
             opts.className,
             'animate-enter',
           ]
@@ -70,6 +71,7 @@ export const showSimpleToast = {
           className={[
             'flex items-center justify-center gap-2',
             'text-sm font-medium rounded-lg py-2 px-4',
+            'bg-red-600 text-white',
             opts.className,
             'animate-enter',
           ]
@@ -94,13 +96,14 @@ export const showSimpleToast = {
           className={[
             'flex items-center justify-center gap-2',
             'text-sm font-medium rounded-lg py-2 px-4',
+            'bg-amber-500 text-white',
             opts.className,
             'animate-enter',
           ]
             .filter(Boolean)
             .join(' ')}
         >
-          <AlertTriangle className="h-4 w-4 text-amber-500" />
+          <AlertTriangle className="h-4 w-4 text-white" />
           <span>{opts.message}</span>
         </div>
       ),
@@ -118,13 +121,14 @@ export const showSimpleToast = {
           className={[
             'flex items-center justify-center gap-2',
             'text-sm font-medium rounded-lg py-2 px-4',
+            'bg-blue-600 text-white',
             opts.className,
             'animate-enter',
           ]
             .filter(Boolean)
             .join(' ')}
         >
-          <Info className="h-4 w-4 text-blue-500" />
+          <Info className="h-4 w-4 text-white" />
           <span>{opts.message}</span>
         </div>
       ),
@@ -168,6 +172,7 @@ export const showInteractiveToast = {
           className={[
             'flex flex-col gap-3',
             'text-sm text-gray-800 rounded-xl border border-gray-200 p-4',
+            'bg-white shadow-lg',
             opts.className,
             'animate-enter',
           ]
@@ -218,6 +223,7 @@ export const showInteractiveToast = {
             'rounded-lg p-4',
             'mx-auto',
             'shadow-sm',
+            'bg-white',
             opts.className,
             'animate-enter',
           ]
@@ -276,6 +282,7 @@ export const showInteractiveToast = {
           className={[
             'flex items-center justify-between gap-3',
             'text-sm text-gray-800 rounded-xl border border-gray-200 p-3',
+            'bg-white',
             opts.className,
             'animate-enter',
           ]

@@ -18,6 +18,7 @@ import { DetailedContentData } from '@type/explore/Explore';
 import { VideoPlayer } from '@components/explore/VideoPlayer';
 import { useGetContentDetails } from '@hooks/explore/useGetContentDetails';
 import { formattingOpenDate } from '@utils/formattingOpenDate';
+import { DetailBottomSheetSkeleton } from '@components/explore/DetailBottomSheetSkeleton';
 
 interface DetailBottomSheetContentProps {
   contentId: number;
@@ -116,7 +117,7 @@ export const DetailBottomSheetContent = ({
   }, [contentTrailerUrl]);
 
   if (status === 'pending') {
-    return <div>로딩 중입니다.</div>;
+    return <DetailBottomSheetSkeleton />;
   }
 
   if (status === 'error') {

@@ -42,13 +42,8 @@ const ProfilePage = () => {
 
   if (userQuery.status === 'pending') {
     return (
-      <div className="h-[calc(100vh-80px)] overflow-y-auto w-full mx-auto px-4 pt-6 text-white flex flex-col items-center">
-        <div className="w-full flex justify-center mb-16 h-10">
-          <span className="text-lg font-bold text-center text-white">
-            프로필
-          </span>
-        </div>
-        <div className="w-full max-w-[600px] flex flex-col justify-center items-center gap-3 px-4 sm:px-6">
+      <div className="h-full w-full overflow-y-auto py-4 mx-auto px-4 text-white flex flex-col items-center">
+        <div className="w-full max-w-[600px] flex flex-col justify-center items-center gap-3 py-4 px-4 sm:px-6">
           {/* 유저 정보 스켈레톤 */}
           <div className="w-full max-w-[500px] bg-white/20 rounded-[16px] p-4">
             <div className="flex items-center gap-4 mb-2">

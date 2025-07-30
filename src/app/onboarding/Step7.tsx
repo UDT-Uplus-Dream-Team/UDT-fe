@@ -102,7 +102,7 @@ export default function Step7({ onNext }: Step7Props) {
               className="
                   absolute my-4
                   min-w-[280px] min-h-[480px]
-                  max-w-[400px] max-h-[680px]  w-[80vw] h-[65vh] md:w-full md:h-full
+                  max-w-[400px] max-h-[680px]  w-[80vw] h-[65svh] md:w-full md:h-full
                 "
             >
               {isCenter ? (

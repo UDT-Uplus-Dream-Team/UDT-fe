@@ -309,7 +309,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       case 'right':
         return 'translate-x-[100vw] rotate-[30deg]';
       case 'up':
-        return 'translate-y-[-100vh]';
+        return 'translate-y-[-100svh]';
     }
   };
 
@@ -388,7 +388,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
           onTouchCancel={() => setStartPoint(null)}
         >
           {/* 자리 채우기 티켓 */}
-          <div className="relative flex w-full h-[70vh] aspect-[75/135] min-w-70 min-h-110 max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
+          <div className="relative flex w-full h-[70svh] aspect-[75/135] min-w-70 min-h-110 max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
             <Ticket
               key={currentMovie.contentId}
               movie={currentMovie}

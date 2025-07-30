@@ -8,7 +8,14 @@ interface CustomJWTPayload extends JoseJWTPayload {
   exp: number;
 }
 
-const PUBLIC_PATHS = ['/_next', '/favicon.ico', '/fonts', '/images', '/icons'];
+const PUBLIC_PATHS = [
+  '/_next',
+  '/favicon.ico',
+  '/fonts',
+  '/images',
+  '/icons',
+  '/test',
+];
 
 const ROLE_RESTRICTIONS = {
   ROLE_GUEST: {

@@ -29,10 +29,17 @@ export default function ContentDetail({
               <Calendar className="h-4 w-4" />
               <span>{content.openDate?.split('T')[0] || ''}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              {content.runningTime}분
-            </div>
+            {content.runningTime > 0 && (
+              <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                {content.runningTime}분
+              </div>
+            )}
+            {content.episode > 0 && (
+              <div className="flex items-center gap-1">
+                <span>{content.episode}화</span>
+              </div>
+            )}
             <Badge>{content.rating}</Badge>
           </div>
         </div>
@@ -99,7 +106,7 @@ export default function ContentDetail({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-1 mb-5">
+                    <div className="space-y-1 mb-5 min-h-[15px]">
                       {content.directors.map((director, index) => (
                         <div key={index} className="text-sm">
                           {director}
@@ -196,9 +203,12 @@ export default function ContentDetail({
                 <CardContent>
                   <div className="space-y-3 mb-5">
                     {content.platforms.map((platform, index) => (
-                      <div
+                      <a
                         key={index}
-                        className="flex items-center justify-between p-3 border rounded-lg"
+                        href={platform.watchUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                       >
                         <div className="flex items-center gap-3">
                           <Play className="h-5 w-5 text-blue-600" />
@@ -211,7 +221,7 @@ export default function ContentDetail({
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 </CardContent>

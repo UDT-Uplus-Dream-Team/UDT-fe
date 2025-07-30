@@ -48,12 +48,14 @@ export function CircleOption({
 }: CircleOptionProps) {
   return (
     <button
-      onClick={onClick}
       className={cn('flex flex-col items-center space-y-1', className)}
       {...props}
     >
       <div className={avatarWrapperVariants({ size, selected })}>
-        <Avatar className="cursor-pointer w-full h-full rounded-full">
+        <Avatar
+          onClick={onClick}
+          className="cursor-pointer w-full h-full rounded-full"
+        >
           <AvatarImage
             src={imageSrc}
             alt={label}

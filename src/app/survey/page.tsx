@@ -4,7 +4,6 @@ import Step1 from '@components/survey/Step1';
 import Step2 from '@components/survey/Step2';
 import SurveyComplete from '@components/survey/SurveyComplete';
 import { useState } from 'react';
-import { SurveyProvider } from '@store/SurveyContext';
 import { postSurvey } from '@lib/apis/survey/postSurvey';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
@@ -50,9 +49,5 @@ export default function SurveyPage() {
   // 페이지 머무르는 시간 추적 (설문조사 페이지 추적 / Google Analytics 연동을 위함)
   usePageStayTracker('survey');
 
-  return (
-    <SurveyProvider>
-      <SurveyFlow />
-    </SurveyProvider>
-  );
+  return <SurveyFlow />;
 }

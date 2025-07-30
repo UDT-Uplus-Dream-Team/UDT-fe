@@ -50,18 +50,19 @@ export default function ExplorePage() {
   const todayRecommendSentence = useFetchTodayRecommendSentence();
 
   return (
-    <div className="flex flex-col min-h-full overflow-y-auto">
-      {/* 상단 제목 영역 */}
+    <div className="flex flex-col min-h-screen w-full bg-transparent">
+      {/* 1. 최상단 제목 (이건 항상 맨 위에 있으나, 아래의 overflow-y-auto 영역에 안 들어감) */}
       <div className="flex items-center justify-center pt-6">
         <span className="text-2xl font-semibold text-white">작품 탐색하기</span>
       </div>
 
-      {/* 필터 그룹 - 스크롤 시 상단에 고정 */}
+      {/* 2. FilterRadioButtonGroup은 sticky가 아니라 그냥 여기에 둔다! */}
       <FilterRadioButtonGroup />
 
-      {
-        // 필터가 적용된 경우
-        filters !== undefined ? (
+      {/* 3. 나머지 모든 콘텐츠가 스크롤되는 영역 */}
+      <div className="flex-1 overflow-y-auto pb-15">
+        <div className="h-0" />
+        {filters !== undefined ? (
           <PosterCardsGrid
             contents={contents}
             status={status}
@@ -70,12 +71,10 @@ export default function ExplorePage() {
             isFetchingNextPage={isFetchingNextPage}
           />
         ) : (
-          // 스크롤 가능한 콘텐츠 영역
-          <div className="flex-1 container mx-auto space-y-6 py-4">
+          <div className="container mx-auto space-y-6 py-4">
             <div className="w-full">
               <ExplorePageCarousel autoPlayInterval={3000} />
             </div>
-
             <PosterCardScrollBox
               BoxTitle={todayRecommendSentence}
               BoxType="todayRecommend"
@@ -85,8 +84,8 @@ export default function ExplorePage() {
               BoxType="popular"
             />
           </div>
-        )
-      }
+        )}
+      </div>
     </div>
   );
 }

@@ -45,7 +45,7 @@ export default function Step2({ onNext }: Step2Props) {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="h-[100svh] flex justify-center items-center">
       <div
         className="flex flex-col items-center px-6 w-full max-w-[500px]"
         style={{ maxHeight: '700px' }}
@@ -65,7 +65,7 @@ export default function Step2({ onNext }: Step2Props) {
               <CircleOption
                 key={label}
                 label={label}
-                imageSrc={`/images/genre/${id}.png`}
+                imageSrc={`/images/genre/${id}.webp`}
                 selected={selectedGenres.includes(label)}
                 onClick={() => toggleGenre(label)}
                 className="m-1"

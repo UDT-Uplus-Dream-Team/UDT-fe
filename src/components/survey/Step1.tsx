@@ -31,7 +31,7 @@ export default function Step1({ onNext }: Step1Props) {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="h-[100svh] flex justify-center items-center">
       <div
         className="flex flex-col items-center px-6 w-full max-w-[500px]"
         style={{ maxHeight: '700px' }}
@@ -49,7 +49,7 @@ export default function Step1({ onNext }: Step1Props) {
               <CircleOption
                 key={label}
                 label={label}
-                imageSrc={`/images/ott/${id}.png`}
+                imageSrc={`/images/ott/${id}.webp`}
                 selected={selectedPlatforms.includes(label)}
                 onClick={() => togglePlatforms(label)}
               />

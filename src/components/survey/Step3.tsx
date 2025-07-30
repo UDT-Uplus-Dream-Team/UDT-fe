@@ -46,7 +46,7 @@ export default function Step3({ onNext }: Step3Props) {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="h-[100svh] flex justify-center items-center">
       <div
         className="flex flex-col items-center px-6 w-full max-w-[500px]"
         style={{ maxHeight: '700px' }}

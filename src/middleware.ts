@@ -8,11 +8,6 @@ interface CustomJWTPayload extends JoseJWTPayload {
   exp: number;
 }
 
-interface ReissueResult {
-  ok: boolean;
-  setCookie?: string;
-}
-
 const PUBLIC_PATHS = [
   '/_next',
   '/favicon.ico',
@@ -25,7 +20,7 @@ const PUBLIC_PATHS = [
 const ROLE_RESTRICTIONS = {
   ROLE_GUEST: { allowed: ['/survey'], denied: [] },
   ROLE_USER: { allowed: [], denied: ['/survey', '/admin'] },
-  ROLE_ADMIN: { allowed: [], denied: ['/survey', '/onboarding'] }, // '/onboarding'로 수정
+  ROLE_ADMIN: { allowed: [], denied: ['/survey', '/onboarding'] },
 } as const;
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -123,31 +118,19 @@ async function verifyToken(token: string): Promise<TokenVerificationResult> {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 토큰 재발급 - Authorization 쿠키를 포함한 전체 쿠키 헤더 전달                */
+/* 리프레시 토큰 기반 재발급                                                   */
 /* -------------------------------------------------------------------------- */
-async function reissueToken(request: NextRequest): Promise<ReissueResult> {
+async function reissueToken(): Promise<boolean> {
   try {
-    const cookieHeader = request.headers.get('cookie') || '';
-
     const response = await fetch(`${API_BASE_URL}/auth/reissue/token`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: cookieHeader, // Authorization 쿠키가 포함된 전체 헤더 전달
-      },
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
     });
-
-    if (response.status === 204) {
-      return {
-        ok: true,
-        setCookie: response.headers.get('set-cookie') || undefined,
-      };
-    }
-
-    return { ok: false };
-  } catch (error) {
-    console.error('Token reissue failed:', error);
-    return { ok: false };
+    return response.status === 204;
+  } catch (err) {
+    console.error('reissueToken 네트워크 오류', err);
+    return false;
   }
 }
 
@@ -180,16 +163,10 @@ export async function middleware(request: NextRequest) {
     }
 
     if (verification.isExpired) {
-      // 만료된 토큰이면 재발급 시도
-      const { ok, setCookie } = await reissueToken(request);
-
+      /* ★ 수정: reissueToken 인자·구조 변경 */
+      const ok = await reissueToken(); // ← 인자 삭제, 불린 반환으로 변경
       if (ok) {
-        // 재발급 성공 시 같은 경로로 리다이렉트
-        const response = NextResponse.redirect(new URL('/', request.url));
-        if (setCookie) {
-          response.headers.set('set-cookie', setCookie);
-        }
-        return response;
+        return NextResponse.redirect(new URL('/', request.url)); // set-cookie 수동 전달 불필요
       }
     }
 
@@ -229,16 +206,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (verification.isExpired) {
-    // 만료된 토큰이면 재발급 시도
-    const { ok, setCookie } = await reissueToken(request);
-
+    /* ★ 수정: reissueToken 인자·구조 변경 */
+    const ok = await reissueToken(); // ← 인자 삭제, 불린 반환으로 변경
     if (ok) {
-      // 재발급 성공 시 같은 경로로 리다이렉트
-      const response = NextResponse.redirect(new URL(pathname, request.url));
-      if (setCookie) {
-        response.headers.set('set-cookie', setCookie);
-      }
-      return response;
+      return NextResponse.redirect(new URL(pathname, request.url));
     }
 
     // 재발급 실패 시 만료 메시지와 함께 로그인 페이지로

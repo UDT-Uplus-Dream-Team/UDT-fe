@@ -37,7 +37,7 @@ export default function Step1({ onNext }: Step1Props) {
         style={{ maxHeight: '700px' }}
       >
         {/* 고정 제목 */}
-        <h2 className="text-white font-bold text-[20px] text-center mb-10 mt-10">
+        <h2 className="text-white font-bold text-[20px] text-center mb-10">
           추천 받고 싶은 <span className="text-[#9F8EC5]">서비스</span>를
           선택해주세요
         </h2>
@@ -58,7 +58,7 @@ export default function Step1({ onNext }: Step1Props) {
         </div>
 
         {/* 고정 버튼 */}
-        <div className="mt-auto pt-10">
+        <div className="mt-auto pt-3">
           <Button
             onClick={handleComplete}
             className="min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer"

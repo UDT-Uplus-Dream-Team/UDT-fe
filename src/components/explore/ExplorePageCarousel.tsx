@@ -77,13 +77,19 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
       }
     }
     checkDomReady();
+    // 컴포넌트 언마운트 후 setState 방지
+    return () => {
+      retryCount = 10;
+    };
   }, []);
 
   // 2. ResizeObserver: ref, width 준비되고 나서만 사용!
   useEffect(() => {
     if (!isDomReady || !carouselRef.current) return;
-    const handleResize = () =>
-      setContainerWidth(carouselRef.current!.offsetWidth);
+    const handleResize = () => {
+      if (!carouselRef.current) return; // null 체크
+      setContainerWidth(carouselRef.current.offsetWidth);
+    };
     const observer = new ResizeObserver(handleResize);
     observer.observe(carouselRef.current);
     handleResize();
@@ -103,7 +109,7 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
     }
   }, [isDomReady, contentsLength, containerWidth, startIndex]);
 
-  // 4. currentIndex 변화시 x/spring/jump
+  // 4. currentIndex 변화시 x/spring/jump/fade
   useEffect(() => {
     if (
       !isDomReady ||
@@ -112,22 +118,27 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
       currentIndex === -1
     )
       return;
+
     const EXTENDED_MIN = contentsLength * 5;
     const EXTENDED_MAX = contentsLength * (REPEAT_COUNT - 5);
 
     if (currentIndex <= EXTENDED_MIN || currentIndex >= EXTENDED_MAX) {
-      // Jump (딱 1번만!)
+      // 1. jump 트릭 (페이드)
       setJumping(true);
+      // opacity 0로 → 트랜지션이 적용된 상태이므로 부드럽게 사라짐
       setCarouselOpacity(0);
       setTimeout(() => {
-        setCurrentIndex(startIndex);
+        // jump 위치로 이동 (순간 이동)
         x.set(getTargetX(startIndex));
+        setCurrentIndex(startIndex);
+        // 2. 약간의 delay 후 opacity를 다시 1로 (fade in)
         setTimeout(() => {
-          setCarouselOpacity(1);
+          setCarouselOpacity(1); // 트랜지션 덕에 페이드 인
           setJumping(false);
-        }, JUMP_FADE_DURATION);
-      }, JUMP_FADE_DURATION);
+        }, JUMP_FADE_DURATION); // 페이드인 길이와 맞춤
+      }, JUMP_FADE_DURATION); // fade out이 끝나는 시간과 맞춤
     } else {
+      // 3. 일반 이동은 spring 효과
       animate(x, getTargetX(currentIndex), {
         type: 'spring',
         stiffness: 400,

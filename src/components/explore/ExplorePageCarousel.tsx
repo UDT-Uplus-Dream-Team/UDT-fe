@@ -1,247 +1,194 @@
 'use client';
 
 import React, {
-  useEffect,
   useRef,
   useState,
-  useCallback,
+  useEffect,
+  useLayoutEffect,
   useMemo,
+  useCallback,
 } from 'react';
+import { motion, useMotionValue, animate, PanInfo } from 'framer-motion';
 import { RepresentativeContentCard } from '@components/explore/RepresentativeContentCard';
-// TODO: 나중에 MVP를 거치며 최신 콘텐츠 목록 조회가 아닌 다른 것을 조회하는 것으로 바뀔 수 있음 -> 명칭 변경될 수도 있음
 import { useGetLatestContents } from '@hooks/explore/useGetLatestContents';
 import { FilterRadioButton } from '@components/explore/FilterRadioButton';
 import { ExplorePageCarouselSkeleton } from '@components/explore/ExplorePageCarouselSkeleton';
-import { RecentContentData } from '@/types/explore/Explore';
+import { RecentContentData } from '@type/explore/Explore';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from '@components/ui/sheet';
-import { DetailBottomSheetContent } from './DetailBottomSheetContent';
-import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
-import { X } from 'lucide-react'; // 커스텀 닫기 버튼에 사용할 아이콘
-
-interface CarouselProps {
-  autoPlayInterval?: number;
-}
+import { DetailBottomSheetContent } from '@components/explore/DetailBottomSheetContent';
+import { useQueryErrorToast } from '@hooks/useQueryErrorToast';
+import { X } from 'lucide-react';
 
 const CARD_WIDTH = 272;
 const CARD_GAP = 8;
 const SWIPE_THRESHOLD = 60;
 const SCALE_FACTOR = 0.85;
 const SCALE_RANGE = 2;
-const REPEAT_COUNT = 5; // 배열 반복 횟수
+const REPEAT_COUNT = 21;
+const JUMP_FADE_DURATION = 200;
 
-// 탐색 페이지의 맨 위에 표시되는 카드 Carousel 컴포넌트
-export const ExplorePageCarousel = ({
-  autoPlayInterval = 3000,
-}: CarouselProps) => {
+// 탐색 페이지 상단의 무한?캐러셀 컴포넌트
+export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(true);
+  // 중심 index는 반드시 width, data 둘 다 준비된 후에만 세팅!
   const [containerWidth, setContainerWidth] = useState(0);
-
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [translateX, setTranslateX] = useState(0);
-
-  // 부모에서만 상세 시트 상태/분기 처리 진행해야 함
+  const [isDomReady, setIsDomReady] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(-1); // 처음엔 -1로 시작
   const [selectedContent, setSelectedContent] =
     useState<RecentContentData | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [jumping, setJumping] = useState(false);
+  const [carouselOpacity, setCarouselOpacity] = useState(1);
+  const x = useMotionValue(0);
 
-  const draggedContentRef = useRef<RecentContentData | null>(null);
-
+  // 데이터 가져오기
   const getLatestContentsQuery = useGetLatestContents();
   const { data: contents, status, refetch } = getLatestContentsQuery;
-
-  // 에러 발생 시 토스트 띄우기
   useQueryErrorToast(getLatestContentsQuery);
+  const contentsLength = contents?.length ?? 0;
+  const extendedMovies = useMemo(
+    () => (contentsLength ? Array(REPEAT_COUNT).fill(contents).flat() : []),
+    [contents],
+  );
+  const startIndex = useMemo(
+    () => (contentsLength ? contentsLength * Math.floor(REPEAT_COUNT / 2) : 0),
+    [contents],
+  );
+  const CARD_TOTAL_WIDTH = CARD_WIDTH + CARD_GAP;
+  const getTargetX = (index: number) =>
+    containerWidth / 2 - CARD_WIDTH / 2 - index * CARD_TOTAL_WIDTH;
 
-  const extendedMovies = useMemo(() => {
-    if (!contents || contents.length === 0) return [];
-    return Array(REPEAT_COUNT).fill(contents).flat();
-  }, [contents]);
-
-  // 시작 인덱스
-  const startIndex = useMemo(() => {
-    if (!contents || contents.length === 0) return 0;
-    return contents.length * Math.floor(REPEAT_COUNT / 2);
-  }, [contents]);
-
-  // 리셋 인덱스
-  const resetIndex = useMemo(() => {
-    if (!contents || contents.length === 0) return 0;
-    return contents.length * (REPEAT_COUNT - 1);
-  }, [contents]);
-
-  // 시작 인덱스 설정 (movies length가 0이 아닐 때만 설정)
-  const contentsLength = useMemo(() => contents?.length ?? 0, [contents]);
-
-  useEffect(() => {
-    if (contentsLength > 0) setCurrentIndex(startIndex);
-  }, [startIndex, contentsLength]);
-
-  // 1. 초기 mount 시 + 리사이즈 시
-  useEffect(() => {
-    const update = () => {
-      requestAnimationFrame(() => {
-        if (carouselRef.current) {
-          setContainerWidth(carouselRef.current.offsetWidth);
-        }
-      });
-    };
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
-
-  // 2. movies 로드 후 정확한 offsetWidth 측정
-  useEffect(() => {
-    if (contentsLength === 0) return;
-    requestAnimationFrame(() => {
+  // 1. 최초 마운트시 ref DOM이 완전히 준비된 뒤에만 width 계산
+  useLayoutEffect(() => {
+    let retryCount = 0;
+    function checkDomReady() {
       if (carouselRef.current) {
+        setIsDomReady(true);
         setContainerWidth(carouselRef.current.offsetWidth);
+      } else if (retryCount < 10) {
+        retryCount += 1;
+        setTimeout(checkDomReady, 30); // ref 안 잡혔으면 조금 뒤에 재시도 (최대 10번)
       }
-    });
-  }, [contentsLength]);
-
-  // 3. containerWidth가 잡힌 후에만 중심 index 설정
-  useEffect(() => {
-    if (contentsLength > 0 && containerWidth > 0) {
-      setCurrentIndex(startIndex);
     }
-  }, [contentsLength, containerWidth, startIndex]);
-
-  // 자동 재생 시작 메소드
-  const startAutoPlay = useCallback(() => {
-    if (autoPlayRef.current) clearInterval(autoPlayRef.current); // 이미 재생 중이면 중지
-    if (contentsLength > 1) {
-      autoPlayRef.current = setInterval(() => {
-        setCurrentIndex((prev) => prev + 1);
-      }, autoPlayInterval);
-    }
-  }, [contentsLength, autoPlayInterval]);
-
-  // 자동 재생 중지 메소드
-  const stopAutoPlay = useCallback(() => {
-    if (autoPlayRef.current) {
-      // 재생 중이면 중지
-      clearInterval(autoPlayRef.current);
-      autoPlayRef.current = null;
-    }
+    checkDomReady();
   }, []);
 
-  // 자동 재생 시작 및 중지 메소드 호출
+  // 2. ResizeObserver: ref, width 준비되고 나서만 사용!
   useEffect(() => {
-    startAutoPlay();
-    return () => stopAutoPlay();
-  }, [startAutoPlay, stopAutoPlay]);
+    if (!isDomReady || !carouselRef.current) return;
+    const handleResize = () =>
+      setContainerWidth(carouselRef.current!.offsetWidth);
+    const observer = new ResizeObserver(handleResize);
+    observer.observe(carouselRef.current);
+    handleResize();
+    return () => observer.disconnect();
+  }, [isDomReady]);
 
-  // 트랜지션 끝나면 중앙으로 리셋
-  const handleTransitionEnd = () => {
-    if (currentIndex >= resetIndex || currentIndex < contentsLength) {
-      setIsTransitioning(false);
+  // 3. 데이터/width 둘 다 준비된 뒤에 중심 currentIndex 강제 세팅 (1회만)
+  useEffect(() => {
+    if (
+      isDomReady &&
+      contentsLength > 0 &&
+      containerWidth > 0 &&
+      currentIndex !== startIndex
+    ) {
       setCurrentIndex(startIndex);
+      x.set(getTargetX(startIndex)); // x 좌표도 강제 세팅
+    }
+  }, [isDomReady, contentsLength, containerWidth, startIndex]);
 
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setIsTransitioning(true));
+  // 4. currentIndex 변화시 x/spring/jump
+  useEffect(() => {
+    if (
+      !isDomReady ||
+      contentsLength === 0 ||
+      containerWidth === 0 ||
+      currentIndex === -1
+    )
+      return;
+    const EXTENDED_MIN = contentsLength * 5;
+    const EXTENDED_MAX = contentsLength * (REPEAT_COUNT - 5);
+
+    if (currentIndex <= EXTENDED_MIN || currentIndex >= EXTENDED_MAX) {
+      // Jump (딱 1번만!)
+      setJumping(true);
+      setCarouselOpacity(0);
+      setTimeout(() => {
+        setCurrentIndex(startIndex);
+        x.set(getTargetX(startIndex));
+        setTimeout(() => {
+          setCarouselOpacity(1);
+          setJumping(false);
+        }, JUMP_FADE_DURATION);
+      }, JUMP_FADE_DURATION);
+    } else {
+      animate(x, getTargetX(currentIndex), {
+        type: 'spring',
+        stiffness: 400,
+        damping: 40,
       });
     }
-  };
+  }, [currentIndex, isDomReady, contentsLength, containerWidth, startIndex]);
 
-  // 마우스 또는 터치 시작 시 드래그 시작
-  const handleMouseDown = (
-    e: React.MouseEvent | React.TouchEvent,
-    content?: RecentContentData,
-  ) => {
-    stopAutoPlay();
-    setIsDragging(true);
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    setStartX(clientX);
-    setTranslateX(0);
-    setIsTransitioning(false);
-
-    // 누른 시점에 해당 카드의 콘텐츠 정보 기록
-    if (content) draggedContentRef.current = content;
-  };
-
-  // 마우스 또는 터치 시작 시 드래그 중 마우스 이동 핸들러
-  const handleMouseMove = useCallback(
-    (e: MouseEvent | TouchEvent) => {
-      if (!isDragging) return;
-      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-      setTranslateX(clientX - startX);
+  // 5. 드래그/스와이프
+  const handleDragEnd = useCallback(
+    (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+      let next = currentIndex;
+      if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -500) next += 1;
+      else if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > 500)
+        next -= 1;
+      setIsDragging(false);
+      setCurrentIndex(next);
     },
-    [isDragging, startX],
+    [currentIndex],
   );
 
-  // 마우스 또는 터치 시작 시 드래그 중 마우스 이동 핸들러
-  const handleMouseUp = useCallback(() => {
-    if (!isDragging) return;
-
-    if (Math.abs(translateX) > SWIPE_THRESHOLD) {
-      // 드래그: 인덱스 이동
-      const direction = translateX > 0 ? -1 : 1;
-      setCurrentIndex((prev) => prev + direction);
-    } else if (draggedContentRef.current) {
-      // 드래그 아닌 클릭(=짧게 눌렀다 뗀 경우): 상세 오픈
-      setSelectedContent(draggedContentRef.current);
-    }
-    setTranslateX(0);
-    setIsDragging(false);
-    setIsTransitioning(true);
-    startAutoPlay();
-  }, [translateX, isDragging, startAutoPlay]);
-
-  // 마우스 또는 터치 시작 시 드래그 중 마우스 핸들러 추가
+  // 6. 자동 재생 (모든 조건 완전히 만족시에만)
   useEffect(() => {
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('touchmove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('touchend', handleMouseUp);
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('touchmove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchend', handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
+    if (
+      !isDomReady ||
+      isDragging ||
+      jumping ||
+      currentIndex === -1 ||
+      contentsLength === 0 ||
+      containerWidth === 0
+    )
+      return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => prev + 1);
+    }, autoPlayInterval);
+    return () => clearInterval(timer);
+  }, [
+    isDomReady,
+    isDragging,
+    jumping,
+    currentIndex,
+    contentsLength,
+    containerWidth,
+    autoPlayInterval,
+  ]);
 
-  const transformStyle = useMemo(() => {
-    const baseX =
-      containerWidth / 2 -
-      CARD_WIDTH / 2 -
-      currentIndex * (CARD_WIDTH + CARD_GAP);
-    return {
-      transform: `translateX(${baseX + translateX}px)`,
-    };
-  }, [containerWidth, currentIndex, translateX]);
-
-  // 스케일 계산 최적화: 현재 중심 index를 movies.length 기준으로 정규화
+  // 카드 스케일
   const getCardScale = (index: number) => {
+    if (!contentsLength) return SCALE_FACTOR;
     const logicalIndex = index % contentsLength;
     const logicalCurrent = currentIndex % contentsLength;
-
-    // 원형 거리 계산
     const direct = Math.abs(logicalIndex - logicalCurrent);
     const wrapped = contentsLength - direct;
     const distance = Math.min(direct, wrapped);
-
     if (distance > SCALE_RANGE) return SCALE_FACTOR;
     return 1 - (distance / SCALE_RANGE) * (1 - SCALE_FACTOR);
   };
 
-  // 로딩 상태 처리
-  if (status === 'pending') {
-    return <ExplorePageCarouselSkeleton />;
-  }
-
-  // 에러 상태 처리
-  if (status === 'error') {
+  // 상태별 UI
+  if (status === 'pending') return <ExplorePageCarouselSkeleton />;
+  if (status === 'error')
     return (
       <div className="w-full h-40 flex flex-col items-center justify-center gap-4 px-6">
         <span className="text-white text-lg text-center">
@@ -250,43 +197,40 @@ export const ExplorePageCarousel = ({
         <FilterRadioButton onToggle={() => refetch()} label="다시 시도하기" />
       </div>
     );
-  }
-
-  // status가 success이지만, 콘텐츠가 없는 경우 처리
-  if (contents.length === 0) {
+  if (!contentsLength)
     return (
       <div className="w-full max-w-5xl mx-auto py-12 flex justify-center text-gray-500">
         표시할 영화가 없습니다.
       </div>
     );
-  }
 
+  // UI 렌더
   return (
-    <div
-      className="w-full max-w-5xl mx-auto"
-      onMouseEnter={stopAutoPlay}
-      onMouseLeave={startAutoPlay}
-    >
+    <div className="w-full max-w-5xl mx-auto">
       <div
         ref={carouselRef}
-        className="overflow-hidden"
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleMouseDown}
-        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        className="overflow-hidden touch-pan-x w-full select-none"
       >
-        <div
-          className={`flex ${
-            isTransitioning ? 'transition-transform duration-300 ease-out' : ''
-          }`}
-          style={transformStyle}
-          onTransitionEnd={handleTransitionEnd}
+        <motion.div
+          drag="x"
+          dragConstraints={{ left: -99999, right: 99999 }}
+          style={{
+            x,
+            display: 'flex',
+            cursor: 'grab',
+            userSelect: 'none',
+            pointerEvents: jumping ? 'none' : 'auto',
+            opacity: carouselOpacity,
+            transition: `opacity ${JUMP_FADE_DURATION}ms cubic-bezier(.4,0,.2,1)`,
+          }}
+          onDragStart={() => setIsDragging(true)}
+          onDragEnd={handleDragEnd}
         >
           {extendedMovies.map((content, index) => {
             const scale = getCardScale(index);
-            const logicalIndex = index % contents.length;
-            const logicalCurrent = currentIndex % contents.length;
+            const logicalIndex = index % contentsLength;
+            const logicalCurrent = currentIndex % contentsLength;
             const isCurrent = logicalIndex === logicalCurrent;
-
             return (
               <div
                 key={`${content.contentId}-${index}`}
@@ -298,13 +242,18 @@ export const ExplorePageCarousel = ({
                   transformOrigin: 'center bottom',
                   transition: 'transform 0.3s ease-out',
                 }}
+                onClick={() =>
+                  !isDragging &&
+                  !jumping &&
+                  isCurrent &&
+                  setSelectedContent(content)
+                }
+                tabIndex={isCurrent ? 0 : -1}
+                role="button"
+                aria-label={isCurrent ? '자세히 보기' : undefined}
               >
                 <div className="relative">
-                  <RepresentativeContentCard
-                    content={content}
-                    onMouseDown={(e) => handleMouseDown(e, content)}
-                    onTouchStart={(e) => handleMouseDown(e, content)}
-                  />
+                  <RepresentativeContentCard content={content} />
                   {!isCurrent && (
                     <div className="absolute inset-0 bg-black/40 rounded-lg pointer-events-none" />
                   )}
@@ -312,22 +261,18 @@ export const ExplorePageCarousel = ({
               </div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
-      {/* 영화 상세 정보 BottomSheet (필요 시 pop-up) */}
+      {/* 상세 정보 BottomSheet */}
       <Sheet
         open={!!selectedContent}
-        onOpenChange={(open) => {
-          if (!open) setSelectedContent(null);
-        }}
+        onOpenChange={(open) => !open && setSelectedContent(null)}
       >
-        {/* 커스텀 닫기 버튼 추가 */}
         <SheetContent
           side="bottom"
-          hideDefaultClose={true} // 기본 닫기 버튼 제거
+          hideDefaultClose={true}
           className="px-0 pb-5 h-[90svh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
         >
-          {/* 커스텀 X 버튼 (z-index로 위에 배치) */}
           <button
             onClick={() => setSelectedContent(null)}
             className="absolute top-4 right-4 w-8 h-8 z-50 flex items-center justify-center rounded-full bg-white/60 hover:bg-white/80 transition"
@@ -335,8 +280,6 @@ export const ExplorePageCarousel = ({
           >
             <X className="w-4 h-4 text-gray-800" />
           </button>
-
-          {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
           <SheetHeader className="p-0">
             <SheetTitle className="sr-only h-0 p-0">상세정보</SheetTitle>
           </SheetHeader>

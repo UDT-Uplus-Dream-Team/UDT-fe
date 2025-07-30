@@ -97,7 +97,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
                 text-white rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105"
             >
               <Play className="w-6 h-6 mr-3" />
-              튜토리얼 시작히기
+              튜토리얼 시작하기
             </Button>
           </motion.div>
         </motion.div>

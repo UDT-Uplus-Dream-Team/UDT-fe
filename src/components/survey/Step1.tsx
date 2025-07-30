@@ -1,17 +1,19 @@
 'use client';
 
-import { useSurveyContext } from '@hooks/useSurveyContext';
 import { CircleOption } from '@components/common/circleOption';
 import { PLATFORMS } from '@lib/platforms';
 import { Button } from '@components/ui/button';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
+import { useSurveyStore } from '@store/useSurveyStore';
 
 type Step1Props = {
   onNext: () => void;
 };
 
 export default function Step1({ onNext }: Step1Props) {
-  const { selectedPlatforms, setSelectedPlatforms } = useSurveyContext();
+  const selectedPlatforms = useSurveyStore((state) => state.platforms);
+  const setSelectedPlatforms = useSurveyStore((state) => state.setPlatforms);
+
   const showErrorToast = useErrorToastOnce();
 
   const togglePlatforms = (label: string) => {

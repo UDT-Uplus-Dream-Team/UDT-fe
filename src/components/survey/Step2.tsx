@@ -1,18 +1,20 @@
 'use client';
 
 import { GENRES } from '@lib/genres';
-import { useSurveyContext } from '@hooks/useSurveyContext';
 import { CircleOption } from '@components/common/circleOption';
 import { Button } from '@components/ui/button';
 import { useEffect } from 'react';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
+import { useSurveyStore } from '@store/useSurveyStore';
 
 type Step2Props = {
   onNext: () => void;
 };
 
 export default function Step2({ onNext }: Step2Props) {
-  const { selectedGenres, setSelectedGenres } = useSurveyContext();
+  const selectedGenres = useSurveyStore((state) => state.genres);
+  const setSelectedGenres = useSurveyStore((state) => state.setGenres);
+
   const showErrorToast = useErrorToastOnce();
 
   useEffect(() => {

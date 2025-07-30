@@ -25,11 +25,140 @@ OTT 콘텐츠가 넘쳐나는 시대, 아직도 “무엇을 볼지” 30분씩 
 - **구독 중인 OTT 우선 추천** + **발견 기반 큐레이션**
 - **초반에 설문을 통해 얻은 정보로 cold-start 해결** + **빠른 리롤링 캐싱 전략**
 
+
+###  📁 프로젝트 구조
+```
+🌌 UDT-fe/
+├── 📂 .github/                     # GitHub 워크플로우 및 템플릿(CI/CD, Jira PR 처리 등 포함)
+├── 📂 public/                      # 정적 자산
+│   ├── icons/                      # 아이콘 파일들
+│   └── images/                     # 이미지 자산
+├── 📂 src/                        
+│   ├── 📂 app/                     
+│   │   ├── 📂 admin/               # 🛠️ 백오피스 관리자 페이지
+│   │   ├── 📂 profile/             # 👤 마이페이지 & 사용자 관리
+│   │   ├── 📂 profile/             # 🖥️ OTT 플랫폼과 같은 컨텐츠 찾아보기
+│   │   ├── 📂 onboarding/          # 🎯 온보딩 튜토리얼 페이지
+│   │   ├── 📂 recommend/           # 🎪 메인 추천 스와이프 페이지
+│   │   ├── 📂 survey/              # 📊 초기 설문조사 페이지
+│   │   ├── layout.tsx              # 루트 레이아웃
+│   │   ├── globals.css             # 전역 스타일
+│   │   └── page.tsx                # 로그인 페이지
+│   ├── 📂 components/              # 재사용 가능한 UI 컴포넌트
+│   │   ├── 📂 admin/               # 🛠️ 백오피스 전용 컴포넌트
+│   │   ├── 📂 common/              # 🔄 공통 컴포넌트(Navbar, Toast)
+│   │   ├── 📂 profile/             # 👤 마이페이지 관련 컴포넌트
+│   │   ├── 📂 recommend/           # 🎪 추천 시스템 전용 컴포넌트
+│   │   ├── 📂 survey/              # 📊 설문조사 전용 컴포넌트
+│   │   └── 📂 ui/                  # 🎨 shadcn/ui 기반 기본 컴포넌트
+│   ├── 📂 hooks/                   # Tanstack query 활용 상태 관리에 사용되는 custom Hook들
+│   ├── 📂 lib/                     # 유틸리티 함수 및 설정
+│   │   ├── 📂 apis/                # API 통신 관련 함수들
+│   │   ├── 📂 store/               # Zustand 전역 상태 관리
+│   │   ├── 📂 utils/               # 공통 유틸리티 함수
+│   ├── 📂 types/                   # TypeScript 타입 정의
+│   └── 📂 stories/                 # Storybook 컴포넌트 문서화
+```
+
 ---
 
 ## 플로우 차트
 
 <img width="4528" height="2384" alt="융합 프로젝트 4조 chart" src="https://github.com/user-attachments/assets/a9cd3998-5b16-44b3-8882-7ea22455e0f2" />
+
+---
+
+## 🚀 로컬 개발 환경 설정
+
+### 필수 요구사항
+- Node.js 18.17.0 이상
+- npm 또는 yarn 패키지 매니저
+
+## 🛠️ 로컬 개발 환경 실행 방법
+
+### 1. 패키지 설치
+
+```bash
+npm install
+````
+
+#### 2.1 mkcert 설치 및 SSL 인증서 생성
+
+**macOS (Homebrew):**
+```bash
+# mkcert 설치
+brew install mkcert
+brew install nss # Firefox 사용 시
+
+# 로컬 인증 기관(CA) 생성 및 시스템에 설치
+mkcert -install
+
+# localhost와 local.banditbool.com 도메인용 인증서 생성
+mkcert localhost local.banditbool.com 127.0.0.1 ::1
+
+### 3. 실행 방법
+
+#### 3.1 개발 환경 실행
+
+```bash
+npm run dev:https
+```
+
+**Windows (Chocolatey):**
+```bash
+# mkcert 설치
+choco install mkcert
+
+# 로컬 인증 기관(CA) 생성 및 시스템에 설치
+mkcert -install
+
+# localhost와 local.banditbool.com 도메인용 인증서 생성
+mkcert localhost local.banditbool.com 127.0.0.1 ::1
+```
+
+#### 2.2 인증서 배치(위치 변경 및 이름 변경)
+```
+프로젝트루트/
+├── localhost+3.pem        # SSL 인증서
+├── localhost+3-key.pem    # 개인키
+└── ... (기타 프로젝트 파일들)
+```
+
+
+### 3. 실행 방법
+
+#### 3.1 개발 환경 실행
+
+```bash
+npm run dev:https
+```
+
+#### 3.2 프로덕션 빌드 및 실행
+
+```bash
+npm run build
+```
+
+### 3. 접속
+
+아래 주소로 접속:
+[http://local.banditbool.com:3000](http://local.banditbool.com:3000)
+
+## 🌐 배포 주소
+
+### 🚀 프로덕션 환경
+- **메인 서비스**: `www.banditbool.com`
+- **백오피스**: `www.banditbool.com/admin`
+
+
+### 📱 접속 안내
+- **권장 브라우저**: Chrome, Safari, Edge 최신 버전
+- **모바일 최적화**: iOS Safari, Android Chrome 지원
+- **반응형 디자인**: 데스크탑, 태블릿, 모바일 모든 디바이스 대응
+
+> ⚠️ **주의사항**
+>> 현재 베타 서비스로 운영 중이며, 매일 17:00~18:00에 개발 진행 내용 바탕으로 재배포가 이루어질 수 있습니다.
+>> 모바일 환경의 경우 375*667px 이하의 뷰포트를 가진 기기의 경우 일부 화면에서 사용에 불편함이 있을 수 있습니다.
 
 ---
 

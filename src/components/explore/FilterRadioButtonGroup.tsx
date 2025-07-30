@@ -14,6 +14,7 @@ import {
   useExploreTempFilters,
 } from '@hooks/useExplorePageState';
 import { useEffect, useRef, useState } from 'react';
+import { X } from 'lucide-react';
 
 // FilterRadioButton을 모아두는 그룹 컴포넌트
 export const FilterRadioButtonGroup = () => {
@@ -139,6 +140,14 @@ export const FilterRadioButtonGroup = () => {
                   side="bottom"
                   className="flex flex-col gap-0 h-[60svh] max-h-[60svh] max-w-[640px] w-full mx-auto bg-[#07033E] border-t-0 rounded-t-[20px]"
                 >
+                  {/* 커스텀 닫기 버튼 */}
+                  <button
+                    onClick={closeBottomSheet}
+                    className="absolute top-4 right-4 w-8 h-8 z-50 flex items-center justify-center rounded-full bg-white/60 hover:bg-white/80 transition"
+                    aria-label="닫기"
+                  >
+                    <X className="w-4 h-4 text-gray-800" />
+                  </button>
                   {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
                   <SheetHeader className="p-0">
                     <SheetTitle className="sr-only h-0 p-0">필터</SheetTitle>

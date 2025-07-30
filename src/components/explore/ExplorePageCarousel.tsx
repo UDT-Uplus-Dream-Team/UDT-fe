@@ -26,7 +26,7 @@ import { X } from 'lucide-react';
 
 const CARD_WIDTH = 272;
 const CARD_GAP = 8;
-const SWIPE_THRESHOLD = 60;
+const SWIPE_THRESHOLD = 50;
 const SCALE_FACTOR = 0.85;
 const SCALE_RANGE = 2;
 const REPEAT_COUNT = 21;
@@ -140,8 +140,8 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
   const handleDragEnd = useCallback(
     (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       let next = currentIndex;
-      if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -500) next += 1;
-      else if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > 500)
+      if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -400) next += 1;
+      else if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > 400)
         next -= 1;
       setIsDragging(false);
       setCurrentIndex(next);

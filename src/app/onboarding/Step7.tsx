@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { RefreshCw, Plus, Eye, EyeOff, ArrowDown } from 'lucide-react';
+import { RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
 import { Ticket } from '@components/Ticket/Ticket';
 import { Button } from '@components/ui/button';
@@ -75,9 +75,8 @@ export default function Step7({ onNext }: Step7Props) {
       <div className="absolute top-4 text-center z-20">
         <p className="md:text-lg  text-[16px] font-semibold leading-relaxed text-white ">
           👀 <strong>눈 버튼</strong>을 눌러 상세 정보를 확인하고 <br />
-          🔄 <strong>리롤 버튼(1회)</strong>으로 다른 콘텐츠도 확인해보세요!
+          🔄 <strong>리롤 버튼(1회)</strong>으로 다른 콘텐츠도 확인이 가능해요!
         </p>
-        <ArrowDown className="w-6 h-6 text-gray-500 mt-2 animate-bounce mx-auto" />
       </div>
 
       {/* 카드 슬라이더 */}
@@ -102,7 +101,7 @@ export default function Step7({ onNext }: Step7Props) {
               className="
                   absolute my-4
                   min-w-[280px] min-h-[480px]
-                  max-w-[400px] max-h-[680px]  w-[80vw] h-[65svh] md:w-full md:h-full
+                  max-w-[400px] max-h-[680px]  w-[80svw] h-[65svh] md:w-full md:h-full
                 "
             >
               {isCenter ? (
@@ -169,21 +168,13 @@ export default function Step7({ onNext }: Step7Props) {
           );
         })}
       </div>
-
-      {/* 콘텐츠 추가 버튼 */}
-      <div className="flex justify-center mt-2">
-        <Button
-          onClick={() => {
-            onNext();
-          }}
-          className="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full shadow-lg flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5" />
-          <span className="font-medium">
-            콘텐츠 추가 버튼으로 컨텐츠 저장하기!
-          </span>
-        </Button>
-      </div>
+      <Button
+        variant="default"
+        className=" md:mt-2 px-8 py-4  text-sm md:text-lg font-semibold rounded-xl bg-white text-black hover:bg-white/90 transition"
+        onClick={onNext}
+      >
+        계속
+      </Button>
     </div>
   );
 }

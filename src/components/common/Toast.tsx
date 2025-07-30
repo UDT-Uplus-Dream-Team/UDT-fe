@@ -223,7 +223,7 @@ export const showInteractiveToast = {
             'rounded-lg p-4',
             'mx-auto',
             'shadow-sm',
-            'bg-gray-100',
+            'bg-gray-500',
             opts.className,
             'animate-enter',
           ]

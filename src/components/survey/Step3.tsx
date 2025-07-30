@@ -1,12 +1,12 @@
 'use client';
 
-import { useSurveyContext } from '@hooks/useSurveyContext';
 import { SurveyPosterCard } from './SurveyPosterCard';
 import { Button } from '@components/ui/button';
 import { useEffect, useState } from 'react';
-import { MOCK_CONTENTS } from './mockContents';
-import { Skeleton } from '../common/Skeleton';
+import { MOCK_CONTENTS } from '@components/survey/mockContents';
+import { Skeleton } from '@components/common/Skeleton';
 import Image from 'next/image';
+import { useSurveyStore } from '@store/useSurveyStore';
 
 type Step3Props = {
   onNext: () => void;
@@ -18,7 +18,9 @@ function getRandomContents(count: number) {
 }
 
 export default function Step3({ onNext }: Step3Props) {
-  const { watchedContents, setWatchedContents } = useSurveyContext();
+  const selectedContentIds = useSurveyStore((state) => state.contentIds);
+  const setSelectedContentIds = useSurveyStore((state) => state.setContentIds);
+
   const [randomContents] = useState(() => getRandomContents(9));
   const [loadedCount, setLoadedCount] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -34,11 +36,11 @@ export default function Step3({ onNext }: Step3Props) {
   }, [loadedCount, randomContents.length]);
 
   const toggleContent = (contentId: number) => {
-    const updated = watchedContents.includes(contentId)
-      ? watchedContents.filter((id) => id !== contentId)
-      : [...watchedContents, contentId];
+    const updated = selectedContentIds.includes(contentId)
+      ? selectedContentIds.filter((id) => id !== contentId)
+      : [...selectedContentIds, contentId];
 
-    setWatchedContents(updated);
+    setSelectedContentIds(updated);
   };
 
   const handleImageLoad = () => {
@@ -46,7 +48,7 @@ export default function Step3({ onNext }: Step3Props) {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="h-[100svh] flex justify-center items-center">
       <div
         className="flex flex-col items-center px-6 w-full max-w-[500px]"
         style={{ maxHeight: '700px' }}
@@ -69,7 +71,7 @@ export default function Step3({ onNext }: Step3Props) {
                     key={`${contentId}-${idx}`}
                     title={title}
                     image={posterUrl}
-                    selected={watchedContents.includes(contentId)}
+                    selected={selectedContentIds.includes(contentId)}
                     onClick={() => toggleContent(contentId)}
                   />
                 ))

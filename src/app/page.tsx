@@ -14,6 +14,12 @@ interface StarData {
 export default function KakaoLoginPage() {
   const [stars, setStars] = useState<StarData[]>([]);
 
+  // const handleKakaoLogin = () => {
+  //   window.location.replace(
+  //     'https://api.banditbool.com/oauth2/authorization/kakao',
+  //   );
+  // };
+
   const handleKakaoLogin = () => {
     window.location.replace(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth2/authorization/kakao`,

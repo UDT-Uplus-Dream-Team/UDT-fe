@@ -49,7 +49,7 @@ export function OttCircleOption({
       >
         <Avatar className="w-full h-full rounded-full">
           <AvatarImage
-            src={imageSrc || 'images/ott/netflix.png'}
+            src={imageSrc || '/images/ott/netflix.webp'}
             alt={label}
             className="object-cover w-full h-full"
           />

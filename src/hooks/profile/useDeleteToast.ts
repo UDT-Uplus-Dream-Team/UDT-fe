@@ -7,7 +7,7 @@ import { useRef } from 'react';
 interface UseDeleteToastProps {
   selectedIds: number[];
   onDeleteComplete: () => void;
-  // 현재 엄선된 삭제의 경우 배열 / 피드백의 경우 단일처리임(해당 부분의 경우 수정 될 예정) 이에 맞게 분기처리 후 나중에 수정
+  // 현재 엄선된 삭제의 경우 배열
   deleteFn: (ids: number[]) => Promise<unknown>;
 }
 

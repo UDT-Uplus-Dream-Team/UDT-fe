@@ -103,7 +103,7 @@ export const FilterRadioButtonGroup = () => {
       >
         <div className="w-full">
           {/* 필터 버튼 그룹 */}
-          <div className="pt-5 pb-4">
+          <div className="pt-4 pb-4">
             <div
               ref={scrollRef}
               className="flex flex-row justify-start items-center gap-3 overflow-x-auto scrollbar-hide max-w-full overscroll-x-none px-6 select-none"

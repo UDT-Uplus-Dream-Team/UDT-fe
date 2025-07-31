@@ -108,10 +108,6 @@ export default function SwipeTestPage() {
   ) => {
     if (isAnimating || isFlipped) return;
 
-    console.log(
-      `스와이프 방향: ${direction}, 피드백: ${feedbackType || 'neutral'}`,
-    );
-
     setIsAnimating(true);
     setSwipeDirection(direction);
     if (feedbackType) setFeedback(feedbackType);
@@ -119,16 +115,20 @@ export default function SwipeTestPage() {
     setIsDragging(false);
     setDragOffset({ x: 0, y: 0 });
 
-    // 애니메이션 완료 후 다음 카드로 이동
+    // 1단계: 스와이프 애니메이션 (700ms)
     setTimeout(() => {
-      setSwipeDirection(null);
-      setFeedback('neutral');
-      setDragOffset({ x: 0, y: 0 });
+      // 카드 교체만 먼저 실행 (transform은 그대로 유지)
       setCurrentIndex((prev) => prev + 1);
       setSwipeCount((prev) => prev + 1);
-
-      setIsAnimating(false);
     }, 700);
+
+    // 2단계: 상태 리셋 (750ms - 살짝 나중에)
+    setTimeout(() => {
+      setSwipeDirection(null); // 이제 transform 리셋
+      setFeedback('neutral');
+      setDragOffset({ x: 0, y: 0 });
+      setIsAnimating(false);
+    }, 750);
   };
 
   // 드래그 중 실시간 업데이트
@@ -325,10 +325,12 @@ export default function SwipeTestPage() {
 
             {/* 다음 카드 peek */}
             <div
-              className={`absolute inset-0 z-10 flex items-center justify-center pointer-events-none transition-transform duration-700 ${
-                isAnimating
-                  ? 'translate-y-0 scale-100'
-                  : 'translate-y-0 scale-100 opacity-100 blur-none'
+              className={`absolute inset-0 z-10 flex items-center justify-center pointer-events-none transition-all duration-300 ease-out ${
+                isAnimating && swipeDirection
+                  ? 'opacity-100 scale-100 translate-y-0 blur-none' // 스와이프 중: 앞으로 튀어나옴
+                  : isDragging
+                    ? 'opacity-60 scale-95 translate-y-1 blur-sm' // 드래그 중: 살짝 앞으로
+                    : 'opacity-50 scale-90 translate-y-2 blur-sm' // 대기 중: 뒤에서 대기
               }`}
             >
               <Ticket movie={nextMovie} variant="initial" feedback="neutral" />
@@ -338,10 +340,12 @@ export default function SwipeTestPage() {
             <div
               className={`absolute inset-0 z-20 flex items-center justify-center ${
                 swipeDirection
-                  ? 'transition-transform duration-700 ease-linear'
+                  ? 'transition-transform duration-700 ease-linear' // 스와이프 중
                   : isDragging
                     ? '' // 드래그 중에는 transition 없음
-                    : 'transition-all duration-700 ease-out'
+                    : isAnimating
+                      ? ''
+                      : 'transition-all duration-300 ease-out' // 일반 상태 (스냅백 등)
               }`}
               style={{
                 perspective: '1000px',

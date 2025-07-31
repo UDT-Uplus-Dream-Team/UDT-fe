@@ -3,14 +3,16 @@
 import Step1 from '@components/survey/Step1';
 import Step2 from '@components/survey/Step2';
 import SurveyComplete from '@components/survey/SurveyComplete';
-import { useState } from 'react';
 import { postSurvey } from '@lib/apis/survey/postSurvey';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 import { useSurveyStore } from '@store/useSurveyStore';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 function SurveyFlow() {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const step = Number(searchParams.get('step') || '1');
 
   const platforms = useSurveyStore((state) => state.platforms);
   const genres = useSurveyStore((state) => state.genres);
@@ -18,9 +20,13 @@ function SurveyFlow() {
 
   const showErrorToast = useErrorToastOnce();
 
+  const goToStep = (nextStep: number) => {
+    router.push(`/survey?step=${nextStep}`);
+  };
+
   const handleNext = async () => {
     if (step < 2) {
-      setStep((prev) => (prev + 1) as 1 | 2 | 3);
+      goToStep(step + 1);
     } else {
       try {
         await postSurvey({
@@ -28,7 +34,7 @@ function SurveyFlow() {
           genres: genres,
           contentIds: contentIds,
         });
-        setStep(3); // 성공 시 완료 페이지로 이동
+        goToStep(3); // 성공 시 완료 페이지로 이동
       } catch {
         showErrorToast('설문조사 제출에 실패했습니다.');
       }

@@ -15,8 +15,8 @@ export const getFeedbackContents = async (
 };
 
 //[DELETE] - 현재 api 이름 모름 임의 작성
-export const deleteFeedback = async (feedbackId: number[]): Promise<void> => {
-  await axiosInstance.delete(`/api/users/me/feedbacks/bulk`, {
-    data: { feedbackId },
+export const deleteFeedback = async (feedbackIds: number[]): Promise<void> => {
+  await axiosInstance.delete(`/api/users/me/feedbacks`, {
+    data: { feedbackIds },
   });
 };

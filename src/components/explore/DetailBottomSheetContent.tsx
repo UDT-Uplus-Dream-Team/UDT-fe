@@ -150,17 +150,17 @@ export const DetailBottomSheetContent = ({
             {/* 그라데이션 오버레이 */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
 
-            {/* 콘텐츠 정보 */}
+            {/* 콘텐츠 정보(제목, 연도만 표시) */}
             <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center text-center space-y-3">
               <span className="text-3xl font-bold text-white">
                 {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
                 {contentData.openDate !== null ? (
-                  <span>{contentData.openDate}</span>
+                  <span>
+                    {formattingOpenDate(contentData.openDate).slice(0, 4)}
+                  </span>
                 ) : null}
-                <span>{contentData.rating}</span>
-                <span>{contentData.countries[0]}</span>
               </div>
             </div>
           </div>
@@ -184,17 +184,17 @@ export const DetailBottomSheetContent = ({
             {/* 그라데이션 오버레이 */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
 
-            {/* 콘텐츠 정보 */}
+            {/* 콘텐츠 정보(제목, 연도만 표시) */}
             <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center text-center space-y-3">
               <span className="text-3xl font-bold text-white">
                 {contentData.title}
               </span>
               <div className="flex items-center space-x-5 text-sm text-gray-200">
                 {contentData.openDate !== null ? (
-                  <span>{formattingOpenDate(contentData.openDate)}</span>
+                  <span>
+                    {formattingOpenDate(contentData.openDate).slice(0, 4)}
+                  </span>
                 ) : null}
-                <span>{contentData.rating}</span>
-                <span>{contentData.countries[0]}</span>
               </div>
             </div>
           </div>
@@ -213,37 +213,61 @@ export const DetailBottomSheetContent = ({
           />
         ))}
 
-        {/* 시놉시스(줄거리) */}
-        <div className="space-y-2">
-          <div className="text-sm text-gray-300 leading-relaxed">
-            {isSynopsisExpanded ? (
-              <>
-                {contentData.description}
-                {isTextOverflowing && (
-                  <span
-                    onClick={() => handleToggleSynopsis(false)}
-                    className="text-white cursor-pointer ml-1"
-                  >
-                    ...접기
-                  </span>
-                )}
-              </>
-            ) : (
-              <>
-                <span ref={synopsisRef} className="line-clamp-5">
+        {/* "작품정보" 보여주는 곳 */}
+        <div className="flex flex-col space-y-3">
+          <span className="text-lg font-semibold text-white">작품정보</span>
+
+          {/* 시놉시스(줄거리) */}
+          <div className="space-y-2">
+            <div className="text-sm text-gray-300 leading-relaxed">
+              {isSynopsisExpanded ? (
+                <>
                   {contentData.description}
-                </span>
-                {/* Text가 5줄 넘어간다고 판단되는 경우에만 '...더보기' 글자 버튼 띄우기 */}
-                {isTextOverflowing && (
-                  <span
-                    onClick={() => handleToggleSynopsis(true)}
-                    className="text-white cursor-pointer ml-1"
-                  >
-                    ...더보기
+                  {isTextOverflowing && (
+                    <span
+                      onClick={() => handleToggleSynopsis(false)}
+                      className="text-white cursor-pointer ml-1"
+                    >
+                      ...접기
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <span ref={synopsisRef} className="line-clamp-5">
+                    {contentData.description}
                   </span>
-                )}
-              </>
-            )}
+                  {/* Text가 5줄 넘어간다고 판단되는 경우에만 '...더보기' 글자 버튼 띄우기 */}
+                  {isTextOverflowing && (
+                    <span
+                      onClick={() => handleToggleSynopsis(true)}
+                      className="text-white cursor-pointer ml-1"
+                    >
+                      ...더보기
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
+            {/* 세부 정보 2열 표 */}
+            <div className="mt-4 w-full max-w-xl">
+              <div className="grid grid-cols-2 gap-y-2 text-sm">
+                <span className="text-gray-400">장르</span>
+                <span className="text-gray-300">
+                  {contentData.genres.join(', ')}
+                </span>
+                <span className="text-gray-400">연령등급</span>
+                <span className="text-gray-300">{contentData.rating}</span>
+                <span className="text-gray-400">개봉일</span>
+                <span className="text-gray-300">
+                  {formattingOpenDate(contentData.openDate)}
+                </span>
+                <span className="text-gray-400">제작국가</span>
+                <span className="text-gray-300">
+                  {contentData.countries.join(', ')}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 

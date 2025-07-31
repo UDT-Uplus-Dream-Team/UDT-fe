@@ -2,19 +2,19 @@
 export function getPlatformLogo(platform: string): string | undefined {
   switch (platform.toLowerCase()) {
     case '넷플릭스':
-      return '/images/ott/netflix.png';
+      return '/images/ott/netflix.webp';
     case '애플티비':
-      return '/images/ott/appleTv.png';
+      return '/images/ott/appleTv.webp';
     case '티빙':
-      return '/images/ott/tving.png';
+      return '/images/ott/tving.webp';
     case '디즈니+':
-      return '/images/ott/disneyPlus.png';
+      return '/images/ott/disneyPlus.webp';
     case '웨이브':
-      return '/images/ott/wavve.png';
+      return '/images/ott/wavve.webp';
     case '왓챠':
-      return '/images/ott/watcha.png';
+      return '/images/ott/watcha.webp';
     case '쿠팡플레이':
-      return '/images/ott/coupangPlay.png';
+      return '/images/ott/coupangPlay.webp';
     default:
       return undefined;
   }

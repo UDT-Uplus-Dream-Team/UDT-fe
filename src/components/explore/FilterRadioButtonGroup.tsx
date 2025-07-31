@@ -13,13 +13,11 @@ import {
   useExploreUI,
   useExploreTempFilters,
 } from '@hooks/useExplorePageState';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { X } from 'lucide-react';
 
 // FilterRadioButton을 모아두는 그룹 컴포넌트
 export const FilterRadioButtonGroup = () => {
-  const [isSticky, setIsSticky] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
   // 스크롤 위치 추적을 위한 state, Ref, 함수 정의
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -59,26 +57,6 @@ export const FilterRadioButtonGroup = () => {
   } = useExploreUI();
   const { clearTempFilters, toggleTempFilter } = useExploreTempFilters();
 
-  // 스크롤 위치 추적
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSticky(!entry.isIntersecting);
-      },
-      {
-        root: null,
-        threshold: 0,
-        rootMargin: '-1px 0px 0px 0px',
-      },
-    );
-
-    const current = sentinelRef.current;
-    if (current) observer.observe(current);
-    return () => {
-      if (current) observer.unobserve(current);
-    };
-  }, []);
-
   // 필터 토글 핸들러
   const handleFilterToggle = (label: string) => {
     if (isBottomSheetOpen) {
@@ -91,16 +69,9 @@ export const FilterRadioButtonGroup = () => {
 
   return (
     <>
-      {/* Sentinel (sticky 시작 전 위치) */}
-      <div ref={sentinelRef} className="h-0" />
-      <div
-        className={`sticky top-0 z-10 transition-colors duration-200 ease-in-out ${
-          isSticky ? 'bg-primary-900' : 'bg-transparent'
-        }`}
-      >
+      <div className="w-full transition-colors duration-200 bg-transparent">
         <div className="w-full">
           {/* 필터 버튼 그룹 */}
-          {/* TODO: 추후 디자인 변경 시 padding값 수정 필요 */}
           <div className="pt-5 pb-4">
             <div
               ref={scrollRef}
@@ -139,6 +110,14 @@ export const FilterRadioButtonGroup = () => {
                   side="bottom"
                   className="flex flex-col gap-0 h-[60svh] max-h-[60svh] max-w-[640px] w-full mx-auto bg-[#07033E] border-t-0 rounded-t-[20px]"
                 >
+                  {/* 커스텀 닫기 버튼 */}
+                  <button
+                    onClick={closeBottomSheet}
+                    className="absolute top-4 right-4 w-8 h-8 z-50 flex items-center justify-center rounded-full bg-white/60 hover:bg-white/80 transition"
+                    aria-label="닫기"
+                  >
+                    <X className="w-4 h-4 text-gray-800" />
+                  </button>
                   {/* 표시되지 않는 Header (Screen Reader에서만 읽힘) */}
                   <SheetHeader className="p-0">
                     <SheetTitle className="sr-only h-0 p-0">필터</SheetTitle>

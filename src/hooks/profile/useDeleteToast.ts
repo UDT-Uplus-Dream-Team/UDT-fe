@@ -8,17 +8,13 @@ interface UseDeleteToastProps {
   selectedIds: number[];
   onDeleteComplete: () => void;
   // 현재 엄선된 삭제의 경우 배열 / 피드백의 경우 단일처리임(해당 부분의 경우 수정 될 예정) 이에 맞게 분기처리 후 나중에 수정
-  deleteFn:
-    | ((ids: number[]) => Promise<unknown>)
-    | ((id: number) => Promise<unknown>);
-  isBatch?: boolean; //배열인지 안닌지 확인
+  deleteFn: (ids: number[]) => Promise<unknown>;
 }
 
 export const useDeleteToast = ({
   selectedIds,
   onDeleteComplete,
   deleteFn,
-  isBatch = false,
 }: UseDeleteToastProps) => {
   const isToastOpen = useRef(false);
 
@@ -45,19 +41,7 @@ export const useDeleteToast = ({
       className: 'bg-white shadow-lg',
       onConfirm: async () => {
         try {
-          if (isBatch) {
-            //  배열 기반 API
-            await (deleteFn as (ids: number[]) => Promise<unknown>)(
-              selectedIds,
-            );
-          } else {
-            //  단일 기반 API (Promise.all)
-            await Promise.all(
-              selectedIds.map((id) =>
-                (deleteFn as (id: number) => Promise<unknown>)(id),
-              ),
-            );
-          }
+          await deleteFn(selectedIds);
 
           showSimpleToast.success({
             message: '삭제가 완료되었습니다.',

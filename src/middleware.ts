@@ -168,28 +168,23 @@ async function reissueToken(request: NextRequest): Promise<ReissueResult> {
     const cookieHeader = request.headers.get('cookie') || '';
     console.log('Cookie Header:', cookieHeader);
 
-    const response = await fetch(`${API_BASE_URL}/auth/reissue/token`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/reissue/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Cookie: cookieHeader, // Authorization 쿠키가 포함된 전체 헤더 전달
       },
     });
-
-    console.log('재발급 API 응답 상태:', response.status);
-
     if (response.status === 204) {
-      console.log('✅ 토큰 재발급 성공');
       return {
         ok: true,
         setCookie: response.headers.get('set-cookie') || undefined,
       };
     }
-
-    console.log('❌ 토큰 재발급 실패 - 상태코드:', response.status);
+    console.log('error:', response.status);
     return { ok: false };
   } catch (error) {
-    console.error('❌ Token reissue failed:', error);
+    console.error('error', error);
     return { ok: false };
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { StartScreen } from './onBordingStart';
 import Step0 from './Step0';
 import Step1 from './Step1';
@@ -10,7 +11,6 @@ import Step4 from './Step4';
 import Step5 from './Step5';
 import Step6 from './Step6';
 import Step7 from './Step7';
-import { useRouter } from 'next/navigation';
 import Step8 from './Step8';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
 import { ProgressDots } from '@components/common/ProgressDots';
@@ -19,17 +19,26 @@ export default function OnboardingPage() {
   // 페이지 머무르는 시간 추적 (온보딩 페이지 추적 / Google Analytics 연동을 위함)
   usePageStayTracker('onboarding');
 
-  const [started, setStarted] = useState(false);
-  const [step, setStep] = useState(0);
-
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const handleStart = () => {
-    setStarted(true);
+  const stepParam = searchParams.get('step');
+  const step = useMemo(() => {
+    const parsed = parseInt(stepParam ?? '');
+    return isNaN(parsed) || parsed < 0 ? null : parsed;
+  }, [stepParam]);
+
+  const handleStepChange = (nextStep: number) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('step', nextStep.toString());
+    router.push(`/onboarding?${newSearchParams.toString()}`);
   };
 
+  const handleStart = () => handleStepChange(0);
   const handleNext = () => {
-    setStep((prev) => prev + 1);
+    if (step !== null && step < steps.length - 1) {
+      handleStepChange(step + 1);
+    }
   };
 
   const handleComplete = () => {
@@ -40,7 +49,7 @@ export default function OnboardingPage() {
     router.push('/recommend');
   };
 
-  if (!started) return <StartScreen onStart={handleStart} />;
+  if (step === null) return <StartScreen onStart={handleStart} />;
 
   const steps = [
     <Step0 onNext={handleNext} key={0} />, // Step0: 설명 + 카드
@@ -51,7 +60,7 @@ export default function OnboardingPage() {
     <Step5 onNext={handleNext} key={5} />, // Step5: 실제 좋아요/싫어요 2회 시도 + 자동 전환
     <Step6 onNext={handleNext} key={6} />, // Step6: 확인 토스트 반환
     <Step7 onNext={handleNext} key={7} />, // Step7: 결과 창
-    <Step8 onNext={handleComplete} key={7} />, // Step8: 마이페이지 확인
+    <Step8 onNext={handleComplete} key={8} />, // Step8: 마이페이지 확인
   ];
 
   return (

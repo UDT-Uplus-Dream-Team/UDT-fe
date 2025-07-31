@@ -38,7 +38,13 @@ export default function LayoutWrapper({
       <div className="w-full min-h-[100svh] max-w-160 bg-gradient-to-b from-primary-900 via-purple-900 to-indigo-900 text-white flex flex-col relative pointer-events-auto">
         {/* 메인 콘텐츠 - 남은 공간 모두 사용 */}
         <main className="h-full flex flex-col overflow-y-auto">
-          <div className="h-[calc(100%-60px)]">{children}</div>
+          <div
+            style={{
+              height: shouldHideBottomNavbar ? '100%' : 'calc(100% - 60px)',
+            }}
+          >
+            {children}
+          </div>
           {!shouldHideBottomNavbar && <BottomNavbar />}
         </main>
       </div>

@@ -131,7 +131,7 @@ export function RequestQueueDashboard() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="rounded-full w-full h-full p-1 bg-red-600 opacity-80 text-white"
+                        className="rounded-full w-16 h-full p-1 bg-red-600 opacity-80 text-white"
                       >
                         취소
                       </Button>

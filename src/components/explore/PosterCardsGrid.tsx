@@ -61,7 +61,7 @@ export const PosterCardsGrid = ({
     <>
       {contents.length > 0 ? (
         <>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-5 px-4 py-6 mx-auto transition-opacity duration-300">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-5 px-4 py-6 mx-auto transition-opacity duration-300 justify-items-center">
             {contents.map((item, idx) => (
               <PosterCard
                 key={idx}

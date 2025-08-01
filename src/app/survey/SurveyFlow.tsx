@@ -7,18 +7,26 @@ import SurveyComplete from '@components/survey/SurveyComplete';
 import { postSurvey } from '@lib/apis/survey/postSurvey';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 import { useSurveyStore } from '@store/useSurveyStore';
-import { Button } from '@components/ui/button';
+import { useEffect } from 'react';
 
 export default function SurveyFlow() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const step = Number(searchParams.get('step'));
+  const stepParam = searchParams.get('step');
+  const step = Number(stepParam);
 
   const platforms = useSurveyStore((state) => state.platforms);
   const genres = useSurveyStore((state) => state.genres);
   const contentIds = useSurveyStore((state) => state.contentIds);
 
   const showErrorToast = useErrorToastOnce();
+
+  // step 쿼리 없으면 자동으로 ?step=1 붙여줌
+  useEffect(() => {
+    if (!stepParam) {
+      router.replace('/survey?step=1');
+    }
+  }, [stepParam, router]);
 
   const goToStep = (nextStep: number) => {
     router.push(`/survey?step=${nextStep}`);
@@ -36,19 +44,6 @@ export default function SurveyFlow() {
       }
     }
   };
-
-  // step이 없으면 시작 화면
-  if (!step) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <h1 className="text-2xl font-bold mb-4">설문조사 시작!</h1>
-        <p className="mb-6">
-          간단한 질문을 통해 더 나은 추천을 제공해 드릴게요
-        </p>
-        <Button onClick={() => goToStep(1)}>시작하기</Button>
-      </div>
-    );
-  }
 
   return (
     <div>

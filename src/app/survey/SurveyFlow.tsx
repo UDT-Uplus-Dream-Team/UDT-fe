@@ -39,8 +39,12 @@ export default function SurveyFlow() {
       try {
         await postSurvey({ platforms, genres, contentIds });
         goToStep(3);
-      } catch {
-        showErrorToast('설문조사 제출에 실패했습니다.');
+      } catch (error) {
+        const message =
+          error instanceof Error && error.message
+            ? error.message
+            : '설문조사 제출에 실패했습니다.';
+        showErrorToast(message);
       }
     }
   };

@@ -7,7 +7,13 @@ export interface User {
   likeCount: number;
   dislikeCount: number;
   uninterestedCount: number;
-  profileImage?: string;
+  surveyCompleted: boolean;
+}
+
+export interface CursorPageResponse<T> {
+  items: T[];
+  hasNext: boolean;
+  nextCursor: number | null;
 }
 
 export interface UserListProps {

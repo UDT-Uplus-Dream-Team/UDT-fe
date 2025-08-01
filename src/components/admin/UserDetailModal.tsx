@@ -7,10 +7,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from '@components/ui/dialog';
+import { Button } from '@components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar';
+import { Badge } from '@components/ui/badge';
 import {
   ThumbsUp,
   ThumbsDown,
@@ -19,7 +20,7 @@ import {
   UserX,
   Mail,
 } from 'lucide-react';
-import { UserDetailProps } from '@/types/admin/user';
+import { UserDetailProps } from '@type/admin/user';
 
 export default function UserDetailModal({
   user,
@@ -106,7 +107,7 @@ export default function UserDetailModal({
               <div className="flex items-center space-x-4">
                 <Avatar className="h-16 w-16">
                   <AvatarImage
-                    src={user.profileImage || '/placeholder.svg'}
+                    src={'/images/default-profile.png'}
                     alt={user.name}
                   />
                   <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold text-xl">
@@ -118,6 +119,15 @@ export default function UserDetailModal({
                     {user.name}
                   </h3>
                   <p className="text-gray-600">회원 ID: {user.memberId}</p>
+                  <Badge
+                    className={`${
+                      user.surveyCompleted
+                        ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                        : 'bg-gray-200 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {user.surveyCompleted ? '정회원' : '임시회원'}
+                  </Badge>
                 </div>
               </div>
               <Button

@@ -3,9 +3,8 @@
 import { useState, useCallback } from 'react';
 import UserDetailModal from '@components/admin/UserDetailModal';
 import { User } from '@type/admin/user';
-import { useInfiniteScroll } from '@hooks/admin/useInfiniteScroll';
 import UserList from '@components/admin/UserList';
-
+import { useInfiniteMockUsers } from '@/hooks/admin/useInfiniteScroll';
 export default function UserManagement() {
   const [sortBy, setSortBy] = useState<string>('전체');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -18,7 +17,7 @@ export default function UserManagement() {
     loadMoreRef,
     deleteUser,
     deleteFeedback,
-  } = useInfiniteScroll();
+  } = useInfiniteMockUsers();
 
   // 유저 선택 핸들러
   const handleUserSelect = useCallback((user: User) => {

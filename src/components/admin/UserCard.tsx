@@ -5,6 +5,7 @@ import { Button } from '@components/ui/button';
 import { Edit, Mail, Calendar } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar';
 import { User } from '@type/admin/user';
+import { Badge } from '../ui/badge';
 
 interface UserCardProps {
   user: User;
@@ -26,20 +27,29 @@ export default function UserCard({ user, onView }: UserCardProps) {
         <div className="flex items-center space-x-4">
           {/* 프로필 이미지 */}
           <Avatar className="h-12 w-12">
-            <AvatarImage
-              src={user.profileImage || '/images/default-profile.png'}
-              alt={user.name}
-            />
+            <AvatarImage src={'/images/default-profile.png'} alt={user.name} />
             <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
               {user.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
 
           {/* 사용자 정보 */}
+          {/* 사용자 정보 */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg text-gray-900 truncate mb-1">
-              {user.name}
-            </h3>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-lg text-gray-900 truncate">
+                {user.name}
+              </h3>
+              <Badge
+                className={`${
+                  user.surveyCompleted
+                    ? 'bg-green-100 text-green-700 hover:bg-green-100'
+                    : 'bg-gray-200 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {user.surveyCompleted ? '정회원' : '임시회원'}
+              </Badge>
+            </div>
             <div className="flex items-center text-sm text-gray-600 mb-1">
               <Mail className="h-4 w-4 mr-1 flex-shrink-0" />
               <span className="truncate">{user.email}</span>

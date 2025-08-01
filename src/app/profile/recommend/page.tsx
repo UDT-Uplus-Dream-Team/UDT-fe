@@ -83,7 +83,6 @@ const RecommendPage = () => {
     selectedIds,
     onDeleteComplete: handleCancelDeleteMode,
     deleteFn: deleteCurated,
-    isBatch: true,
   });
 
   return (

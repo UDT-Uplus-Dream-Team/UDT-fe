@@ -56,7 +56,7 @@ export default function ExplorePage() {
         <span className="text-2xl font-semibold text-white">작품 탐색하기</span>
       </div>
 
-      {/* 2. FilterRadioButtonGroup은 sticky가 아니라 그냥 여기에 둔다! */}
+      {/* 2. FilterRadioButtonGroup의 sticky 옵션은 해당 컴포넌트 내부에 둔다! */}
       <FilterRadioButtonGroup />
 
       {/* 3. 나머지 모든 콘텐츠가 스크롤되는 영역 */}

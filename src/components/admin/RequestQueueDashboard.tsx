@@ -10,6 +10,14 @@ import {
   TableRow,
 } from '@components/ui/table';
 import { CirclePlus, FolderCheck, Pencil, Trash } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@components/ui/dropdown-menu';
+import { Filter, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 
 const mockRequests = [
   {
@@ -43,6 +51,9 @@ const requestTypeConfig = {
 
 // 배치 처리를 위해 pending 중인 요청 목록을 보여줌
 export function RequestQueueDashboard() {
+  const [selectedFilter, setSelectedFilter] = useState<string>('전체');
+  const filterOptions = ['전체', '콘텐츠 등록', '콘텐츠 수정', '콘텐츠 삭제']; // 필터링 옵션들
+
   return (
     <div className="space-y-6">
       {/* 상단의 카드 레이아웃(요청 대기열 관련 수치 정보 표시) */}
@@ -71,7 +82,7 @@ export function RequestQueueDashboard() {
             <Pencil className="h-4 w-4 text-orange-800" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">5</div>
+            <div className="text-2xl font-bold pb-2">5</div>
           </CardContent>
         </Card>
         <Card>
@@ -80,7 +91,7 @@ export function RequestQueueDashboard() {
             <Trash className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">11</div>
+            <div className="text-2xl font-bold pb-2">11</div>
           </CardContent>
         </Card>
       </div>
@@ -88,7 +99,31 @@ export function RequestQueueDashboard() {
       {/* 요청 목록 테이블 */}
       <Card className="py-4 px-2">
         <CardHeader>
-          <CardTitle className="text-lg font-bold">요청 목록</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-bold">요청 목록</CardTitle>
+
+            {/* 필터 드롭다운 */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2 bg-transparent">
+                  <Filter className="h-4 w-4" />
+                  {selectedFilter}
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {filterOptions.map((option) => (
+                  <DropdownMenuItem
+                    key={option}
+                    onClick={() => setSelectedFilter(option)}
+                    className={selectedFilter === option ? 'bg-accent' : ''}
+                  >
+                    {option}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -130,8 +165,7 @@ export function RequestQueueDashboard() {
                     <TableCell>
                       <Button
                         size="sm"
-                        variant="outline"
-                        className="rounded-full w-16 h-full p-1 bg-red-600 opacity-80 text-white"
+                        className="rounded-full w-16 h-full p-1 bg-red-600 opacity-80 text-white cursor-pointer"
                       >
                         취소
                       </Button>

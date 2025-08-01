@@ -108,7 +108,7 @@ export const FilterRadioButtonGroup = () => {
                 {/* Sheet 콘텐츠 (해당 콘텐츠는 FilterBottomSheetContent 컴포넌트로 구현) */}
                 <SheetContent
                   side="bottom"
-                  className="flex flex-col gap-0 h-[60svh] max-h-[60svh] max-w-[640px] w-full mx-auto bg-[#07033E] border-t-0 rounded-t-[20px]"
+                  className="flex flex-col gap-0 h-[60svh] max-h-[60svh] max-w-[640px] w-full mx-auto bg-[#07033E] border-t-0 rounded-t-[20px] !border-none"
                 >
                   {/* 커스텀 닫기 버튼 */}
                   <button

@@ -8,6 +8,7 @@ import { postSurvey } from '@lib/apis/survey/postSurvey';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 import { useSurveyStore } from '@store/useSurveyStore';
 import { useEffect } from 'react';
+import { Button } from '@components/ui/button';
 
 export default function SurveyFlow() {
   const searchParams = useSearchParams();
@@ -54,6 +55,12 @@ export default function SurveyFlow() {
       {step === 1 && <Step1 onNext={handleNext} />}
       {step === 2 && <Step2 onNext={handleNext} />}
       {step === 3 && <SurveyComplete />}
+      {step > 3 && (
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <p className="mb-4 font-bold">잘못된 설문 단계입니다.</p>
+          <Button onClick={() => goToStep(1)}>처음부터 시작</Button>
+        </div>
+      )}
     </div>
   );
 }

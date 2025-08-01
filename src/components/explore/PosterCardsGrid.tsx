@@ -35,7 +35,6 @@ export const PosterCardsGrid = ({
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   const handlePosterClick = (movieId: number) => {
-    //TODO: 이것을 네트워크 통신으로 대체해야 함
     setSelectedMovieId(movieId);
     setIsDetailBottomSheetOpen(true);
   };
@@ -61,7 +60,7 @@ export const PosterCardsGrid = ({
     <>
       {contents.length > 0 ? (
         <>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-5 px-4 py-6 mx-auto transition-opacity duration-300">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-5 px-4 py-6 mx-auto transition-opacity duration-300 justify-items-center">
             {contents.map((item, idx) => (
               <PosterCard
                 key={idx}
@@ -109,7 +108,7 @@ export const PosterCardsGrid = ({
         </>
       ) : (
         // 로딩 중인 것인지의 여부에 따라 나오는 텍스트가 달라야 함
-        <div className="w-full h-full flex items-center justify-center text-white">
+        <div className="flex flex-1 flex-col items-center justify-center text-white">
           {status === 'pending' ? '불러오는 중...' : '검색 결과가 없습니다.'}
         </div>
       )}

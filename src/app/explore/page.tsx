@@ -59,9 +59,8 @@ export default function ExplorePage() {
       {/* 2. FilterRadioButtonGroup은 sticky가 아니라 그냥 여기에 둔다! */}
       <FilterRadioButtonGroup />
 
-      {/* 3. 나머지 모든 콘텐츠가 스크롤되는 영역 */}
-      <div className="flex-1 overflow-y-auto pb-15">
-        <div className="h-0" />
+      {/* 3. 나머지 모든 콘텐츠가 스크롤되는 영역 (여기에서만 overflow-y-auto 속성 사용) */}
+      <div className="flex-1 flex flex-col h-full overflow-y-auto pb-15">
         {filters !== undefined ? (
           <PosterCardsGrid
             contents={contents}

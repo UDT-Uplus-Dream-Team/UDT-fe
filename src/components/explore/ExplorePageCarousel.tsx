@@ -172,8 +172,8 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
   const handleDragEnd = useCallback(
     (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       let next = currentIndex;
-      if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -400) next += 1;
-      else if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > 400)
+      if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -50) next += 1;
+      else if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > 50)
         next -= 1;
       setIsDragging(false);
       setCurrentIndex(next);
@@ -295,7 +295,7 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
         <SheetContent
           side="bottom"
           hideDefaultClose={true}
-          className="px-0 pb-5 h-[90svh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
+          className="px-0 pb-5 h-[90svh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0 !border-none"
         >
           <button
             onClick={() => setSelectedContent(null)}

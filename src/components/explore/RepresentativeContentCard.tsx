@@ -24,7 +24,7 @@ export const RepresentativeContentCard = memo(
     );
 
     return (
-      <Card className="flex flex-col w-68 h-87 overflow-hidden group cursor-pointer transition-transform duration-200 border-none">
+      <Card className="!border-none !bg-transparent !shadow-none flex flex-col w-68 h-87 overflow-hidden group cursor-pointer transition-transform duration-200">
         <div className="relative flex-grow">
           <Image
             src={posterImgSrc}

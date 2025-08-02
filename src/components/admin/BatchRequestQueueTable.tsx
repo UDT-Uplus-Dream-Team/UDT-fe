@@ -20,12 +20,16 @@ import {
   requestTypeConfigInBatchRequestQueue,
 } from '@type/admin/BatchPage';
 import { Filter, ChevronDown, ChartLine } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { BatchJobDetailDialog } from './BatchJobDetailDialog';
 
 // 배치 대기열에서 배치 목록을 보여주는 테이블
 export function BatchRequestQueueTable() {
   // TODO: 추후 목록 data 값들은 네트워크 통신으로 가져와야 함
   const [selectedFilter, setSelectedFilter] = useState<string>('전체');
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // 상세보기 모달 창 열기 위한 상태 관리
+  const [selectedJobId, setSelectedJobId] = useState<number>(-1); // 상세보기 모달 창에 표시할 요청 정보 관리
+
   const filterOptions = [
     '전체',
     '콘텐츠 등록',
@@ -36,6 +40,29 @@ export function BatchRequestQueueTable() {
 
   const [selectedStatusFilter, setSelectedStatusFilter] = useState('전체');
   const statusFilterOptions = ['전체', '대기중', '취소됨'];
+
+  // 필터링 된 요청 목록 반환
+  const filteredJobs = useMemo(() => {
+    return mockRequestsInBatchRequestQueue.filter((req) => {
+      const typePass =
+        selectedFilter === '전체' || req.title === selectedFilter;
+      const statusPass =
+        selectedStatusFilter === '전체' ||
+        requestTypeConfigInBatchRequestQueue[
+          req.status as keyof typeof requestTypeConfigInBatchRequestQueue
+        ].label === selectedStatusFilter;
+      return typePass && statusPass;
+    });
+  }, [selectedFilter, selectedStatusFilter, mockRequestsInBatchRequestQueue]);
+
+  // "상세보기" 버튼을 눌렀을 경우 모달 창 열기
+  const handleDetailClick = (requestId: number) => {
+    setIsDialogOpen(true);
+    if (!isDialogOpen) {
+      setSelectedJobId(requestId);
+    }
+  };
+
   return (
     // 요청 목록 테이블
     <Card className="h-[600px] flex flex-col py-4 px-2">
@@ -111,7 +138,7 @@ export function BatchRequestQueueTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockRequestsInBatchRequestQueue.map((request) => {
+            {filteredJobs.map((request) => {
               return (
                 <TableRow key={request.logId}>
                   <TableCell className="font-medium">{request.logId}</TableCell>
@@ -138,6 +165,7 @@ export function BatchRequestQueueTable() {
                     <Button
                       size="sm"
                       className="rounded-full w-16 h-full p-1 bg-gray-400 opacity-80 text-white cursor-pointer"
+                      onClick={() => handleDetailClick(request.logId)}
                     >
                       상세보기
                     </Button>
@@ -156,6 +184,17 @@ export function BatchRequestQueueTable() {
           </TableBody>
         </Table>
       </CardContent>
+
+      {/* 상세보기를 눌렀을 경우 모달 창 열기 */}
+      <BatchJobDetailDialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          // 모달 창 닫을 때 선택된 요청 정보 초기화
+          setIsDialogOpen(open);
+          if (!open) setSelectedJobId(-1);
+        }}
+        jobId={selectedJobId}
+      />
     </Card>
   );
 }

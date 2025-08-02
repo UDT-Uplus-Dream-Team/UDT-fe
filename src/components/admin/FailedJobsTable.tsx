@@ -15,12 +15,16 @@ import {
 } from '@components/ui/table';
 import { Button } from '@components/ui/button';
 import { Filter, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { mockRequestsInBatchRequestQueue } from '@type/admin/BatchPage';
+import { BatchJobDetailDialog } from '@components/admin/BatchJobDetailDialog';
 
 // 실패한 배치 job 목록을 보여주는 테이블
 export function FailedJobsTable() {
   const [selectedStatusFilter, setSelectedStatusFilter] = useState('전체');
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // 상세보기 모달 창 열기 위한 상태 관리
+  const [selectedJobId, setSelectedJobId] = useState<number>(-1); // 상세보기 모달 창에 표시할 요청 정보 관리
+
   const statusFilterOptions = [
     '전체',
     '콘텐츠 등록',
@@ -28,6 +32,25 @@ export function FailedJobsTable() {
     '콘텐츠 삭제',
     '사용자 피드백',
   ];
+
+  const filteredRequests = useMemo(
+    // 필터링 된 요청 목록 반환
+    () =>
+      selectedStatusFilter === '전체'
+        ? mockRequestsInBatchRequestQueue
+        : mockRequestsInBatchRequestQueue.filter(
+            (req) => req.title === selectedStatusFilter,
+          ),
+    [selectedStatusFilter, mockRequestsInBatchRequestQueue],
+  );
+
+  // "상세보기" 버튼을 눌렀을 경우 모달 창 열기
+  const handleDetailClick = (requestId: number) => {
+    setIsDialogOpen(true);
+    if (!isDialogOpen) {
+      setSelectedJobId(requestId);
+    }
+  };
 
   return (
     // 요청 목록 테이블
@@ -77,7 +100,7 @@ export function FailedJobsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockRequestsInBatchRequestQueue.map((request) => {
+            {filteredRequests.map((request) => {
               return (
                 <TableRow key={request.logId}>
                   <TableCell className="font-medium">{request.logId}</TableCell>
@@ -89,6 +112,7 @@ export function FailedJobsTable() {
                     <Button
                       size="sm"
                       className="rounded-full w-16 h-full p-1 bg-gray-400 opacity-80 text-white cursor-pointer"
+                      onClick={() => handleDetailClick(request.logId)}
                     >
                       상세보기
                     </Button>
@@ -107,6 +131,17 @@ export function FailedJobsTable() {
           </TableBody>
         </Table>
       </CardContent>
+
+      {/* 상세보기를 눌렀을 경우 모달 창 열기 */}
+      <BatchJobDetailDialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          // 모달 창 닫을 때 선택된 요청 정보 초기화
+          setIsDialogOpen(open);
+          if (!open) setSelectedJobId(-1);
+        }}
+        jobId={selectedJobId}
+      />
     </Card>
   );
 }

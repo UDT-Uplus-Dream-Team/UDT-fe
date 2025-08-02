@@ -27,7 +27,6 @@ export function BatchResultDashboardTable() {
             <TableRow>
               <TableHead>배치 ID</TableHead>
               <TableHead>요청 타입</TableHead>
-              <TableHead>요청자</TableHead>
               <TableHead>수행 시작 시간</TableHead>
               <TableHead>수행 완료 시간</TableHead>
               <TableHead>상태</TableHead>
@@ -45,7 +44,6 @@ export function BatchResultDashboardTable() {
                     {request.batchId}
                   </TableCell>
                   <TableCell>{request.title}</TableCell>
-                  <TableCell>{request.memberId}</TableCell>
                   <TableCell>{request.generateTime}</TableCell>
                   <TableCell>{request.generateTime}</TableCell>
                   <TableCell>

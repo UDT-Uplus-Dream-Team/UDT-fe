@@ -10,6 +10,8 @@ import {
 import { PieChart, Pie, Cell } from 'recharts';
 import {
   FolderCheck,
+  CheckCircle,
+  XCircle,
   CirclePlus,
   Pencil,
   Trash,
@@ -22,35 +24,53 @@ export interface BatchTopCardLayoutProps {
   title: string;
 }
 
+// TODO: 추후 목록 data 값들은 네트워크 통신으로 가져와야 함
+const queueData: BatchTopCardDataItem[] = [
+  {
+    name: '콘텐츠 등록',
+    value: 57,
+    color: '#fbbf24',
+    icon: CirclePlus,
+  },
+  {
+    name: '콘텐츠 수정',
+    value: 11,
+    color: '#818cf8',
+    icon: Pencil,
+  },
+  {
+    name: '콘텐츠 삭제',
+    value: 11,
+    color: '#818cf8',
+    icon: Trash,
+  },
+  {
+    name: '사용자 피드백',
+    value: 6,
+    color: '#93c5fd',
+    icon: MessageSquare,
+  },
+];
+
+const resultData: BatchTopCardDataItem[] = [
+  {
+    name: '성공',
+    value: 1800,
+    color: '#86efac',
+    icon: CheckCircle,
+  },
+  {
+    name: '실패',
+    value: 103,
+    color: '#fca5a5',
+    icon: XCircle,
+  },
+];
+
 // 배치 대기열 및 결과 확인하는 페이지에서 전체 현황을 볼 수 있는 카드 레이아웃
 export function BatchTopCardLayout({ title }: BatchTopCardLayoutProps) {
   // TODO: 추후 목록 data 값들은 네트워크 통신으로 가져와야 함
-  const data: BatchTopCardDataItem[] = [
-    {
-      name: '콘텐츠 등록',
-      value: 10,
-      color: '#86efac',
-      icon: CirclePlus,
-    },
-    {
-      name: '콘텐츠 수정',
-      value: 5,
-      color: '#fdba74',
-      icon: Pencil,
-    },
-    {
-      name: '콘텐츠 삭제',
-      value: 11,
-      color: '#fca5a5',
-      icon: Trash,
-    },
-    {
-      name: '사용자 피드백',
-      value: 6,
-      color: '#93c5fd',
-      icon: MessageSquare,
-    },
-  ];
+  const data = title === '배치 대기열 전체 현황' ? queueData : resultData;
 
   // PieChart 설정을 props로 넘겨 받은 data로부터 자동 생성
   const chartConfig = useMemo(

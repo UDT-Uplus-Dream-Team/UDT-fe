@@ -1,6 +1,6 @@
 import { ElementType } from 'react';
 
-// '배치 대기열' 및 '배치 결과' 페이지에서 사용할 타입을 정의하는 파일입니다
+// '배치 대기열' 및 '배치 결과' 페이지에서 사용할 타입을 정의하는 파일이에요!
 
 // 배치 대기열 및 결과 확인하는 페이지에서 전체 현황을 볼 수 있는 카드 레이아웃의 props 타입
 export interface BatchTopCardDataItem {
@@ -119,28 +119,24 @@ export const mockRequestsInBatchRequestQueue = [
 export const mockRequestsInBatchResult = [
   {
     batchId: 1,
-    memberId: '허준호',
     title: '콘텐츠 등록',
     generateTime: '2025-07-31 10:15:23:123',
     status: 'PARTIAL_SUCCESS',
   },
   {
     batchId: 2,
-    memberId: '허준호',
     title: '콘텐츠 수정',
     generateTime: '2025-08-01 10:15:23:123',
     status: 'PARTIAL_SUCCESS',
   },
   {
     batchId: 3,
-    memberId: '허준호',
     title: '콘텐츠 삭제',
     generateTime: '2025-08-02 10:15:23:123',
     status: 'FAIL',
   },
   {
     batchId: 4,
-    memberId: '허준호',
     title: '사용자 피드백',
     generateTime: '2025-08-03 10:15:23:123',
     status: 'SUCCESS',

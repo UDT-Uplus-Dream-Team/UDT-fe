@@ -1,4 +1,4 @@
-import { ContentWithoutId } from '@type/admin/Content';
+import { ContentCreateUpdate } from '@type/admin/Content';
 import axiosInstance from '@lib/apis/axiosInstance';
 
 /**
@@ -7,7 +7,7 @@ import axiosInstance from '@lib/apis/axiosInstance';
  * @param data - 수정할 콘텐츠 데이터
  * @returns 수정된 콘텐츠 ID
  */
-export const patchContent = (contentId: number, data: ContentWithoutId) => {
+export const patchContent = (contentId: number, data: ContentCreateUpdate) => {
   return axiosInstance.patch<{ contentId: number }>(
     `/api/admin/contents/${contentId}`,
     data,

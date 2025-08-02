@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Ticket } from '@components/Ticket/Ticket';
+import { Ticket } from '@/components/Recommend/Ticket';
 import { MockMovies } from './moviedata';
 
 interface StepProps5 {

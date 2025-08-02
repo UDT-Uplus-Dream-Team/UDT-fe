@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { LoadingScreen } from './LoadingScreen';
 import { RefreshCw, Plus, Eye, EyeOff, Undo2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
-import { Ticket } from '@components/Ticket/Ticket';
+import { Ticket } from '@/components/Recommend/Ticket';
 import { Button } from '@components/ui/button';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 import { useRecommendStore } from '@store/useRecommendStore';

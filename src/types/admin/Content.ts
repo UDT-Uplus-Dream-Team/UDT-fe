@@ -57,7 +57,7 @@ export interface ContentWithoutId {
 
 // 콘텐츠 목록 조회 params 타입
 export interface AdminContentListParams {
-  cursor: number;
+  cursor: string | null;
   size: number;
   categoryType: string | null;
 }

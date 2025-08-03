@@ -18,7 +18,7 @@ import {
 import { Badge } from '@components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Upload, Image as ImageIcon } from 'lucide-react';
 import type {
   ContentWithoutId,
   ContentCreateUpdate,
@@ -29,6 +29,7 @@ import type {
 import { PLATFORMS } from '@/lib/platforms';
 import { showSimpleToast } from '@components/common/Toast';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
+import { usePostUploadImages } from '@hooks/admin/usePostUploadImages';
 import { RATING_OPTIONS, CONTENT_CATEGORIES, COUNTRIES } from '@/constants';
 import { getGenresByCategory } from '@/lib/genres';
 import Image from 'next/image';
@@ -136,6 +137,32 @@ export default function ContentForm({
     platformType: '',
     watchUrl: '',
   });
+
+  // 이미지 업로드 훅
+  const uploadImagesMutation = usePostUploadImages();
+
+  // 이미지 업로드 핸들러
+  const handleImageUpload = async (
+    files: FileList | null,
+    imageType: 'poster' | 'backdrop',
+  ) => {
+    if (!files || files.length === 0) return;
+
+    try {
+      const fileArray = Array.from(files);
+      const response = await uploadImagesMutation.mutateAsync(fileArray);
+
+      if (response.data.uploadedFileUrls.length > 0) {
+        const uploadedUrl = response.data.uploadedFileUrls[0];
+        updateFormData((prev) => ({
+          ...prev,
+          [imageType === 'poster' ? 'posterUrl' : 'backdropUrl']: uploadedUrl,
+        }));
+      }
+    } catch (error) {
+      console.error('이미지 업로드 실패:', error);
+    }
+  };
 
   // 폼 제출 핸들러
   const handleSubmit = (e: React.FormEvent) => {
@@ -414,34 +441,106 @@ export default function ContentForm({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="posterUrl" className="mb-3">
-                    포스터 URL
+                  <Label htmlFor="posterUpload" className="mb-3">
+                    포스터 이미지
                   </Label>
-                  <Input
-                    id="posterUrl"
-                    value={formData.posterUrl}
-                    onChange={(e) =>
-                      updateFormData((prev) => ({
-                        ...prev,
-                        posterUrl: e.target.value,
-                      }))
-                    }
-                  />
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          document.getElementById('posterUpload')?.click()
+                        }
+                        disabled={uploadImagesMutation.isPending}
+                        className="flex items-center gap-2"
+                      >
+                        <Upload className="h-4 w-4" />
+                        {uploadImagesMutation.isPending
+                          ? '업로드 중...'
+                          : '이미지 선택'}
+                      </Button>
+                      {formData.posterUrl && (
+                        <div className="flex items-center gap-2">
+                          <ImageIcon className="h-4 w-4 text-green-500" />
+                          <span className="text-sm text-green-600">
+                            업로드 완료
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      id="posterUpload"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleImageUpload(e.target.files, 'poster')
+                      }
+                      className="hidden"
+                    />
+                    {formData.posterUrl && (
+                      <div className="relative w-20 h-28 border rounded overflow-hidden">
+                        <Image
+                          src={formData.posterUrl}
+                          alt="포스터 미리보기"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
-                  <Label htmlFor="backdropUrl" className="mb-3">
-                    배경 이미지 URL
+                  <Label htmlFor="backdropUpload" className="mb-3">
+                    배경 이미지
                   </Label>
-                  <Input
-                    id="backdropUrl"
-                    value={formData.backdropUrl}
-                    onChange={(e) =>
-                      updateFormData((prev) => ({
-                        ...prev,
-                        backdropUrl: e.target.value,
-                      }))
-                    }
-                  />
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          document.getElementById('backdropUpload')?.click()
+                        }
+                        disabled={uploadImagesMutation.isPending}
+                        className="flex items-center gap-2"
+                      >
+                        <Upload className="h-4 w-4" />
+                        {uploadImagesMutation.isPending
+                          ? '업로드 중...'
+                          : '이미지 선택'}
+                      </Button>
+                      {formData.backdropUrl && (
+                        <div className="flex items-center gap-2">
+                          <ImageIcon className="h-4 w-4 text-green-500" />
+                          <span className="text-sm text-green-600">
+                            업로드 완료
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      id="backdropUpload"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleImageUpload(e.target.files, 'backdrop')
+                      }
+                      className="hidden"
+                    />
+                    {formData.backdropUrl && (
+                      <div className="relative w-32 h-20 border rounded overflow-hidden">
+                        <Image
+                          src={formData.backdropUrl}
+                          alt="배경 이미지 미리보기"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 

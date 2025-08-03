@@ -1,37 +1,39 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, type FC } from 'react';
 import { LoadingScreen } from './LoadingScreen';
 import { RefreshCw, Plus, Eye, EyeOff, Undo2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
 import { Ticket } from '@/components/Recommend/Ticket';
 import { Button } from '@components/ui/button';
-import { TicketComponent } from '@type/recommend/TicketComponent';
 import { useRecommendStore } from '@store/useRecommendStore';
 import {
   useGetCuratedContents,
   useRefreshCuratedContents,
 } from '@hooks/recommend/useGetCuratedContents';
-import { useQueryClient } from '@tanstack/react-query';
 import { usePostCuratedContent } from '@hooks/recommend/usePostCuratedContents';
 
-export const ResultScreen: React.FC = () => {
+export const ResultScreen: FC = () => {
   const { forceRefresh } = useRefreshCuratedContents();
-  const queryClient = useQueryClient();
-
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [dist, setDist] = useState(136);
 
-  // Zustand: UI 상태만
   const {
-    setPhase,
+    // 전역 저장 관리
     addSavedCuratedContent,
     removeSavedCuratedContent,
     isSavedCuratedContent,
-    initializeSavedContentIds,
+
+    // ResultScreen 전용 상태
+    resultScreenState: { rerollUsed, isFlipped, currentIndex, contentIndices },
+    setResultRerollUsed,
+    setResultIsFlipped,
+    setResultCurrentIndex,
+    setResultContentIndex,
+    initializeResultSavedContents,
+
+    setPhase,
   } = useRecommendStore();
 
-  // TanStack Query: API 상태만
   const {
     data: curatedContents = [],
     isLoading,
@@ -40,179 +42,31 @@ export const ResultScreen: React.FC = () => {
     isFetching,
   } = useGetCuratedContents();
 
+  // 저장 뮤테이션: 전역 저장 상태 업데이트
   const { mutate: saveCuratedContent, isPending } = usePostCuratedContent({
     onOptimisticUpdate: (contentId: number) => {
-      const curatedIndex = findCuratedIndex(contentId);
-      if (curatedIndex !== -1) {
-        addSavedCuratedContent(curatedIndex);
-      }
+      const idx = curatedContents.findIndex((c) => c.contentId === contentId);
+      if (idx !== -1) addSavedCuratedContent(idx);
     },
-
     onOptimisticRevert: (contentId: number) => {
-      const curatedIndex = findCuratedIndex(contentId);
-      if (curatedIndex !== -1) {
-        removeSavedCuratedContent(curatedIndex);
-      }
+      const idx = curatedContents.findIndex((c) => c.contentId === contentId);
+      if (idx !== -1) removeSavedCuratedContent(idx);
     },
   });
 
-  const findCuratedIndex = (contentId: number): number => {
-    return curatedContents.findIndex(
-      (content) => content.contentId === contentId,
-    );
-  };
-
-  // 로컬 UI 상태들
-  const [contents, setContents] = useState<TicketComponent[]>([]);
-  const [rerollUsed, setRerollUsed] = useState<boolean[]>([
-    false,
-    false,
-    false,
-  ]);
-  const [currentIndex, setCurrentIndex] = useState(1);
-  const [rerollCount, setRerollCount] = useState([0, 0, 0]);
-  const [isFlipped, setIsFlipped] = useState<boolean[]>([false, false, false]);
-  const [showLoadingScreen, setShowLoadingScreen] = useState(() => {
-    const cachedData = queryClient.getQueryData(['curatedContents']);
-    return !cachedData;
-  });
-  const [forceLoading, setForceLoading] = useState(false);
-
-  useEffect(() => {
-    if (showLoadingScreen) return;
-    if (!containerRef.current) return;
-
-    const update = () => {
-      if (containerRef.current) {
-        setDist(containerRef.current.offsetWidth * 0.4);
-      }
-    };
-
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, [showLoadingScreen]);
-
-  // 큐레이션 데이터가 로드되면 contents 설정
+  // 초기화: 로드된 만큼 전역 savedContentIds도 초기화
   useEffect(() => {
     if (curatedContents.length > 0) {
-      setContents(curatedContents.slice(0, 3));
-      initializeSavedContentIds(curatedContents.length);
-
-      // forceLoading 해제
-      if (forceLoading) {
-        setForceLoading(false);
-      }
-
-      // showLoadingScreen 해제 (setTimeout 제거)
-      if (showLoadingScreen) {
-        setShowLoadingScreen(false);
-      }
+      initializeResultSavedContents(curatedContents.length);
     }
-  }, [
-    curatedContents,
-    showLoadingScreen,
-    forceLoading,
-    initializeSavedContentIds,
-  ]);
+  }, [curatedContents, initializeResultSavedContents]);
 
-  const isCurrentContentSaved = (): boolean => {
-    const currentMovie = contents[currentIndex];
-    if (!currentMovie) return false;
+  const getDist = () =>
+    containerRef.current ? containerRef.current.offsetWidth * 0.4 : 136;
+  const dist = getDist();
 
-    const curatedIndex = findCuratedIndex(currentMovie.contentId);
-    return curatedIndex !== -1 ? isSavedCuratedContent(curatedIndex) : false;
-  };
-
-  const handleReroll = (idx: number) => {
-    if (rerollUsed[idx] || curatedContents.length < 6) return;
-
-    // 1단계: 카운터 증가로 exit 애니메이션 트리거
-    setRerollCount((prev) => {
-      const copy = [...prev];
-      copy[idx] = copy[idx] + 1;
-      return copy;
-    });
-
-    // 2단계: 애니메이션 완료 후 새 데이터로 교체
-    setTimeout(() => {
-      const next = [...contents];
-      next[idx] = curatedContents[idx + 3];
-      setContents(next);
-
-      setRerollUsed((prev) => {
-        const copy = [...prev];
-        copy[idx] = true;
-        return copy;
-      });
-    }, 300);
-  };
-
-  const handleFlip = (idx: number) => {
-    setIsFlipped((prev) => {
-      const copy = [...prev];
-      copy[idx] = !copy[idx];
-      return copy;
-    });
-  };
-
-  const handleAddContent = () => {
-    const movie = contents[currentIndex];
-    if (movie && !isCurrentContentSaved()) {
-      saveCuratedContent(movie.contentId);
-    }
-  };
-
-  const handleStartNewRecommendation = async () => {
-    try {
-      // 1. 로딩 상태 설정
-      setForceLoading(true);
-      setShowLoadingScreen(true);
-
-      // 2. 기존 상태들 초기화
-      setContents([]);
-      setRerollUsed([false, false, false]);
-      setCurrentIndex(1);
-      setRerollCount([0, 0, 0]);
-      setIsFlipped([false, false, false]);
-
-      // 3. 새로운 timestamp로 완전히 새로운 쿼리 생성
-      await forceRefresh();
-
-      // 4. 시작 화면으로 이동 (새로운 데이터가 자동으로 로드됨)
-      setPhase('start');
-    } catch (error) {
-      console.error('다시 추천받기 실패:', error);
-      // 에러 발생해도 시작 화면으로 이동
-      setForceLoading(false);
-      setShowLoadingScreen(false);
-      setPhase('start');
-    }
-  };
-
-  const handleRetry = async () => {
-    try {
-      setShowLoadingScreen(true);
-      setForceLoading(true);
-
-      // 새로운 timestamp로 완전히 새로운 쿼리 생성
-      await forceRefresh();
-    } catch (error) {
-      console.error('재시도 실패:', error);
-      // 실패해도 로딩 상태 해제
-      setForceLoading(false);
-      setShowLoadingScreen(false);
-    }
-  };
-
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x > 50 && currentIndex > 0) setCurrentIndex((i) => i - 1);
-    else if (info.offset.x < -50 && currentIndex < contents.length - 1)
-      setCurrentIndex((i) => i + 1);
-  };
-
-  const getCardPosition = (idx: number, dist: number) => {
-    const diff = idx - currentIndex;
+  const getCardPosition = (posIdx: number) => {
+    const diff = posIdx - currentIndex;
     return {
       x: diff * dist,
       scale: diff === 0 ? 1 : 0.8,
@@ -221,8 +75,57 @@ export const ResultScreen: React.FC = () => {
     };
   };
 
-  // 로딩 중이거나 수동 로딩 상태인 경우
-  if (isLoading || showLoadingScreen || forceLoading || isFetching) {
+  // 전역 저장 여부 조회
+  const isCurrentContentSaved = () => {
+    const contentIdx = contentIndices[currentIndex];
+    return isSavedCuratedContent(contentIdx);
+  };
+
+  const handleReroll = (idx: number) => {
+    if (rerollUsed[idx] || curatedContents.length < 6) return;
+    setResultRerollUsed(idx, true);
+    setTimeout(() => {
+      setResultContentIndex(idx, idx + 3);
+    }, 300);
+  };
+
+  const handleFlip = (idx: number) => {
+    setResultIsFlipped(idx, !isFlipped[idx]);
+  };
+
+  const handleAddContent = () => {
+    const contentIdx = contentIndices[currentIndex];
+    const movie = curatedContents[contentIdx];
+    if (movie && !isCurrentContentSaved()) {
+      saveCuratedContent(movie.contentId);
+    }
+  };
+
+  const handleStartNewRecommendation = async () => {
+    try {
+      await forceRefresh();
+    } finally {
+      setPhase('start');
+    }
+  };
+
+  // 플립 여부와 상관없이, 중앙 카드일 때만 드래그 허용
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    let newIndex = currentIndex;
+    if (info.offset.x > 50 && currentIndex > 0) {
+      newIndex = currentIndex - 1;
+    } else if (
+      info.offset.x < -50 &&
+      currentIndex < contentIndices.length - 1
+    ) {
+      newIndex = currentIndex + 1;
+    }
+    // 클램프
+    newIndex = Math.max(0, Math.min(newIndex, contentIndices.length - 1));
+    setResultCurrentIndex(newIndex);
+  };
+
+  if (isLoading || isFetching) {
     return (
       <LoadingScreen
         message="추천 컨텐츠를 선별하고 있어요!"
@@ -230,8 +133,6 @@ export const ResultScreen: React.FC = () => {
       />
     );
   }
-
-  // 에러 발생 시 에러 화면
   if (isError) {
     return (
       <div className="flex min-h-full items-center justify-center">
@@ -245,16 +146,14 @@ export const ResultScreen: React.FC = () => {
           </p>
           <div className="flex gap-4 justify-center">
             <Button
-              onClick={handleRetry}
+              onClick={() => forceRefresh()}
+              disabled={isFetching}
               className="flex items-center gap-2"
-              disabled={isFetching || forceLoading}
             >
               <RefreshCw
-                className={`w-4 h-4 ${
-                  isFetching || forceLoading ? 'animate-spin' : ''
-                }`}
+                className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`}
               />
-              {isFetching || forceLoading ? '재시도 중...' : '다시 시도'}
+              {isFetching ? '재시도 중...' : '다시 시도'}
             </Button>
             <Button variant="outline" onClick={() => setPhase('start')}>
               처음으로
@@ -264,9 +163,7 @@ export const ResultScreen: React.FC = () => {
       </div>
     );
   }
-
-  // 콘텐츠가 없는 경우
-  if (contents.length === 0) {
+  if (curatedContents.length === 0) {
     return (
       <div className="flex min-h-full items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
@@ -276,16 +173,14 @@ export const ResultScreen: React.FC = () => {
           </p>
           <div className="flex gap-4 justify-center">
             <Button
-              onClick={handleRetry}
+              onClick={() => forceRefresh()}
+              disabled={isFetching}
               className="flex items-center gap-2"
-              disabled={isFetching || forceLoading}
             >
               <RefreshCw
-                className={`w-4 h-4 ${
-                  isFetching || forceLoading ? 'animate-spin' : ''
-                }`}
+                className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`}
               />
-              {isFetching || forceLoading ? '새로고침 중...' : '새로고침'}
+              {isFetching ? '새로고침 중...' : '새로고침'}
             </Button>
             <Button variant="outline" onClick={() => setPhase('start')}>
               다시 추천받기
@@ -298,28 +193,38 @@ export const ResultScreen: React.FC = () => {
 
   return (
     <div className="flex w-full h-full flex-col justify-center overflow-y-auto">
-      {/* 제목 섹션 */}
       <div className="text-center py-5">
         <h1 className="text-2xl font-bold mb-1">추천 결과</h1>
         <p className="text-gray-500">마음에 드는 콘텐츠를 선택해보세요</p>
       </div>
-
-      {/* Carousel Container */}
       <div className="flex-grow h-[60svh] min-h-110 max-h-175 flex items-center justify-center px-4">
         <div
           ref={containerRef}
-          className="relative h-full w-[80%] min-w-70 max-w-100 flex items-center justify-center"
+          className="relative h-full w-[80%] min-w-70 max-w-100 flex items-center justify-center touch-pan-y"
         >
-          {contents.map((content, idx) => {
-            const pos = getCardPosition(idx, dist);
+          {contentIndices.map((contentIdx, idx) => {
+            const content = curatedContents[contentIdx];
+            const pos = getCardPosition(idx);
             const isCenter = idx === currentIndex;
+
             return (
               <motion.div
                 key={content.contentId}
-                drag="x"
+                drag={isCenter ? 'x' : false}
+                dragMomentum={false}
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0}
-                onDragEnd={handleDragEnd}
+                onDragStart={() => {
+                  // 페이지 스크롤 잠금
+                  document.body.style.overflow = 'hidden';
+                }}
+                onDragEnd={(e, info) => {
+                  // 페이지 스크롤 해제
+                  document.body.style.overflow = '';
+                  handleDragEnd(e, info);
+                }}
+                // 터치 제스처는 가로 스와이프만
+                style={{ transformStyle: 'preserve-3d', touchAction: 'pan-x' }}
                 initial={{ opacity: 0 }}
                 animate={{
                   x: pos.x,
@@ -328,30 +233,22 @@ export const ResultScreen: React.FC = () => {
                   zIndex: pos.zIndex,
                 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="
-                  absolute my-4
-                  min-w-[280px] min-h-[440px]
-                  max-w-[400px] max-h-[680px] w-full h-full
-                "
+                className="absolute my-4 min-w-[280px] min-h-[440px] max-w-[400px] max-h-[680px] w-full h-full"
               >
                 {isCenter ? (
                   <div className="relative w-full h-full">
-                    {/* 리롤 애니메이션용 AnimatePresence */}
                     <AnimatePresence mode="wait">
                       <motion.div
-                        key={`reroll-${content.contentId}-${rerollCount[idx]}`}
+                        key={`reroll-${content.contentId}-${rerollUsed[idx]}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
                         className="w-full h-full"
                       >
-                        {/* 플립 애니메이션용 AnimatePresence */}
                         <AnimatePresence mode="wait">
                           <motion.div
-                            key={`flip-${content.contentId}-${
-                              isFlipped[idx] ? 'back' : 'front'
-                            }`}
+                            key={`flip-${content.contentId}-${isFlipped[idx]}`}
                             initial={{ rotateY: isFlipped[idx] ? 90 : -90 }}
                             animate={{ rotateY: 0 }}
                             exit={{ rotateY: isFlipped[idx] ? -90 : 90 }}
@@ -381,7 +278,6 @@ export const ResultScreen: React.FC = () => {
 
                 {isCenter && (
                   <div className="absolute -top-2 -right-2 flex gap-x-2 z-50">
-                    {/* 상세보기 버튼 */}
                     <motion.div whileTap={{ scale: 0.9 }}>
                       <Button
                         variant="outline"
@@ -395,21 +291,12 @@ export const ResultScreen: React.FC = () => {
                         )}
                       </Button>
                     </motion.div>
-
-                    {/* 리롤 버튼 */}
                     <motion.div whileTap={{ scale: 0.9 }}>
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => handleReroll(idx)}
                         disabled={rerollUsed[idx] || curatedContents.length < 6}
-                        title={
-                          curatedContents.length < 6
-                            ? '리롤할 추가 콘텐츠가 없습니다'
-                            : rerollUsed[idx]
-                              ? '이미 리롤을 사용했습니다'
-                              : '다른 콘텐츠로 바꾸기'
-                        }
                       >
                         <RefreshCw
                           className={`w-4 h-4 ${
@@ -427,8 +314,6 @@ export const ResultScreen: React.FC = () => {
           })}
         </div>
       </div>
-
-      {/* Action Buttons */}
       <div className="flex justify-center gap-4 my-5">
         <Button
           onClick={handleAddContent}
@@ -450,18 +335,13 @@ export const ResultScreen: React.FC = () => {
                 : '이 콘텐츠 추가하기'}
           </span>
         </Button>
-
         <Button
           onClick={handleStartNewRecommendation}
-          disabled={forceLoading || isFetching}
+          disabled={isFetching}
           className="px-8 py-3 bg-primary-500 text-white rounded-full shadow-lg flex items-center gap-2 disabled:bg-primary-300"
         >
-          <Undo2
-            className={`w-5 h-5 ${
-              forceLoading || isFetching ? 'animate-spin' : ''
-            }`}
-          />
-          {forceLoading || isFetching ? '로딩 중...' : '다시 추천받기'}
+          <Undo2 className={`w-5 h-5 ${isFetching ? 'animate-spin' : ''}`} />
+          {isFetching ? '로딩 중...' : '다시 추천받기'}
         </Button>
       </div>
     </div>

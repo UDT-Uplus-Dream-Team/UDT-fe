@@ -2,10 +2,12 @@
 
 import { Card, CardContent } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { Edit, Mail, Calendar } from 'lucide-react';
+import { Mail, Calendar, Pencil } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar';
 import { User } from '@type/admin/user';
-import { Badge } from '../ui/badge';
+import { Badge } from '../../ui/badge';
+
+//개별 유저 정보 표시
 
 interface UserCardProps {
   user: User;
@@ -22,18 +24,20 @@ export default function UserCard({ user, onView }: UserCardProps) {
   };
 
   return (
-    <Card className="hover:shadow-md transition-all duration-200 border-gray-200 bg-white">
+    <Card className="transition-all duration-200 border-gray-200 bg-white">
       <CardContent className="p-4">
         <div className="flex items-center space-x-4">
           {/* 프로필 이미지 */}
           <Avatar className="h-12 w-12">
-            <AvatarImage src={'/images/default-profile.png'} alt={user.name} />
+            <AvatarImage
+              src={user.ProfileImageUrl || '/images/default-profile.png'}
+              alt={user.name}
+            />
             <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
               {user.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
 
-          {/* 사용자 정보 */}
           {/* 사용자 정보 */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
@@ -87,10 +91,9 @@ export default function UserCard({ user, onView }: UserCardProps) {
             <Button
               onClick={() => onView(user)}
               size="sm"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 font-medium"
+              className="h-8 w-8 p-0 bg-transparent hover:bg-blue-100 cursor-pointer"
             >
-              <Edit className="h-4 w-4 mr-1" />
-              수정
+              <Pencil className="h-4 w-4 text-blue-600" />
             </Button>
           </div>
         </div>

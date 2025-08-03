@@ -4,6 +4,7 @@ import * as React from 'react';
 import AdminDashboard from '@components/admin/AdminDashboard';
 import { RequestQueueDashboard } from '@components/admin/RequestQueueDashboard';
 import { SmoothExpandableSidebar } from '@components/admin/SmoothExpandableSidebar';
+import UserManagement from '@/components/admin/userManagement/UserManagement';
 
 type TabType = 'request-queue' | 'content-management' | 'member-management';
 
@@ -22,7 +23,7 @@ const tabConfig = {
   'member-management': {
     title: '회원 정보 관리',
     description: '회원 정보를 조회하고 관리할 수 있습니다',
-    component: AdminDashboard,
+    component: UserManagement,
   },
 };
 

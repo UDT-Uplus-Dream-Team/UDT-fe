@@ -5,7 +5,7 @@ import ChartTypeToggle from './ChartTypeToggle';
 import GenreBarChart from './GenreBarChart';
 import GenrePieChart from './GenrePieChart';
 import GenreList from './GenreList';
-import { GenreFeedback } from '@/types/admin/user';
+import { GenreFeedback } from '@type/admin/user';
 
 //전체 차트 wrapper
 interface GenreChartWrapperProps {

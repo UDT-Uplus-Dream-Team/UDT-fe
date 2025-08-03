@@ -1,7 +1,7 @@
 'use client';
 
 import { GenreFeedback } from '@type/admin/user';
-import { getGenreLabel } from '@/utils/admin/genres';
+import { getGenreLabel } from '@utils/admin/genres';
 import {
   BarChart,
   Bar,

@@ -64,7 +64,7 @@ export default function CastSearchDialog({
     size: 20,
   });
 
-  // Intersection Observer로 하단 감지
+  // Intersection Observer로 하단 감지하여 무한 스크롤 구현
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage) return;
 
@@ -82,11 +82,12 @@ export default function CastSearchDialog({
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // 엔터키로 검색 실행
+  // 검색 버튼 클릭 시 검색 실행
   const handleSearch = () => {
     setSearchTerm(searchInput.trim());
   };
 
+  // 엔터키 입력 시 검색 실행
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -94,15 +95,16 @@ export default function CastSearchDialog({
     }
   };
 
-  // API 검색 결과 처리
+  // API 검색 결과를 페이지별로 합쳐서 하나의 배열로 만듦
   const searchResults = data?.pages.flatMap((page) => page.item) || [];
 
-  // 이미 추가된 출연진 제외
+  // 이미 추가된 출연진을 제외한 사용 가능한 배우 목록
   const availableCasts = searchResults.filter(
     (cast) =>
       !existingCasts.some((existing) => existing.castName === cast.castName),
   );
 
+  // 개별 배우 선택/해제 토글 처리
   const handleCastToggle = (cast: Cast, checked: boolean) => {
     if (checked) {
       setSelectedCasts([...selectedCasts, cast]);
@@ -113,6 +115,7 @@ export default function CastSearchDialog({
     }
   };
 
+  // 현재 화면에 보이는 모든 배우 선택
   const handleSelectAllVisible = () => {
     const newSelections = availableCasts.filter(
       (cast) =>
@@ -121,10 +124,12 @@ export default function CastSearchDialog({
     setSelectedCasts([...selectedCasts, ...newSelections]);
   };
 
+  // 선택된 모든 배우 해제
   const handleDeselectAll = () => {
     setSelectedCasts([]);
   };
 
+  // 선택 완료 시 부모 컴포넌트에 선택된 배우 목록 전달
   const handleConfirmSelection = () => {
     onSelectCasts(selectedCasts);
     onOpenChange(false);
@@ -134,6 +139,7 @@ export default function CastSearchDialog({
     setShowAddForm(false);
   };
 
+  // 새 배우 등록 처리 (이미지 업로드 + 배우 등록)
   const handleAddNewCast = async () => {
     if (!newCast.castName.trim()) return;
 
@@ -186,6 +192,7 @@ export default function CastSearchDialog({
     }
   };
 
+  // 이미지 파일 선택 시 미리보기 URL 생성
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -195,6 +202,7 @@ export default function CastSearchDialog({
     }
   };
 
+  // 폼 상태 초기화
   const resetForm = () => {
     setSearchInput('');
     setSearchTerm('');

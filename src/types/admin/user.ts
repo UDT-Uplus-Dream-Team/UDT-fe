@@ -1,8 +1,8 @@
-import type React from 'react';
 export interface User {
-  memberId: number;
+  id: number;
   name: string;
   email: string;
+  ProfileImageUrl?: string;
   joinDate: string;
   likeCount: number;
   dislikeCount: number;
@@ -16,20 +16,32 @@ export interface CursorPageResponse<T> {
   nextCursor: number | null;
 }
 
-export interface UserListProps {
-  users: User[];
-  onUserSelect: (user: User) => void;
-  sortBy: string;
-  onSortChange: (sort: string) => void;
-  isLoading: boolean;
-  hasNextPage: boolean;
-  loadMoreRef: React.RefObject<HTMLDivElement | null>;
+export interface GenreFeedback {
+  genreType: string; // 예: "ACTION", "DOCUMENTARY"
+  likeCount: number;
+  dislikeCount: number;
+  uninterestedCount: number;
 }
 
-export interface UserDetailProps {
-  user: User;
+export interface UserDetail {
+  id: number;
+  name: string;
+  email: string;
+  ProfileImageUrl?: string;
+  lastLoginAt: string;
+  totalLikeCount: number;
+  totalDislikeCount: number;
+  totalUninterestedCount: number;
+  genres: GenreFeedback[];
+}
+
+export interface UserDetailModalProps {
+  userId: number;
   isOpen: boolean;
   onClose: () => void;
-  onDelete: (userId: number) => void;
-  onDeleteFeedback: (userId: number, feedbackTypes: string[]) => void;
 }
+
+export type adminGenre = {
+  label: string;
+  id: string;
+};

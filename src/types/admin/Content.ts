@@ -15,7 +15,7 @@ export interface Category {
   genres: string[];
 }
 
-export interface Platform {
+export interface PlatformInfo {
   platformType: string;
   watchUrl: string;
 }
@@ -35,7 +35,7 @@ export interface Content {
   countries: string[];
   directors: Director[];
   casts: Cast[];
-  platforms: Platform[];
+  platforms: PlatformInfo[];
 }
 
 export interface ContentWithoutId {
@@ -52,7 +52,7 @@ export interface ContentWithoutId {
   countries: string[];
   directors: Director[];
   casts: Cast[];
-  platforms: Platform[];
+  platforms: PlatformInfo[];
 }
 
 // 콘텐츠 목록 조회 params 타입
@@ -95,5 +95,5 @@ export interface ContentCreateUpdate {
   countries: string[];
   directors: number[];
   casts: number[];
-  platforms: Platform[];
+  platforms: PlatformInfo[];
 }

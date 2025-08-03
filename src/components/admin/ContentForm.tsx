@@ -23,7 +23,7 @@ import type {
   ContentWithoutId,
   ContentCreateUpdate,
   Cast,
-  Platform,
+  PlatformInfo,
   Director,
 } from '@type/admin/Content';
 import { PLATFORMS } from '@/lib/platforms';
@@ -132,7 +132,7 @@ export default function ContentForm({
     castName: '',
     castImageUrl: '',
   });
-  const [newPlatform, setNewPlatform] = useState<Platform>({
+  const [newPlatform, setNewPlatform] = useState<PlatformInfo>({
     platformType: '',
     watchUrl: '',
   });

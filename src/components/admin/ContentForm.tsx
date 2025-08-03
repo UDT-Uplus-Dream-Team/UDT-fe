@@ -108,16 +108,6 @@ const validateFormData = (formData: ContentWithoutId): string | null => {
     return '플랫폼은 하나 이상 입력해야 합니다.';
   }
 
-  // 플랫폼 타입이 허용된 플랫폼 중 하나인지 검증
-  const allowedPlatformLabels = PLATFORMS.map((p) => p.label);
-  for (const platform of formData.platforms) {
-    if (!allowedPlatformLabels.includes(platform.platformType)) {
-      return `플랫폼은 다음 중 하나여야 합니다: ${allowedPlatformLabels.join(
-        ', ',
-      )}`;
-    }
-  }
-
   return null;
 };
 

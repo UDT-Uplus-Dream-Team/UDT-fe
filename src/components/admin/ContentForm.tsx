@@ -485,6 +485,7 @@ export default function ContentForm({
                           src={formData.posterUrl}
                           alt="포스터 미리보기"
                           fill
+                          unoptimized
                           className="object-cover"
                         />
                       </div>
@@ -536,6 +537,7 @@ export default function ContentForm({
                           src={formData.backdropUrl}
                           alt="배경 이미지 미리보기"
                           fill
+                          unoptimized
                           className="object-cover"
                         />
                       </div>

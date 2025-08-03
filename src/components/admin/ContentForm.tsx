@@ -22,17 +22,17 @@ import { X, Plus, Upload, Image as ImageIcon } from 'lucide-react';
 import type {
   ContentWithoutId,
   ContentCreateUpdate,
-  Cast,
   PlatformInfo,
-  Director,
 } from '@type/admin/Content';
-import { PLATFORMS } from '@/lib/platforms';
+import { PLATFORMS } from '@lib/platforms';
 import { showSimpleToast } from '@components/common/Toast';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 import { usePostUploadImages } from '@hooks/admin/usePostUploadImages';
 import { RATING_OPTIONS, CONTENT_CATEGORIES, COUNTRIES } from '@/constants';
-import { getGenresByCategory } from '@/lib/genres';
+import { getGenresByCategory } from '@lib/genres';
 import Image from 'next/image';
+import ActorSearchDialog from '@components/admin/dialogs/actorSearchDialog';
+import DirectorSearchDialog from '@components/admin/dialogs/directorSearchDialog';
 
 interface ContentFormProps {
   content?: ContentWithoutId;
@@ -122,17 +122,9 @@ export default function ContentForm({
   );
   const showErrorToast = useErrorToastOnce();
 
-  // 입력 필드 상태
-  const [newDirector, setNewDirector] = useState<Director>({
-    directorId: 0,
-    directorName: '',
-    directorImageUrl: '',
-  });
-  const [newCast, setNewCast] = useState<Cast>({
-    castId: 0,
-    castName: '',
-    castImageUrl: '',
-  });
+  const [isActorSearchOpen, setIsActorSearchOpen] = useState(false);
+  const [isDirectorSearchOpen, setIsDirectorSearchOpen] = useState(false);
+
   const [newPlatform, setNewPlatform] = useState<PlatformInfo>({
     platformType: '',
     watchUrl: '',
@@ -256,34 +248,6 @@ export default function ContentForm({
     [updateFormData],
   );
 
-  // 감독 관리
-  const addDirector = useCallback(() => {
-    if (!newDirector.directorName.trim()) return;
-
-    // 임시로 ID를 생성 (실제로는 API에서 받아와야 함)
-    const directorId = Date.now();
-    const newDirectorObj = {
-      directorId,
-      directorName: newDirector.directorName.trim(),
-      directorImageUrl: newDirector.directorImageUrl.trim(),
-    };
-
-    updateFormData((prev) => {
-      if (
-        !prev.directors.some(
-          (d) => d.directorName === newDirector.directorName.trim(),
-        )
-      ) {
-        return {
-          ...prev,
-          directors: [...prev.directors, newDirectorObj],
-        };
-      }
-      return prev;
-    });
-    setNewDirector({ directorId: 0, directorName: '', directorImageUrl: '' });
-  }, [newDirector, updateFormData, showErrorToast]);
-
   const removeDirector = useCallback(
     (directorToRemove: string) => {
       updateFormData((prev) => ({
@@ -295,22 +259,6 @@ export default function ContentForm({
     },
     [updateFormData],
   );
-
-  // 출연진 관리
-  const addCast = useCallback(() => {
-    if (!newCast.castName.trim()) return;
-
-    // 임시로 ID를 생성 (실제로는 API에서 받아와야 함)
-    const castId = Date.now();
-    const newCastObj = {
-      castId,
-      castName: newCast.castName.trim(),
-      castImageUrl: newCast.castImageUrl.trim(),
-    };
-
-    updateFormData((prev) => ({ ...prev, casts: [...prev.casts, newCastObj] }));
-    setNewCast({ castId: 0, castName: '', castImageUrl: '' });
-  }, [newCast, updateFormData, showErrorToast]);
 
   const removeCast = useCallback(
     (castToRemove: string) => {
@@ -733,35 +681,13 @@ export default function ContentForm({
               <CardTitle className="mt-5">감독 정보</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                <Input
-                  value={newDirector.directorName}
-                  onChange={(e) =>
-                    setNewDirector({
-                      ...newDirector,
-                      directorName: e.target.value,
-                    })
-                  }
-                  placeholder="감독 이름"
-                />
-                <Input
-                  value={newDirector.directorImageUrl}
-                  onChange={(e) =>
-                    setNewDirector({
-                      ...newDirector,
-                      directorImageUrl: e.target.value,
-                    })
-                  }
-                  placeholder="감독 이미지 URL"
-                />
-              </div>
               <Button
                 type="button"
-                onClick={addDirector}
-                className="w-full cursor-pointer"
+                onClick={() => setIsDirectorSearchOpen(true)}
+                className="w-full"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                감독 추가
+                감독 검색 및 추가
               </Button>
               <div className="space-y-2 mb-5">
                 {formData.directors.map((director) => (
@@ -805,29 +731,13 @@ export default function ContentForm({
               <CardTitle className="mt-5">출연진 정보</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                <Input
-                  value={newCast.castName}
-                  onChange={(e) =>
-                    setNewCast({ ...newCast, castName: e.target.value })
-                  }
-                  placeholder="배우 이름"
-                />
-                <Input
-                  value={newCast.castImageUrl}
-                  onChange={(e) =>
-                    setNewCast({ ...newCast, castImageUrl: e.target.value })
-                  }
-                  placeholder="배우 이미지 URL"
-                />
-              </div>
               <Button
                 type="button"
-                onClick={addCast}
-                className="w-full cursor-pointer"
+                onClick={() => setIsActorSearchOpen(true)}
+                className="w-full"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                출연진 추가
+                출연진 검색 및 추가
               </Button>
               <div className="space-y-2 mb-5">
                 {formData.casts.map((cast) => (
@@ -937,11 +847,35 @@ export default function ContentForm({
               </div>
             </CardContent>
           </Card>
+
+          {/* 배우 검색 다이얼로그 */}
+          <ActorSearchDialog
+            open={isActorSearchOpen}
+            onOpenChange={setIsActorSearchOpen}
+            onSelectCasts={(casts) => {
+              setFormData({
+                ...formData,
+                casts: [...formData.casts, ...casts],
+              });
+            }}
+            existingCasts={formData.casts}
+          />
+
+          {/* 감독 검색 다이얼로그 */}
+          <DirectorSearchDialog
+            open={isDirectorSearchOpen}
+            onOpenChange={setIsDirectorSearchOpen}
+            onSelectDirectors={(directors) => {
+              setFormData({
+                ...formData,
+                directors: [...formData.directors, ...directors],
+              });
+            }}
+            existingDirectors={formData.directors}
+          />
         </TabsContent>
 
-        <TabsContent value="platforms" className="space-y-6 mt-3">
-          {/* 추가 인물 등록 탭은 현재 비어있음 */}
-        </TabsContent>
+        <TabsContent value="platforms" className="space-y-6 mt-3"></TabsContent>
       </Tabs>
 
       <div className="flex justify-end space-x-2">

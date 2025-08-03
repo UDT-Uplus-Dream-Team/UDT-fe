@@ -34,7 +34,7 @@ function ContentCard({ content, onView, onEdit, onDelete }: ContentCardProps) {
         try {
           await onDelete(content.contentId);
           showSimpleToast.success({
-            message: '콘텐츠가 삭제되었습니다.',
+            message: '콘텐츠가 삭제 배치 예정되었습니다.',
             position: 'top-center',
             className: 'border',
           });

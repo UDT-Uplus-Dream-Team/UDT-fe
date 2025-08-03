@@ -10,6 +10,8 @@ import {
 } from 'react';
 import { useSwipe } from '@hooks/recommend/useSwipe';
 import { Ticket } from '@components/Recommend/Ticket';
+import { Button } from '@components/ui/button';
+import { Eye, EyeOff } from 'lucide-react';
 import type { SwipeResult, SwipeHandle } from '@type/recommend/swipe';
 import type { TicketComponent } from '@type/recommend/TicketComponent';
 
@@ -19,6 +21,7 @@ interface SwipeContainerProps {
   className?: string;
   enableKeyboard?: boolean;
   isFlipped?: boolean;
+  onFlipToggle?: (flipped: boolean) => void;
 }
 
 export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
@@ -29,6 +32,7 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
       className = '',
       enableKeyboard = true,
       isFlipped = false,
+      onFlipToggle,
     },
     ref,
   ) => {
@@ -65,6 +69,12 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
       triggerSwipe,
       isAnimating,
     }));
+
+    const handleFlipToggle = useCallback(() => {
+      if (onFlipToggle) {
+        onFlipToggle(!isFlipped);
+      }
+    }, [isFlipped, onFlipToggle]);
 
     // 키보드 이벤트 처리
     useEffect(() => {
@@ -187,7 +197,7 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
         onTouchCancel={handleTouchEnd}
       >
         {/* 자리 채우기 티켓 (레이아웃 고정용) */}
-        <div className="relative flex w-full aspect-[75/135] min-w-70 min-h-110 max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
+        <div className="relative flex w-full min-w-70 min-h-110 max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
           <Ticket movie={currentItem} feedback="neutral" variant="initial" />
         </div>
 
@@ -244,6 +254,22 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
                 />
               </div>
             </div>
+            {onFlipToggle && (
+              <div className="absolute -top-2 -right-2 z-50">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleFlipToggle}
+                  className="w-10 h-10 bg-white hover:bg-gray-50 border border-gray-200 shadow-lg"
+                >
+                  {isFlipped ? (
+                    <EyeOff className="w-4 h-4 text-black" />
+                  ) : (
+                    <Eye className="w-4 h-4 text-black" />
+                  )}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 

@@ -58,6 +58,10 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   const [remainingCount, setRemainingCount] = useState<number>(20);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
 
+  const handleFlipToggle = (flipped: boolean) => {
+    setIsFlipped(flipped);
+  };
+
   // ── 로딩 지연 상태 관리 ──────────────────────────
   useEffect(() => {
     if (moviePool.length > 0) {
@@ -294,31 +298,24 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
 
   // ── 렌더링 ─────────────────────────────────────
   return (
-    <div className="flex flex-col w-full h-full items-center justify-center gap-y-5 sm:gap-y-7">
-      <div className="flex w-full h-[75%] justify-center items-center">
-        <div className="mx-10 w-full h-full">
+    <div className="flex flex-col w-full h-full items-center justify-center gap-y-5 sm:gap-y-7 overflow-y-auto">
+      <div className="flex flex-col text-xl md:text-2xl w-full h-[5%] justify-center items-center">
+        컨텐츠에 대한 피드백을 남겨주세요! 🤔
+      </div>
+      <div className="flex w-[80%] h-[75%] max-h-170 max-w-100 min-w-70 min-h-110 justify-center items-center">
+        <div className="w-full h-full">
           <SwipeContainer
             ref={swipeRef}
             items={moviePool}
             onSwipe={handleSwipe}
             enableKeyboard={true}
             isFlipped={isFlipped}
+            onFlipToggle={handleFlipToggle}
           />
         </div>
       </div>
 
-      {/* 플립 버튼 */}
-      {/* <div className="relative z-30 flex flex-col items-center gap-4">
-        <Button
-          onClick={() => setIsFlipped((f: boolean) => !f)}
-          variant="outline"
-          className="bg-white/20 border-white/20 text-white px-5 py-2 text-sm hover:bg-white/20 backdrop-blur-sm"
-        >
-          {isFlipped ? '돌아가기' : '상세보기'}
-        </Button>
-      </div> */}
-
-      <div className="flex w-full px-10 items-center justify-center">
+      <div className="flex w-[80%] items-center justify-center">
         <div className="w-full min-w-70 max-w-100">
           <ProgressBar
             value={100 * (swipeCount / remainingCount)}

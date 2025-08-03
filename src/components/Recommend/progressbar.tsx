@@ -79,7 +79,7 @@ export const ProgressBar = React.forwardRef<
           </h1>
         )}
         <div
-          className="relative h-5 w-full rounded-full overflow-hidden"
+          className="relative h-3 w-full rounded-full overflow-hidden"
           style={getBackgroundStyle()}
         >
           <ProgressPrimitive.Root

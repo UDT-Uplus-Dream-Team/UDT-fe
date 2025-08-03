@@ -28,7 +28,7 @@ export const useUpdateContent = () => {
       });
 
       showSimpleToast.success({
-        message: '콘텐츠가 성공적으로 수정되었습니다.',
+        message: '콘텐츠가 수정 배치 예정되었습니다.',
         position: 'top-center',
       });
     },

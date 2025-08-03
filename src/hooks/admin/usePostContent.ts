@@ -12,7 +12,7 @@ export const usePostContent = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['infiniteAdminContentList'] });
       showSimpleToast.success({
-        message: '콘텐츠가 성공적으로 등록되었습니다.',
+        message: '콘텐츠가 등록 배치 예정되었습니다.',
         position: 'top-center',
       });
     },

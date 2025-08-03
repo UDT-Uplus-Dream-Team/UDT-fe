@@ -82,6 +82,10 @@ export default function ExplorePage() {
               BoxTitle="지금 🔥Hot🔥한 콘텐츠"
               BoxType="popular"
             />
+            <PosterCardScrollBox
+              BoxTitle="🎥플랫폼별 인기 콘텐츠!"
+              BoxType="platformPicks"
+            />
           </div>
         )}
       </div>

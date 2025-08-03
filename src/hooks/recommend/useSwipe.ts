@@ -4,9 +4,9 @@ import { useState, useCallback, useRef } from 'react';
 import type {
   SwipeDirection,
   FeedbackType,
-  TicketData,
   SwipeResult,
 } from '@type/recommend/swipe';
+import type { TicketComponent } from '@type/recommend/TicketComponent';
 
 interface UseSwipeOptions {
   threshold?: number;
@@ -19,7 +19,10 @@ export interface SwipeHandle {
   isAnimating: boolean;
 }
 
-export function useSwipe(items: TicketData[], options: UseSwipeOptions = {}) {
+export function useSwipe(
+  items: TicketComponent[],
+  options: UseSwipeOptions = {},
+) {
   const { threshold = 150, onSwipe, animationDuration = 700 } = options;
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,7 +91,7 @@ export function useSwipe(items: TicketData[], options: UseSwipeOptions = {}) {
       if (absX > absY && absX > 50) {
         setFeedback(dx > 0 ? 'liked' : 'unliked');
       } else if (dy < -50) {
-        setFeedback('neutral');
+        setFeedback('uninterested');
       } else {
         setFeedback('neutral');
       }
@@ -133,7 +136,7 @@ export function useSwipe(items: TicketData[], options: UseSwipeOptions = {}) {
         dx > 0 ? 'liked' : 'unliked',
       );
     } else if (dy < -threshold) {
-      internalHandleSwipe('up', 'neutral');
+      internalHandleSwipe('up', 'uninterested');
     } else {
       // 스냅백 - 즉시 리셋
       resetStates();

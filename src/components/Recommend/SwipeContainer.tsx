@@ -10,21 +10,28 @@ import {
 } from 'react';
 import { useSwipe } from '@hooks/recommend/useSwipe';
 import { Ticket } from '@components/Recommend/Ticket';
-import type {
-  TicketData,
-  SwipeResult,
-  SwipeHandle,
-} from '@type/recommend/swipe';
+import type { SwipeResult, SwipeHandle } from '@type/recommend/swipe';
+import type { TicketComponent } from '@type/recommend/TicketComponent';
 
 interface SwipeContainerProps {
-  items: TicketData[];
+  items: TicketComponent[];
   onSwipe?: (result: SwipeResult) => void;
   className?: string;
   enableKeyboard?: boolean;
+  isFlipped?: boolean;
 }
 
 export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
-  ({ items, onSwipe, className = '', enableKeyboard = true }, ref) => {
+  (
+    {
+      items,
+      onSwipe,
+      className = '',
+      enableKeyboard = true,
+      isFlipped = false,
+    },
+    ref,
+  ) => {
     const {
       currentItem,
       nextItem,
@@ -61,11 +68,13 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
 
     // 키보드 이벤트 처리
     useEffect(() => {
-      if (!enableKeyboard) return;
+      if (!enableKeyboard || isFlipped) return; // isFlipped일 때 키보드 이벤트 비활성화
 
       const handleKeyPress = (e: KeyboardEvent): void => {
-        if (isAnimating) return;
-
+        if (isAnimating || e.repeat) {
+          e.preventDefault();
+          return;
+        }
         switch (e.key) {
           case 'ArrowLeft':
             e.preventDefault();
@@ -75,16 +84,16 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
             e.preventDefault();
             triggerSwipe('right', 'liked');
             break;
-          case 'ArrowDown':
+          case 'ArrowUp':
             e.preventDefault();
-            triggerSwipe('up', 'neutral');
+            triggerSwipe('up', 'uninterested'); // neutral -> uninterested로 변경
             break;
         }
       };
 
       window.addEventListener('keydown', handleKeyPress);
       return () => window.removeEventListener('keydown', handleKeyPress);
-    }, [isAnimating, triggerSwipe, enableKeyboard]);
+    }, [isAnimating, triggerSwipe, enableKeyboard, isFlipped]); // isFlipped 의존성 추가
 
     // 컴포넌트 언마운트 시 정리
     useEffect(() => {
@@ -94,72 +103,54 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
     // 포인터 이벤트 핸들러
     const handlePointerDown = useCallback(
       (e: React.PointerEvent): void => {
-        if (isAnimating) return;
+        if (isAnimating || isFlipped) return; // isFlipped 체크 추가
         startDrag(e.clientX, e.clientY);
       },
-      [isAnimating, startDrag],
+      [isAnimating, startDrag, isFlipped], // isFlipped 의존성 추가
     );
 
     const handlePointerMove = useCallback(
       (e: React.PointerEvent): void => {
-        if (!isDragging) return;
+        if (!isDragging || isFlipped) return; // isFlipped 체크 추가
         updateDragPosition(e.clientX, e.clientY);
       },
-      [isDragging, updateDragPosition],
+      [isDragging, updateDragPosition, isFlipped], // isFlipped 의존성 추가
     );
 
     const handlePointerUp = useCallback((): void => {
-      if (!isDragging) return;
+      if (!isDragging || isFlipped) return; // isFlipped 체크 추가
       endDrag();
-    }, [isDragging, endDrag]);
+    }, [isDragging, endDrag, isFlipped]); // isFlipped 의존성 추가
 
     // 터치 이벤트 핸들러
     const handleTouchStart = useCallback(
       (e: React.TouchEvent): void => {
-        if (isAnimating || e.touches.length !== 1) return;
-        e.preventDefault();
+        if (isAnimating || e.touches.length !== 1 || isFlipped) return; // isFlipped 체크 추가
         const touch = e.touches[0];
         startDrag(touch.clientX, touch.clientY);
       },
-      [isAnimating, startDrag],
+      [isAnimating, startDrag, isFlipped], // isFlipped 의존성 추가
     );
 
     const handleTouchMove = useCallback(
       (e: React.TouchEvent): void => {
-        if (!isDragging || e.touches.length !== 1) return;
-        e.preventDefault();
+        if (!isDragging || e.touches.length !== 1 || isFlipped) return; // isFlipped 체크 추가
         const touch = e.touches[0];
         updateDragPosition(touch.clientX, touch.clientY);
       },
-      [isDragging, updateDragPosition],
+      [isDragging, updateDragPosition, isFlipped], // isFlipped 의존성 추가
     );
 
     const handleTouchEnd = useCallback(
       (e: React.TouchEvent): void => {
-        if (!isDragging || e.changedTouches.length !== 1) return;
-        e.preventDefault();
+        if (!isDragging || e.changedTouches.length !== 1 || isFlipped) return; // isFlipped 체크 추가
+        if (e.cancelable) {
+          e.preventDefault();
+        }
         endDrag();
       },
-      [isDragging, endDrag],
+      [isDragging, endDrag, isFlipped], // isFlipped 의존성 추가
     );
-
-    // TicketData를 기존 Ticket 컴포넌트 형식으로 변환
-    const convertToTicketFormat = (item: TicketData) => ({
-      contentId: item.contentId,
-      title: item.title,
-      description: item.description,
-      posterUrl: item.posterUrl,
-      backdropUrl: item.backdropUrl,
-      openDate: item.openDate,
-      runningTime: item.runningTime,
-      episode: item.episode,
-      rating: item.rating,
-      category: item.category,
-      genres: item.genres,
-      directors: item.directors,
-      casts: item.casts,
-      platforms: item.platforms,
-    });
 
     // transition 클래스 계산
     const getTransitionClass = () => {
@@ -177,9 +168,11 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
 
     return (
       <div
-        className={`relative select-none touch-none ${className}`}
+        className={`relative select-none h-full w-full ${
+          isFlipped ? 'touch-action-auto' : 'touch-action-none'
+        } ${className}`}
         style={{
-          touchAction: 'none',
+          touchAction: isFlipped ? 'auto' : 'none',
           WebkitTouchCallout: 'none',
           WebkitUserSelect: 'none',
           userSelect: 'none',
@@ -194,15 +187,11 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
         onTouchCancel={handleTouchEnd}
       >
         {/* 자리 채우기 티켓 (레이아웃 고정용) */}
-        <div className="relative flex w-full h-[70svh] aspect-[75/135] min-w-70 min-h-110 max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
-          <Ticket
-            movie={convertToTicketFormat(currentItem)}
-            feedback="neutral"
-            variant="initial"
-          />
+        <div className="relative flex w-full aspect-[75/135] min-w-70 min-h-110 max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
+          <Ticket movie={currentItem} feedback="neutral" variant="initial" />
         </div>
 
-        {/* 현재 카드 - 직접 div 사용 (SwipeCard 완전 제거) */}
+        {/* 현재 카드 */}
         <div
           className={`absolute inset-0 z-20 flex items-center justify-center ${getTransitionClass()}`}
           style={{
@@ -214,12 +203,47 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
             className={`relative w-full h-full flex justify-center items-center opacity-100
            transition-opacity duration-300`}
           >
-            <Ticket
-              key={`current-${currentItem?.contentId}`}
-              movie={convertToTicketFormat(currentItem)}
-              feedback={feedback}
-              variant="initial"
-            />
+            <div
+              className="relative w-full h-full"
+              style={{
+                transformStyle: 'preserve-3d',
+                transition: 'transform 500ms linear',
+                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+              }}
+            >
+              {/* Front */}
+              <div
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
+                  isFlipped ? 'opacity-0' : 'opacity-100'
+                }`}
+                style={{ backfaceVisibility: 'hidden' }}
+              >
+                <Ticket
+                  key={`current-${currentItem?.contentId}`}
+                  movie={currentItem}
+                  feedback={feedback}
+                  variant="initial"
+                />
+              </div>
+              {/* Back */}
+              <div
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
+                  isFlipped ? 'opacity-100' : 'opacity-0'
+                }`}
+                style={{
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)',
+                  pointerEvents: isFlipped ? 'auto' : 'none',
+                  zIndex: isFlipped ? 30 : 10,
+                }}
+              >
+                <Ticket
+                  key={`current-detail-${currentItem?.contentId}`}
+                  movie={currentItem}
+                  variant="detail"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -236,7 +260,7 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
           >
             <Ticket
               key={`next-${nextItem?.contentId}`}
-              movie={convertToTicketFormat(nextItem)}
+              movie={nextItem}
               feedback="neutral"
               variant="initial"
             />

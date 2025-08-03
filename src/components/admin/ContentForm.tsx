@@ -533,21 +533,14 @@ export default function ContentForm({
                   onValueChange={(value) => {
                     updateFormData((prev) => {
                       const updatedCategories = [...prev.categories];
-                      const currentGenres = updatedCategories[0]?.genres || [];
-                      const newAvailableGenres = getGenresByCategory(value);
-
-                      // 새로운 카테고리에서 허용되지 않는 장르 제거
-                      const filteredGenres = currentGenres.filter((genre) =>
-                        newAvailableGenres.includes(genre),
-                      );
 
                       if (updatedCategories[0]) {
                         updatedCategories[0].categoryType = value;
-                        updatedCategories[0].genres = filteredGenres;
+                        updatedCategories[0].genres = [];
                       } else {
                         updatedCategories[0] = {
                           categoryType: value,
-                          genres: filteredGenres,
+                          genres: [],
                         };
                       }
                       return { ...prev, categories: updatedCategories };

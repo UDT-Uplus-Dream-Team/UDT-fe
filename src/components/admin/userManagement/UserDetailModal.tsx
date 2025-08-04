@@ -14,6 +14,7 @@ import { BarChart3, X } from 'lucide-react';
 import { Badge } from '@components/ui/badge';
 import { UserDetailModalProps } from '@type/admin/user';
 import { useUserDetail } from '@hooks/admin/useUserDetail';
+import { formatDateHour } from '@utils/admin/formatDate';
 import SummaryStats from './SummaryStats';
 import GenreChartWrapper from './GenreChartWrapper';
 
@@ -25,18 +26,6 @@ export default function UserDetailModal({
   onClose,
 }: UserDetailModalProps) {
   const { data: userDetail, isLoading } = useUserDetail(userId, isOpen);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true, // 오후/오전 표시
-    });
-  };
 
   if (!userDetail && !isLoading) return null;
 
@@ -84,7 +73,7 @@ export default function UserDetailModal({
                     <Avatar className="h-16 w-16">
                       <AvatarImage
                         src={
-                          userDetail.ProfileImageUrl ||
+                          userDetail.profileImageUrl ||
                           '/images/default-profile.png'
                         }
                         alt={userDetail.name}
@@ -126,7 +115,7 @@ export default function UserDetailModal({
                         최근 접속일
                       </p>
                       <p className="text-lg">
-                        {formatDate(userDetail.lastLoginAt)}
+                        {formatDateHour(userDetail.lastLoginAt)}
                       </p>
                     </div>
                   </div>

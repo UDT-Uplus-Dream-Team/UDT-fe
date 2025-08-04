@@ -99,17 +99,17 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
         {/* 그라데이션 오버레이 */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
 
-        {/* 콘텐츠 정보 */}
+        {/* 콘텐츠 정보(제목, 연도만 표시) */}
         <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center text-center space-y-3">
           <span className="text-3xl font-bold text-white">
             {contentData.title}
           </span>
           <div className="flex items-center space-x-5 text-sm text-gray-200">
             {contentData.openDate !== null ? (
-              <span>{formattingOpenDate(contentData.openDate)}</span>
+              <span>
+                {formattingOpenDate(contentData.openDate).slice(0, 4)}
+              </span>
             ) : null}
-            <span>{contentData.rating}</span>
-            <span>{contentData.countries[0]}</span>
           </div>
         </div>
       </div>
@@ -133,17 +133,17 @@ export const VideoPlayer = ({ contentData, onLoadError }: VideoPlayerProps) => {
           {/* 그라데이션 오버레이 */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
 
-          {/* 콘텐츠 정보 */}
+          {/* 콘텐츠 정보(제목, 연도만 표시) */}
           <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col items-center text-center space-y-3">
             <span className="text-3xl font-bold text-white">
               {contentData.title}
             </span>
             <div className="flex items-center space-x-5 text-sm text-gray-200">
               {contentData.openDate !== null ? (
-                <span>{formattingOpenDate(contentData.openDate)}</span>
+                <span>
+                  {formattingOpenDate(contentData.openDate).slice(0, 4)}
+                </span>
               ) : null}
-              <span>{contentData.rating}</span>
-              <span>{contentData.countries[0]}</span>
             </div>
           </div>
         </>

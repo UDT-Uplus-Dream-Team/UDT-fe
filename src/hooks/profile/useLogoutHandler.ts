@@ -5,9 +5,11 @@ import {
   showSimpleToast,
   showInteractiveToast,
 } from '@components/common/Toast';
+import { useRecommendStore } from '@/store/useRecommendStore';
 
 export const useLogoutHandler = () => {
   const router = useRouter();
+  const { setPhase, resetRecommendProgress } = useRecommendStore();
 
   const handleLogout = () => {
     showInteractiveToast.confirm({
@@ -21,6 +23,8 @@ export const useLogoutHandler = () => {
           await authService.logout();
           localStorage.clear();
           sessionStorage.clear();
+          setPhase('start');
+          resetRecommendProgress();
 
           showSimpleToast.success({
             message: '로그아웃 되었습니다.',

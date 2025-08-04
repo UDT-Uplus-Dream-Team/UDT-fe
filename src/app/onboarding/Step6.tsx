@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Ticket } from '@components/Ticket/Ticket';
+import { useEffect, useRef, useState } from 'react';
+import { Ticket } from '@/components/Recommend/Ticket';
 import { showInteractiveToast } from '@components/common/Toast';
 import { MockMovies } from './moviedata';
 
@@ -10,7 +10,7 @@ interface Step6Props {
 }
 
 export default function Step6({ onNext }: Step6Props) {
-  const [toastShown, setToastShown] = useState(false);
+  const toastShownRef = useRef(false);
   const [mounted, setMounted] = useState(false); // hydration 방지
 
   useEffect(() => {
@@ -18,21 +18,22 @@ export default function Step6({ onNext }: Step6Props) {
   }, []);
 
   useEffect(() => {
-    if (mounted && !toastShown) {
+    if (mounted && !toastShownRef.current) {
+      toastShownRef.current = true; // 토스트 표시 상태를 먼저 업데이트
+
       showInteractiveToast.action({
         message: '모든 영화를 확인했습니다!\n추천 결과를 보시겠어요?',
         actionText: '결과 보기',
         duration: Infinity,
         position: 'top-center',
         className: 'bg-gray-500',
+        showCloseButton: false,
         onAction: () => {
-          setToastShown(true); // 바로 true 처리 (중복 방지)
-          onNext(); // Step6으로 전환
+          onNext();
         },
-        showCloseButton: false, // X 못하게 없엠
       });
     }
-  }, [mounted, toastShown, onNext]);
+  }, [mounted, onNext]);
 
   if (!mounted) return null;
 
@@ -56,8 +57,8 @@ export default function Step6({ onNext }: Step6Props) {
           />
         </svg>
         <p className="text-lg font-semibold leading-relaxed">
-          <span className="text-purple-100  text-xl font-bold">
-            충분히 스와이프를 진행하면
+          <span className="text-purple-100 text-xl font-bold">
+            충분한 스와이프가 진행되면
           </span>
           <br />
           사용자님의 취향을 확인하여 <br />
@@ -68,7 +69,7 @@ export default function Step6({ onNext }: Step6Props) {
       </div>
 
       {/* 카드 - 중앙 정렬 */}
-      <div className="relative w-[80vw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]">
+      <div className="relative w-[80svw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]">
         <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
       </div>
     </div>

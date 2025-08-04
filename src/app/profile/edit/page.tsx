@@ -109,7 +109,7 @@ export default function EditPreferencePage() {
             <CircleOption
               key={label}
               label={label}
-              imageSrc={`/images/ott/${id}.png`}
+              imageSrc={`/images/ott/${id}.webp`}
               size="sm"
               selected={selectedOtt.includes(label)}
               onClick={() => {
@@ -152,7 +152,7 @@ export default function EditPreferencePage() {
                     ({ label, id }) => (
                       <CircleOption
                         key={label}
-                        imageSrc={`/images/genre/${id}.png`}
+                        imageSrc={`/images/genre/${id}.webp`}
                         label={label}
                         size="sm"
                         selected={selectedGenres.includes(label)}

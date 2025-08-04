@@ -1,18 +1,20 @@
 'use client';
 
 import { GENRES } from '@lib/genres';
-import { useSurveyContext } from '@hooks/useSurveyContext';
 import { CircleOption } from '@components/common/circleOption';
 import { Button } from '@components/ui/button';
 import { useEffect } from 'react';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
+import { useSurveyStore } from '@store/useSurveyStore';
 
 type Step2Props = {
   onNext: () => void;
 };
 
 export default function Step2({ onNext }: Step2Props) {
-  const { selectedGenres, setSelectedGenres } = useSurveyContext();
+  const selectedGenres = useSurveyStore((state) => state.genres);
+  const setSelectedGenres = useSurveyStore((state) => state.setGenres);
+
   const showErrorToast = useErrorToastOnce();
 
   useEffect(() => {
@@ -45,13 +47,13 @@ export default function Step2({ onNext }: Step2Props) {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="h-[100svh] flex justify-center items-center">
       <div
         className="flex flex-col items-center px-6 w-full max-w-[500px]"
         style={{ maxHeight: '700px' }}
       >
         {/* 고정 제목 */}
-        <h2 className="text-white font-bold text-[20px] text-center mb-10 mt-10">
+        <h2 className="text-white font-bold text-[20px] text-center mb-10">
           좋아하는 <span className="text-[#9F8EC5]">장르</span>를 선택해주세요
         </h2>
 
@@ -60,22 +62,22 @@ export default function Step2({ onNext }: Step2Props) {
           className="overflow-y-auto w-full visible-scroll"
           style={{ maxHeight: '500px' }}
         >
-          <div className="grid grid-cols-3 gap-y-6 px-4">
+          <div className="grid grid-cols-3 gap-y-4 px-4">
             {GENRES.map(({ label, id }) => (
               <CircleOption
                 key={label}
                 label={label}
-                imageSrc={`/images/genre/${id}.png`}
+                imageSrc={`/images/genre/${id}.webp`}
                 selected={selectedGenres.includes(label)}
                 onClick={() => toggleGenre(label)}
-                className="m-1"
+                className="m-2"
               />
             ))}
           </div>
         </div>
 
         {/* 고정 버튼 */}
-        <div className="mt-auto pt-10">
+        <div className="mt-auto pt-3">
           <Button
             onClick={handleNext}
             className="min-w-[99px] min-h-[41px] bg-white/20 text-white rounded-[80px] px-6 py-2 text-sm font-semibold shadow-md transition-colors hover:bg-white/30 cursor-pointer"

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { Ticket } from '@components/Ticket/Ticket';
+import { Ticket } from '@/components/Recommend/Ticket';
 import type { TicketComponent } from '@type/recommend/TicketComponent';
 
 const dummyMovie: TicketComponent = {
@@ -18,6 +18,7 @@ const dummyMovie: TicketComponent = {
   directors: ['마이크 미첼'],
   casts: ['잭 블랙', '아콰피나', '더스틴 호프만'],
   platforms: ['넷플릭스', '디즈니+'],
+  watchUrls: ['', ''],
 };
 const meta = {
   title: 'Components/Ticket',

@@ -9,7 +9,7 @@ export default function SurveyComplete() {
   };
 
   return (
-    <div className="h-full overflow-y-auto flex flex-col items-center pt-17 pb-10">
+    <div className="h-[100svh] flex flex-col items-center pt-17 pb-10">
       {/* 중앙 정렬된 텍스트 */}
       <div className="flex-1 flex items-center justify-center text-center text-white">
         <h2 className="text-white font-bold text-[20px]">

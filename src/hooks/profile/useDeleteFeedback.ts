@@ -5,7 +5,7 @@ export const useDeleteFeedback = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (feedbackId: number) => deleteFeedback(feedbackId),
+    mutationFn: (feedbackId: number[]) => deleteFeedback(feedbackId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
     },

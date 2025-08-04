@@ -16,7 +16,7 @@ import { X } from 'lucide-react';
 
 export interface PosterCardScrollBoxProps {
   BoxTitle: string;
-  BoxType: 'popular' | 'todayRecommend';
+  BoxType: 'popular' | 'todayRecommend' | 'platformPicks';
 }
 
 // 포스터를 모아놓은 스크롤 박스 컴포넌트 (여기는 x축으로 왼쪽/오른쪽 스크롤 가능)
@@ -154,7 +154,7 @@ export const PosterCardScrollBox = ({
         <SheetContent
           side="bottom"
           hideDefaultClose={true} // 기본 닫기 버튼 제거
-          className="px-0 pb-5 h-[90svh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
+          className="px-0 pb-5 h-[90svh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0 !border-none"
         >
           {/* 커스텀 X 버튼 (z-index로 위에 배치) */}
           <button

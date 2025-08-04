@@ -22,7 +22,7 @@ const FeedbackPage = () => {
   const [tab, setTab] = useState<'like' | 'dislike'>('like');
 
   //무한 스크롤을 통한 데이터 연동
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteFeedbacks({
       size: 20,
       feedbackType: tab === 'like' ? 'LIKE' : 'DISLIKE',
@@ -55,6 +55,8 @@ const FeedbackPage = () => {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, tab, isEmpty]);
 
+  const triggerIndex = Math.max(posters.length - 8, 0);
+
   //삭제 모드에 대한 관리
   const {
     state: { isDeleteMode, isAllSelected, selectedIds },
@@ -65,6 +67,11 @@ const FeedbackPage = () => {
       handleCancelDeleteMode,
     },
   } = useDeleteMode(posters, (item) => item.feedbackId);
+
+  // 탭 변경 시 삭제 모드 자동 종료
+  useEffect(() => {
+    handleCancelDeleteMode();
+  }, [tab]);
 
   // 실제 삭제 api 연동 토스토 확인 시 삭제 되도록 구성
   const { mutateAsync: deleteFeedback } = useDeleteFeedback();
@@ -161,16 +168,24 @@ const FeedbackPage = () => {
       </div>
 
       {/* 카드 리스트 */}
-      <div className="w-full max-w-screen-md">
-        {isEmpty ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400 text-sm font-medium">
-            현재 저장된 콘텐츠가 없습니다.
+      <div className="relative w-full max-w-screen-md min-h-[70Svh]">
+        {isLoading ? (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-white">데이터를 불러오는 중...</p>
+            </div>
+          </div>
+        ) : isEmpty ? (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-white md:text-m  text-sm font-medium">
+            현재 저장된 콘텐츠가 없습니다
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 justify-items-center">
-            {posters.map((poster) => (
+            {posters.map((poster, index) => (
               <PosterCard
                 key={poster.feedbackId ?? poster.contentId}
+                ref={index === triggerIndex ? observerRef : null}
                 title={poster.title}
                 image={poster.posterUrl}
                 size="lg"
@@ -182,7 +197,6 @@ const FeedbackPage = () => {
                 onClick={() => handleCardClick(poster)}
               />
             ))}
-            <div ref={observerRef} className="h-1 w-full col-span-full" />
           </div>
         )}
       </div>

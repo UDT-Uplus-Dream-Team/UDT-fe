@@ -23,6 +23,7 @@ import { usePostAdminDirectors } from '@hooks/admin/usePostDirectors';
 import { Cast, Director } from '@type/admin/Content';
 
 import Image from 'next/image';
+import { showSimpleToast } from '@components/common/Toast';
 
 interface PersonData {
   id: string;
@@ -222,7 +223,9 @@ export default function BulkPersonRegistration() {
       // 폼 초기화
       setPersons([]);
     } catch {
-      // 에러 처리 없음
+      showSimpleToast.error({
+        message: '인물 등록에 실패했습니다.',
+      });
     } finally {
       setIsLoading(false);
     }

@@ -8,11 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@components/ui/input';
+import { Button } from '@components/ui/button';
+import { Badge } from '@components/ui/badge';
+import { Card, CardContent } from '@components/ui/card';
+import { ScrollArea } from '@components/ui/scroll-area';
 
 import { Search, Plus, Users, Upload, Check, Loader2 } from 'lucide-react';
 import { useInfiniteCastsSearch } from '@hooks/admin/useGetCastsSearch';
@@ -20,6 +20,7 @@ import { usePostUploadImages } from '@hooks/admin/usePostUploadImages';
 import { usePostAdminCasts } from '@hooks/admin/usePostCasts';
 import Image from 'next/image';
 import { Cast } from '@type/admin/Content';
+import { showSimpleToast } from '@components/common/Toast';
 
 interface CastSearchDialogProps {
   open: boolean;
@@ -43,6 +44,15 @@ export default function CastSearchDialog({
     castImageFile: null as File | null,
     castImageUrl: '',
   });
+
+  // blob URL cleanup
+  useEffect(() => {
+    return () => {
+      if (newCast.castImageUrl && newCast.castImageUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(newCast.castImageUrl);
+      }
+    };
+  }, [newCast.castImageUrl]);
 
   // 무한 스크롤용 ref
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -143,11 +153,11 @@ export default function CastSearchDialog({
   const handleAddNewCast = async () => {
     if (!newCast.castName.trim()) return;
 
-    try {
-      let imageUrl = newCast.castImageUrl;
+    let imageUrl = newCast.castImageUrl;
 
-      // 이미지가 업로드된 경우 서버에 업로드
-      if (newCast.castImageFile) {
+    // 이미지가 업로드된 경우 서버에 업로드
+    if (newCast.castImageFile) {
+      try {
         const fileArray = [newCast.castImageFile];
         const uploadResponse =
           await uploadImagesMutation.mutateAsync(fileArray);
@@ -155,18 +165,29 @@ export default function CastSearchDialog({
         if (uploadResponse.data.uploadedFileUrls.length > 0) {
           imageUrl = uploadResponse.data.uploadedFileUrls[0];
         }
+      } catch {
+        showSimpleToast.error({ message: '이미지 업로드에 실패했습니다.' });
+        return;
       }
+    } else if (
+      newCast.castImageUrl &&
+      newCast.castImageUrl.startsWith('blob:')
+    ) {
+      // blob URL인 경우 빈 문자열로 설정
+      imageUrl = '';
+    }
 
-      // 배우 등록
-      const castData = {
-        casts: [
-          {
-            castName: newCast.castName,
-            castImageUrl: imageUrl || '',
-          },
-        ],
-      };
+    // 배우 등록
+    const castData = {
+      casts: [
+        {
+          castName: newCast.castName,
+          castImageUrl: imageUrl || '',
+        },
+      ],
+    };
 
+    try {
       const response = await postCastsMutation.mutateAsync(castData);
 
       if (response.castIds.length > 0) {
@@ -187,8 +208,10 @@ export default function CastSearchDialog({
         });
         setShowAddForm(false);
       }
-    } catch (error) {
-      console.error('배우 등록 실패:', error);
+    } catch {
+      showSimpleToast.error({
+        message: '배우 등록에 실패했습니다.',
+      });
     }
   };
 
@@ -196,9 +219,18 @@ export default function CastSearchDialog({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setNewCast({ ...newCast, castImageFile: file });
+      // 기존 blob URL 정리
+      if (newCast.castImageUrl && newCast.castImageUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(newCast.castImageUrl);
+      }
+
+      // 새로운 blob URL 생성 및 상태 업데이트
       const imageUrl = URL.createObjectURL(file);
-      setNewCast((prev) => ({ ...prev, castImageUrl: imageUrl }));
+      setNewCast({
+        ...newCast,
+        castImageFile: file,
+        castImageUrl: imageUrl,
+      });
     }
   };
 

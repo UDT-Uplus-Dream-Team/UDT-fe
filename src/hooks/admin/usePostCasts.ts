@@ -18,11 +18,5 @@ export const usePostAdminCasts = () => {
 
       queryClient.invalidateQueries({ queryKey: ['infiniteAdminCasts'] });
     },
-    onError: () => {
-      showSimpleToast.error({
-        message: '출연진 등록에 실패했습니다.',
-        position: 'top-center',
-      });
-    },
   });
 };

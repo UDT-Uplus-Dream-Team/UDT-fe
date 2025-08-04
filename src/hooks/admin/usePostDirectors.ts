@@ -18,11 +18,5 @@ export const usePostAdminDirectors = () => {
 
       queryClient.invalidateQueries({ queryKey: ['infiniteAdminDirectors'] });
     },
-    onError: () => {
-      showSimpleToast.error({
-        message: '감독 등록에 실패했습니다.',
-        position: 'top-center',
-      });
-    },
   });
 };

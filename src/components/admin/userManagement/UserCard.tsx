@@ -6,6 +6,7 @@ import { Mail, Calendar, Pencil } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar';
 import { User } from '@type/admin/user';
 import { Badge } from '../../ui/badge';
+import { formatDateHour } from '@utils/admin/formatDate';
 
 //개별 유저 정보 표시
 
@@ -14,15 +15,21 @@ interface UserCardProps {
   onView: (user: User) => void;
 }
 
-export default function UserCard({ user, onView }: UserCardProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
+const getRoleBadge = (role: string) => {
+  if (role === 'USER') {
+    return {
+      label: '정회원',
+      className: 'bg-green-100 text-green-700 hover:bg-green-100',
+    };
+  }
+  return {
+    label: '임시회원',
+    className: 'bg-gray-200 text-gray-600 hover:bg-gray-200',
   };
+};
 
+export default function UserCard({ user, onView }: UserCardProps) {
+  const { label, className } = getRoleBadge(user.userRole);
   return (
     <Card className="transition-all duration-200 border-gray-200 bg-white">
       <CardContent className="p-4">
@@ -30,7 +37,7 @@ export default function UserCard({ user, onView }: UserCardProps) {
           {/* 프로필 이미지 */}
           <Avatar className="h-12 w-12">
             <AvatarImage
-              src={user.ProfileImageUrl || '/images/default-profile.png'}
+              src={user.profileImageUrl || '/images/default-profile.png'}
               alt={user.name}
             />
             <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
@@ -44,15 +51,7 @@ export default function UserCard({ user, onView }: UserCardProps) {
               <h3 className="font-semibold text-lg text-gray-900 truncate">
                 {user.name}
               </h3>
-              <Badge
-                className={`${
-                  user.surveyCompleted
-                    ? 'bg-green-100 text-green-700 hover:bg-green-100'
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {user.surveyCompleted ? '정회원' : '임시회원'}
-              </Badge>
+              <Badge className={className}>{label}</Badge>
             </div>
             <div className="flex items-center text-sm text-gray-600 mb-1">
               <Mail className="h-4 w-4 mr-1 flex-shrink-0" />
@@ -60,7 +59,7 @@ export default function UserCard({ user, onView }: UserCardProps) {
             </div>
             <div className="flex items-center text-sm text-gray-600">
               <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
-              <span>{formatDate(user.joinDate)}</span>
+              <span>{formatDateHour(user.lastLoginAt)}</span>
             </div>
           </div>
 
@@ -68,19 +67,19 @@ export default function UserCard({ user, onView }: UserCardProps) {
           <div className="flex items-center space-x-6 text-sm">
             <div className="text-center">
               <div className="font-semibold text-green-600">
-                {user.likeCount}
+                {user.totalLikeCount}
               </div>
               <div className="text-gray-500">좋아요</div>
             </div>
             <div className="text-center">
               <div className="font-semibold text-red-600">
-                {user.dislikeCount}
+                {user.totalDislikeCount}
               </div>
               <div className="text-gray-500">싫어요</div>
             </div>
             <div className="text-center">
               <div className="font-semibold text-gray-600">
-                {user.uninterestedCount}
+                {user.totalUninterestedCount}
               </div>
               <div className="text-gray-500">관심없음</div>
             </div>

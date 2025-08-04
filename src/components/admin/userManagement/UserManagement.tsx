@@ -41,7 +41,7 @@ export default function UserManagement() {
             회원 현황 및 유저별 선호 장르 통계 확인
           </p>
         </div>
-
+        {/* 키워드 검색*/}
         <div className="flex justify-end items-center gap-2 mb-4">
           <Label htmlFor="user-search">검색:</Label>
           <Input

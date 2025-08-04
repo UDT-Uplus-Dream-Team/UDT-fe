@@ -2,12 +2,12 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  ProfileImageUrl?: string;
-  joinDate: string;
-  likeCount: number;
-  dislikeCount: number;
-  uninterestedCount: number;
-  surveyCompleted: boolean;
+  userRole: string; // 'ADMIN' | 'USER'
+  profileImageUrl?: string;
+  lastLoginAt: string;
+  totalLikeCount: number;
+  totalDislikeCount: number;
+  totalUninterestedCount: number;
 }
 
 export interface CursorPageResponse<T> {
@@ -27,7 +27,7 @@ export interface UserDetail {
   id: number;
   name: string;
   email: string;
-  ProfileImageUrl?: string;
+  profileImageUrl?: string;
   lastLoginAt: string;
   totalLikeCount: number;
   totalDislikeCount: number;

@@ -33,7 +33,7 @@ export default function GenreBarChart({ genres }: GenreBarChartProps) {
     }))
     .filter((g) => g.total > 0) // 총합 0인 항목 제거
     .sort((a, b) => b.total - a.total) // 총합 기준 내림차순 정렬
-    .slice(0, 10); // 상위 15개 항목만 시각화
+    .slice(0, 10); // 상위 10개 항목만 시각화
 
   //튤팁을 통한 실제 값 자세히보기 컴포넌트
   const CustomTooltip = ({

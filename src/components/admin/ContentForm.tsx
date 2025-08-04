@@ -33,6 +33,7 @@ import { getGenresByCategory } from '@lib/genres';
 import Image from 'next/image';
 import ActorSearchDialog from '@components/admin/dialogs/actorSearchDialog';
 import DirectorSearchDialog from '@components/admin/dialogs/directorSearchDialog';
+import BulkPersonRegistration from './bulkPersonRegistration';
 
 interface ContentFormProps {
   content?: ContentWithoutId;
@@ -309,7 +310,7 @@ export default function ContentForm({
           <TabsTrigger value="contentInfo" className="cursor-pointer">
             콘텐츠 등록
           </TabsTrigger>
-          <TabsTrigger value="platforms" className="cursor-pointer">
+          <TabsTrigger value="personRegistration" className="cursor-pointer">
             인물 등록
           </TabsTrigger>
         </TabsList>
@@ -875,7 +876,9 @@ export default function ContentForm({
           />
         </TabsContent>
 
-        <TabsContent value="platforms" className="space-y-6 mt-3"></TabsContent>
+        <TabsContent value="personRegistration" className="space-y-6 mt-3">
+          <BulkPersonRegistration />
+        </TabsContent>
       </Tabs>
 
       <div className="flex justify-end space-x-2">

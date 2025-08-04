@@ -149,52 +149,47 @@ export default function DirectorSearchDialog({
   const handleAddNewDirector = async () => {
     if (!newDirector.directorName.trim()) return;
 
-    try {
-      let imageUrl = newDirector.directorImageUrl;
+    let imageUrl = newDirector.directorImageUrl;
 
-      // 이미지가 업로드된 경우 서버에 업로드
-      if (newDirector.directorImageFile) {
-        const fileArray = [newDirector.directorImageFile];
-        const uploadResponse =
-          await uploadImagesMutation.mutateAsync(fileArray);
+    // 이미지가 업로드된 경우 서버에 업로드
+    if (newDirector.directorImageFile) {
+      const fileArray = [newDirector.directorImageFile];
+      const uploadResponse = await uploadImagesMutation.mutateAsync(fileArray);
 
-        if (uploadResponse.data.uploadedFileUrls.length > 0) {
-          imageUrl = uploadResponse.data.uploadedFileUrls[0];
-        }
+      if (uploadResponse.data.uploadedFileUrls.length > 0) {
+        imageUrl = uploadResponse.data.uploadedFileUrls[0];
       }
+    }
 
-      // 감독 등록
-      const directorData = {
-        directors: [
-          {
-            directorName: newDirector.directorName,
-            directorImageUrl: imageUrl || '',
-          },
-        ],
-      };
-
-      const response = await postDirectorsMutation.mutateAsync(directorData);
-
-      if (response.directorIds.length > 0) {
-        // 등록된 감독을 선택된 감독 목록에 추가
-        const newDirectorItem: Director = {
-          directorId: response.directorIds[0],
+    // 감독 등록
+    const directorData = {
+      directors: [
+        {
           directorName: newDirector.directorName,
           directorImageUrl: imageUrl || '',
-        };
+        },
+      ],
+    };
 
-        setSelectedDirectors([...selectedDirectors, newDirectorItem]);
+    const response = await postDirectorsMutation.mutateAsync(directorData);
 
-        // 폼 초기화
-        setNewDirector({
-          directorName: '',
-          directorImageFile: null,
-          directorImageUrl: '',
-        });
-        setShowAddForm(false);
-      }
-    } catch (error) {
-      console.error('감독 등록 실패:', error);
+    if (response.directorIds.length > 0) {
+      // 등록된 감독을 선택된 감독 목록에 추가
+      const newDirectorItem: Director = {
+        directorId: response.directorIds[0],
+        directorName: newDirector.directorName,
+        directorImageUrl: imageUrl || '',
+      };
+
+      setSelectedDirectors([...selectedDirectors, newDirectorItem]);
+
+      // 폼 초기화
+      setNewDirector({
+        directorName: '',
+        directorImageFile: null,
+        directorImageUrl: '',
+      });
+      setShowAddForm(false);
     }
   };
 

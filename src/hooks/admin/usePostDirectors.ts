@@ -12,7 +12,7 @@ export const usePostAdminDirectors = () => {
     mutationFn: postAdminDirectors,
     onSuccess: (data) => {
       showSimpleToast.success({
-        message: `${data.directorIds.length}명의 출연진이 등록되었습니다.`,
+        message: `${data.directorIds.length}명의 감독이 등록되었습니다.`,
         position: 'top-center',
       });
 

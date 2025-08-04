@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
-import { Ticket } from '@components/Ticket/Ticket';
+import { Ticket } from '@/components/Recommend/Ticket';
 import { Button } from '@components/ui/button';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 import { MockMovies } from './moviedata';

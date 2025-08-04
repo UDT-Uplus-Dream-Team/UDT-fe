@@ -56,6 +56,7 @@ export default function CastSearchDialog({
 
   // 무한 스크롤용 ref
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const castImageRef = useRef<HTMLInputElement>(null);
 
   // 이미지 업로드 및 배우 등록 훅
   const uploadImagesMutation = usePostUploadImages();
@@ -475,14 +476,12 @@ export default function CastSearchDialog({
                       accept="image/*"
                       onChange={handleImageUpload}
                       className="hidden"
-                      id="cast-image-upload"
+                      ref={castImageRef}
                     />
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() =>
-                        document.getElementById('cast-image-upload')?.click()
-                      }
+                      onClick={() => castImageRef.current?.click()}
                       className="flex-1"
                     >
                       <Upload className="h-4 w-4 mr-2" />

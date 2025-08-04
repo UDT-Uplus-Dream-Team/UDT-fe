@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
@@ -37,6 +37,7 @@ export default function BulkPersonRegistration() {
   const [persons, setPersons] = useState<PersonData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [nextId, setNextId] = useState(0);
+  const refs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   // blob URL cleanup
   useEffect(() => {
@@ -319,17 +320,15 @@ export default function BulkPersonRegistration() {
                       accept="image/*"
                       onChange={(e) => handleImageUpload(person.id, e)}
                       className="hidden"
-                      id={`image-upload-${person.id}`}
+                      ref={(el) => {
+                        refs.current[person.id] = el;
+                      }}
                       disabled={isLoading}
                     />
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() =>
-                        document
-                          .getElementById(`image-upload-${person.id}`)
-                          ?.click()
-                      }
+                      onClick={() => refs.current[person.id]?.click()}
                       className="flex-1"
                       disabled={isLoading}
                     >

@@ -17,6 +17,7 @@ import { RATING_OPTIONS } from '@/constants';
 import Image from 'next/image';
 import type { ContentWithoutId } from '@type/admin/Content';
 import type { UseMutationResult } from '@tanstack/react-query';
+import { useRef } from 'react';
 
 interface BasicInfoProps {
   formData: ContentWithoutId;
@@ -41,6 +42,9 @@ export default function BasicInfo({
   handleImageUpload,
   uploadImagesMutation,
 }: BasicInfoProps) {
+  const posterInputRef = useRef<HTMLInputElement>(null);
+  const backdropInputRef = useRef<HTMLInputElement>(null);
+
   return (
     <Card>
       <CardHeader>
@@ -124,9 +128,7 @@ export default function BasicInfo({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    document.getElementById('posterUpload')?.click()
-                  }
+                  onClick={() => posterInputRef.current?.click()}
                   disabled={uploadImagesMutation.isPending}
                   className="flex items-center gap-2"
                 >
@@ -143,7 +145,7 @@ export default function BasicInfo({
                 )}
               </div>
               <input
-                id="posterUpload"
+                ref={posterInputRef}
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleImageUpload(e.target.files, 'poster')}
@@ -172,9 +174,7 @@ export default function BasicInfo({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    document.getElementById('backdropUpload')?.click()
-                  }
+                  onClick={() => backdropInputRef.current?.click()}
                   disabled={uploadImagesMutation.isPending}
                   className="flex items-center gap-2"
                 >
@@ -191,7 +191,7 @@ export default function BasicInfo({
                 )}
               </div>
               <input
-                id="backdropUpload"
+                ref={backdropInputRef}
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleImageUpload(e.target.files, 'backdrop')}

@@ -132,7 +132,7 @@ const RecommendPage = () => {
       <div className="w-full max-w-screen-md mb-4 border-b border-white/30" />
 
       {/* 카드 영역 */}
-      <div className="elative w-full max-w-screen-md min-h-[70Svh]">
+      <div className="relative w-full max-w-screen-md min-h-[70Svh]">
         {isLoading ? (
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
             <div className="text-center">

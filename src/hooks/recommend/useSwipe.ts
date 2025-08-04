@@ -64,6 +64,9 @@ export function useSwipe(
         });
       }
 
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
       // 애니메이션 완료 후 상태 리셋
       animationTimeoutRef.current = setTimeout(() => {
         setCurrentIndex((prev) => prev + 1);
@@ -117,6 +120,10 @@ export function useSwipe(
     setIsSnapback(true);
     setDragOffset({ x: 0, y: 0 });
     setFeedback('neutral');
+
+    if (snapbackTimeoutRef.current) {
+      clearTimeout(snapbackTimeoutRef.current);
+    }
 
     snapbackTimeoutRef.current = setTimeout(() => {
       setIsSnapback(false);

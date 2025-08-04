@@ -202,8 +202,6 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
 
   // ── 스와이프 처리 ─────────────────────────────
   const handleSwipe = async (result: SwipeResult): Promise<void> => {
-    console.log(swipeCount, remainingCount, currentIndex);
-
     // GA4로 스와이프 이벤트 전송
     sendAnalyticsEvent('swipe_action_in_reels', {
       direction: result.direction,

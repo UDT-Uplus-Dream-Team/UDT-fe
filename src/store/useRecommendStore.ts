@@ -135,7 +135,6 @@ export const useRecommendStore = create<RecommendState>()(
 
       // ── ResultScreen 상태 관리 액션들 ──────────────────────
       setResultRerollUsed: (index: number, used: boolean) => {
-        console.log('🏪 Store: setResultRerollUsed', { index, used });
         set((state) => {
           const newRerollUsed = [...state.resultScreenState.rerollUsed];
           newRerollUsed[index] = used;
@@ -145,7 +144,6 @@ export const useRecommendStore = create<RecommendState>()(
               rerollUsed: newRerollUsed,
             },
           };
-          console.log('🏪 Store: 새로운 rerollUsed 상태', newRerollUsed);
           return newState;
         });
       },
@@ -173,10 +171,6 @@ export const useRecommendStore = create<RecommendState>()(
       },
 
       setResultContentIndex: (position: number, contentIndex: number) => {
-        console.log('🏪 Store: setResultContentIndex', {
-          position,
-          contentIndex,
-        });
         set((state) => {
           const newContentIndices = [...state.resultScreenState.contentIndices];
           newContentIndices[position] = contentIndex;

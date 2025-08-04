@@ -13,18 +13,43 @@ import {
   useExploreUI,
   useExploreTempFilters,
 } from '@hooks/useExplorePageState';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 
 // FilterRadioButton을 모아두는 그룹 컴포넌트
 export const FilterRadioButtonGroup = () => {
   // 스크롤 위치 추적을 위한 state, Ref, 함수 정의
   const scrollRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
+  const [isSticky, setIsSticky] = useState(false); // 현재 스크롤 위치에 따라 sticky 상태 감지
   const [isDragging, setIsDragging] = useState(false);
   const [dragMoved, setDragMoved] = useState(false);
   const dragStartX = useRef(0);
   const dragScrollLeft = useRef(0);
 
+  // sticky 상태를 감지하기 위해 사용하는 코드
+  useEffect(() => {
+    // sticky 바로 위에 삽입해서, 해당 element가 화면에 보이지 않으면 sticky 발동
+    const sentinel = document.createElement('div');
+    stickyRef.current?.parentNode?.insertBefore(sentinel, stickyRef.current);
+
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        setIsSticky(!entry.isIntersecting);
+      },
+      {
+        root: null, // window 기준으로 뷰포트 범위 내에서 확인
+        threshold: 0,
+      },
+    );
+    observer.observe(sentinel);
+    return () => {
+      observer.disconnect();
+      sentinel.remove();
+    };
+  }, []);
+
+  // 포인터 옵션 관련 핸들러
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     setIsDragging(true);
     setDragMoved(false);
@@ -47,6 +72,7 @@ export const FilterRadioButtonGroup = () => {
     (e.target as Element).releasePointerCapture?.(e.pointerId);
   };
 
+  // 필터 관련 상태 및 함수 추출 (Zustand를 사용한 상태 관리 훅에서 가져옴)
   const { appliedFilters, displayedOptionsInTop, toggleAppliedFilter } =
     useExploreFilters();
   const {
@@ -69,10 +95,15 @@ export const FilterRadioButtonGroup = () => {
 
   return (
     <>
-      <div className="w-full transition-colors duration-200 bg-transparent">
+      <div
+        ref={stickyRef}
+        className={`sticky top-0 z-10 w-full transition-colors duration-200 ${
+          isSticky ? 'bg-primary-800/80 backdrop-blur' : 'bg-transparent'
+        }`}
+      >
         <div className="w-full">
           {/* 필터 버튼 그룹 */}
-          <div className="pt-5 pb-4">
+          <div className="pt-4 pb-4">
             <div
               ref={scrollRef}
               className="flex flex-row justify-start items-center gap-3 overflow-x-auto scrollbar-hide max-w-full overscroll-x-none px-6 select-none"
@@ -108,7 +139,7 @@ export const FilterRadioButtonGroup = () => {
                 {/* Sheet 콘텐츠 (해당 콘텐츠는 FilterBottomSheetContent 컴포넌트로 구현) */}
                 <SheetContent
                   side="bottom"
-                  className="flex flex-col gap-0 h-[60svh] max-h-[60svh] max-w-[640px] w-full mx-auto bg-[#07033E] border-t-0 rounded-t-[20px]"
+                  className="flex flex-col gap-0 h-[60svh] max-h-[60svh] max-w-[640px] w-full mx-auto bg-[#07033E] border-t-0 rounded-t-[20px] !border-none"
                 >
                   {/* 커스텀 닫기 버튼 */}
                   <button

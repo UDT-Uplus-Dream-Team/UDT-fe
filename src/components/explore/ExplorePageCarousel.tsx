@@ -64,22 +64,43 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
   const getTargetX = (index: number) =>
     containerWidth / 2 - CARD_WIDTH / 2 - index * CARD_TOTAL_WIDTH;
 
+  // 자동 재생 조건 확인하는 값
+  const canAutoPlay = useMemo(() => {
+    return (
+      isDomReady &&
+      !isDragging &&
+      !jumping &&
+      currentIndex !== -1 &&
+      contentsLength > 0 &&
+      containerWidth > 0
+    );
+  }, [
+    isDomReady,
+    isDragging,
+    jumping,
+    currentIndex,
+    contentsLength,
+    containerWidth,
+  ]);
+
   // 1. 최초 마운트시 ref DOM이 완전히 준비된 뒤에만 width 계산
   useLayoutEffect(() => {
     let retryCount = 0;
+    let timeoutId: NodeJS.Timeout;
+
     function checkDomReady() {
       if (carouselRef.current) {
         setIsDomReady(true);
         setContainerWidth(carouselRef.current.offsetWidth);
       } else if (retryCount < 10) {
         retryCount += 1;
-        setTimeout(checkDomReady, 30); // ref 안 잡혔으면 조금 뒤에 재시도 (최대 10번)
+        timeoutId = setTimeout(checkDomReady, 30); // ref 안 잡혔으면 조금 뒤에 재시도 (최대 10번)
       }
     }
     checkDomReady();
-    // 컴포넌트 언마운트 후 setState 방지
+    // 컴포넌트 언마운트 후엔 pending된 setTimeout을 확실히 취소해야 함
     return () => {
-      retryCount = 10;
+      if (timeoutId) clearTimeout(timeoutId);
     };
   }, []);
 
@@ -151,8 +172,8 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
   const handleDragEnd = useCallback(
     (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       let next = currentIndex;
-      if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -400) next += 1;
-      else if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > 400)
+      if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -50) next += 1;
+      else if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > 50)
         next -= 1;
       setIsDragging(false);
       setCurrentIndex(next);
@@ -162,15 +183,7 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
 
   // 6. 자동 재생 (모든 조건 완전히 만족시에만)
   useEffect(() => {
-    if (
-      !isDomReady ||
-      isDragging ||
-      jumping ||
-      currentIndex === -1 ||
-      contentsLength === 0 ||
-      containerWidth === 0
-    )
-      return;
+    if (!canAutoPlay) return; // 자동 재생 조건 불만족시 종료
     const timer = setInterval(() => {
       setCurrentIndex((prev) => prev + 1);
     }, autoPlayInterval);
@@ -282,7 +295,7 @@ export const ExplorePageCarousel = ({ autoPlayInterval = 3000 }) => {
         <SheetContent
           side="bottom"
           hideDefaultClose={true}
-          className="px-0 pb-5 h-[90svh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0"
+          className="px-0 pb-5 h-[90svh] max-w-[640px] w-full mx-auto rounded-t-2xl bg-primary-800 flex flex-col overflow-y-auto scrollbar-hide gap-0 !border-none"
         >
           <button
             onClick={() => setSelectedContent(null)}

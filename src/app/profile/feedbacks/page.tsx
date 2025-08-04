@@ -69,12 +69,11 @@ const FeedbackPage = () => {
   // 실제 삭제 api 연동 토스토 확인 시 삭제 되도록 구성
   const { mutateAsync: deleteFeedback } = useDeleteFeedback();
 
-  // 피드백 id의 경우 배열 처리로 수정하는데 시간이 걸린다 하여 우선 단일 처리 진행 후 수정
+  // 배열 삭제로 수정
   const { handleDelete } = useDeleteToast({
     selectedIds,
     onDeleteComplete: handleCancelDeleteMode,
-    deleteFn: deleteFeedback, // 단일 처리 함수
-    isBatch: false, // 명시적으로 단일 호출임을 지정
+    deleteFn: deleteFeedback,
   });
 
   //상세보기를 위한 모달 처리

@@ -19,7 +19,13 @@ import { Badge } from '@components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 import { X, Plus } from 'lucide-react';
-import type { ContentWithoutId, Cast, Platform } from '@type/admin/Content';
+import type {
+  ContentWithoutId,
+  ContentCreateUpdate,
+  Cast,
+  PlatformInfo,
+  Director,
+} from '@type/admin/Content';
 import { PLATFORMS } from '@/lib/platforms';
 import { showSimpleToast } from '@components/common/Toast';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
@@ -29,7 +35,7 @@ import Image from 'next/image';
 
 interface ContentFormProps {
   content?: ContentWithoutId;
-  onSave: (content: ContentWithoutId) => void;
+  onSave: (content: ContentCreateUpdate) => void;
   onCancel: () => void;
 }
 
@@ -51,12 +57,35 @@ const getInitialFormData = (content?: ContentWithoutId): ContentWithoutId => ({
   platforms: content?.platforms || [],
 });
 
+// ContentWithoutId를 ContentCreateUpdate로 변환하는 함수
+const convertContentWithoutIdToContentCreateUpdate = (
+  content: ContentWithoutId,
+): ContentCreateUpdate => ({
+  title: content.title,
+  description: content.description,
+  posterUrl: content.posterUrl,
+  backdropUrl: content.backdropUrl,
+  trailerUrl: content.trailerUrl,
+  openDate: content.openDate,
+  runningTime: content.runningTime,
+  episode: content.episode,
+  rating: content.rating,
+  categories: content.categories,
+  countries: content.countries,
+  directors: content.directors.map((director) => director.directorId),
+  casts: content.casts.map((cast) => cast.castId),
+  platforms: content.platforms,
+});
+
 // 유효성 검사 함수
 const validateFormData = (formData: ContentWithoutId): string | null => {
   // 제목 검증
   if (!formData.title.trim()) return '제목은 필수 항목입니다.';
 
-  // 관람등급
+  // 관람등급 검증
+  if (!formData.rating || formData.rating.trim() === '') {
+    return '관람등급은 필수 항목입니다.';
+  }
 
   // 카테고리 검증
   if (
@@ -79,16 +108,6 @@ const validateFormData = (formData: ContentWithoutId): string | null => {
     return '플랫폼은 하나 이상 입력해야 합니다.';
   }
 
-  // 플랫폼 타입이 허용된 플랫폼 중 하나인지 검증
-  const allowedPlatformLabels = PLATFORMS.map((p) => p.label);
-  for (const platform of formData.platforms) {
-    if (!allowedPlatformLabels.includes(platform.platformType)) {
-      return `플랫폼은 다음 중 하나여야 합니다: ${allowedPlatformLabels.join(
-        ', ',
-      )}`;
-    }
-  }
-
   return null;
 };
 
@@ -103,12 +122,17 @@ export default function ContentForm({
   const showErrorToast = useErrorToastOnce();
 
   // 입력 필드 상태
-  const [newDirector, setNewDirector] = useState('');
+  const [newDirector, setNewDirector] = useState<Director>({
+    directorId: 0,
+    directorName: '',
+    directorImageUrl: '',
+  });
   const [newCast, setNewCast] = useState<Cast>({
+    castId: 0,
     castName: '',
     castImageUrl: '',
   });
-  const [newPlatform, setNewPlatform] = useState<Platform>({
+  const [newPlatform, setNewPlatform] = useState<PlatformInfo>({
     platformType: '',
     watchUrl: '',
   });
@@ -131,10 +155,13 @@ export default function ContentForm({
         : formData.openDate + 'T00:00:00';
     }
 
-    onSave({
+    // ContentWithoutId를 ContentCreateUpdate로 변환하여 저장
+    const contentToSave = convertContentWithoutIdToContentCreateUpdate({
       ...formData,
       openDate: normalizedDate,
     });
+
+    onSave(contentToSave);
   };
 
   // 폼 데이터 업데이트 헬퍼 함수
@@ -204,61 +231,65 @@ export default function ContentForm({
 
   // 감독 관리
   const addDirector = useCallback(() => {
-    if (!newDirector.trim()) return;
+    if (!newDirector.directorName.trim()) return;
+
+    // 임시로 ID를 생성 (실제로는 API에서 받아와야 함)
+    const directorId = Date.now();
+    const newDirectorObj = {
+      directorId,
+      directorName: newDirector.directorName.trim(),
+      directorImageUrl: newDirector.directorImageUrl.trim(),
+    };
 
     updateFormData((prev) => {
-      if (!prev.directors.includes(newDirector.trim())) {
+      if (
+        !prev.directors.some(
+          (d) => d.directorName === newDirector.directorName.trim(),
+        )
+      ) {
         return {
           ...prev,
-          directors: [...prev.directors, newDirector.trim()],
+          directors: [...prev.directors, newDirectorObj],
         };
       }
       return prev;
     });
-    setNewDirector('');
-  }, [newDirector, updateFormData]);
+    setNewDirector({ directorId: 0, directorName: '', directorImageUrl: '' });
+  }, [newDirector, updateFormData, showErrorToast]);
 
   const removeDirector = useCallback(
     (directorToRemove: string) => {
       updateFormData((prev) => ({
         ...prev,
-        directors: prev.directors.filter((d) => d !== directorToRemove),
+        directors: prev.directors.filter(
+          (d) => d.directorName !== directorToRemove,
+        ),
       }));
     },
     [updateFormData],
   );
 
-  // URL 유효성 검사 함수
-  const isValidImageUrl = useCallback((url: string): boolean => {
-    if (!url.trim()) return true; // 빈 URL은 허용 (선택사항)
-
-    try {
-      const urlObj = new URL(url);
-      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  }, []);
-
   // 출연진 관리
   const addCast = useCallback(() => {
     if (!newCast.castName.trim()) return;
 
-    // 이미지 URL이 입력되었지만 유효하지 않은 경우
-    if (newCast.castImageUrl.trim() && !isValidImageUrl(newCast.castImageUrl)) {
-      showErrorToast('올바른 이미지 URL을 입력해주세요');
-      return;
-    }
+    // 임시로 ID를 생성 (실제로는 API에서 받아와야 함)
+    const castId = Date.now();
+    const newCastObj = {
+      castId,
+      castName: newCast.castName.trim(),
+      castImageUrl: newCast.castImageUrl.trim(),
+    };
 
-    updateFormData((prev) => ({ ...prev, casts: [...prev.casts, newCast] }));
-    setNewCast({ castName: '', castImageUrl: '' });
-  }, [newCast, updateFormData, isValidImageUrl, showErrorToast]);
+    updateFormData((prev) => ({ ...prev, casts: [...prev.casts, newCastObj] }));
+    setNewCast({ castId: 0, castName: '', castImageUrl: '' });
+  }, [newCast, updateFormData, showErrorToast]);
 
   const removeCast = useCallback(
-    (index: number) => {
+    (castToRemove: string) => {
       updateFormData((prev) => ({
         ...prev,
-        casts: prev.casts.filter((_, i) => i !== index),
+        casts: prev.casts.filter((c) => c.castName !== castToRemove),
       }));
     },
     [updateFormData],
@@ -601,41 +632,67 @@ export default function ContentForm({
               <CardTitle className="mt-5">감독 정보</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex gap-2 mb-3">
+              <div className="grid grid-cols-2 gap-2 mb-2">
                 <Input
-                  value={newDirector}
-                  onChange={(e) => setNewDirector(e.target.value)}
-                  placeholder="감독 이름 입력"
-                  onKeyDown={(e) =>
-                    e.key === 'Enter' && (e.preventDefault(), addDirector())
+                  value={newDirector.directorName}
+                  onChange={(e) =>
+                    setNewDirector({
+                      ...newDirector,
+                      directorName: e.target.value,
+                    })
                   }
+                  placeholder="감독 이름"
                 />
-                <Button
-                  type="button"
-                  onClick={addDirector}
-                  className="cursor-pointer"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                <Input
+                  value={newDirector.directorImageUrl}
+                  onChange={(e) =>
+                    setNewDirector({
+                      ...newDirector,
+                      directorImageUrl: e.target.value,
+                    })
+                  }
+                  placeholder="감독 이미지 URL"
+                />
               </div>
-              <div className="flex flex-wrap gap-2 mb-3">
+              <Button
+                type="button"
+                onClick={addDirector}
+                className="w-full cursor-pointer"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                감독 추가
+              </Button>
+              <div className="space-y-2 mb-5">
                 {formData.directors.map((director) => (
-                  <Badge
-                    key={director}
-                    variant="secondary"
-                    className="flex items-center gap-1"
+                  <div
+                    key={director.directorId}
+                    className="flex items-center justify-between p-2 border rounded"
                   >
-                    {director}
+                    <div className="flex items-center gap-2">
+                      {director.directorImageUrl && (
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+                          <Image
+                            src={
+                              director.directorImageUrl || '/placeholder.svg'
+                            }
+                            alt={director.directorName || '감독 이미지'}
+                            fill
+                            unoptimized
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <span>{director.directorName}</span>
+                    </div>
                     <Button
                       type="button"
-                      size="icon"
-                      variant="ghost"
-                      className="h-4 w-4 p-0 cursor-pointer"
-                      onClick={() => removeDirector(director)}
+                      className="cursor-pointer"
+                      size="sm"
+                      onClick={() => removeDirector(director.directorName)}
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                     </Button>
-                  </Badge>
+                  </div>
                 ))}
               </div>
             </CardContent>
@@ -672,9 +729,9 @@ export default function ContentForm({
                 출연진 추가
               </Button>
               <div className="space-y-2 mb-5">
-                {formData.casts.map((cast, index) => (
+                {formData.casts.map((cast) => (
                   <div
-                    key={index}
+                    key={cast.castId}
                     className="flex items-center justify-between p-2 border rounded"
                   >
                     <div className="flex items-center gap-2">
@@ -695,7 +752,7 @@ export default function ContentForm({
                       type="button"
                       className="cursor-pointer"
                       size="sm"
-                      onClick={() => removeCast(index)}
+                      onClick={() => removeCast(cast.castName)}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -782,113 +839,7 @@ export default function ContentForm({
         </TabsContent>
 
         <TabsContent value="platforms" className="space-y-6 mt-3">
-          {/* <Card>
-            <CardHeader>
-              <CardTitle className="mt-5">감독 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2 mb-3">
-                <Input
-                  value={newDirector}
-                  onChange={(e) => setNewDirector(e.target.value)}
-                  placeholder="감독 이름 입력"
-                  onKeyDown={(e) =>
-                    e.key === 'Enter' && (e.preventDefault(), addDirector())
-                  }
-                />
-                <Button
-                  type="button"
-                  onClick={addDirector}
-                  className="cursor-pointer"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-3">
-                {formData.directors.map((director) => (
-                  <Badge
-                    key={director}
-                    variant="secondary"
-                    className="flex items-center gap-1"
-                  >
-                    {director}
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      className="h-4 w-4 p-0 cursor-pointer"
-                      onClick={() => removeDirector(director)}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="mt-5">출연진 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                <Input
-                  value={newCast.castName}
-                  onChange={(e) =>
-                    setNewCast({ ...newCast, castName: e.target.value })
-                  }
-                  placeholder="배우 이름"
-                />
-                <Input
-                  value={newCast.castImageUrl}
-                  onChange={(e) =>
-                    setNewCast({ ...newCast, castImageUrl: e.target.value })
-                  }
-                  placeholder="배우 이미지 URL"
-                />
-              </div>
-              <Button
-                type="button"
-                onClick={addCast}
-                className="w-full cursor-pointer"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                출연진 추가
-              </Button>
-              <div className="space-y-2 mb-5">
-                {formData.casts.map((cast, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-2 border rounded"
-                  >
-                    <div className="flex items-center gap-2">
-                      {cast.castImageUrl && (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                          <Image
-                            src={cast.castImageUrl || '/placeholder.svg'}
-                            alt={cast.castName || '출연진 이미지'}
-                            fill
-														unoptimized
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        </div>
-                      )}
-                      <span>{cast.castName}</span>
-                    </div>
-                    <Button
-                      type="button"
-                      className="cursor-pointer"
-                      size="sm"
-                      onClick={() => removeCast(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card> */}
+          {/* 추가 인물 등록 탭은 현재 비어있음 */}
         </TabsContent>
       </Tabs>
 

@@ -1,6 +1,13 @@
 export interface Cast {
+  castId: number;
   castName: string;
   castImageUrl: string;
+}
+
+export interface Director {
+  directorId: number;
+  directorName: string;
+  directorImageUrl: string;
 }
 
 export interface Category {
@@ -8,7 +15,7 @@ export interface Category {
   genres: string[];
 }
 
-export interface Platform {
+export interface PlatformInfo {
   platformType: string;
   watchUrl: string;
 }
@@ -26,14 +33,31 @@ export interface Content {
   rating: string;
   categories: Category[];
   countries: string[];
-  directors: string[];
+  directors: Director[];
   casts: Cast[];
-  platforms: Platform[];
+  platforms: PlatformInfo[];
+}
+
+export interface ContentWithoutId {
+  title: string;
+  description: string;
+  posterUrl: string;
+  backdropUrl: string;
+  trailerUrl: string;
+  openDate: string;
+  runningTime: number;
+  episode: number;
+  rating: string;
+  categories: Category[];
+  countries: string[];
+  directors: Director[];
+  casts: Cast[];
+  platforms: PlatformInfo[];
 }
 
 // 콘텐츠 목록 조회 params 타입
 export interface AdminContentListParams {
-  cursor: number;
+  cursor: string | null;
   size: number;
   categoryType: string | null;
 }
@@ -56,8 +80,8 @@ export interface AdminContentListResponse {
   hasNext: boolean;
 }
 
-// id 제외 콘텐츠 타입
-export interface ContentWithoutId {
+// 콘텐츠 등록/수정용 타입 (directors와 casts는 ID 배열)
+export interface ContentCreateUpdate {
   title: string;
   description: string;
   posterUrl: string;
@@ -69,7 +93,7 @@ export interface ContentWithoutId {
   rating: string;
   categories: Category[];
   countries: string[];
-  directors: string[];
-  casts: Cast[];
-  platforms: Platform[];
+  directors: number[];
+  casts: number[];
+  platforms: PlatformInfo[];
 }

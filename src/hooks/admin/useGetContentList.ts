@@ -3,7 +3,11 @@ import {
   AdminContentListParams,
   AdminContentListResponse,
 } from '@type/admin/Content';
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import {
+  useQuery,
+  useInfiniteQuery,
+  InfiniteData,
+} from '@tanstack/react-query';
 
 // 기존: 관리자 콘텐츠 목록을 불러오는 훅
 export const useAdminContentList = (params: AdminContentListParams) => {
@@ -17,20 +21,26 @@ export const useAdminContentList = (params: AdminContentListParams) => {
 export const useInfiniteAdminContentList = (
   params: Omit<AdminContentListParams, 'cursor'>,
 ) => {
-  return useInfiniteQuery<AdminContentListResponse>({
+  return useInfiniteQuery<
+    AdminContentListResponse, // TQueryFnData
+    unknown, // TError
+    InfiniteData<AdminContentListResponse>, // TData
+    [string, typeof params], // TQueryKey
+    string | null // TPageParam
+  >({
     queryKey: ['infiniteAdminContentList', params],
-    queryFn: ({ pageParam = 0 }) => {
+    queryFn: ({ pageParam = null }) => {
       const category =
         params.categoryType === 'all' ? null : params.categoryType;
 
       return getContentList({
         ...params,
         categoryType: category,
-        cursor: pageParam as number,
+        cursor: pageParam,
       });
     },
     getNextPageParam: (lastPage) =>
-      lastPage.hasNext ? Number(lastPage.nextCursor) : undefined,
+      lastPage.hasNext ? lastPage.nextCursor : undefined,
     initialPageParam: null,
   });
 };

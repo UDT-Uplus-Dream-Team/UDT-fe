@@ -19,7 +19,7 @@ import {
 } from '@components/ui/dialog';
 import { Plus } from 'lucide-react';
 
-import type { ContentWithoutId } from '@type/admin/Content';
+import type { ContentCreateUpdate } from '@type/admin/Content';
 import { useInfiniteAdminContentList } from '@hooks/admin/useGetContentList';
 import { usePostContent } from '@hooks/admin/usePostContent';
 import { useUpdateContent } from '@hooks/admin/usePatchContent';
@@ -117,7 +117,7 @@ export default function AdminDashboard() {
 
   // 콘텐츠 추가 핸들러
   const handleAddContent = useCallback(
-    (contentData: ContentWithoutId) => {
+    (contentData: ContentCreateUpdate) => {
       postContent.mutate(contentData, {
         onSuccess: () => setIsAddDialogOpen(false),
       });
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
 
   // 콘텐츠 수정 핸들러
   const handleEditContent = useCallback(
-    (contentData: ContentWithoutId) => {
+    (contentData: ContentCreateUpdate) => {
       if (selectedContentId) {
         updateContent.mutate(
           { contentId: selectedContentId, data: contentData },

@@ -17,7 +17,7 @@ import {
   Trash,
   MessageSquare,
 } from 'lucide-react';
-import { BatchTopCardDataItem } from '@type/admin/BatchPage';
+import { BatchTopCardDataItem } from '@/types/admin/batch';
 
 // 배치 대기열 및 결과 확인하는 페이지에서 전체 현황을 볼 수 있는 카드 레이아웃의 props 타입
 export interface BatchTopCardLayoutProps {

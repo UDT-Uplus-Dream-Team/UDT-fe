@@ -16,7 +16,7 @@ import {
 import { Button } from '@components/ui/button';
 import { Filter, ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { mockRequestsInBatchRequestQueue } from '@type/admin/BatchPage';
+import { mockRequestsInBatchRequestQueue } from '@/types/admin/batch';
 import { BatchJobDetailDialog } from '@components/admin/BatchJobDetailDialog';
 
 // 실패한 배치 job 목록을 보여주는 테이블

@@ -1,6 +1,20 @@
 import { ElementType } from 'react';
 
-// '배치 대기열' 및 '배치 결과' 페이지에서 사용할 타입을 정의하는 파일이에요!
+// '배치 대기열' 및 '배치 결과' 페이지에서 사용할 타입을 정의하는 곳
+export type BatchResultType = 'REGISTER' | 'UPDATE' | 'DELETE' | 'FEEDBACK';
+export type BatchResultStatus = 'COMPLETED' | 'PARTIAL_COMPLETED' | 'FAILED';
+
+// 배치 결과 목록을 조회할 때 사용하는 type
+export interface BatchResult {
+  resultId: number;
+  type: BatchResultType;
+  status: BatchResultStatus;
+  totalRead: number;
+  totalWrite: number;
+  totalSkip: number;
+  startTime?: string; // ISO8601 형식(예: 2024-08-04T08:00:00.000Z)
+  endTime?: string;
+}
 
 // 배치 대기열 및 결과 확인하는 페이지에서 전체 현황을 볼 수 있는 카드 레이아웃의 props 타입
 export interface BatchTopCardDataItem {
@@ -14,16 +28,6 @@ export interface BatchTopCardDataItem {
 export const requestTypeConfigInBatchRequestQueue = {
   CANCEL: { label: '취소됨', color: 'bg-red-100 text-red-800' },
   PENDING: { label: '대기중', color: 'bg-orange-100 text-orange-800' },
-};
-
-// '배치 결과' 페이지에서 해당 요청의 종류를 표현하기 위한 색상 설정
-export const requestTypeConfigInBatchResult = {
-  FAIL: { label: '실패', color: 'bg-red-100 text-red-800' },
-  PARTIAL_SUCCESS: {
-    label: '부분성공',
-    color: 'bg-orange-100 text-orange-800',
-  },
-  SUCCESS: { label: '성공', color: 'bg-green-100 text-green-800' },
 };
 
 // 배치 요청 목록 모의 데이터

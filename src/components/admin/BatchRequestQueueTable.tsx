@@ -18,7 +18,7 @@ import { Button } from '@components/ui/button';
 import {
   mockRequestsInBatchRequestQueue,
   requestTypeConfigInBatchRequestQueue,
-} from '@type/admin/BatchPage';
+} from '@/types/admin/batch';
 import { Filter, ChevronDown, ChartLine } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { BatchJobDetailDialog } from './BatchJobDetailDialog';

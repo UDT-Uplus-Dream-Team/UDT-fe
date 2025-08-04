@@ -11,7 +11,7 @@ import MovieDetailModal from '@components/profile/MovieDetailModal';
 import { useDeleteMode } from '@hooks/profile/useDeleteMode';
 import { useDeleteCurated } from '@hooks/profile/useDeleteCurated';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
-import { useDeleteToast } from '@/hooks/profile/useDeleteToast';
+import { useDeleteToast } from '@hooks/profile/useDeleteToast';
 
 const RecommendPage = () => {
   // 페이지 머무르는 시간 추적 (저장된 엄선된 콘텐츠 조회하는 페이지 추적 / Google Analytics 연동을 위함)
@@ -26,7 +26,7 @@ const RecommendPage = () => {
   } = usePosterModal();
 
   // 무한스크롤 API 호출
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteCuratedContents({ size: 20 });
 
   const posters = useMemo(
@@ -52,6 +52,8 @@ const RecommendPage = () => {
     }
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, isEmpty]);
+
+  const triggerIndex = Math.max(posters.length - 8, 0);
 
   // 상세보기 데이터 contentid로 찾아서 데이터 보여줌
   const selectedContentId = selectedPosterData?.contentId ?? null;
@@ -126,17 +128,28 @@ const RecommendPage = () => {
         </div>
       </div>
 
+      {/* 라인 */}
+      <div className="w-full max-w-screen-md mb-4 border-b border-white/30" />
+
       {/* 카드 영역 */}
-      <div className="w-full max-w-screen-md">
-        {isEmpty ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400 text-sm font-medium">
+      <div className="elative w-full max-w-screen-md min-h-[70Svh]">
+        {isLoading ? (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-white">데이터를 불러오는 중...</p>
+            </div>
+          </div>
+        ) : isEmpty ? (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-white md:text-m  text-sm font-medium">
             현재 저장된 추천 콘텐츠가 없습니다
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8 justify-items-center">
-            {posters.map((poster) => (
+            {posters.map((poster, index) => (
               <PosterCard
                 key={poster.contentId}
+                ref={index === triggerIndex ? observerRef : null}
                 title={poster.title}
                 image={poster.posterUrl}
                 size="lg"
@@ -145,7 +158,6 @@ const RecommendPage = () => {
                 onClick={() => handleCardClick(poster)}
               />
             ))}
-            <div ref={observerRef} className="h-1 w-full" />
           </div>
         )}
       </div>

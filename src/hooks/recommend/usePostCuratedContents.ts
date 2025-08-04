@@ -2,28 +2,23 @@ import { postCuratedContent } from '@lib/apis/recommend/postCuratedContents';
 import { useMutation } from '@tanstack/react-query';
 import { showSimpleToast } from '@/components/common/Toast';
 
-interface UsePostFeedbackContentOptions {
+interface UsePostCuratedContentOptions {
   onSuccessCallback?: () => void;
   onErrorCallback?: (error: Error) => void;
   showToast?: boolean; // Toast 표시 여부 (기본값: true)
-
   onOptimisticUpdate?: (contentId: number) => void; // 즉시 UI 업데이트
   onOptimisticRevert?: (contentId: number) => void;
 }
 
 export const usePostCuratedContent = (
-  options?: UsePostFeedbackContentOptions,
+  options?: UsePostCuratedContentOptions,
 ) => {
   const { showToast = true } = options || {};
 
   return useMutation({
     mutationFn: async (contentId: number) => {
-      const result = await postCuratedContent(contentId);
-      if (!result.success) {
-        throw new Error(result.message || '저장에 실패했습니다.');
-      }
-
-      return result;
+      await postCuratedContent(contentId);
+      return { contentId }; // 성공 시 contentId 반환
     },
 
     retry: 3,
@@ -34,6 +29,8 @@ export const usePostCuratedContent = (
     },
 
     onSuccess: () => {
+      options?.onSuccessCallback?.();
+
       if (showToast) {
         showSimpleToast.success({
           message: '컨텐츠가 성공적으로 저장되었습니다.',
@@ -43,14 +40,23 @@ export const usePostCuratedContent = (
         });
       }
     },
+
     onError: (error: Error, contentId: number) => {
       console.error('컨텐츠 저장 실패:', error.message);
 
       options?.onOptimisticRevert?.(contentId);
-      const isAlreadyExists = error.message.includes('이미 저장된');
+      options?.onErrorCallback?.(error);
+
+      // 에러 메시지 파싱
+      const isAlreadyExists =
+        error.message.includes('이미 저장된') ||
+        error.message.includes('already exists') ||
+        error.message.includes('409');
+
       const errorMessage = isAlreadyExists
         ? '이미 저장된 콘텐츠입니다.'
         : '저장에 실패하였습니다.';
+
       // Toast 표시
       if (showToast) {
         showSimpleToast.error({

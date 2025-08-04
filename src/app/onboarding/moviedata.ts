@@ -17,6 +17,7 @@ export const MockMovies: TicketComponent[] = [
     directors: ['웨스 앤더슨'],
     casts: ['랄프 파인스', '머레이 아브라함', '매튜 아모도브'],
     platforms: ['디즈니+', '쿠팡플레이'],
+    watchUrls: ['', ''],
   },
   {
     contentId: 2,
@@ -34,6 +35,7 @@ export const MockMovies: TicketComponent[] = [
     directors: ['피터 패럴리'],
     casts: ['비고 모텐슨', '마허샬라 알리', '린다 카델리니'],
     platforms: ['웨이브', '넷플릭스'],
+    watchUrls: ['', ''],
   },
   {
     contentId: 3,
@@ -51,6 +53,7 @@ export const MockMovies: TicketComponent[] = [
     directors: ['브라이언 싱어'],
     casts: ['라미 말렉', '루시 보인턴', '그윈 리'],
     platforms: ['넷플릭스', '쿠팡플레이'],
+    watchUrls: ['', ''],
   },
   {
     contentId: 4,
@@ -68,6 +71,7 @@ export const MockMovies: TicketComponent[] = [
     directors: ['프랭크 다라본트'],
     casts: ['팀 로빈스', '모건 프리먼', '밥 건턴'],
     platforms: ['웨이브', '쿠팡플레이'],
+    watchUrls: ['', ''],
   },
   {
     contentId: 5,
@@ -85,6 +89,7 @@ export const MockMovies: TicketComponent[] = [
     directors: ['신카이 마코토'],
     casts: ['가미키 류노스케', '가미시라이시 모네', '나가사와 마사미'],
     platforms: ['웨이브', '왓챠'],
+    watchUrls: ['', ''],
   },
   {
     contentId: 6,
@@ -102,5 +107,6 @@ export const MockMovies: TicketComponent[] = [
     directors: ['크리스토퍼 놀란'],
     casts: ['매튜 매커너히', '앤 해서웨이', '제시카 체스테인'],
     platforms: ['넷플릭스', '쿠팡플레이', '웨이브'],
+    watchUrls: ['', ''],
   },
 ];

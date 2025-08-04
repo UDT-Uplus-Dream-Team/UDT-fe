@@ -1,5 +1,6 @@
 import { usePatchPlatform } from './usePatchPlatform';
 import { usePatchGenre } from './usePatchGenre';
+import { useDeleteRecommendationCache } from '@hooks/recommend/useDeleteRecommendationCache';
 import {
   showSimpleToast,
   showInteractiveToast,
@@ -19,6 +20,7 @@ export const usePreferenceHandler = (
   // API 호출 훅
   const { mutateAsync: patchPlatformsAsync } = usePatchPlatform();
   const { mutateAsync: patchGenresAsync } = usePatchGenre();
+  const { mutateAsync: clearCacheAsync } = useDeleteRecommendationCache();
 
   const isToastOpen = useRef(false);
 
@@ -77,6 +79,8 @@ export const usePreferenceHandler = (
             await patchGenresAsync(selectedGenres);
             showSuccess('선호 장르가 저장되었습니다.');
           }
+
+          await clearCacheAsync();
         } catch (error) {
           console.error(error);
           showError('설정 저장에 실패했습니다.');

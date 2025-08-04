@@ -64,14 +64,14 @@ export default function OnboardingPage() {
   ];
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center">
-      {/* 진행 바 상단에 고정 */}
-      <div className="w-full max-w-[640px] px-6 pt-6">
+    <div className="relative w-full h-full">
+      {/* 프로그레스 바 - 고정 위치에서 덧씌우기 */}
+      <div className="absolute top-0 left-0 right-0 w-full max-w-[640px] mx-auto z-50 px-6 pt-6">
         <ProgressDots currentStep={step} totalSteps={steps.length} />
       </div>
 
-      {/* 현재 스텝 컴포넌트 */}
-      <div className="flex-1 w-full">{steps[step]}</div>
+      {/* 현재 스텝 컴포넌트 - 부모 전체 높이 차지 */}
+      <div className="w-full h-full">{steps[step]}</div>
     </div>
   );
 }

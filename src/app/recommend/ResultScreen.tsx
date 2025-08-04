@@ -192,12 +192,12 @@ export const ResultScreen: FC = () => {
   }
 
   return (
-    <div className="flex w-full h-full flex-col justify-center overflow-y-auto">
+    <div className="flex w-full h-full flex-col justify-center overflow-y-auto overflow-x-hidden">
       <div className="text-center py-5">
         <h1 className="text-2xl font-bold mb-1">추천 결과</h1>
         <p className="text-gray-500">마음에 드는 콘텐츠를 선택해보세요</p>
       </div>
-      <div className="flex-grow h-[60svh] min-h-110 max-h-175 flex items-center justify-center px-4">
+      <div className="flex-grow h-[60%] w-full min-h-110 max-h-175 flex items-center justify-center px-4">
         <div
           ref={containerRef}
           className="relative h-full w-[80%] min-w-70 max-w-100 flex items-center justify-center touch-pan-y"
@@ -215,16 +215,12 @@ export const ResultScreen: FC = () => {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0}
                 onDragStart={() => {
-                  // 페이지 스크롤 잠금
                   document.body.style.overflow = 'hidden';
                 }}
                 onDragEnd={(e, info) => {
-                  // 페이지 스크롤 해제
                   document.body.style.overflow = '';
                   handleDragEnd(e, info);
                 }}
-                // 터치 제스처는 가로 스와이프만
-                style={{ transformStyle: 'preserve-3d', touchAction: 'pan-x' }}
                 initial={{ opacity: 0 }}
                 animate={{
                   x: pos.x,
@@ -232,8 +228,23 @@ export const ResultScreen: FC = () => {
                   opacity: pos.opacity,
                   zIndex: pos.zIndex,
                 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="absolute my-4 min-w-[280px] min-h-[440px] max-w-[400px] max-h-[680px] w-full h-full"
+                transition={{
+                  type: 'spring',
+                  stiffness: 400, // ExplorePageCarousel과 동일
+                  damping: 40, // ExplorePageCarousel과 동일
+                }}
+                className={`absolute my-4 min-w-[280px] min-h-[440px] max-w-[400px] max-h-[680px] w-full h-full ${
+                  !isCenter ? 'pointer-events-none' : ''
+                }`}
+                style={{
+                  transformStyle: 'preserve-3d',
+                  touchAction: isCenter ? 'pan-x' : 'none',
+                  cursor: isCenter ? 'grab' : 'default',
+                  userSelect: 'none',
+                }}
+                whileDrag={{
+                  cursor: 'grabbing', // 드래그 중 커서 변경
+                }}
               >
                 {isCenter ? (
                   <div className="relative w-full h-full">

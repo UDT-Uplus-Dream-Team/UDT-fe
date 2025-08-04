@@ -216,6 +216,7 @@ export default function DirectorSearchDialog({
         });
         setShowAddForm(false);
       }
+      showSimpleToast.success({ message: '감독 등록이 완료되었습니다.' });
     } catch {
       showSimpleToast.error({
         message: '감독 등록에 실패했습니다.',

@@ -207,6 +207,7 @@ export default function CastSearchDialog({
           castImageUrl: '',
         });
         setShowAddForm(false);
+        showSimpleToast.success({ message: '배우 등록이 완료되었습니다.' });
       }
     } catch {
       showSimpleToast.error({

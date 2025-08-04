@@ -222,6 +222,8 @@ export default function BulkPersonRegistration() {
 
       // 폼 초기화
       setPersons([]);
+
+      showSimpleToast.success({ message: '인물 등록이 완료되었습니다.' });
     } catch {
       showSimpleToast.error({
         message: '인물 등록에 실패했습니다.',

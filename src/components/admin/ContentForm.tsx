@@ -874,26 +874,27 @@ export default function ContentForm({
             }}
             existingDirectors={formData.directors}
           />
+
+          {/* 취소/수정 버튼 */}
+          <div className="flex justify-end space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              className="cursor-pointer"
+            >
+              취소
+            </Button>
+            <Button type="submit" className="cursor-pointer">
+              {content ? '수정' : '추가'}
+            </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="personRegistration" className="space-y-6 mt-3">
           <BulkPersonRegistration />
         </TabsContent>
       </Tabs>
-
-      <div className="flex justify-end space-x-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          className="cursor-pointer"
-        >
-          취소
-        </Button>
-        <Button type="submit" className="cursor-pointer">
-          {content ? '수정' : '추가'}
-        </Button>
-      </div>
     </form>
   );
 }

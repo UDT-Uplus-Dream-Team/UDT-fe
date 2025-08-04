@@ -7,6 +7,7 @@ import type {
   SwipeResult,
 } from '@type/recommend/swipe';
 import type { TicketComponent } from '@type/recommend/TicketComponent';
+import { useRecommendStore } from '@/store/useRecommendStore';
 
 interface UseSwipeOptions {
   threshold?: number;
@@ -25,7 +26,9 @@ export function useSwipe(
 ) {
   const { threshold = 150, onSwipe, animationDuration = 700 } = options;
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(
+    useRecommendStore.getState().currentIndex,
+  );
   const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(
     null,
   );

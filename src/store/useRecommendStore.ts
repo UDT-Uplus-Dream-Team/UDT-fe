@@ -12,6 +12,7 @@ interface RecommendState {
   currentIndex: number;
   swipeCount: number;
   totalSwipeCount: number;
+  isToastShown: boolean;
 
   savedContentIds: boolean[];
 
@@ -29,6 +30,7 @@ interface RecommendState {
   setCurrentIndex: (index: number) => void;
   incrementSwipeCount: () => void;
   resetSwipeCount: () => void;
+  setToastShown: (shown: boolean) => void;
   resetRecommendProgress: () => void;
 
   addSavedCuratedContent: (index: number) => void;
@@ -60,6 +62,7 @@ export const useRecommendStore = create<RecommendState>()(
       swipeCount: 0,
       totalSwipeCount: 0,
       savedContentIds: [],
+      isToastShown: false,
 
       // ResultScreen 상태 초기값
       resultScreenState: {
@@ -81,6 +84,8 @@ export const useRecommendStore = create<RecommendState>()(
 
       setCurrentIndex: (index: number) => set({ currentIndex: index }),
 
+      setToastShown: (shown: boolean) => set({ isToastShown: shown }),
+
       incrementSwipeCount: () =>
         set((state) => ({
           swipeCount: state.swipeCount + 1,
@@ -97,6 +102,7 @@ export const useRecommendStore = create<RecommendState>()(
           swipeCount: 0,
           totalSwipeCount: 0,
           savedContentIds: [],
+          isToastShown: false,
           // ResultScreen 상태도 함께 초기화
           resultScreenState: {
             rerollUsed: [false, false, false],

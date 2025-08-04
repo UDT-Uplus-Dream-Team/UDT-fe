@@ -34,7 +34,9 @@ interface PersonData {
 }
 
 export default function BulkPersonRegistration() {
-  const [persons, setPersons] = useState<PersonData[]>([]);
+  const [registrationPersons, setRegistrationPersons] = useState<PersonData[]>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [nextId, setNextId] = useState(0);
   const refs = useRef<{ [key: string]: HTMLInputElement | null }>({});
@@ -42,7 +44,7 @@ export default function BulkPersonRegistration() {
   // blob URL cleanup
   useEffect(() => {
     return () => {
-      persons.forEach((person) => {
+      registrationPersons.forEach((person) => {
         if (
           person.profileImageUrl &&
           person.profileImageUrl.startsWith('blob:')
@@ -51,7 +53,7 @@ export default function BulkPersonRegistration() {
         }
       });
     };
-  }, [persons]);
+  }, [registrationPersons]);
 
   // 훅들
   const uploadImagesMutation = usePostUploadImages();
@@ -66,12 +68,14 @@ export default function BulkPersonRegistration() {
       profileImageFile: null,
       profileImageUrl: '',
     };
-    setPersons([...persons, newPerson]);
+    setRegistrationPersons([...registrationPersons, newPerson]);
     setNextId(nextId + 1);
   };
 
   const removePerson = (id: string) => {
-    setPersons(persons.filter((person) => person.id !== id));
+    setRegistrationPersons(
+      registrationPersons.filter((person) => person.id !== id),
+    );
   };
 
   const updatePerson = (
@@ -79,8 +83,8 @@ export default function BulkPersonRegistration() {
     field: keyof PersonData,
     value: string | File | null,
   ) => {
-    setPersons(
-      persons.map((person) =>
+    setRegistrationPersons(
+      registrationPersons.map((person) =>
         person.id === id
           ? {
               ...person,
@@ -98,7 +102,7 @@ export default function BulkPersonRegistration() {
     const file = e.target.files?.[0];
     if (file) {
       // 기존 blob URL 정리
-      const currentPerson = persons.find((p) => p.id === id);
+      const currentPerson = registrationPersons.find((p) => p.id === id);
       if (
         currentPerson?.profileImageUrl &&
         currentPerson.profileImageUrl.startsWith('blob:')
@@ -110,8 +114,8 @@ export default function BulkPersonRegistration() {
       const previewUrl = URL.createObjectURL(file);
 
       // 한 번에 모든 필드 업데이트
-      setPersons(
-        persons.map((person) =>
+      setRegistrationPersons(
+        registrationPersons.map((person) =>
           person.id === id
             ? {
                 ...person,
@@ -125,18 +129,85 @@ export default function BulkPersonRegistration() {
   };
 
   const validatePersons = () => {
-    const errors: string[] = [];
-    persons.forEach((person, index) => {
+    for (let i = 0; i < registrationPersons.length; i++) {
+      const person = registrationPersons[i];
       if (!person.name.trim()) {
-        errors.push(`${index + 1}번째 인물의 이름이 필요합니다.`);
+        showSimpleToast.error({
+          message: `${i + 1}번째 인물의 이름이 필요합니다.`,
+        });
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const uploadPersonImages = async (persons: PersonData[]) => {
+    const imageUploadMap = new Map<string, Promise<string>>();
+
+    persons.forEach((person) => {
+      if (person.profileImageFile) {
+        const uploadPromise = uploadImagesMutation
+          .mutateAsync([person.profileImageFile])
+          .then((response) => response.data.uploadedFileUrls[0]);
+        imageUploadMap.set(person.id, uploadPromise);
+      } else {
+        imageUploadMap.set(person.id, Promise.resolve(person.profileImageUrl));
       }
     });
-    return errors;
+
+    const uploadedImageUrls = await Promise.all(imageUploadMap.values());
+    const imageUrlMap = new Map<string, string>();
+
+    const personIds = Array.from(imageUploadMap.keys());
+    personIds.forEach((id, index) => {
+      imageUrlMap.set(id, uploadedImageUrls[index]);
+    });
+
+    return imageUrlMap;
+  };
+
+  const registerCasts = async (
+    casts: PersonData[],
+    imageUrlMap: Map<string, string>,
+  ) => {
+    if (casts.length === 0) return;
+
+    const castData = {
+      casts: casts.map((cast) => {
+        const imageUrl = cast.profileImageFile
+          ? imageUrlMap.get(cast.id) || ''
+          : '';
+        return {
+          castName: cast.name,
+          castImageUrl: imageUrl,
+        } as Omit<Cast, 'castId'>;
+      }),
+    };
+    await postCastsMutation.mutateAsync(castData);
+  };
+
+  const registerDirectors = async (
+    directors: PersonData[],
+    imageUrlMap: Map<string, string>,
+  ) => {
+    if (directors.length === 0) return;
+
+    const directorData = {
+      directors: directors.map((director) => {
+        const imageUrl = director.profileImageFile
+          ? imageUrlMap.get(director.id) || ''
+          : '';
+        return {
+          directorName: director.name,
+          directorImageUrl: imageUrl,
+        } as Omit<Director, 'directorId'>;
+      }),
+    };
+    await postDirectorsMutation.mutateAsync(directorData);
   };
 
   const handleBulkRegistration = async () => {
-    const validationErrors = validatePersons();
-    if (validationErrors.length > 0) {
+    if (!validatePersons()) {
       return;
     }
 
@@ -144,85 +215,24 @@ export default function BulkPersonRegistration() {
 
     try {
       // 배우와 감독을 분리
-      const casts = persons.filter((person) => person.role === 'cast');
-      const directors = persons.filter((person) => person.role === 'director');
+      const casts = registrationPersons.filter(
+        (person) => person.role === 'cast',
+      );
+      const directors = registrationPersons.filter(
+        (person) => person.role === 'director',
+      );
 
-      // 이미지 업로드 처리 - id와 함께 관리
-      const imageUploadMap = new Map<string, Promise<string>>();
-
-      // 배우 이미지 업로드
-      casts.forEach((cast) => {
-        if (cast.profileImageFile) {
-          const uploadPromise = uploadImagesMutation
-            .mutateAsync([cast.profileImageFile])
-            .then((response) => response.data.uploadedFileUrls[0]);
-          imageUploadMap.set(cast.id, uploadPromise);
-        } else {
-          imageUploadMap.set(cast.id, Promise.resolve(cast.profileImageUrl));
-        }
-      });
-
-      // 감독 이미지 업로드
-      directors.forEach((director) => {
-        if (director.profileImageFile) {
-          const uploadPromise = uploadImagesMutation
-            .mutateAsync([director.profileImageFile])
-            .then((response) => response.data.uploadedFileUrls[0]);
-          imageUploadMap.set(director.id, uploadPromise);
-        } else {
-          imageUploadMap.set(
-            director.id,
-            Promise.resolve(director.profileImageUrl),
-          );
-        }
-      });
-
-      // 모든 이미지 업로드 완료 대기
-      const uploadedImageUrls = await Promise.all(imageUploadMap.values());
-      const imageUrlMap = new Map<string, string>();
-
-      // id와 업로드된 URL을 매핑
-      const personIds = Array.from(imageUploadMap.keys());
-      personIds.forEach((id, index) => {
-        imageUrlMap.set(id, uploadedImageUrls[index]);
-      });
+      // 이미지 업로드 처리
+      const imageUrlMap = await uploadPersonImages(registrationPersons);
 
       // 배우 등록
-      if (casts.length > 0) {
-        const castData = {
-          casts: casts.map((cast) => {
-            // 이미지 파일이 있는 경우에만 업로드된 URL 사용, 없으면 빈 문자열
-            const imageUrl = cast.profileImageFile
-              ? imageUrlMap.get(cast.id) || ''
-              : '';
-            return {
-              castName: cast.name,
-              castImageUrl: imageUrl,
-            } as Omit<Cast, 'castId'>;
-          }),
-        };
-        await postCastsMutation.mutateAsync(castData);
-      }
+      await registerCasts(casts, imageUrlMap);
 
       // 감독 등록
-      if (directors.length > 0) {
-        const directorData = {
-          directors: directors.map((director) => {
-            // 이미지 파일이 있는 경우에만 업로드된 URL 사용, 없으면 빈 문자열
-            const imageUrl = director.profileImageFile
-              ? imageUrlMap.get(director.id) || ''
-              : '';
-            return {
-              directorName: director.name,
-              directorImageUrl: imageUrl,
-            } as Omit<Director, 'directorId'>;
-          }),
-        };
-        await postDirectorsMutation.mutateAsync(directorData);
-      }
+      await registerDirectors(directors, imageUrlMap);
 
       // 폼 초기화
-      setPersons([]);
+      setRegistrationPersons([]);
 
       showSimpleToast.success({ message: '인물 등록이 완료되었습니다.' });
     } catch {
@@ -252,7 +262,7 @@ export default function BulkPersonRegistration() {
 
       {/* 인물 목록 */}
       <div className="space-y-4">
-        {persons.map((person, index) => (
+        {registrationPersons.map((person, index) => (
           <Card key={person.id}>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -355,12 +365,12 @@ export default function BulkPersonRegistration() {
       </div>
 
       {/* 등록 버튼 */}
-      {persons.length > 0 && (
+      {registrationPersons.length > 0 && (
         <div className="flex justify-end gap-2 pt-4 border-t">
           <Button
             type="button"
             variant="outline"
-            onClick={() => setPersons([])}
+            onClick={() => setRegistrationPersons([])}
             disabled={isLoading}
           >
             전체 초기화
@@ -370,7 +380,7 @@ export default function BulkPersonRegistration() {
             onClick={handleBulkRegistration}
             disabled={
               isLoading ||
-              persons.length === 0 ||
+              registrationPersons.length === 0 ||
               uploadImagesMutation.isPending ||
               postCastsMutation.isPending ||
               postDirectorsMutation.isPending
@@ -385,13 +395,13 @@ export default function BulkPersonRegistration() {
                 등록 중...
               </>
             ) : (
-              `${persons.length}명 일괄 등록`
+              `${registrationPersons.length}명 일괄 등록`
             )}
           </Button>
         </div>
       )}
 
-      {persons.length === 0 && (
+      {registrationPersons.length === 0 && (
         <div className="text-center py-12 text-gray-500">
           <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
           <p>등록할 인물을 추가해주세요.</p>

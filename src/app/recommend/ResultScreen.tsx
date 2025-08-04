@@ -12,9 +12,11 @@ import {
   useRefreshCuratedContents,
 } from '@hooks/recommend/useGetCuratedContents';
 import { usePostCuratedContent } from '@hooks/recommend/usePostCuratedContents';
+import { useDeleteRecommendationCache } from '@hooks/recommend/useDeleteRecommendationCache';
 
 export const ResultScreen: FC = () => {
   const { forceRefresh } = useRefreshCuratedContents();
+  const { mutateAsync: clearCacheAsync } = useDeleteRecommendationCache();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const {
@@ -103,6 +105,7 @@ export const ResultScreen: FC = () => {
 
   const handleStartNewRecommendation = async () => {
     try {
+      await clearCacheAsync();
       await forceRefresh();
     } finally {
       setPhase('start');

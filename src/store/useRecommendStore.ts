@@ -224,7 +224,7 @@ export const useRecommendStore = create<RecommendState>()(
 
       shouldLoadMoreContent: () => {
         const { currentIndex } = get();
-        return currentIndex > 0 && currentIndex % 10 === 1;
+        return currentIndex > 0 && currentIndex % 10 === 9;
       },
 
       shouldShowFinish: () => {

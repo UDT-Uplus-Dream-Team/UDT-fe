@@ -1,8 +1,6 @@
-// src/hooks/recommend/useGetCuratedContents.ts
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 import { getCuratedContents } from '@lib/apis/recommend/getCuratedContents';
-import type { CuratedContentsResponse } from '@lib/apis/recommend/getCuratedContents';
 import { dummyMovies } from '@app/recommend/ContentList';
 
 // 글로벌 timestamp 상태 (간단한 상태 관리)
@@ -76,23 +74,19 @@ export const useRefreshCuratedContents = () => {
   };
 };
 
+// API 호출 함수 - 단순화된 에러 처리
 const fetchCuratedContentsWithFallback = async (): Promise<
   TicketComponent[]
 > => {
   try {
-    const timestamp = Date.now();
+    const data = await getCuratedContents();
 
-    const response: CuratedContentsResponse = await getCuratedContents();
-
-    if (response.success && response.data && response.data.length > 0) {
-      return response.data;
+    if (data && data.length > 0) {
+      return data;
     }
 
     // API 성공했지만 데이터가 없는 경우
-    console.warn(
-      `큐레이션 데이터가 없어서 더미 데이터 사용 (${timestamp}):`,
-      response.message,
-    );
+    console.warn('큐레이션 데이터가 없어서 더미 데이터 사용');
     return dummyMovies;
   } catch (error) {
     console.error('큐레이션 API 오류:', error);

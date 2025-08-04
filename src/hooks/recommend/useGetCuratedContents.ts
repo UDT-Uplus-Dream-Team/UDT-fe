@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 import { getCuratedContents } from '@lib/apis/recommend/getCuratedContents';
-import { dummyMovies } from '@app/recommend/ContentList';
 
 // 글로벌 timestamp 상태 (간단한 상태 관리)
 let currentTimestamp = Date.now();
@@ -86,11 +85,9 @@ const fetchCuratedContentsWithFallback = async (): Promise<
     }
 
     // API 성공했지만 데이터가 없는 경우
-    console.warn('큐레이션 데이터가 없어서 더미 데이터 사용');
-    return dummyMovies;
+    return [];
   } catch (error) {
     console.error('큐레이션 API 오류:', error);
-    // API 실패 시 fallback으로 더미 데이터 반환
-    return dummyMovies;
+    return [];
   }
 };

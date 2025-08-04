@@ -8,9 +8,7 @@ export const useInfiniteCastsSearch = (
   return useInfiniteQuery({
     queryKey: ['infiniteAdminCasts', initialParams],
     queryFn: ({ pageParam = '' }) =>
-      getCastsSearch({ ...initialParams, cursor: pageParam }).then(
-        (res) => res.data,
-      ),
+      getCastsSearch({ ...initialParams, cursor: pageParam }),
     getNextPageParam: (lastPage) =>
       lastPage.hasNext ? lastPage.nextCursor : undefined,
     initialPageParam: '',

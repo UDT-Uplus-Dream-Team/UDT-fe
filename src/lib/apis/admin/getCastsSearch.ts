@@ -7,7 +7,9 @@ import axiosInstance from '@lib/apis/axiosInstance';
  * @returns 출연진 목록, 다음 커서 및 hasNext 여부를 포함한 응답 객체
  */
 export const getCastsSearch = (params: AdminCastsGetRequest) => {
-  return axiosInstance.get<AdminCastsGetResponse>('/api/admin/casts', {
-    params,
-  });
+  return axiosInstance
+    .get<AdminCastsGetResponse>('/api/admin/casts', {
+      params,
+    })
+    .then((res) => res.data);
 };

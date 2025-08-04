@@ -10,7 +10,9 @@ import axiosInstance from '@lib/apis/axiosInstance';
  * @returns 감독 목록, 다음 커서 및 hasNext 여부를 포함한 응답 객체
  */
 export const getDirectorsSearch = (params: AdminDirectorsGetRequest) => {
-  return axiosInstance.get<AdminDirectorsGetResponse>('/api/admin/directors', {
-    params,
-  });
+  return axiosInstance
+    .get<AdminDirectorsGetResponse>('/api/admin/directors', {
+      params,
+    })
+    .then((res) => res.data);
 };

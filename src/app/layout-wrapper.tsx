@@ -33,11 +33,11 @@ export default function LayoutWrapper({
 
   return (
     // 외부 컨테이너 - 큰 화면에서 다른 배경색
-    <div className="w-full min-h-[100svh] bg-gray-100 flex justify-center overflow-hidden overscroll-y-none pointer-events-none">
+    <div className="w-full h-full bg-gray-100 flex justify-center overflow-hidden overscroll-y-none pointer-events-none">
       {/* 앱 컨테이너 - flexbox로 구조화 */}
       <div className="w-full min-h-[100svh] max-w-160 bg-gradient-to-b from-primary-900 via-purple-900 to-indigo-900 text-white flex flex-col relative pointer-events-auto">
         {/* 메인 콘텐츠 - 남은 공간 모두 사용 */}
-        <main className="h-full flex flex-col overflow-y-auto">
+        <main className="h-full w-full flex flex-col overflow-y-auto">
           <div
             style={{
               height: shouldHideBottomNavbar ? '100%' : 'calc(100% - 60px)',

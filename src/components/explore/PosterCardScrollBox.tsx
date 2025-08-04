@@ -16,7 +16,7 @@ import { X } from 'lucide-react';
 
 export interface PosterCardScrollBoxProps {
   BoxTitle: string;
-  BoxType: 'popular' | 'todayRecommend';
+  BoxType: 'popular' | 'todayRecommend' | 'platformPicks';
 }
 
 // 포스터를 모아놓은 스크롤 박스 컴포넌트 (여기는 x축으로 왼쪽/오른쪽 스크롤 가능)

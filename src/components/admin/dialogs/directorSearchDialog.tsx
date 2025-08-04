@@ -44,6 +44,17 @@ export default function DirectorSearchDialog({
     directorImageUrl: '',
   });
 
+  useEffect(() => {
+    return () => {
+      if (
+        newDirector.directorImageUrl &&
+        newDirector.directorImageUrl.startsWith('blob:')
+      ) {
+        URL.revokeObjectURL(newDirector.directorImageUrl);
+      }
+    };
+  }, []);
+
   // 무한 스크롤용 ref
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -197,6 +208,12 @@ export default function DirectorSearchDialog({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (
+        newDirector.directorImageUrl &&
+        newDirector.directorImageUrl.startsWith('blob:')
+      ) {
+        URL.revokeObjectURL(newDirector.directorImageUrl);
+      }
       setNewDirector({ ...newDirector, directorImageFile: file });
       const imageUrl = URL.createObjectURL(file);
       setNewDirector((prev) => ({ ...prev, directorImageUrl: imageUrl }));

@@ -35,7 +35,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full items-center justify-center relative overflow-hidden">
+    <div className="flex flex-col h-full w-full items-center justify-center relative overflow-y-auto">
       {/* Animated background stars */}
       <SparkleBackground />
 

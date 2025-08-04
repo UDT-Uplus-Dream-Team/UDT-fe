@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@components/ui/button';
-import { Ticket } from '@components/Ticket/Ticket';
+import { Ticket } from '@/components/Recommend/Ticket';
 import { MockMovies } from './moviedata';
 import Lottie from 'lottie-react';
 import upSwipeLottie from '@/assets/Lottie/Swipe Gesture Up.json';

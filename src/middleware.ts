@@ -25,14 +25,7 @@ interface ReissueResult {
 /* -------------------------------------------------------------------------- */
 /* 상수                                                                      */
 /* -------------------------------------------------------------------------- */
-const PUBLIC_PATHS = [
-  '/_next',
-  '/favicon.ico',
-  '/fonts',
-  '/images',
-  '/icons',
-  '/test',
-];
+const PUBLIC_PATHS = ['/_next', '/favicon.ico', '/fonts', '/images', '/icons'];
 
 const ROLE_RESTRICTIONS = {
   ROLE_GUEST: {

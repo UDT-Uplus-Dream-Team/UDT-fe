@@ -3,8 +3,6 @@ export function getPlatformLogo(platform: string): string | undefined {
   switch (platform.toLowerCase()) {
     case '넷플릭스':
       return '/images/ott/netflix.webp';
-    case '애플티비':
-      return '/images/ott/appleTv.webp';
     case '티빙':
       return '/images/ott/tving.webp';
     case '디즈니+':

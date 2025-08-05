@@ -119,13 +119,13 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
       [isAnimating, startDrag, isFlipped], // isFlipped 의존성 추가
     );
 
-    const handlePointerMove = useCallback(
-      (e: React.PointerEvent): void => {
-        if (!isDragging || isFlipped) return; // isFlipped 체크 추가
-        updateDragPosition(e.clientX, e.clientY);
-      },
-      [isDragging, updateDragPosition, isFlipped], // isFlipped 의존성 추가
-    );
+    // const handlePointerMove = useCallback(
+    //   (e: React.PointerEvent): void => {
+    //     if (!isDragging || isFlipped) return; // isFlipped 체크 추가
+    //     updateDragPosition(e.clientX, e.clientY);
+    //   },
+    //   [isDragging, updateDragPosition, isFlipped], // isFlipped 의존성 추가
+    // );
 
     const handlePointerUp = useCallback((): void => {
       if (!isDragging || isFlipped) return; // isFlipped 체크 추가
@@ -165,7 +165,7 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
     // transition 클래스 계산
     const getTransitionClass = () => {
       if (swipeDirection && isAnimating) {
-        return 'transition-transform duration-700 ease-out';
+        return 'transition-all duration-700 ease-out';
       }
       if (isDragging) {
         return '';
@@ -173,8 +173,43 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
       if (isSnapback) {
         return 'transition-all duration-300 ease-in';
       }
-      return '';
+      return 'transition-opacity duration-700';
     };
+
+    const getCurrentCardOpacity = () => {
+      if (swipeDirection && isAnimating) {
+        // 스와이프 마무리 시 opacity를 0으로 변경
+        return 'opacity-30';
+      }
+      return 'opacity-100';
+    };
+
+    useEffect(() => {
+      if (!isDragging) return;
+
+      // 전역 이벤트 리스너 추가 (드래그 중에만)
+      const handleGlobalPointerMove = (e: PointerEvent) => {
+        if (!isDragging || isFlipped) return;
+        updateDragPosition(e.clientX, e.clientY);
+      };
+
+      const handleGlobalPointerUp = () => {
+        if (!isDragging || isFlipped) return;
+        endDrag();
+      };
+
+      // 전역 이벤트 리스너 등록
+      document.addEventListener('pointermove', handleGlobalPointerMove);
+      document.addEventListener('pointerup', handleGlobalPointerUp);
+      document.addEventListener('pointercancel', handleGlobalPointerUp);
+
+      // 정리 함수
+      return () => {
+        document.removeEventListener('pointermove', handleGlobalPointerMove);
+        document.removeEventListener('pointerup', handleGlobalPointerUp);
+        document.removeEventListener('pointercancel', handleGlobalPointerUp);
+      };
+    }, [isDragging, updateDragPosition, endDrag, isFlipped]);
 
     return (
       <div
@@ -188,8 +223,6 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
           userSelect: 'none',
         }}
         onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -203,7 +236,7 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
 
         {/* 현재 카드 */}
         <div
-          className={`absolute inset-0 z-20 flex items-center justify-center ${getTransitionClass()}`}
+          className={`absolute inset-0 z-20 flex items-center justify-center ${getTransitionClass()} ${getCurrentCardOpacity()}`}
           style={{
             perspective: '1000px',
             transform: getCardTransform(),
@@ -278,10 +311,10 @@ export const SwipeContainer = forwardRef<SwipeHandle, SwipeContainerProps>(
           <div
             className={`absolute inset-0 z-10 flex items-center justify-center pointer-events-none transition-all ease-out ${
               isAnimating && swipeDirection
-                ? 'duration-200 opacity-100 scale-100'
+                ? 'duration-200 opacity-30 scale-100'
                 : isDragging
                   ? 'duration-200 opacity-60 scale-100'
-                  : 'duration-200 opacity-50 scale-100'
+                  : 'duration-200 opacity-0 scale-100'
             }`}
           >
             <Ticket

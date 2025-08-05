@@ -245,15 +245,18 @@ export default function AdminDashboard() {
             <ScrollArea className="h-[500px]">
               <div className="space-y-3 mb-3">
                 {allContents.map((content, idx) => (
-                  <ContentCard
-                    key={`${content.contentId}-${idx}`}
-                    content={content}
-                    onView={openDetailDialog}
-                    onEdit={openEditDialog}
-                    onDelete={handleDeleteContent}
-                  />
+                  <div key={content.contentId}>
+                    <ContentCard
+                      content={content}
+                      onView={openDetailDialog}
+                      onEdit={openEditDialog}
+                      onDelete={handleDeleteContent}
+                    />
+                    {idx === allContents.length - 8 && (
+                      <div ref={loadMoreRef} style={{ height: 1 }} />
+                    )}
+                  </div>
                 ))}
-                <div ref={loadMoreRef} style={{ height: 1 }} />
               </div>
             </ScrollArea>
             {isFetchingNextPage && (

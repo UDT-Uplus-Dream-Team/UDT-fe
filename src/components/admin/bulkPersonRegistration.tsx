@@ -180,9 +180,7 @@ export default function BulkPersonRegistration() {
 
     const castData = {
       casts: casts.map((cast) => {
-        const imageUrl = cast.profileImageFile
-          ? imageUrlMap.get(cast.id) || ''
-          : '';
+        const imageUrl = imageUrlMap.get(cast.id) || '';
         return {
           castName: cast.name,
           castImageUrl: imageUrl,
@@ -200,9 +198,7 @@ export default function BulkPersonRegistration() {
 
     const directorData = {
       directors: directors.map((director) => {
-        const imageUrl = director.profileImageFile
-          ? imageUrlMap.get(director.id) || ''
-          : '';
+        const imageUrl = imageUrlMap.get(director.id) || '';
         return {
           directorName: director.name,
           directorImageUrl: imageUrl,

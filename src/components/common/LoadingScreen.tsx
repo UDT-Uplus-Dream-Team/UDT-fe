@@ -1,7 +1,7 @@
 // components/LoadingScreen.tsx
 'use client';
 
-import SparkleBackground from '@/components/common/sparkle_background';
+import SparkleBackground from '@components/common/sparkle_background';
 import React from 'react';
 
 interface LoadingScreenProps {

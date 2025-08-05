@@ -51,7 +51,7 @@ export default function SurveyFlow() {
 
         // 3초 후 온보딩으로 자동 리다이렉트
         setTimeout(() => {
-          router.push('/onboarding');
+          window.location.href = '/onboarding';
         }, 3000);
       } catch (error) {
         const message =

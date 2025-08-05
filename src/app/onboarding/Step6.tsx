@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Ticket } from '@/components/Recommend/Ticket';
 import { showInteractiveToast } from '@components/common/Toast';
+import { toast } from 'sonner';
 import { MockMovies } from './moviedata';
 
 interface Step6Props {
@@ -34,6 +35,14 @@ export default function Step6({ onNext }: Step6Props) {
       });
     }
   }, [mounted, onNext]);
+
+  // 컴포넌트 언마운트 시 토스트 정리
+  useEffect(() => {
+    return () => {
+      // Step6을 벗어날 때 모든 토스트 dismiss
+      toast.dismiss();
+    };
+  }, []);
 
   if (!mounted) return null;
 

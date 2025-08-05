@@ -49,7 +49,7 @@ export default function Step4({ onNext }: StepProps4) {
           className="mt-4 px-8 py-4 text-sm md:text-lg font-semibold rounded-xl bg-white text-black hover:bg-white/90 transition"
           onClick={onNext}
         >
-          계속
+          다음
         </Button>
       </div>
     </div>

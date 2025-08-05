@@ -41,11 +41,11 @@ const ROLE_RESTRICTIONS = {
   },
   ROLE_USER: {
     allowed: [],
-    denied: ['/survey', '/admin'],
+    denied: ['/survey'],
   },
   ROLE_ADMIN: {
     allowed: [],
-    denied: ['/survey', '/onboarding'], // 슬래시 추가
+    denied: ['/survey'], // 슬래시 추가
   },
 } as const;
 

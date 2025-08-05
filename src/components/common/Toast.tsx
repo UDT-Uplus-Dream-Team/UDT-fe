@@ -171,7 +171,7 @@ export const showInteractiveToast = {
         <div
           className={[
             'flex flex-col gap-3',
-            'text-sm text-white rounded-xl border border-gray-200 p-4',
+            'text-sm text-gray-800 rounded-xl border border-gray-200 p-4',
             'bg-gray-100 shadow-lg',
             opts.className,
             'animate-enter',

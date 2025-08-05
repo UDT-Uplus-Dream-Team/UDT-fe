@@ -385,6 +385,7 @@ export default function CastSearchDialog({
                                       alt={cast.castName}
                                       width={48}
                                       height={48}
+                                      unoptimized
                                       className="w-12 h-12 rounded-full object-cover"
                                     />
                                   ) : (
@@ -495,6 +496,7 @@ export default function CastSearchDialog({
                         alt="미리보기"
                         width={64}
                         height={64}
+                        unoptimized
                         className="w-16 h-16 rounded-full object-cover"
                       />
                     </div>

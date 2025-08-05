@@ -27,7 +27,6 @@ const CATEGORY_SETS: Record<
     '왓챠',
     '티빙',
     '쿠팡플레이',
-    '애플티비',
   ]),
   countries: new Set([
     '한국',

@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { useRecommendStore } from '@store/useRecommendStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRefreshCuratedContents } from '@/hooks/recommend/useGetCuratedContents';
-import { LoadingScreen } from './LoadingScreen';
+import { LoadingScreen } from '../../components/common/LoadingScreen';
 
 export const FinishScreen: React.FC = () => {
   const { setPhase } = useRecommendStore();

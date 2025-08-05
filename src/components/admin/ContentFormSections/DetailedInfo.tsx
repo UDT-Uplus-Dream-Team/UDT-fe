@@ -34,6 +34,9 @@ export default function DetailedInfo({
   addCountry,
   removeCountry,
 }: DetailedInfoProps) {
+  const selectedCategory = formData.categories[0]?.categoryType || '';
+  const availableGenres = getGenresByCategory(selectedCategory);
+
   return (
     <Card>
       <CardHeader>
@@ -48,14 +51,18 @@ export default function DetailedInfo({
             <Input
               id="openDate"
               type="date"
-              value={formData.openDate?.split('T')[0] || ''}
+              value={
+                formData.openDate?.includes('T')
+                  ? formData.openDate.split('T')[0]
+                  : formData.openDate || ''
+              }
               onChange={(e) =>
                 updateFormData((prev) => ({
                   ...prev,
                   openDate: e.target.value,
                 }))
               }
-              className="dark:bg-gray-700 dark:text-black"
+              className="dark:bg-gray-700 dark:text-white"
             />
           </div>
           <div>
@@ -102,18 +109,15 @@ export default function DetailedInfo({
             value={formData.categories[0]?.categoryType || ''}
             onValueChange={(value) => {
               updateFormData((prev) => {
-                const updatedCategories = [...prev.categories];
-
-                if (updatedCategories[0]) {
-                  updatedCategories[0].categoryType = value;
-                  updatedCategories[0].genres = [];
-                } else {
-                  updatedCategories[0] = {
-                    categoryType: value,
-                    genres: [],
-                  };
-                }
-                return { ...prev, categories: updatedCategories };
+                return {
+                  ...prev,
+                  categories: [
+                    {
+                      categoryType: value,
+                      genres: [],
+                    },
+                  ],
+                };
               });
             }}
           >
@@ -138,38 +142,32 @@ export default function DetailedInfo({
           <div>
             <Label className="mb-3">장르 *</Label>
             <div className="flex flex-wrap gap-2 max-w-full">
-              {(() => {
-                const selectedCategory =
-                  formData.categories[0]?.categoryType || '';
-                const availableGenres = getGenresByCategory(selectedCategory);
+              {availableGenres.map((genre) => {
+                const isSelected =
+                  formData.categories[0]?.genres.includes(genre);
 
-                return availableGenres.map((genre) => {
-                  const isSelected =
-                    formData.categories[0]?.genres.includes(genre);
-
-                  return (
-                    <Badge
-                      key={genre}
-                      variant={isSelected ? 'default' : 'secondary'}
-                      className={`cursor-pointer select-none ${
-                        isSelected ? 'bg-blue-600 text-white' : ''
-                      }`}
-                      onClick={() =>
-                        isSelected ? removeGenre(genre) : addGenre(genre)
-                      }
-                    >
-                      {genre}
-                    </Badge>
-                  );
-                });
-              })()}
+                return (
+                  <Badge
+                    key={genre}
+                    variant={isSelected ? 'default' : 'secondary'}
+                    className={`cursor-pointer select-none ${
+                      isSelected ? 'bg-blue-600 text-white' : ''
+                    }`}
+                    onClick={() =>
+                      isSelected ? removeGenre(genre) : addGenre(genre)
+                    }
+                  >
+                    {genre}
+                  </Badge>
+                );
+              })}
             </div>
           </div>
         )}
 
         <div>
           <Label className="mb-3">제작 국가</Label>
-          <div className="flex flex-wrap gap-2 mb-5 ">
+          <div className="flex flex-wrap gap-2 mb-5">
             {COUNTRIES.map((country) => {
               const isSelected = formData.countries.includes(country);
 

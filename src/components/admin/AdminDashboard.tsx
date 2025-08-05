@@ -28,11 +28,19 @@ import { useGetContentDetail } from '@hooks/admin/useGetContentDetail';
 import { useMutationErrorToast } from '@hooks/useMutationErrorToast';
 import ContentForm from '@components/admin/ContentForm';
 import ContentCard from '@components/admin/ContentCard';
-import ContentChart from '@components/admin/ContentChart';
+import CategoryChart from '@/components/admin/CategoryChart';
 import ContentDetail from '@components/admin/ContentDetail';
 import SearchFilter from '@components/admin/SearchFilter';
+import { useGetCategoryMetrics } from '@hooks/admin/useGetCategoryMetrics';
 
 export default function AdminDashboard() {
+  // 카테고리 지표 조회
+  const {
+    data: categoryMetricsData,
+    isLoading: isMetricsLoading,
+    error: metricsError,
+  } = useGetCategoryMetrics();
+
   // 무한 스크롤용 필터 상태
   const size = 20;
   const [categoryType, setCategoryType] = useState<string>('');
@@ -181,7 +189,15 @@ export default function AdminDashboard() {
         {/* 콘텐츠 분포 차트 */}
         <div className="w-full flex justify-center">
           <div className="w-full max-w-5xl">
-            <ContentChart contents={allContents} />
+            {isMetricsLoading ? (
+              <div className="text-center py-4">차트를 불러오는 중...</div>
+            ) : metricsError || !categoryMetricsData ? (
+              <div className="text-center py-4">카테고리 지표 로드 실패</div>
+            ) : (
+              <CategoryChart
+                categoryMetrics={categoryMetricsData.categoryMetrics}
+              />
+            )}
           </div>
         </div>
 

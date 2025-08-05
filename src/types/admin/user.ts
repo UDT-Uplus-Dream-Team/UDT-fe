@@ -11,7 +11,7 @@ export interface User {
 }
 
 export interface CursorPageResponse<T> {
-  items: T[];
+  item: T[];
   hasNext: boolean;
   nextCursor: number | null;
 }

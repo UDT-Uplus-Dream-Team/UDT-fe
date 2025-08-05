@@ -31,7 +31,6 @@ export const PLATFORMS = [
   '왓챠',
   '티빙',
   '쿠팡플레이',
-  '애플티비',
 ] as const;
 
 export const GENRES = [

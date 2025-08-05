@@ -6,7 +6,6 @@ import {
   CirclePlus,
   Pencil,
   Trash,
-  MessageSquare,
   FolderCheck,
 } from 'lucide-react';
 
@@ -15,12 +14,16 @@ export type BatchRequestQueueKeys =
   | 'totalRegister'
   | 'totalUpdate'
   | 'totalDelete'
-  | 'totalFeedback'
   | 'total';
 export type BatchResultKeys = 'totalRead' | 'totalWrite' | 'totalSkip';
-export type BatchJobType = 'REGISTER' | 'UPDATE' | 'DELETE' | 'FEEDBACK';
+export type BatchJobType = 'REGISTER' | 'UPDATE' | 'DELETE';
 export type BatchResultStatus = 'COMPLETED' | 'PARTIAL_COMPLETED' | 'FAILED';
-export type BatchJobStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+export type BatchJobStatus =
+  | 'PENDING'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'INVALID';
 
 // 배치 결과 목록을 조회할 때 사용하는 type
 export interface BatchResult {
@@ -47,7 +50,6 @@ export interface BatchRequestQueueStatistics {
   totalRegister: number;
   totalUpdate: number;
   totalDelete: number;
-  totalFeedback: number;
 }
 
 // 배치 대기열 및 결과 확인하는 페이지에서 전체 현황을 볼 수 있는 카드 레이아웃의 props 타입
@@ -72,11 +74,6 @@ export const batchTopCardDataConfigMap: Record<
   totalRegister: { label: '콘텐츠 등록', color: '#60a5fa', icon: CirclePlus },
   totalUpdate: { label: '콘텐츠 수정', color: '#a78bfa', icon: Pencil },
   totalDelete: { label: '콘텐츠 삭제', color: '#fca5a5', icon: Trash },
-  totalFeedback: {
-    label: '사용자 피드백',
-    color: '#a78bfa',
-    icon: MessageSquare,
-  },
   total: { label: '전체', color: '#22d3ee', icon: FolderCheck },
 };
 
@@ -92,14 +89,13 @@ export const batchRequestQueueKeys: BatchRequestQueueKeys[] = [
   'totalRegister',
   'totalUpdate',
   'totalDelete',
-  'totalFeedback',
   'total',
 ];
 
 export interface GetBatchJobListParams {
   cursor: string | null; // optional for 첫 페이지
   size: number;
-  type: 'RESERVATION' | 'FAILED';
+  type: 'RESERVATION' | 'FAILED' | 'INVALID'; // 예약, 실패, 무효화된 배치 목록 조회
 }
 
 export interface GetBatchJobListResponse {
@@ -116,8 +112,11 @@ export interface GetBatchJobListResponse {
   hasNext: boolean;
 }
 
-// '배치 대기열' 페이지에서 해당 요청의 종류를 표현하기 위한 색상 설정
-export const requestTypeConfigInBatchRequestQueue = {
-  CANCEL: { label: '취소됨', color: 'bg-red-100 text-red-800' },
+// 배치 job 목록에서 사용하는 타입
+export const requestTypeConfigInBatchJobList = {
+  FAILED: { label: '실패', color: 'bg-red-100 text-red-800' },
+  INVALID: { label: '무효', color: 'bg-yellow-100 text-yellow-800' },
+  COMPLETED: { label: '성공', color: 'bg-green-100 text-green-800' },
   PENDING: { label: '대기중', color: 'bg-orange-100 text-orange-800' },
+  PROCESSING: { label: '처리중', color: 'bg-blue-100 text-blue-800' },
 };

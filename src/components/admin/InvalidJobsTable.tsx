@@ -21,21 +21,24 @@ import { BatchJobDetailDialog } from '@components/admin/BatchJobDetailDialog';
 import { useGetBatchJobList } from '@/hooks/admin/useGetBatchJobList';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { requestTypeConfigInBatchJobList } from '@type/admin/batch';
+import { useDeleteInvalidJobs } from '@hooks/admin/useDeleteInvalidJobs';
 
-// 배치 대기열에서 배치 목록을 보여주는 테이블
-export function FailedJobsTable() {
+// 배치 대기열에서 무효한 배치(INVALID) 목록을 보여주는 테이블
+export function InvalidJobsTable() {
   const [selectedJobType, setSelectedJobType] = useState<string>('전체');
   const [isDialogOpen, setIsDialogOpen] = useState(false); // 상세보기 모달 창 열기 위한 상태 관리
   const [selectedJobId, setSelectedJobId] = useState<number>(-1); // 상세보기 모달 창에 표시할 요청 정보 관리
   const observerRef = useRef<IntersectionObserver | null>(null); // 무한 스크롤 처리를 위한 Intersection Observer 설정
   const loadMoreRef = useRef<HTMLDivElement | null>(null); // 무한 스크롤 트리거용 요소 추적을 위한 ref
 
-  const batchJobListQuery = useGetBatchJobList({ type: 'FAILED' }); // 실패한 배치 목록 조회 훅
+  const batchJobListQuery = useGetBatchJobList({ type: 'INVALID' }); // 실패한 배치 목록 조회 훅
+  const { mutate: deleteInvalidJobs, isPending: isDeletingInvalidJobs } =
+    useDeleteInvalidJobs(); // 무효화된 배치 삭제 훅
 
   // 에러 토스트 띄우기
   useQueryErrorToast(
     batchJobListQuery,
-    '실패한 배치 목록 조회 중 오류가 발생했습니다.',
+    '무효화된 배치 목록 조회 중 오류가 발생했습니다.',
   );
 
   // batchJobListQuery에서 제공하는 객체 가져오기
@@ -90,7 +93,9 @@ export function FailedJobsTable() {
     <Card className="max-h-[600px] flex flex-col py-4 px-2">
       <CardHeader className="flex-shrink-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-bold">실패한 배치 목록</CardTitle>
+          <CardTitle className="text-lg font-bold">
+            무효화된 배치 목록
+          </CardTitle>
 
           {/* 필터 드롭다운 */}
           <div className="flex items-center gap-2">
@@ -114,6 +119,16 @@ export function FailedJobsTable() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+            {/* 삭제 버튼 */}
+            <Button
+              variant="destructive"
+              disabled={!filteredJobs || filteredJobs.length === 0}
+              className="ml-2"
+              // 실제 삭제 함수 연결
+              onClick={() => deleteInvalidJobs()}
+            >
+              {isDeletingInvalidJobs ? '삭제 중...' : '삭제하기'}
+            </Button>
           </div>
         </div>
       </CardHeader>
@@ -144,7 +159,7 @@ export function FailedJobsTable() {
         {status === 'success' &&
           (!filteredJobs || filteredJobs.length === 0) && (
             <div className="flex flex-1 flex-col justify-center items-center py-8 text-gray-400">
-              <span>조건에 맞는 실패한 배치 목록이 없습니다.</span>
+              <span>조건에 맞는 무효화된 배치 목록이 없습니다.</span>
               {/* 필터 초기화하는 버튼 하나 추가 */}
               <Button
                 size="sm"

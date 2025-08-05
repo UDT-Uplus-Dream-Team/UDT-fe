@@ -1,6 +1,7 @@
 import { BatchResultDashboardTable } from '@components/admin/BatchResultDashboardTable';
 import { FailedJobsTable } from '@components/admin/FailedJobsTable';
 import { BatchResultTopCardSection } from '@components/admin/BatchResultTopCardSection';
+import { InvalidJobsTable } from './InvalidJobsTable';
 
 // '배치 결과' 페이지
 export function BatchResultDashboard() {
@@ -14,6 +15,9 @@ export function BatchResultDashboard() {
 
       {/* 실패한 배치 job 목록을 보여주는 테이블 */}
       <FailedJobsTable />
+
+      {/* 무효화된 배치 job 목록을 보여주는 테이블 */}
+      <InvalidJobsTable />
     </div>
   );
 }

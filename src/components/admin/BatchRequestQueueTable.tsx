@@ -15,7 +15,7 @@ import {
 } from '@components/ui/table';
 import { Badge } from '@components/ui/badge';
 import { Button } from '@components/ui/button';
-import { requestTypeConfigInBatchRequestQueue } from '@/types/admin/batch';
+import { requestTypeConfigInBatchJobList } from '@type/admin/batch';
 import { Filter, ChevronDown } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BatchJobDetailDialog } from '@components/admin/BatchJobDetailDialog';
@@ -24,14 +24,13 @@ import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 
 // 배치 대기열에서 배치 목록을 보여주는 테이블
 export function BatchRequestQueueTable() {
-  const [selectedFilter, setSelectedFilter] = useState<string>('전체');
+  const [selectedJobType, setSelectedJobType] = useState<string>('전체');
   const [isDialogOpen, setIsDialogOpen] = useState(false); // 상세보기 모달 창 열기 위한 상태 관리
   const [selectedJobId, setSelectedJobId] = useState<number>(-1); // 상세보기 모달 창에 표시할 요청 정보 관리
   const observerRef = useRef<IntersectionObserver | null>(null); // 무한 스크롤 처리를 위한 Intersection Observer 설정
   const loadMoreRef = useRef<HTMLDivElement | null>(null); // 무한 스크롤 트리거용 요소 추적을 위한 ref
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState('전체');
 
-  const batchJobListQuery = useGetBatchJobList({ type: 'RESERVATION' });
+  const batchJobListQuery = useGetBatchJobList({ type: 'RESERVATION' }); // 배치 대기열 목록 조회 훅
 
   // 에러 토스트 띄우기
   useQueryErrorToast(
@@ -63,7 +62,7 @@ export function BatchRequestQueueTable() {
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const filterOptions = ['전체', 'REGISTER', 'UPDATE', 'DELETE', 'FEEDBACK']; // 필터링 옵션들
+  const jobTypeOptions = ['전체', 'REGISTER', 'UPDATE', 'DELETE']; // 필터링 옵션들
 
   // 필터링 된 요청 목록 반환
   const filteredJobs = useMemo(() => {
@@ -71,15 +70,12 @@ export function BatchRequestQueueTable() {
       .flatMap((page) => page.item)
       .filter((req) => {
         const typePass =
-          selectedFilter === '전체' || req.jobType === selectedFilter;
+          selectedJobType === '전체' || req.jobType === selectedJobType;
         const statusPass =
-          selectedStatusFilter === '전체' ||
-          requestTypeConfigInBatchRequestQueue[
-            req.status as keyof typeof requestTypeConfigInBatchRequestQueue
-          ].label === selectedStatusFilter;
+          selectedJobType === '전체' || req.jobType === selectedJobType; // 선택된 상태와 일치하는 요청만 필터링
         return typePass && statusPass;
       });
-  }, [selectedFilter, selectedStatusFilter, data]);
+  }, [selectedJobType, selectedJobType, data]);
 
   // "상세보기" 버튼을 눌렀을 경우 모달 창 열기
   const handleDetailClick = (requestId: number) => {
@@ -102,16 +98,16 @@ export function BatchRequestQueueTable() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2 bg-transparent">
                   <Filter className="h-4 w-4" />
-                  {selectedFilter}
+                  {selectedJobType}
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {filterOptions.map((option) => (
+                {jobTypeOptions.map((option) => (
                   <DropdownMenuItem
                     key={option}
-                    onClick={() => setSelectedFilter(option)}
-                    className={selectedFilter === option ? 'bg-accent' : ''}
+                    onClick={() => setSelectedJobType(option)}
+                    className={selectedJobType === option ? 'bg-accent' : ''}
                   >
                     {option}
                   </DropdownMenuItem>
@@ -155,8 +151,7 @@ export function BatchRequestQueueTable() {
                 variant="ghost"
                 className="mt-2"
                 onClick={() => {
-                  setSelectedFilter('전체');
-                  setSelectedStatusFilter('전체');
+                  setSelectedJobType('전체');
                 }}
               >
                 필터 초기화
@@ -191,14 +186,14 @@ export function BatchRequestQueueTable() {
                     <TableCell>
                       <Badge
                         className={`${
-                          requestTypeConfigInBatchRequestQueue[
-                            request.status as keyof typeof requestTypeConfigInBatchRequestQueue
+                          requestTypeConfigInBatchJobList[
+                            request.status as keyof typeof requestTypeConfigInBatchJobList
                           ].color
                         }`}
                       >
                         {
-                          requestTypeConfigInBatchRequestQueue[
-                            request.status as keyof typeof requestTypeConfigInBatchRequestQueue
+                          requestTypeConfigInBatchJobList[
+                            request.status as keyof typeof requestTypeConfigInBatchJobList
                           ].label
                         }
                       </Badge>

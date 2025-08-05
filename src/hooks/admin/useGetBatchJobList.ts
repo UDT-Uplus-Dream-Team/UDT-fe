@@ -8,7 +8,7 @@ export const useGetBatchJobList = ({
   size = 20,
   enabled = true,
 }: {
-  type: 'RESERVATION' | 'FAILED';
+  type: 'RESERVATION' | 'FAILED' | 'INVALID';
   size?: number;
   enabled?: boolean;
 }) => {

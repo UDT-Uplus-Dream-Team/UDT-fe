@@ -41,7 +41,7 @@ export default function CastInfo({
                 {cast.castImageUrl && (
                   <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
                     <Image
-                      src={cast.castImageUrl || '/placeholder.svg'}
+                      src={cast.castImageUrl}
                       alt={cast.castName || '출연진 이미지'}
                       fill
                       unoptimized

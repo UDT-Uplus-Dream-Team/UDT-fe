@@ -41,7 +41,7 @@ export default function DirectorInfo({
                 {director.directorImageUrl && (
                   <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
                     <Image
-                      src={director.directorImageUrl || '/placeholder.svg'}
+                      src={director.directorImageUrl}
                       alt={director.directorName || '감독 이미지'}
                       fill
                       unoptimized

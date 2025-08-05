@@ -148,10 +148,16 @@ export default function BulkPersonRegistration() {
       if (person.profileImageFile) {
         const uploadPromise = uploadImagesMutation
           .mutateAsync([person.profileImageFile])
-          .then((response) => response.data.uploadedFileUrls[0]);
+          .then((response) => response.data.uploadedFileUrls[0])
+          .catch(() => ''); // 업로드 실패 시 빈 문자열 반환
         imageUploadMap.set(person.id, uploadPromise);
       } else {
-        imageUploadMap.set(person.id, Promise.resolve(person.profileImageUrl));
+        // blob URL인 경우 빈 문자열로 설정
+        const imageUrl =
+          person.profileImageUrl && person.profileImageUrl.startsWith('blob:')
+            ? ''
+            : person.profileImageUrl;
+        imageUploadMap.set(person.id, Promise.resolve(imageUrl));
       }
     });
 

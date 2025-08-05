@@ -41,9 +41,20 @@ export default function AdminDashboard() {
     error: metricsError,
   } = useGetCategoryMetrics();
 
+  const [categoryType, setCategoryType] = useState<string>('');
+
+  const filteredCategoryCount =
+    categoryType && categoryType !== 'all'
+      ? (categoryMetricsData?.categoryMetrics.find(
+          (metric) => metric.categoryType === categoryType,
+        )?.count ?? 0)
+      : (categoryMetricsData?.categoryMetrics.reduce(
+          (sum, metric) => sum + metric.count,
+          0,
+        ) ?? 0);
+
   // 무한 스크롤용 필터 상태
   const size = 20;
-  const [categoryType, setCategoryType] = useState<string>('');
 
   // 무한 스크롤 쿼리
   const { data, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -210,7 +221,7 @@ export default function AdminDashboard() {
                   등록된 콘텐츠 목록
                 </CardTitle>
                 <CardDescription>
-                  전체 {allContents.length}개의 콘텐츠
+                  전체 {filteredCategoryCount}개의 콘텐츠
                 </CardDescription>
               </div>
               <Button

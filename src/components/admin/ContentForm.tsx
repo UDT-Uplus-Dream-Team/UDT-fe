@@ -16,7 +16,6 @@ import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 import { usePostUploadImages } from '@hooks/admin/usePostUploadImages';
 import ActorSearchDialog from '@components/admin/dialogs/actorSearchDialog';
 import DirectorSearchDialog from '@components/admin/dialogs/directorSearchDialog';
-import BulkPersonRegistration from './bulkPersonRegistration';
 
 // 분리된 컴포넌트들 import
 import BasicInfo from '@components/admin/ContentFormSections/BasicInfo';
@@ -24,6 +23,7 @@ import DetailedInfo from '@components/admin/ContentFormSections/DetailedInfo';
 import DirectorInfo from '@components/admin/ContentFormSections/DirectorInfo';
 import CastInfo from '@components/admin/ContentFormSections/CastInfo';
 import PlatformSection from '@components/admin/ContentFormSections/PlatformInfo';
+import BulkPersonRegistration from '@components/admin/bulkPersonRegistration';
 
 interface ContentFormProps {
   content?: ContentWithoutId;
@@ -240,11 +240,11 @@ export default function ContentForm({
   );
 
   const removeDirector = useCallback(
-    (directorToRemove: string) => {
+    (directorIdToRemove: number) => {
       updateFormData((prev) => ({
         ...prev,
         directors: prev.directors.filter(
-          (d) => d.directorName !== directorToRemove,
+          (d) => d.directorId !== directorIdToRemove,
         ),
       }));
     },
@@ -252,10 +252,10 @@ export default function ContentForm({
   );
 
   const removeCast = useCallback(
-    (castToRemove: string) => {
+    (castIdToRemove: number) => {
       updateFormData((prev) => ({
         ...prev,
-        casts: prev.casts.filter((c) => c.castName !== castToRemove),
+        casts: prev.casts.filter((c) => c.castId !== castIdToRemove),
       }));
     },
     [updateFormData],

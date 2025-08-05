@@ -9,7 +9,7 @@ import type { ContentWithoutId } from '@type/admin/Content';
 interface DirectorInfoProps {
   formData: ContentWithoutId;
   setIsDirectorSearchOpen: (open: boolean) => void;
-  removeDirector: (directorToRemove: string) => void;
+  removeDirector: (directorIdToRemove: number) => void;
 }
 
 export default function DirectorInfo({
@@ -45,7 +45,7 @@ export default function DirectorInfo({
                       alt={director.directorName || '감독 이미지'}
                       fill
                       unoptimized
-                      className="w-8 h-8 rounded-full object-cover"
+                      className="w-12 h-12 rounded-full object-cover"
                     />
                   </div>
                 )}
@@ -55,7 +55,7 @@ export default function DirectorInfo({
                 type="button"
                 className="cursor-pointer"
                 size="sm"
-                onClick={() => removeDirector(director.directorName)}
+                onClick={() => removeDirector(director.directorId)}
               >
                 <X className="h-4 w-4" />
               </Button>

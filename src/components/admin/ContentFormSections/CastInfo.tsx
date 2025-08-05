@@ -9,7 +9,7 @@ import type { ContentWithoutId } from '@type/admin/Content';
 interface CastInfoProps {
   formData: ContentWithoutId;
   setIsActorSearchOpen: (open: boolean) => void;
-  removeCast: (castToRemove: string) => void;
+  removeCast: (castIdToRemove: number) => void;
 }
 
 export default function CastInfo({
@@ -45,7 +45,7 @@ export default function CastInfo({
                       alt={cast.castName || '출연진 이미지'}
                       fill
                       unoptimized
-                      className="w-8 h-8 rounded-full object-cover"
+                      className="w-12 h-12 rounded-full object-cover"
                     />
                   </div>
                 )}
@@ -55,7 +55,7 @@ export default function CastInfo({
                 type="button"
                 className="cursor-pointer"
                 size="sm"
-                onClick={() => removeCast(cast.castName)}
+                onClick={() => removeCast(cast.castId)}
               >
                 <X className="h-4 w-4" />
               </Button>

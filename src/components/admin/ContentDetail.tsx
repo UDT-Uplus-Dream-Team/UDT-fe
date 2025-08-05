@@ -106,10 +106,32 @@ export default function ContentDetail({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-1 mb-5 min-h-[15px]">
-                      {content.directors.map((director, index) => (
-                        <div key={index} className="text-sm">
-                          {director}
+                    <div className="grid sm:grid-cols-1 gap-4 mb-5">
+                      {content.directors.map((director) => (
+                        <div
+                          key={director.directorId}
+                          className="flex items-center gap-3 p-3 border rounded-lg"
+                        >
+                          {director.directorImageUrl ? (
+                            <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+                              <Image
+                                src={director.directorImageUrl}
+                                alt={director.directorName || '출연진 이미지'}
+                                fill
+                                unoptimized
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                              <Users className="h-6 w-6 text-gray-400" />
+                            </div>
+                          )}
+                          <div>
+                            <div className="font-medium">
+                              {director.directorName}
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -165,9 +187,9 @@ export default function ContentDetail({
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-                    {content.casts.map((cast, index) => (
+                    {content.casts.map((cast) => (
                       <div
-                        key={index}
+                        key={cast.castId}
                         className="flex items-center gap-3 p-3 border rounded-lg"
                       >
                         {cast.castImageUrl ? (

@@ -1,6 +1,6 @@
 'use client';
 
-import { Ticket } from '@components/Ticket/Ticket';
+import { Ticket } from '@/components/Recommend/Ticket';
 import { Button } from '@components/ui/button';
 import { MockMovies } from './moviedata';
 

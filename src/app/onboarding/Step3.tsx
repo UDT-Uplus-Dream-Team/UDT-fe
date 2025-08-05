@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@components/ui/button';
-import { Ticket } from '@components/Ticket/Ticket';
+import { Ticket } from '@/components/Recommend/Ticket';
 import { MockMovies } from './moviedata';
 import Lottie from 'lottie-react';
 import upSwipeLottie from '@/assets/Lottie/Swipe Gesture Up.json';
@@ -21,7 +21,7 @@ export default function Step3({ onNext }: StepProps3) {
       </div>
 
       {/* 오버레이 */}
-      <div className="absolute inset-0 bg-black/50 z-20 flex flex-col items-center justify-center text-center px-6">
+      <div className="absolute inset-0 bg-black/50 z-20 flex flex-col h-full items-center justify-center text-center px-6">
         <div className="flex flex-col items-center gap-3 mb-6">
           <h2 className="text-xl md:text-2xl font-semibold leading-relaxed">
             관심없어...딱히 잘 모르겠다?
@@ -30,7 +30,7 @@ export default function Step3({ onNext }: StepProps3) {
             위로 쭉쭉 넘겨서 관심없음 처리해 주세요
           </p>
           <p className="mt-1 text-xs md:text-sm text-white/50">
-            (키보드 방향키는 <span className="font-semibold">아래</span>를
+            (키보드 방향키는 <span className="font-semibold">↑</span>를
             눌러주세요)
           </p>
         </div>

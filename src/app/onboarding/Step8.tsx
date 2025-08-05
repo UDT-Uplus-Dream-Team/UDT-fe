@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@components/ui/button';
-import { Ticket } from '@components/Ticket/Ticket';
+import { Ticket } from '@/components/Recommend/Ticket';
 import { MockMovies } from './moviedata';
 
 interface Step8Props {
@@ -36,7 +36,7 @@ export default function Step8({ onNext }: Step8Props) {
           <h2 className="text-lg md:text-xl font-semibold leading-relaxed">
             언제든지 마이페이지에서 <br />
             직접 고른 좋아요, 싫어요 컨텐츠와 <br />
-            저장한 컨텐츠 내역을 확인 할 수 있어요
+            저장한 컨텐츠 내역을 확인 할 수 있어요!
           </h2>
         </div>
 

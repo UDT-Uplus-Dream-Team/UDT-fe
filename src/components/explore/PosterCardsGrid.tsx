@@ -56,6 +56,8 @@ export const PosterCardsGrid = ({
     };
   }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
 
+  const triggerIndex = Math.max(contents.length - 8, 0); // 앞에서 8번째 카드에 ref
+
   return (
     <>
       {contents.length > 0 ? (
@@ -64,14 +66,12 @@ export const PosterCardsGrid = ({
             {contents.map((item, idx) => (
               <PosterCard
                 key={idx}
+                ref={idx === triggerIndex ? loadMoreRef : null}
                 title={item.title}
                 image={item.posterUrl}
                 onClick={() => handlePosterClick(item.contentId)}
               />
             ))}
-
-            {/* 무한스크롤 트리거용 빈 div */}
-            <div ref={loadMoreRef} className="col-span-3 h-1" />
 
             {/* 영화 상세 정보 BottomSheet (필요 시 pop-up) */}
             <Sheet

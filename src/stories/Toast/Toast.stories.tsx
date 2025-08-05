@@ -69,7 +69,7 @@ export const SimpleSuccess: ToastStory = {
     </Button>
   ),
   args: {
-    message: '성공 메시지입니다!',
+    message: '회원 가입 완료! 튜토리얼로 이동합니다...',
     duration: 4000,
     position: 'top-center',
     className: 'bg-success text-white',
@@ -151,10 +151,10 @@ export const InteractiveAction: ToastStory = {
     </Button>
   ),
   args: {
-    message: '회원님을 위한 컨텐츠를 확인하세요!',
+    message: '회원 가입이 완료되었습니다!\\n잠시 후 튜토리얼로 이동합니다...',
     duration: 8000,
     position: 'top-center',
-    className: 'bg-primary-0 text-gray-800 border border-gray-200',
+    className: 'bg-success text-white px-4 py-2 rounded-md mx-auto shadow-lg',
   },
 };
 
@@ -177,9 +177,9 @@ export const InteractiveConfirm: ToastStory = {
     </Button>
   ),
   args: {
-    message: '정말 확인하시겠습니까?',
+    message: '튜토리얼을 다시 확인하시겠습니까?',
     duration: Number.POSITIVE_INFINITY,
     position: 'top-center',
-    className: 'bg-white text-gray-800 border border-gray-200',
+    className: "bg-white shadow-lg border border-gray-200'",
   },
 };

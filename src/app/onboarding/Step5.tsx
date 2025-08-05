@@ -1,233 +1,67 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Ticket } from '@components/Ticket/Ticket';
+import { useState } from 'react';
+import { SwipeContainer } from '@components/Recommend/SwipeContainer';
+import { Button } from '@components/ui/button';
 import { MockMovies } from './moviedata';
-
 interface StepProps5 {
   onNext: () => void;
 }
 
-type SwipeDirection = 'left' | 'right' | 'up';
-type FeedbackType = 'liked' | 'unliked' | 'neutral';
-
 export default function Step5({ onNext }: StepProps5) {
-  // ── 상태 ─────────────────────────────────────────────────────────────
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [nextMovie, setNextMovie] = useState(
-    MockMovies.length > 1 ? MockMovies[1] : null,
-  );
   const [isFlipped, setIsFlipped] = useState(false);
-  const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(
-    null,
-  );
-  const [feedback, setFeedback] = useState<FeedbackType>('neutral');
-  const [isAnimating, setIsAnimating] = useState(false);
-  const startPoint = useRef<{ x: number; y: number } | null>(null);
 
-  const currentMovie = MockMovies[currentIndex];
-  const movieList = MockMovies.slice(0, 2);
+  // MockMovies를 무한 반복할 수 있도록 확장
+  const infiniteMovies = [...MockMovies, ...MockMovies, ...MockMovies]; // 3번 반복
 
-  // ── 스와이프 처리 ──────────────────────────────────────────────────
-  const handleSwipe = (
-    direction: SwipeDirection,
-    feedbackType?: FeedbackType,
-  ) => {
-    if (isAnimating || isFlipped) return;
-    setIsAnimating(true);
-    setSwipeDirection(direction);
-    if (feedbackType) setFeedback(feedbackType);
-    setIsFlipped(false);
-
-    // 애니메이션 → 인덱스 이동
-    setTimeout(() => {
-      setSwipeDirection(null);
-      setCurrentIndex((prev) => prev + 1);
-      setFeedback('neutral');
-    }, 700);
-
-    // 애니메이션 잠금 해제
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 1000);
-  };
-  // ── 다음페이지로
-  useEffect(() => {
-    if (currentIndex >= movieList.length) {
-      onNext(); // 다음 스텝으로
-    }
-  }, [currentIndex, onNext]);
-
-  useEffect(() => {
-    const nextIdx = currentIndex + 1;
-    setNextMovie(MockMovies[nextIdx] ?? null);
-  }, [currentIndex]);
-
-  // ── 키보드 스와이프 지원 ────────────────────────────────────────────
-  const handleKeyPress = (e: KeyboardEvent) => {
-    if (isAnimating) return;
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      handleSwipe('left', 'unliked');
-    }
-    if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      handleSwipe('right', 'liked');
-    }
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      handleSwipe('up');
-    }
-  };
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isAnimating]);
-
-  // ── 터치/마우스 시작 & 끝 처리 ────────────────────────────────────
-  const onPointerDown = (e: React.PointerEvent) => {
-    if (isAnimating) return;
-    startPoint.current = { x: e.clientX, y: e.clientY };
-  };
-  const onPointerUp = (e: React.PointerEvent) => {
-    if (!startPoint.current) return;
-    const dx = e.clientX - startPoint.current.x;
-    const dy = e.clientY - startPoint.current.y;
-    startPoint.current = null;
-    const absX = Math.abs(dx),
-      absY = Math.abs(dy),
-      threshold = 150;
-    if (absX > absY && absX > threshold) {
-      handleSwipe(dx > 0 ? 'right' : 'left', dx > 0 ? 'liked' : 'unliked');
-    } else if (dy < -threshold) {
-      handleSwipe('up');
-    }
+  // 스와이프 핸들러 - 카운트만 증가
+  const handleSwipe = () => {
+    setIsFlipped(false); // 스와이프 시 카드 뒤집기 해제
   };
 
-  // ── transform 클래스 계산 ──────────────────────────────────────────
-  const getCardTransform = () => {
-    if (!swipeDirection) return '';
-    switch (swipeDirection) {
-      case 'left':
-        return 'translate-x-[-100vw] rotate-[-30deg]';
-      case 'right':
-        return 'translate-x-[100vw] rotate-[30deg]';
-      case 'up':
-        return 'translate-y-[-100svh]';
-    }
+  // 카드 플립 토글 핸들러
+  const handleFlipToggle = (flipped: boolean) => {
+    setIsFlipped(flipped);
   };
-
-  // ── 렌더링 ─────────────────────────────────────────────────────────
-  if (currentIndex >= MockMovies.length) return null;
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-full w-full px-6 pt-4 text-white">
-      {/* 카드 위 문구 */}
-      <div className="text-center space-y-2 mb-2">
-        <p className="text-sm text-white/80">{`${currentIndex + 1} / 2`}</p>
-        <h2 className="text-xl font-semibold leading-relaxed">
+    <div className="relative flex flex-col items-center justify-center h-full w-full px-6 py-4 text-white">
+      {/* 상단 설명 */}
+      <div className="text-center space-y-2 mb-4 mt-4">
+        <h2 className="text-lg md:text-xl font-semibold leading-relaxed">
           직접 스와이프를 진행해 볼까요?
         </h2>
-      </div>
-
-      {/* 카드 아래 안내 문구 */}
-      <div className="text-center space-y-2 z-30">
-        <p className="text-sm text-white/80">
-          좌 우 아래 스와이프로 취향 반영이 가능해요 <br />
-          카드를 직접 끌거나 키보드 방향키로 직접 시도해 보세요!
+        <p className="text-sm text-white/70">
+          스와이프 및 상세 보기를 직접 사용해보세요!
         </p>
       </div>
 
-      <div className="my-8 flex w-full justify-center  relative">
-        <div
-          className={`relative w-[80svw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh] select-none ${
-            isFlipped ? 'touch-action-auto' : 'touch-action-none'
-          }`}
-          style={{
-            touchAction: isFlipped ? 'auto' : 'none',
-            WebkitTouchCallout: 'none',
-            WebkitUserSelect: 'none',
-            userSelect: 'none',
-          }}
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-          onPointerCancel={() => (startPoint.current = null)}
-        >
-          {/* 자리 채우기 티켓 */}
-          <div className="relative flex w-full aspect-[75/135] max-w-100 max-h-180 invisible pointer-events-none items-center justify-center">
-            <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
-          </div>
-
-          {/* 다음 카드 peek */}
-          {nextMovie && (
-            <div
-              className={`absolute inset-0 z-10 flex items-center justify-center opacity-50 blur-sm pointer-events-none transition-transform duration-200 ${
-                isAnimating
-                  ? 'translate-y-2 scale-90'
-                  : 'translate-y-0 scale-100'
-              }`}
-            >
-              <Ticket movie={nextMovie} variant="initial" feedback="neutral" />
-            </div>
-          )}
-
-          {/* 현재 카드 */}
-          <div
-            className={`absolute inset-0 z-20 flex items-center justify-center transition-transform ${
-              swipeDirection
-                ? `duration-700 ease-in ${getCardTransform()}`
-                : `duration-100 ease-out ${
-                    isAnimating
-                      ? 'scale-90 translate-y-2 opacity-50 blur-sm'
-                      : 'scale-100 translate-y-0 opacity-100'
-                  }`
-            }`}
-            style={{ perspective: '1000px' }}
-          >
-            <div
-              className={`relative w-full h-full transition-opacity duration-300 ${
-                isAnimating ? 'opacity-0' : 'opacity-100'
-              }`}
-            >
-              <div
-                className="relative w-full h-full"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  transition: 'transform 500ms linear',
-                  transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                }}
-              >
-                {/* Front */}
-                <div
-                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
-                    isFlipped ? 'opacity-0' : 'opacity-100'
-                  }`}
-                  style={{ backfaceVisibility: 'hidden' }}
-                >
-                  <Ticket
-                    movie={currentMovie}
-                    variant="initial"
-                    feedback={feedback}
-                  />
-                </div>
-                {/* Back */}
-                <div
-                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
-                    isFlipped ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    transform: 'rotateY(180deg)',
-                    pointerEvents: isFlipped ? 'auto' : 'none',
-                    zIndex: isFlipped ? 30 : 10,
-                  }}
-                >
-                  <Ticket movie={currentMovie} variant="detail" />
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* SwipeContainer 영역 */}
+      <div className="flex w-[80%] h-[60%] max-h-170 max-w-100 min-w-70 min-h-110 justify-center items-center">
+        <div className="w-full h-full">
+          <SwipeContainer
+            items={infiniteMovies}
+            onSwipe={handleSwipe}
+            enableKeyboard={true}
+            isFlipped={isFlipped}
+            onFlipToggle={handleFlipToggle}
+          />
         </div>
+      </div>
+
+      {/* 하단 안내 및 버튼 */}
+      <div className="text-center space-y-4 mt-4">
+        <p className="text-xs text-white/60">
+          키보드 방향키(←, →, ↑)로도 조작 가능합니다
+        </p>
+
+        <Button
+          variant="default"
+          className="px-8 py-4 text-sm md:text-lg font-semibold rounded-xl bg-white text-black hover:bg-white/90 transition"
+          onClick={onNext}
+        >
+          계속하기
+        </Button>
       </div>
     </div>
   );

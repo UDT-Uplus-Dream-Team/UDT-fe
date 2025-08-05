@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Heart, X } from 'lucide-react';
+import { Smile, Frown, Meh } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@components/ui/card';
 import { Badge } from '@components/ui/badge';
 import { TicketComponent } from '@type/recommend/TicketComponent';
@@ -9,7 +9,7 @@ import { CircleOption } from '@components/common/circleOption';
 
 type TicketProps = {
   movie: TicketComponent;
-  feedback?: 'liked' | 'unliked' | 'neutral';
+  feedback?: 'liked' | 'unliked' | 'uninterested' | 'neutral';
   variant: 'initial' | 'detail' | 'result';
 };
 
@@ -36,6 +36,14 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
     if (isNaN(date.getTime())) return fallback;
 
     return date.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  };
+
+  // 플랫폼 버튼 클릭 핸들러
+  const handlePlatformClick = (platformIndex: number) => {
+    const watchUrl = movie.watchUrls?.[platformIndex];
+    if (watchUrl) {
+      window.open(watchUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   //카드 크기 고정을 위한 값지정
@@ -92,16 +100,23 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
               <div className="space-y-2">
                 <h4 className="font-medium text-sm md:text-lg">플랫폼</h4>
                 <div className="flex flex-wrap gap-2">
-                  {movie.platforms.map((platformLabel) => {
+                  {movie.platforms.map((platformLabel, index) => {
                     const imageSrc = getPlatformLogo(platformLabel);
+                    const hasWatchUrl = movie.watchUrls?.[index];
+
                     return imageSrc ? (
                       <CircleOption
-                        key={platformLabel}
+                        key={`${platformLabel}-${index}`}
                         label={platformLabel}
                         imageSrc={imageSrc}
                         size="sm"
-                        onClick={() => {}}
+                        onClick={() => handlePlatformClick(index)}
                         showLabel={false}
+                        className={
+                          hasWatchUrl
+                            ? 'cursor-pointer hover:scale-105 transition-transform'
+                            : 'cursor-default opacity-60'
+                        }
                       />
                     ) : null;
                   })}
@@ -255,22 +270,35 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
           {feedback === 'liked' && (
             <div className="absolute inset-0 z-20 flex justify-start items-center bg-like/70">
               <div className="p-4 flex items-center gap-2 text-white">
-                <Heart className="w-6 h-6 fill-current" />
+                <Smile className="w-8 h-8 stroke-current" strokeWidth={2.5} />
                 <div className="flex flex-col">
                   <span className="font-bold text-lg">좋아요</span>
-                  <span className="text-xs">이런 컨텐츠 보고 싶어요!</span>
+                  <span className="text-md">이런 컨텐츠 보고 싶어요!</span>
                 </div>
               </div>
             </div>
           )}
           {feedback === 'unliked' && (
-            <div className="absolute inset-0 z-20 flex justify-end items-center bg-dislike/50">
+            <div className="absolute inset-0 z-20 flex justify-end items-center bg-destructive/30">
               <div className="p-4 flex items-center gap-2 text-white">
                 <div className="flex flex-col text-right">
                   <span className="font-bold text-lg">싫어요</span>
-                  <span className="text-xs">이런 컨텐츠는 별로예요</span>
+                  <span className="text-md">이런 컨텐츠는 별로예요..</span>
                 </div>
-                <X className="w-6 h-6 fill-current" />
+                <Frown className="w-8 h-8 stroke-current" strokeWidth={2.5} />
+              </div>
+            </div>
+          )}
+          {feedback === 'uninterested' && (
+            <div className="absolute inset-0 z-20 flex justify-center items-end bg-dislike/70">
+              <div className="p-4 flex flex-col items-center text-white mb-8">
+                <div className="flex items-center gap-2 mb-1">
+                  <Meh className="w-8 h-8 stroke-current" strokeWidth={2.5} />
+                  <span className="font-bold text-xl">관심없음</span>
+                </div>
+                <span className="text-md text-center">
+                  다른 콘텐츠 볼래요..
+                </span>
               </div>
             </div>
           )}

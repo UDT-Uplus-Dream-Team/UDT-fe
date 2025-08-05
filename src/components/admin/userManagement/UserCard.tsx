@@ -16,18 +16,29 @@ interface UserCardProps {
 }
 
 const getRoleBadge = (role: string) => {
-  if (role === 'USER') {
-    return {
-      label: '정회원',
-      className: 'bg-green-100 text-green-700 hover:bg-green-100',
-    };
+  switch (role) {
+    case 'ROLE_USER':
+      return {
+        label: '정회원',
+        className: 'bg-green-100 text-green-700 hover:bg-green-100',
+      };
+    case 'ROLE_GUEST':
+      return {
+        label: '임시회원',
+        className: 'bg-gray-200 text-gray-600 hover:bg-gray-200',
+      };
+    case 'ROLE_ADMIN':
+      return {
+        label: '관리자',
+        className: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100',
+      };
+    default:
+      return {
+        label: '알 수 없음',
+        className: 'bg-red-100 text-red-700 hover:bg-red-100',
+      };
   }
-  return {
-    label: '임시회원',
-    className: 'bg-gray-200 text-gray-600 hover:bg-gray-200',
-  };
 };
-
 export default function UserCard({ user, onView }: UserCardProps) {
   const { label, className } = getRoleBadge(user.userRole);
   return (

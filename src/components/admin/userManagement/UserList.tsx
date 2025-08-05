@@ -43,9 +43,11 @@ export default function UserList({
 
       <CardContent>
         <div className="space-y-4">
-          {users.map((user) => (
-            <UserCard key={user.id} user={user} onView={onUserSelect} />
-          ))}
+          {users
+            .filter((user): user is User => user !== undefined && user !== null)
+            .map((user) => (
+              <UserCard key={user.id} user={user} onView={onUserSelect} />
+            ))}
           <div ref={loadMoreRef} style={{ height: 1 }} />
         </div>
 

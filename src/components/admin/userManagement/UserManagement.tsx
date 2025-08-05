@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import UserDetailModal from '@components/admin/userManagement/UserDetailModal';
 import UserList from '@components/admin/userManagement/UserList';
-import { useInfiniteMockUsers } from '@hooks/admin/useInfiniteScroll';
+import { useInfiniteUsers } from '@hooks/admin/useInfiniteScroll';
 import { Label } from '@components/ui/label';
 import { Input } from '@components/ui/input';
 import { User } from '@type/admin/user';
@@ -15,9 +15,31 @@ export default function UserManagement() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
 
-  //나중에 목데이터가 아닌 실제 무한 스트롤로 변경 필요
-  const { users, isLoading, hasNextPage, loadMoreRef } =
-    useInfiniteMockUsers(searchKeyword);
+  const {
+    users,
+    isLoading,
+    isFetching,
+    hasNextPage,
+    loadMoreRef,
+    fetchNextPage,
+  } = useInfiniteUsers(searchKeyword);
+
+  useEffect(() => {
+    if (!hasNextPage || isFetching) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        fetchNextPage();
+      }
+    });
+
+    const el = loadMoreRef.current;
+    if (el) observer.observe(el);
+
+    return () => {
+      if (el) observer.unobserve(el);
+    };
+  }, [hasNextPage, isFetching, fetchNextPage]);
 
   const handleUserSelect = useCallback((user: User) => {
     setSelectedUserId(user.id);

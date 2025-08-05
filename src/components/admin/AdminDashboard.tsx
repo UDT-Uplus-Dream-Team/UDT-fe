@@ -222,7 +222,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* 검색 및 필터 */}
-            <div className="mt-4">
+            <div className="mt-1">
               <SearchFilter
                 filterType={categoryType}
                 onFilterChange={handleFilterChange}
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
           </CardHeader>
 
           <CardContent>
-            <ScrollArea className="h-96">
+            <ScrollArea className="h-[500px]">
               <div className="space-y-3 mb-3">
                 {allContents.map((content, idx) => (
                   <ContentCard

@@ -116,7 +116,7 @@ export default function ContentDetail({
                             <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
                               <Image
                                 src={director.directorImageUrl}
-                                alt={director.directorName || '출연진 이미지'}
+                                alt={director.directorName || '감독 이미지'}
                                 fill
                                 unoptimized
                                 className="object-cover"

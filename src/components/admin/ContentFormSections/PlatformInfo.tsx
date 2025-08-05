@@ -68,7 +68,7 @@ export default function PlatformSection({
             placeholder="시청 URL"
           />
         </div>
-        <div className="flex items-center space-x-2 mb-3"></div>
+
         <Button
           type="button"
           onClick={addPlatform}
@@ -80,7 +80,7 @@ export default function PlatformSection({
         <div className="space-y-2">
           {formData.platforms.map((platform, index) => (
             <div
-              key={index}
+              key={`${platform.platformType}-${platform.watchUrl}`}
               className="flex items-center justify-between p-2 border rounded"
             >
               <div>

@@ -79,11 +79,7 @@ export default function BasicInfo({
               }
             >
               <SelectTrigger className="cursor-pointer">
-                {formData.rating ? (
-                  <span>{formData.rating}</span>
-                ) : (
-                  <SelectValue placeholder="관람등급 선택" />
-                )}
+                <SelectValue placeholder="관람등급 선택" />
               </SelectTrigger>
               <SelectContent>
                 {RATING_OPTIONS.map((rating) => (

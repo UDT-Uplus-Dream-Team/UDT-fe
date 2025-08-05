@@ -1,12 +1,13 @@
-import { BatchTopCardLayout } from '@components/admin/BatchTopCardLayout';
-import { BatchResultDashboardTable } from './BatchResultDashboardTable';
-import { FailedJobsTable } from './FailedJobsTable';
+import { BatchResultDashboardTable } from '@components/admin/BatchResultDashboardTable';
+import { FailedJobsTable } from '@components/admin/FailedJobsTable';
+import { BatchResultTopCardSection } from '@components/admin/BatchResultTopCardSection';
 
+// '배치 결과' 페이지
 export function BatchResultDashboard() {
   return (
     <div className="space-y-6">
-      {/* 상단의 카드 레이아웃(요청 대기열 관련 수치 정보 표시) */}
-      <BatchTopCardLayout title="배치 결과 전체 현황" />
+      {/* 상단의 카드 레이아웃(배치 결과 관련 수치 정보 표시) */}
+      <BatchResultTopCardSection />
 
       {/* 각 배치 ID에 대한 결과를 보여주는 테이블 */}
       <BatchResultDashboardTable />

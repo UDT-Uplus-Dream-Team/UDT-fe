@@ -13,36 +13,73 @@ import {
   TableHeader,
   TableRow,
 } from '@components/ui/table';
+import { Badge } from '@components/ui/badge';
 import { Button } from '@components/ui/button';
+import { requestTypeConfigInBatchRequestQueue } from '@/types/admin/batch';
 import { Filter, ChevronDown } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { mockRequestsInBatchRequestQueue } from '@/types/admin/batch';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BatchJobDetailDialog } from '@components/admin/BatchJobDetailDialog';
+import { useGetBatchJobList } from '@/hooks/admin/useGetBatchJobList';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 
-// 실패한 배치 job 목록을 보여주는 테이블
+// 배치 대기열에서 배치 목록을 보여주는 테이블
 export function FailedJobsTable() {
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState('전체');
+  const [selectedFilter, setSelectedFilter] = useState<string>('전체');
   const [isDialogOpen, setIsDialogOpen] = useState(false); // 상세보기 모달 창 열기 위한 상태 관리
   const [selectedJobId, setSelectedJobId] = useState<number>(-1); // 상세보기 모달 창에 표시할 요청 정보 관리
+  const observerRef = useRef<IntersectionObserver | null>(null); // 무한 스크롤 처리를 위한 Intersection Observer 설정
+  const loadMoreRef = useRef<HTMLDivElement | null>(null); // 무한 스크롤 트리거용 요소 추적을 위한 ref
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState('전체');
 
-  const statusFilterOptions = [
-    '전체',
-    '콘텐츠 등록',
-    '콘텐츠 수정',
-    '콘텐츠 삭제',
-    '사용자 피드백',
-  ];
+  const batchJobListQuery = useGetBatchJobList({ type: 'FAILED' });
 
-  const filteredRequests = useMemo(
-    // 필터링 된 요청 목록 반환
-    () =>
-      selectedStatusFilter === '전체'
-        ? mockRequestsInBatchRequestQueue
-        : mockRequestsInBatchRequestQueue.filter(
-            (req) => req.title === selectedStatusFilter,
-          ),
-    [selectedStatusFilter, mockRequestsInBatchRequestQueue],
+  // 에러 토스트 띄우기
+  useQueryErrorToast(
+    batchJobListQuery,
+    '실패한 배치 목록 조회 중 오류가 발생했습니다.',
   );
+
+  // batchJobListQuery에서 제공하는 객체 가져오기
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+    batchJobListQuery;
+
+  // 무한 스크롤 처리
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
+
+    // 기존 observer 해제
+    observerRef.current?.disconnect();
+
+    observerRef.current = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    });
+
+    observerRef.current.observe(loadMoreRef.current);
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const filterOptions = ['전체', 'REGISTER', 'UPDATE', 'DELETE', 'FEEDBACK']; // 필터링 옵션들
+
+  // 필터링 된 요청 목록 반환
+  const filteredJobs = useMemo(() => {
+    return data?.pages
+      .flatMap((page) => page.item)
+      .filter((req) => {
+        const typePass =
+          selectedFilter === '전체' || req.jobType === selectedFilter;
+        const statusPass =
+          selectedStatusFilter === '전체' ||
+          requestTypeConfigInBatchRequestQueue[
+            req.status as keyof typeof requestTypeConfigInBatchRequestQueue
+          ].label === selectedStatusFilter;
+        return typePass && statusPass;
+      });
+  }, [selectedFilter, selectedStatusFilter, data]);
 
   // "상세보기" 버튼을 눌렀을 경우 모달 창 열기
   const handleDetailClick = (requestId: number) => {
@@ -54,10 +91,10 @@ export function FailedJobsTable() {
 
   return (
     // 요청 목록 테이블
-    <Card className="h-[600px] flex flex-col py-4 px-2">
+    <Card className="max-h-[600px] flex flex-col py-4 px-2">
       <CardHeader className="flex-shrink-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-bold">실패한 요청 목록</CardTitle>
+          <CardTitle className="text-lg font-bold">실패한 배치 목록</CardTitle>
 
           {/* 필터 드롭다운 */}
           <div className="flex items-center gap-2">
@@ -65,18 +102,16 @@ export function FailedJobsTable() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2 bg-transparent">
                   <Filter className="h-4 w-4" />
-                  {selectedStatusFilter}
+                  {selectedFilter}
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {statusFilterOptions.map((option) => (
+                {filterOptions.map((option) => (
                   <DropdownMenuItem
                     key={option}
-                    onClick={() => setSelectedStatusFilter(option)}
-                    className={
-                      selectedStatusFilter === option ? 'bg-accent' : ''
-                    }
+                    onClick={() => setSelectedFilter(option)}
+                    className={selectedFilter === option ? 'bg-accent' : ''}
                   >
                     {option}
                   </DropdownMenuItem>
@@ -87,49 +122,110 @@ export function FailedJobsTable() {
         </div>
       </CardHeader>
       <CardContent className="flex-1 min-h-0 overflow-y-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="sticky top-0 z-10 bg-white">
-              <TableHead>요청 ID</TableHead>
-              <TableHead>요청 타입</TableHead>
-              <TableHead>요청자</TableHead>
-              <TableHead>생성 시간</TableHead>
-              <TableHead>실패 시각</TableHead>
-              <TableHead>상세보기</TableHead>
-              <TableHead>재시도</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredRequests.map((request) => {
-              return (
-                <TableRow key={request.logId}>
-                  <TableCell className="font-medium">{request.logId}</TableCell>
-                  <TableCell>{request.title}</TableCell>
-                  <TableCell>{request.memberName}</TableCell>
-                  <TableCell>{request.generateTime}</TableCell>
-                  <TableCell>{request.generateTime}</TableCell>
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      className="rounded-full w-16 h-full p-1 bg-gray-400 opacity-80 text-white cursor-pointer"
-                      onClick={() => handleDetailClick(request.logId)}
-                    >
-                      상세보기
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      className="rounded-full w-16 h-full p-1 bg-blue-400 opacity-80 text-white cursor-pointer"
-                    >
-                      재시도
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+        {/* 1. 로딩 중 */}
+        {status === 'pending' && (
+          <div className="flex flex-1 justify-center items-center py-8 text-gray-400">
+            불러오는 중입니다...
+          </div>
+        )}
+
+        {/* 2. 에러 */}
+        {status === 'error' && (
+          <div className="flex flex-1 justify-center items-center py-8 text-red-500">
+            데이터 조회 중 오류가 발생했습니다
+            <Button
+              size="sm"
+              variant="outline"
+              className="ml-4"
+              onClick={() => batchJobListQuery.refetch()}
+            >
+              재시도
+            </Button>
+          </div>
+        )}
+
+        {/* 3. 빈 목록 (로딩/에러가 아닐 때만) */}
+        {status === 'success' &&
+          (!filteredJobs || filteredJobs.length === 0) && (
+            <div className="flex flex-1 flex-col justify-center items-center py-8 text-gray-400">
+              <span>조건에 맞는 배치 대기열이 없습니다.</span>
+              {/* 필터 초기화하는 버튼 하나 추가 */}
+              <Button
+                size="sm"
+                variant="ghost"
+                className="mt-2"
+                onClick={() => {
+                  setSelectedFilter('전체');
+                  setSelectedStatusFilter('전체');
+                }}
+              >
+                필터 초기화
+              </Button>
+            </div>
+          )}
+
+        {/* 4. 정상일 때 */}
+        {status === 'success' && filteredJobs && filteredJobs.length > 0 && (
+          <Table>
+            <TableHeader>
+              <TableRow className="sticky top-0 z-10 bg-white">
+                <TableHead>요청 ID</TableHead>
+                <TableHead>요청 타입</TableHead>
+                <TableHead>요청자</TableHead>
+                <TableHead>생성 시간</TableHead>
+                <TableHead>실패 시각</TableHead>
+                <TableHead>상태</TableHead>
+                <TableHead>상세보기</TableHead>
+                <TableHead>처리</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredJobs?.map((request) => {
+                return (
+                  <TableRow key={request.id}>
+                    <TableCell className="font-medium">{request.id}</TableCell>
+                    <TableCell>{request.jobType}</TableCell>
+                    <TableCell>{request.memberId}</TableCell>
+                    <TableCell>{request.createdAt}</TableCell>
+                    <TableCell>{request.finishedAt}</TableCell>
+                    <TableCell>
+                      <Badge
+                        className={`${
+                          requestTypeConfigInBatchRequestQueue[
+                            request.status as keyof typeof requestTypeConfigInBatchRequestQueue
+                          ].color
+                        }`}
+                      >
+                        {
+                          requestTypeConfigInBatchRequestQueue[
+                            request.status as keyof typeof requestTypeConfigInBatchRequestQueue
+                          ].label
+                        }
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        className="rounded-full w-16 h-full p-1 bg-gray-400 opacity-80 text-white cursor-pointer"
+                        onClick={() => handleDetailClick(request.id)}
+                      >
+                        상세보기
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        className="rounded-full w-16 h-full p-1 bg-red-600 opacity-80 text-white cursor-pointer"
+                      >
+                        취소
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
 
       {/* 상세보기를 눌렀을 경우 모달 창 열기 */}

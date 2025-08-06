@@ -6,6 +6,7 @@ import Step2 from '@components/survey/Step2';
 import SurveyComplete from '@components/survey/SurveyComplete';
 import { postSurvey } from '@lib/apis/survey/postSurvey';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
+import { showSimpleToast } from '@components/common/Toast';
 import { useSurveyStore } from '@store/useSurveyStore';
 import { useEffect } from 'react';
 import { Button } from '@components/ui/button';
@@ -39,7 +40,19 @@ export default function SurveyFlow() {
     } else {
       try {
         await postSurvey({ platforms, genres, contentIds });
-        goToStep(3);
+
+        // 성공 토스트 표시
+        showSimpleToast.success({
+          message: '회원 가입 완료! 튜토리얼로 이동합니다...',
+          duration: 3000,
+          position: 'top-center',
+          className: 'bg-success text-white px-4 py-2 rounded-md mx-auto',
+        });
+
+        // 3초 후 온보딩으로 자동 리다이렉트
+        setTimeout(() => {
+          window.location.href = '/onboarding';
+        }, 3000);
       } catch (error) {
         const message =
           error instanceof Error && error.message

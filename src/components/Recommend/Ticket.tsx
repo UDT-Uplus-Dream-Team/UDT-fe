@@ -38,6 +38,14 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
     return date.toISOString().slice(0, 10); // 'YYYY-MM-DD'
   };
 
+  // 플랫폼 버튼 클릭 핸들러
+  const handlePlatformClick = (platformIndex: number) => {
+    const watchUrl = movie.watchUrls?.[platformIndex];
+    if (watchUrl) {
+      window.open(watchUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   //카드 크기 고정을 위한 값지정
   const cardBaseClass =
     'flex flex-col min-w-[280px] min-h-[440px] max-w-[400px] max-h-[680px] w-full h-full border-none rounded-2xl overflow-hidden';
@@ -92,16 +100,23 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
               <div className="space-y-2">
                 <h4 className="font-medium text-sm md:text-lg">플랫폼</h4>
                 <div className="flex flex-wrap gap-2">
-                  {movie.platforms.map((platformLabel) => {
+                  {movie.platforms.map((platformLabel, index) => {
                     const imageSrc = getPlatformLogo(platformLabel);
+                    const hasWatchUrl = movie.watchUrls?.[index];
+
                     return imageSrc ? (
                       <CircleOption
-                        key={platformLabel}
+                        key={`${platformLabel}-${index}`}
                         label={platformLabel}
                         imageSrc={imageSrc}
                         size="sm"
-                        onClick={() => {}}
+                        onClick={() => handlePlatformClick(index)}
                         showLabel={false}
+                        className={
+                          hasWatchUrl
+                            ? 'cursor-pointer hover:scale-105 transition-transform'
+                            : 'cursor-default opacity-60'
+                        }
                       />
                     ) : null;
                   })}
@@ -251,6 +266,11 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             className="object-cover"
             priority
             onError={() => setPosterSrc('/images/default-poster.png')}
+            style={{
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              pointerEvents: 'none', // 이미지 자체에 대한 포인터 이벤트 방지
+            }}
           />
           {feedback === 'liked' && (
             <div className="absolute inset-0 z-20 flex justify-start items-center bg-like/70">

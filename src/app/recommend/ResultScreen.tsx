@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, type FC } from 'react';
-import { LoadingScreen } from './LoadingScreen';
+import { LoadingScreen } from '../../components/common/LoadingScreen';
 import { RefreshCw, Plus, Eye, EyeOff, Undo2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
 import { Ticket } from '@/components/Recommend/Ticket';

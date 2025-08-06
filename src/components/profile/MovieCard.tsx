@@ -12,7 +12,6 @@ const fallbackUrls: Record<string, string> = {
   웨이브: 'https://www.wavve.com',
   '디즈니+': 'https://www.disneyplus.com',
   왓챠: 'https://watcha.com',
-  애플티비: 'https://tv.apple.com',
 };
 
 const MovieCard = ({

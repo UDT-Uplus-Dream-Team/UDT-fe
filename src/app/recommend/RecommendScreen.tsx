@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { SwipeContainer } from '@components/Recommend/SwipeContainer';
 import { Button } from '@components/ui/button';
 import { ProgressBar } from '@components/Recommend/progressbar';
@@ -11,7 +11,7 @@ import { useFetchRecommendations } from '@hooks/recommend/useGetRecommendationCo
 import { useRefreshCuratedContents } from '@hooks/recommend/useGetCuratedContents';
 import { FinishScreen } from './FinishScreen';
 import { sendAnalyticsEvent } from '@lib/gtag';
-import { LoadingScreen } from './LoadingScreen';
+import { LoadingScreen } from '../../components/common/LoadingScreen';
 import { toast } from 'sonner';
 import type {
   SwipeResult,
@@ -29,9 +29,11 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     moviePool,
     currentIndex,
     swipeCount,
+    isToastShown,
     setMoviePool,
     addMoviesToPool,
     setCurrentIndex,
+    setToastShown,
     incrementSwipeCount,
     resetSwipeCount,
     getCurrentMovie,
@@ -53,10 +55,49 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
   // 로컬 UI 상태들
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [resultReady, setResultReady] = useState<boolean>(false);
-  const [toastShown, setToastShown] = useState<boolean>(false);
   const [loadingDelayOver, setLoadingDelayOver] = useState(false);
   const [remainingCount, setRemainingCount] = useState<number>(20);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
+
+  // ── onClose 로직을 함수로 분리 ──────────────────────────
+  const handleToastClose = useCallback(() => {
+    resetSwipeCount();
+    setToastShown(false);
+    setResultReady(false);
+    if (59 - useRecommendStore.getState().currentIndex > 20)
+      setRemainingCount(20);
+    else setRemainingCount(59 - useRecommendStore.getState().currentIndex);
+  }, [resetSwipeCount, setToastShown, setResultReady, setRemainingCount]);
+
+  // ── 페이지 이탈 시 토스트 정리 ──────────────────────────
+  useEffect(() => {
+    const handlePageLeave = () => {
+      // 토스트가 현재 표시 중이라면 onClose 로직 실행
+      if (isToastShown) {
+        handleToastClose();
+        toast.dismiss(); // 모든 토스트 닫기
+      }
+    };
+
+    // 컴포넌트 언마운트 시 (다른 페이지로 이동)
+    return () => {
+      handlePageLeave();
+    };
+  }, [isToastShown, handleToastClose]);
+
+  // ── 브라우저 탭 종료/새로고침 대응 (선택사항) ──────────────
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (isToastShown) {
+        handleToastClose();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isToastShown, handleToastClose]);
 
   const handleFlipToggle = (flipped: boolean) => {
     setIsFlipped(flipped);
@@ -150,11 +191,11 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     }
   };
 
-  // ── 일정 횟수 스와이프 후 토스트 표시 ──────────────
+  // ── 일정 횟수 스와이프 후 토스트 표시 (수정된 부분) ──────────────
   useEffect(() => {
     const SWIPE_THRESHOLD = 20;
 
-    if (swipeCount >= SWIPE_THRESHOLD && !shouldShowFinish() && !toastShown) {
+    if (swipeCount >= SWIPE_THRESHOLD && !shouldShowFinish() && !isToastShown) {
       setToastShown(true);
 
       showInteractiveToast.action({
@@ -180,24 +221,18 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
             setIsTransitioning(false);
           }
         },
-        onClose: () => {
-          resetSwipeCount();
-          setToastShown(false);
-          setResultReady(false);
-          if (59 - useRecommendStore.getState().currentIndex > 20)
-            setRemainingCount(20);
-          else
-            setRemainingCount(59 - useRecommendStore.getState().currentIndex);
-        },
+        onClose: handleToastClose, // 분리된 함수 사용
       });
     }
   }, [
     swipeCount,
     resultReady,
-    toastShown,
+    isToastShown,
     onComplete,
     resetSwipeCount,
     forceRefresh,
+    setToastShown,
+    handleToastClose, // 의존성에 추가
   ]);
 
   // ── 스와이프 처리 ─────────────────────────────

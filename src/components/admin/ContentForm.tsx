@@ -5,34 +5,25 @@ import type React from 'react';
 import { useCallback, useState } from 'react';
 
 import { Button } from '@components/ui/button';
-import { Input } from '@components/ui/input';
-import { Label } from '@components/ui/label';
-import { Textarea } from '@components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@components/ui/select';
-import { Badge } from '@components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
-import { X, Plus, Upload, Image as ImageIcon } from 'lucide-react';
 import type {
   ContentWithoutId,
   ContentCreateUpdate,
   PlatformInfo,
 } from '@type/admin/Content';
-import { PLATFORMS } from '@lib/platforms';
 import { showSimpleToast } from '@components/common/Toast';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
 import { usePostUploadImages } from '@hooks/admin/usePostUploadImages';
-import { RATING_OPTIONS, CONTENT_CATEGORIES, COUNTRIES } from '@/constants';
-import { getGenresByCategory } from '@lib/genres';
-import Image from 'next/image';
 import ActorSearchDialog from '@components/admin/dialogs/actorSearchDialog';
 import DirectorSearchDialog from '@components/admin/dialogs/directorSearchDialog';
+
+// 분리된 컴포넌트들 import
+import BasicInfo from '@components/admin/ContentFormSections/BasicInfo';
+import DetailedInfo from '@components/admin/ContentFormSections/DetailedInfo';
+import DirectorInfo from '@components/admin/ContentFormSections/DirectorInfo';
+import CastInfo from '@components/admin/ContentFormSections/CastInfo';
+import PlatformSection from '@components/admin/ContentFormSections/PlatformInfo';
+import BulkPersonRegistration from '@components/admin/bulkPersonRegistration';
 
 interface ContentFormProps {
   content?: ContentWithoutId;
@@ -151,8 +142,8 @@ export default function ContentForm({
           [imageType === 'poster' ? 'posterUrl' : 'backdropUrl']: uploadedUrl,
         }));
       }
-    } catch (error) {
-      console.error('이미지 업로드 실패:', error);
+    } catch {
+      showSimpleToast.error({ message: '이미지 업로드에 실패했습니다.' });
     }
   };
 
@@ -249,11 +240,11 @@ export default function ContentForm({
   );
 
   const removeDirector = useCallback(
-    (directorToRemove: string) => {
+    (directorIdToRemove: number) => {
       updateFormData((prev) => ({
         ...prev,
         directors: prev.directors.filter(
-          (d) => d.directorName !== directorToRemove,
+          (d) => d.directorId !== directorIdToRemove,
         ),
       }));
     },
@@ -261,10 +252,10 @@ export default function ContentForm({
   );
 
   const removeCast = useCallback(
-    (castToRemove: string) => {
+    (castIdToRemove: number) => {
       updateFormData((prev) => ({
         ...prev,
-        casts: prev.casts.filter((c) => c.castName !== castToRemove),
+        casts: prev.casts.filter((c) => c.castId !== castIdToRemove),
       }));
     },
     [updateFormData],
@@ -309,544 +300,52 @@ export default function ContentForm({
           <TabsTrigger value="contentInfo" className="cursor-pointer">
             콘텐츠 등록
           </TabsTrigger>
-          <TabsTrigger value="platforms" className="cursor-pointer">
+          <TabsTrigger value="personRegistration" className="cursor-pointer">
             인물 등록
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="contentInfo" className="space-y-6 mt-3">
           {/* 기본 정보 */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="mt-5">기본 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="title" className="mb-3">
-                    제목 *
-                  </Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) =>
-                      updateFormData((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                      }))
-                    }
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="rating" className="mb-3">
-                    관람등급 *
-                  </Label>
-                  <Select
-                    value={formData.rating}
-                    onValueChange={(value) =>
-                      updateFormData((prev) => ({ ...prev, rating: value }))
-                    }
-                  >
-                    <SelectTrigger className="cursor-pointer">
-                      {formData.rating ? (
-                        <span>{formData.rating}</span>
-                      ) : (
-                        <SelectValue placeholder="관람등급 선택" />
-                      )}
-                    </SelectTrigger>
-                    <SelectContent>
-                      {RATING_OPTIONS.map((rating) => (
-                        <SelectItem
-                          key={rating}
-                          value={rating}
-                          className="cursor-pointer"
-                        >
-                          {rating}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="description" className="mb-3">
-                  줄거리
-                </Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    updateFormData((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                  rows={4}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="posterUpload" className="mb-3">
-                    포스터 이미지
-                  </Label>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          document.getElementById('posterUpload')?.click()
-                        }
-                        disabled={uploadImagesMutation.isPending}
-                        className="flex items-center gap-2"
-                      >
-                        <Upload className="h-4 w-4" />
-                        {uploadImagesMutation.isPending
-                          ? '업로드 중...'
-                          : '이미지 선택'}
-                      </Button>
-                      {formData.posterUrl && (
-                        <div className="flex items-center gap-2">
-                          <ImageIcon className="h-4 w-4 text-green-500" />
-                          <span className="text-sm text-green-600">
-                            업로드 완료
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <input
-                      id="posterUpload"
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleImageUpload(e.target.files, 'poster')
-                      }
-                      className="hidden"
-                    />
-                    {formData.posterUrl && (
-                      <div className="relative w-20 h-28 border rounded overflow-hidden">
-                        <Image
-                          src={formData.posterUrl}
-                          alt="포스터 미리보기"
-                          fill
-                          unoptimized
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="backdropUpload" className="mb-3">
-                    배경 이미지
-                  </Label>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          document.getElementById('backdropUpload')?.click()
-                        }
-                        disabled={uploadImagesMutation.isPending}
-                        className="flex items-center gap-2"
-                      >
-                        <Upload className="h-4 w-4" />
-                        {uploadImagesMutation.isPending
-                          ? '업로드 중...'
-                          : '이미지 선택'}
-                      </Button>
-                      {formData.backdropUrl && (
-                        <div className="flex items-center gap-2">
-                          <ImageIcon className="h-4 w-4 text-green-500" />
-                          <span className="text-sm text-green-600">
-                            업로드 완료
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <input
-                      id="backdropUpload"
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleImageUpload(e.target.files, 'backdrop')
-                      }
-                      className="hidden"
-                    />
-                    {formData.backdropUrl && (
-                      <div className="relative w-32 h-20 border rounded overflow-hidden">
-                        <Image
-                          src={formData.backdropUrl}
-                          alt="배경 이미지 미리보기"
-                          fill
-                          unoptimized
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="trailerUrl" className="mb-3">
-                  예고편 URL
-                </Label>
-                <Input
-                  id="trailerUrl"
-                  value={formData.trailerUrl}
-                  onChange={(e) =>
-                    updateFormData((prev) => ({
-                      ...prev,
-                      trailerUrl: e.target.value,
-                    }))
-                  }
-                  className="mb-5"
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <BasicInfo
+            formData={formData}
+            updateFormData={updateFormData}
+            handleImageUpload={handleImageUpload}
+            uploadImagesMutation={uploadImagesMutation}
+          />
 
           {/* 상세 정보 */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="mt-5">상세 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="openDate" className="mb-3">
-                    개봉일
-                  </Label>
-                  <Input
-                    id="openDate"
-                    type="date"
-                    value={formData.openDate?.split('T')[0] || ''}
-                    onChange={(e) =>
-                      updateFormData((prev) => ({
-                        ...prev,
-                        openDate: e.target.value,
-                      }))
-                    }
-                    className="dark:bg-gray-700 dark:text-black"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="runningTime" className="mb-3">
-                    상영시간 (분)
-                  </Label>
-                  <Input
-                    id="runningTime"
-                    type="number"
-                    min="0"
-                    value={formData.runningTime}
-                    onChange={(e) =>
-                      updateFormData((prev) => ({
-                        ...prev,
-                        runningTime: Number(e.target.value) || 0,
-                      }))
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="episode" className="mb-3">
-                    에피소드
-                  </Label>
-                  <Input
-                    id="episode"
-                    type="number"
-                    min="0"
-                    value={formData.episode}
-                    onChange={(e) =>
-                      updateFormData((prev) => ({
-                        ...prev,
-                        episode: Number(e.target.value) || 0,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="category" className="mb-3">
-                  카테고리 *
-                </Label>
-                <Select
-                  value={formData.categories[0]?.categoryType || ''}
-                  onValueChange={(value) => {
-                    updateFormData((prev) => {
-                      const updatedCategories = [...prev.categories];
-
-                      if (updatedCategories[0]) {
-                        updatedCategories[0].categoryType = value;
-                        updatedCategories[0].genres = [];
-                      } else {
-                        updatedCategories[0] = {
-                          categoryType: value,
-                          genres: [],
-                        };
-                      }
-                      return { ...prev, categories: updatedCategories };
-                    });
-                  }}
-                >
-                  <SelectTrigger className="cursor-pointer">
-                    <SelectValue placeholder="카테고리 선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CONTENT_CATEGORIES.map((category) => (
-                      <SelectItem
-                        key={category}
-                        value={category}
-                        className="cursor-pointer"
-                      >
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {formData.categories[0]?.categoryType && (
-                <div>
-                  <Label className="mb-3">장르 *</Label>
-                  <div className="flex flex-wrap gap-2 max-w-full">
-                    {(() => {
-                      const selectedCategory =
-                        formData.categories[0]?.categoryType || '';
-                      const availableGenres =
-                        getGenresByCategory(selectedCategory);
-
-                      return availableGenres.map((genre) => {
-                        const isSelected =
-                          formData.categories[0]?.genres.includes(genre);
-
-                        return (
-                          <Badge
-                            key={genre}
-                            variant={isSelected ? 'default' : 'secondary'}
-                            className={`cursor-pointer select-none ${
-                              isSelected ? 'bg-blue-600 text-white' : ''
-                            }`}
-                            onClick={() =>
-                              isSelected ? removeGenre(genre) : addGenre(genre)
-                            }
-                          >
-                            {genre}
-                          </Badge>
-                        );
-                      });
-                    })()}
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <Label className="mb-3">제작 국가</Label>
-                <div className="flex flex-wrap gap-2 mb-5 ">
-                  {COUNTRIES.map((country) => {
-                    const isSelected = formData.countries.includes(country);
-
-                    return (
-                      <Badge
-                        key={country}
-                        variant={isSelected ? 'default' : 'secondary'}
-                        className={`cursor-pointer select-none ${
-                          isSelected ? 'bg-green-600 text-white' : ''
-                        }`}
-                        onClick={() =>
-                          isSelected
-                            ? removeCountry(country)
-                            : addCountry(country)
-                        }
-                      >
-                        {country}
-                      </Badge>
-                    );
-                  })}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <DetailedInfo
+            formData={formData}
+            updateFormData={updateFormData}
+            addGenre={addGenre}
+            removeGenre={removeGenre}
+            addCountry={addCountry}
+            removeCountry={removeCountry}
+          />
 
           {/* 감독 정보 */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="mt-5">감독 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button
-                type="button"
-                onClick={() => setIsDirectorSearchOpen(true)}
-                className="w-full"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                감독 검색 및 추가
-              </Button>
-              <div className="space-y-2 mb-5">
-                {formData.directors.map((director) => (
-                  <div
-                    key={director.directorId}
-                    className="flex items-center justify-between p-2 border rounded"
-                  >
-                    <div className="flex items-center gap-2">
-                      {director.directorImageUrl && (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                          <Image
-                            src={
-                              director.directorImageUrl || '/placeholder.svg'
-                            }
-                            alt={director.directorName || '감독 이미지'}
-                            fill
-                            unoptimized
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        </div>
-                      )}
-                      <span>{director.directorName}</span>
-                    </div>
-                    <Button
-                      type="button"
-                      className="cursor-pointer"
-                      size="sm"
-                      onClick={() => removeDirector(director.directorName)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <DirectorInfo
+            formData={formData}
+            setIsDirectorSearchOpen={setIsDirectorSearchOpen}
+            removeDirector={removeDirector}
+          />
 
           {/* 출연진 정보 */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="mt-5">출연진 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button
-                type="button"
-                onClick={() => setIsActorSearchOpen(true)}
-                className="w-full"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                출연진 검색 및 추가
-              </Button>
-              <div className="space-y-2 mb-5">
-                {formData.casts.map((cast) => (
-                  <div
-                    key={cast.castId}
-                    className="flex items-center justify-between p-2 border rounded"
-                  >
-                    <div className="flex items-center gap-2">
-                      {cast.castImageUrl && (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                          <Image
-                            src={cast.castImageUrl || '/placeholder.svg'}
-                            alt={cast.castName || '출연진 이미지'}
-                            fill
-                            unoptimized
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        </div>
-                      )}
-                      <span>{cast.castName}</span>
-                    </div>
-                    <Button
-                      type="button"
-                      className="cursor-pointer"
-                      size="sm"
-                      onClick={() => removeCast(cast.castName)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <CastInfo
+            formData={formData}
+            setIsActorSearchOpen={setIsActorSearchOpen}
+            removeCast={removeCast}
+          />
 
           {/* 시청 플랫폼 */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="mt-5">시청 플랫폼 *</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 mb-5">
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                <Select
-                  value={newPlatform.platformType}
-                  onValueChange={(value) =>
-                    setNewPlatform({
-                      ...newPlatform,
-                      platformType: value,
-                    })
-                  }
-                >
-                  <SelectTrigger className="cursor-pointer">
-                    <SelectValue placeholder="플랫폼 선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PLATFORMS.map((platform) => (
-                      <SelectItem
-                        key={platform.id}
-                        value={platform.label}
-                        className="cursor-pointer"
-                      >
-                        {platform.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  value={newPlatform.watchUrl}
-                  onChange={(e) =>
-                    setNewPlatform({ ...newPlatform, watchUrl: e.target.value })
-                  }
-                  placeholder="시청 URL"
-                />
-              </div>
-              <div className="flex items-center space-x-2 mb-3"></div>
-              <Button
-                type="button"
-                onClick={addPlatform}
-                className="w-full mb-10 cursor-pointer"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                플랫폼 추가
-              </Button>
-              <div className="space-y-2">
-                {formData.platforms.map((platform, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-2 border rounded"
-                  >
-                    <div>
-                      <div className="font-medium">{platform.platformType}</div>
-                      <div className="text-sm text-gray-500">
-                        {platform.watchUrl}
-                      </div>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="cursor-pointer"
-                      size="sm"
-                      onClick={() => removePlatform(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <PlatformSection
+            formData={formData}
+            newPlatform={newPlatform}
+            setNewPlatform={setNewPlatform}
+            addPlatform={addPlatform}
+            removePlatform={removePlatform}
+          />
 
           {/* 배우 검색 다이얼로그 */}
           <ActorSearchDialog
@@ -873,24 +372,27 @@ export default function ContentForm({
             }}
             existingDirectors={formData.directors}
           />
+
+          {/* 취소/수정 버튼 */}
+          <div className="flex justify-end space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              className="cursor-pointer"
+            >
+              취소
+            </Button>
+            <Button type="submit" className="cursor-pointer">
+              {content ? '수정' : '추가'}
+            </Button>
+          </div>
         </TabsContent>
 
-        <TabsContent value="platforms" className="space-y-6 mt-3"></TabsContent>
+        <TabsContent value="personRegistration" className="space-y-6 mt-3">
+          <BulkPersonRegistration />
+        </TabsContent>
       </Tabs>
-
-      <div className="flex justify-end space-x-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          className="cursor-pointer"
-        >
-          취소
-        </Button>
-        <Button type="submit" className="cursor-pointer">
-          {content ? '수정' : '추가'}
-        </Button>
-      </div>
     </form>
   );
 }

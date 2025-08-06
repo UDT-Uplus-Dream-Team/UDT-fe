@@ -20,7 +20,7 @@ import { CategoryMetric } from '@type/admin/CategoryMetric';
 interface CategoryChartProps {
   categoryMetrics: CategoryMetric[];
 }
-export default function ContentChart({ categoryMetrics }: CategoryChartProps) {
+export default function CategoryChart({ categoryMetrics }: CategoryChartProps) {
   const formattedData = useMemo(() => {
     return categoryMetrics.map((item) => ({
       name: item.categoryType,

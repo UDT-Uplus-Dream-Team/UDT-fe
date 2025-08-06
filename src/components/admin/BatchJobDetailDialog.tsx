@@ -33,20 +33,20 @@ export function BatchJobDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[400px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Job 상세 로그</DialogTitle>
         </DialogHeader>
         {status === 'pending' ? (
-          <div className="flex items-center gap-2 text-gray-400 text-xs">
+          <div className="flex flex-col justify-items-center gap-2 text-gray-400 text-xs h-[300px]">
             불러오는 중...
           </div>
         ) : status === 'error' ? (
-          <div className="text-red-500 text-xs">
+          <div className="text-red-500 text-xs h-[300px]">
             에러 발생: {jobDetailQuery.error?.message}
           </div>
         ) : data ? (
-          <div className="bg-gray-900 text-white rounded-lg p-4 text-xs font-mono max-h-[300px] overflow-auto">
+          <div className="bg-gray-900 text-white rounded-lg p-4 text-xs font-mono h-[300px] overflow-auto">
             <pre className="whitespace-pre-wrap">
               {data || '로그 데이터가 없습니다.'}
             </pre>

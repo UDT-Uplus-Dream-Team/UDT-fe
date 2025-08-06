@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Play, Film } from 'lucide-react';
+import { Play, Film, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@components/ui/button';
 import { useRecommendStore } from '@store/useRecommendStore';
+import { showInteractiveToast } from '@components/common/Toast';
+import { useRouter } from 'next/navigation';
 import SparkleBackground from '@/components/common/sparkle_background';
 
 interface StartScreenProps {
@@ -14,6 +16,7 @@ interface StartScreenProps {
 export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
   const [showContent, setShowContent] = useState(false);
   const { resetRecommendProgress, setPhase } = useRecommendStore();
+  const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -34,38 +37,40 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
     onStart();
   };
 
+  // 도움말 버튼 클릭 핸들러
+  const handleHelpClick = () => {
+    showInteractiveToast.confirm({
+      message: '튜토리얼을 다시 확인하시겠습니까?',
+      confirmText: '보기',
+      cancelText: '취소',
+      duration: Number.POSITIVE_INFINITY,
+      position: 'top-center',
+      className: 'bg-white shadow-lg border border-gray-200',
+      onConfirm: () => {
+        router.push('/onboarding');
+      },
+      onCancel: () => {
+        // 취소 시 아무것도 하지 않음
+      },
+    });
+  };
+
   return (
-    <div className="flex flex-col h-full w-full items-center justify-center relative overflow-hidden">
+    <div className="flex flex-col h-full w-full items-center justify-center relative overflow-y-auto">
       {/* Animated background stars */}
       <SparkleBackground />
 
-      {/* Floating movie icons */}
-      {/* <div className="absolute inset-0 pointer-events-none">
-        {[Film, Heart, Star, Sparkles].map((Icon, i) => (
-          <motion.div
-            key={i}
-            className="absolute text-white/20"
-            initial={{ y: 100, opacity: 0 }}
-            animate={{
-              y: [-20, -40, -20],
-              opacity: [0.2, 0.4, 0.2],
-              rotate: [0, 10, -10, 0],
-            }}
-            transition={{
-              duration: 4,
-              delay: i * 0.5,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: 'easeInOut',
-            }}
-            style={{
-              left: `${20 + i * 20}%`,
-              top: `${20 + (i % 2) * 40}%`,
-            }}
-          >
-            <Icon size={32} />
-          </motion.div>
-        ))}
-      </div> */}
+      {/* 도움말 버튼 - 우측 상단 고정 */}
+      <div className="absolute top-6 right-6 z-20">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleHelpClick}
+          className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 hover:scale-105 transition-all duration-200"
+        >
+          <HelpCircle style={{ width: '32px', height: '32px' }} />
+        </Button>
+      </div>
 
       {/* Main content */}
       {showContent && (
@@ -97,26 +102,6 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
               >
                 <Film className="w-12 h-12 text-slate-800" />
               </motion.div>
-
-              {/* Orbiting sparkles */}
-              {/* {[...Array(6)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2 bg-yellow-300 rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{
-                    duration: 8,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: 'linear',
-                    delay: i * 0.3,
-                  }}
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    transformOrigin: `0 ${40 + i * 5}px`,
-                  }}
-                />
-              ))} */}
             </div>
           </motion.div>
 
@@ -136,39 +121,6 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
               가장 적합한 컨텐츠를 추천해드려요!
             </p>
           </motion.div>
-
-          {/* Features */}
-          {/* <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-          >
-            {[
-              { icon: Heart, title: '개인 맞춤', desc: '당신의 취향 분석' },
-              {
-                icon: Star,
-                title: '엄선된 콘텐츠',
-                desc: '높은 평점의 작품들',
-              },
-              {
-                icon: Sparkles,
-                title: '새로운 발견',
-                desc: '숨겨진 명작 추천',
-              },
-            ].map((feature, i) => (
-              <motion.div
-                key={i}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
-                whileHover={{ scale: 1.05, y: -5 }}
-                transition={{ duration: 0.3 }}
-              >
-                <feature.icon className="w-8 h-8 mx-auto mb-3 text-yellow-300" />
-                <h3 className="font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-purple-200">{feature.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div> */}
 
           {/* Start button */}
           <motion.div

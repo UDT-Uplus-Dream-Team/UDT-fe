@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@components/ui/button';
-import { Ticket } from '@components/Ticket/Ticket';
+import { SwipeContainer } from '@components/Recommend/SwipeContainer';
 import { MockMovies } from './moviedata';
 import Lottie from 'lottie-react';
 import leftSwipeLottie from '@/assets/Lottie/Swipe Gesture Left.json';
@@ -11,13 +11,21 @@ interface StepProps {
 }
 
 export default function Step1({ onNext }: StepProps) {
-  const currentMovie = MockMovies[0];
+  const movieItems = [MockMovies[0]];
+
+  const handleFlipToggle = () => {};
 
   return (
     <div className="relative flex items-center justify-center h-full w-full px-6 text-white">
-      {/* 카드 */}
-      <div className="relative w-[80svw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]">
-        <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
+      <div className="flex w-[80%] h-[75%] max-h-170 max-w-100 min-w-70 min-h-110 justify-center items-center">
+        <div className="w-full h-full">
+          <SwipeContainer
+            items={movieItems}
+            enableKeyboard={false} // 키보드 비활성화
+            isFlipped={false}
+            onFlipToggle={handleFlipToggle}
+          />
+        </div>
       </div>
 
       {/* 오버레이 */}
@@ -43,7 +51,7 @@ export default function Step1({ onNext }: StepProps) {
           className="mt-8 px-8 py-4  text-sm md:text-lg font-semibold rounded-xl bg-white text-black hover:bg-white/90 transition"
           onClick={onNext}
         >
-          계속
+          다음
         </Button>
       </div>
     </div>

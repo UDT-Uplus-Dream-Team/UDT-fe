@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Ticket } from '@components/Ticket/Ticket';
+import { Ticket } from '@/components/Recommend/Ticket';
 import { showInteractiveToast } from '@components/common/Toast';
+import { toast } from 'sonner';
 import { MockMovies } from './moviedata';
 
 interface Step6Props {
@@ -19,6 +20,8 @@ export default function Step6({ onNext }: Step6Props) {
 
   useEffect(() => {
     if (mounted && !toastShownRef.current) {
+      toastShownRef.current = true; // 토스트 표시 상태를 먼저 업데이트
+
       showInteractiveToast.action({
         message: '모든 영화를 확인했습니다!\n추천 결과를 보시겠어요?',
         actionText: '결과 보기',
@@ -32,6 +35,14 @@ export default function Step6({ onNext }: Step6Props) {
       });
     }
   }, [mounted, onNext]);
+
+  // 컴포넌트 언마운트 시 토스트 정리
+  useEffect(() => {
+    return () => {
+      // Step6을 벗어날 때 모든 토스트 dismiss
+      toast.dismiss();
+    };
+  }, []);
 
   if (!mounted) return null;
 
@@ -55,8 +66,8 @@ export default function Step6({ onNext }: Step6Props) {
           />
         </svg>
         <p className="text-lg font-semibold leading-relaxed">
-          <span className="text-purple-100  text-xl font-bold">
-            20개의 스와이프를 진행하면
+          <span className="text-purple-100 text-xl font-bold">
+            충분한 스와이프가 진행되면
           </span>
           <br />
           사용자님의 취향을 확인하여 <br />

@@ -4,7 +4,6 @@ import { FilterRadioButtonGroup } from '@components/explore/FilterRadioButtonGro
 import { ExplorePageCarousel } from '@components/explore/ExplorePageCarousel';
 import { createFilterRequestParam } from '@utils/createFilterRequestParam';
 import { PosterCardsGrid } from '@components/explore/PosterCardsGrid';
-// TODO: api 연동 완료 후 주석 해제
 import { useGetFilteredContents } from '@hooks/explore/useGetFilteredContents';
 
 import {
@@ -31,7 +30,7 @@ export default function ExplorePage() {
 
   // 필터링된 콘텐츠 목록 조회 (필터 옵션을 이용해서 request param 생성해서 데이터를 받아온다, filter 비어 있으면 수행 X)
   const getFilteredContentsQuery = useGetFilteredContents({
-    size: 12,
+    size: 18,
     filters: createFilterRequestParam(filters ?? []),
     enabled: filters !== undefined,
   });
@@ -59,8 +58,8 @@ export default function ExplorePage() {
       {/* 2. FilterRadioButtonGroup의 sticky 옵션은 해당 컴포넌트 내부에 둔다! */}
       <FilterRadioButtonGroup />
 
-      {/* 3. 나머지 모든 콘텐츠가 스크롤되는 영역 (여기에서만 overflow-y-auto 속성 사용) */}
-      <div className="flex-1 flex flex-col h-full overflow-y-auto pb-15">
+      {/* 3. 나머지 모든 콘텐츠가 스크롤되는 영역 (여기에서만 overflow-y-auto 속성 사용, 가로 스크롤은 방지) */}
+      <div className="flex-1 flex flex-col h-full overflow-x-hidden overflow-y-auto pb-15">
         {filters !== undefined ? (
           <PosterCardsGrid
             contents={contents}
@@ -81,6 +80,10 @@ export default function ExplorePage() {
             <PosterCardScrollBox
               BoxTitle="지금 🔥Hot🔥한 콘텐츠"
               BoxType="popular"
+            />
+            <PosterCardScrollBox
+              BoxTitle="🎥플랫폼별 인기 콘텐츠!"
+              BoxType="platformPicks"
             />
           </div>
         )}

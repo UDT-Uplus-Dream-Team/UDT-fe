@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Ticket } from '@components/Ticket/Ticket';
+import { SwipeContainer } from '@components/Recommend/SwipeContainer';
 import { Button } from '@components/ui/button';
 import { MockMovies } from './moviedata';
 
@@ -10,72 +10,48 @@ interface StepProps4 {
 }
 
 export default function Step4({ onNext }: StepProps4) {
-  const [flipped, setFlipped] = useState(false);
-  const currentMovie = MockMovies[0];
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  // SwipeContainer에서 사용할 단일 아이템 배열
+  const movieItems = [MockMovies[0]];
+
+  // 카드 플립 토글 핸들러
+  const handleFlipToggle = (flipped: boolean) => {
+    setIsFlipped(flipped);
+  };
 
   return (
     <div className="relative flex flex-col items-center justify-center h-full w-full px-6 text-white">
-      <div className="text-center space-y-4 mb-4 mt-1">
-        <h2 className="text-lg md:text-xl font-semibold leading-relaxed">
-          추천 받은 컨텐츠의 상세 내용이 궁금하다면?
-          <br />
-          상세보기 클릭으로 내용 확인 가능합니다
-        </h2>
-      </div>
-
-      {/* 카드 영역 */}
-      <div
-        className="relative w-[80svw] min-w-[280px] max-w-[320px] aspect-[75/135] md:max-w-[400px] sm:aspect-[75/127] max-h-[70svh]"
-        style={{ perspective: '1000px' }}
-        onClick={() => {
-          if (!flipped) setFlipped(true);
-        }}
-      >
-        <div
-          className="relative w-full h-full"
-          style={{
-            transformStyle: 'preserve-3d',
-            transition: 'transform 500ms linear',
-            transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          }}
-        >
-          {/* 앞면 */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ backfaceVisibility: 'hidden' }}
-          >
-            <Ticket movie={currentMovie} variant="initial" feedback="neutral" />
-          </div>
-
-          {/* 뒷면 */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg)',
-              pointerEvents: flipped ? 'auto' : 'none',
-              zIndex: flipped ? 30 : 10,
-            }}
-          >
-            <Ticket movie={currentMovie} variant="detail" />
-          </div>
+      {/* SwipeContainer 영역 */}
+      <div className="flex w-[80%] h-[75%] max-h-170 max-w-100 min-w-70 min-h-110 justify-center items-center">
+        <div className="w-full h-full">
+          <SwipeContainer
+            items={movieItems}
+            enableKeyboard={false} // 키보드 비활성화
+            isFlipped={isFlipped}
+            onFlipToggle={handleFlipToggle}
+          />
         </div>
       </div>
 
-      {/* 버튼 */}
-      <Button
-        variant="default"
-        className="md:mt-5 mt-3 px-8 py-4  text-sm md:text-lg font-semibold rounded-xl bg-white text-black hover:bg-white/90 transition"
-        onClick={() => {
-          if (flipped) {
-            onNext();
-          } else {
-            setFlipped(true);
-          }
-        }}
-      >
-        {flipped ? '계속' : '상세보기 클릭하기!!'}
-      </Button>
+      {/* 검정 오버레이 + 설명 텍스트 + 버튼 */}
+      <div className="absolute inset-0 bg-black/60 z-30 flex flex-col items-center justify-center text-center px-6">
+        <div className="flex flex-col items-center gap-4 mb-6">
+          <h2 className="text-lg md:text-xl font-semibold leading-relaxed">
+            추천 받은 컨텐츠의 상세 내용이 궁금하다면?
+            <br />
+            우측 상단 눈 아이콘으로 상세보기가 가능해요!
+          </h2>
+        </div>
+
+        <Button
+          variant="default"
+          className="mt-4 px-8 py-4 text-sm md:text-lg font-semibold rounded-xl bg-white text-black hover:bg-white/90 transition"
+          onClick={onNext}
+        >
+          다음
+        </Button>
+      </div>
     </div>
   );
 }

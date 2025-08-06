@@ -18,18 +18,25 @@ import {
 import { Badge } from '@components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
-import { X, Plus } from 'lucide-react';
-import type { ContentWithoutId, Cast, Platform } from '@type/admin/Content';
-import { PLATFORMS } from '@/lib/platforms';
+import { X, Plus, Upload, Image as ImageIcon } from 'lucide-react';
+import type {
+  ContentWithoutId,
+  ContentCreateUpdate,
+  PlatformInfo,
+} from '@type/admin/Content';
+import { PLATFORMS } from '@lib/platforms';
 import { showSimpleToast } from '@components/common/Toast';
 import { useErrorToastOnce } from '@hooks/useErrorToastOnce';
+import { usePostUploadImages } from '@hooks/admin/usePostUploadImages';
 import { RATING_OPTIONS, CONTENT_CATEGORIES, COUNTRIES } from '@/constants';
-import { getGenresByCategory } from '@/lib/genres';
+import { getGenresByCategory } from '@lib/genres';
 import Image from 'next/image';
+import ActorSearchDialog from '@components/admin/dialogs/actorSearchDialog';
+import DirectorSearchDialog from '@components/admin/dialogs/directorSearchDialog';
 
 interface ContentFormProps {
   content?: ContentWithoutId;
-  onSave: (content: ContentWithoutId) => void;
+  onSave: (content: ContentCreateUpdate) => void;
   onCancel: () => void;
 }
 
@@ -51,14 +58,34 @@ const getInitialFormData = (content?: ContentWithoutId): ContentWithoutId => ({
   platforms: content?.platforms || [],
 });
 
+// ContentWithoutId를 ContentCreateUpdate로 변환하는 함수
+const convertContentWithoutIdToContentCreateUpdate = (
+  content: ContentWithoutId,
+): ContentCreateUpdate => ({
+  title: content.title,
+  description: content.description,
+  posterUrl: content.posterUrl,
+  backdropUrl: content.backdropUrl,
+  trailerUrl: content.trailerUrl,
+  openDate: content.openDate,
+  runningTime: content.runningTime,
+  episode: content.episode,
+  rating: content.rating,
+  categories: content.categories,
+  countries: content.countries,
+  directors: content.directors.map((director) => director.directorId),
+  casts: content.casts.map((cast) => cast.castId),
+  platforms: content.platforms,
+});
+
 // 유효성 검사 함수
 const validateFormData = (formData: ContentWithoutId): string | null => {
   // 제목 검증
   if (!formData.title.trim()) return '제목은 필수 항목입니다.';
 
-  // 개봉일 검증
-  if (!formData.openDate || formData.openDate.trim() === '') {
-    return '개봉일은 필수 항목입니다.';
+  // 관람등급 검증
+  if (!formData.rating || formData.rating.trim() === '') {
+    return '관람등급은 필수 항목입니다.';
   }
 
   // 카테고리 검증
@@ -82,16 +109,6 @@ const validateFormData = (formData: ContentWithoutId): string | null => {
     return '플랫폼은 하나 이상 입력해야 합니다.';
   }
 
-  // 플랫폼 타입이 허용된 플랫폼 중 하나인지 검증
-  const allowedPlatformLabels = PLATFORMS.map((p) => p.label);
-  for (const platform of formData.platforms) {
-    if (!allowedPlatformLabels.includes(platform.platformType)) {
-      return `플랫폼은 다음 중 하나여야 합니다: ${allowedPlatformLabels.join(
-        ', ',
-      )}`;
-    }
-  }
-
   return null;
 };
 
@@ -105,16 +122,39 @@ export default function ContentForm({
   );
   const showErrorToast = useErrorToastOnce();
 
-  // 입력 필드 상태
-  const [newDirector, setNewDirector] = useState('');
-  const [newCast, setNewCast] = useState<Cast>({
-    castName: '',
-    castImageUrl: '',
-  });
-  const [newPlatform, setNewPlatform] = useState<Platform>({
+  const [isActorSearchOpen, setIsActorSearchOpen] = useState(false);
+  const [isDirectorSearchOpen, setIsDirectorSearchOpen] = useState(false);
+
+  const [newPlatform, setNewPlatform] = useState<PlatformInfo>({
     platformType: '',
     watchUrl: '',
   });
+
+  // 이미지 업로드 훅
+  const uploadImagesMutation = usePostUploadImages();
+
+  // 이미지 업로드 핸들러
+  const handleImageUpload = async (
+    files: FileList | null,
+    imageType: 'poster' | 'backdrop',
+  ) => {
+    if (!files || files.length === 0) return;
+
+    try {
+      const fileArray = Array.from(files);
+      const response = await uploadImagesMutation.mutateAsync(fileArray);
+
+      if (response.data.uploadedFileUrls.length > 0) {
+        const uploadedUrl = response.data.uploadedFileUrls[0];
+        updateFormData((prev) => ({
+          ...prev,
+          [imageType === 'poster' ? 'posterUrl' : 'backdropUrl']: uploadedUrl,
+        }));
+      }
+    } catch (error) {
+      console.error('이미지 업로드 실패:', error);
+    }
+  };
 
   // 폼 제출 핸들러
   const handleSubmit = (e: React.FormEvent) => {
@@ -134,10 +174,13 @@ export default function ContentForm({
         : formData.openDate + 'T00:00:00';
     }
 
-    onSave({
+    // ContentWithoutId를 ContentCreateUpdate로 변환하여 저장
+    const contentToSave = convertContentWithoutIdToContentCreateUpdate({
       ...formData,
       openDate: normalizedDate,
     });
+
+    onSave(contentToSave);
   };
 
   // 폼 데이터 업데이트 헬퍼 함수
@@ -205,63 +248,23 @@ export default function ContentForm({
     [updateFormData],
   );
 
-  // 감독 관리
-  const addDirector = useCallback(() => {
-    if (!newDirector.trim()) return;
-
-    updateFormData((prev) => {
-      if (!prev.directors.includes(newDirector.trim())) {
-        return {
-          ...prev,
-          directors: [...prev.directors, newDirector.trim()],
-        };
-      }
-      return prev;
-    });
-    setNewDirector('');
-  }, [newDirector, updateFormData]);
-
   const removeDirector = useCallback(
     (directorToRemove: string) => {
       updateFormData((prev) => ({
         ...prev,
-        directors: prev.directors.filter((d) => d !== directorToRemove),
+        directors: prev.directors.filter(
+          (d) => d.directorName !== directorToRemove,
+        ),
       }));
     },
     [updateFormData],
   );
 
-  // URL 유효성 검사 함수
-  const isValidImageUrl = useCallback((url: string): boolean => {
-    if (!url.trim()) return true; // 빈 URL은 허용 (선택사항)
-
-    try {
-      const urlObj = new URL(url);
-      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  }, []);
-
-  // 출연진 관리
-  const addCast = useCallback(() => {
-    if (!newCast.castName.trim()) return;
-
-    // 이미지 URL이 입력되었지만 유효하지 않은 경우
-    if (newCast.castImageUrl.trim() && !isValidImageUrl(newCast.castImageUrl)) {
-      showErrorToast('올바른 이미지 URL을 입력해주세요');
-      return;
-    }
-
-    updateFormData((prev) => ({ ...prev, casts: [...prev.casts, newCast] }));
-    setNewCast({ castName: '', castImageUrl: '' });
-  }, [newCast, updateFormData, isValidImageUrl, showErrorToast]);
-
   const removeCast = useCallback(
-    (index: number) => {
+    (castToRemove: string) => {
       updateFormData((prev) => ({
         ...prev,
-        casts: prev.casts.filter((_, i) => i !== index),
+        casts: prev.casts.filter((c) => c.castName !== castToRemove),
       }));
     },
     [updateFormData],
@@ -337,7 +340,7 @@ export default function ContentForm({
                 </div>
                 <div>
                   <Label htmlFor="rating" className="mb-3">
-                    관람등급
+                    관람등급 *
                   </Label>
                   <Select
                     value={formData.rating}
@@ -386,34 +389,108 @@ export default function ContentForm({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="posterUrl" className="mb-3">
-                    포스터 URL
+                  <Label htmlFor="posterUpload" className="mb-3">
+                    포스터 이미지
                   </Label>
-                  <Input
-                    id="posterUrl"
-                    value={formData.posterUrl}
-                    onChange={(e) =>
-                      updateFormData((prev) => ({
-                        ...prev,
-                        posterUrl: e.target.value,
-                      }))
-                    }
-                  />
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          document.getElementById('posterUpload')?.click()
+                        }
+                        disabled={uploadImagesMutation.isPending}
+                        className="flex items-center gap-2"
+                      >
+                        <Upload className="h-4 w-4" />
+                        {uploadImagesMutation.isPending
+                          ? '업로드 중...'
+                          : '이미지 선택'}
+                      </Button>
+                      {formData.posterUrl && (
+                        <div className="flex items-center gap-2">
+                          <ImageIcon className="h-4 w-4 text-green-500" />
+                          <span className="text-sm text-green-600">
+                            업로드 완료
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      id="posterUpload"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleImageUpload(e.target.files, 'poster')
+                      }
+                      className="hidden"
+                    />
+                    {formData.posterUrl && (
+                      <div className="relative w-20 h-28 border rounded overflow-hidden">
+                        <Image
+                          src={formData.posterUrl}
+                          alt="포스터 미리보기"
+                          fill
+                          unoptimized
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
-                  <Label htmlFor="backdropUrl" className="mb-3">
-                    배경 이미지 URL
+                  <Label htmlFor="backdropUpload" className="mb-3">
+                    배경 이미지
                   </Label>
-                  <Input
-                    id="backdropUrl"
-                    value={formData.backdropUrl}
-                    onChange={(e) =>
-                      updateFormData((prev) => ({
-                        ...prev,
-                        backdropUrl: e.target.value,
-                      }))
-                    }
-                  />
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          document.getElementById('backdropUpload')?.click()
+                        }
+                        disabled={uploadImagesMutation.isPending}
+                        className="flex items-center gap-2"
+                      >
+                        <Upload className="h-4 w-4" />
+                        {uploadImagesMutation.isPending
+                          ? '업로드 중...'
+                          : '이미지 선택'}
+                      </Button>
+                      {formData.backdropUrl && (
+                        <div className="flex items-center gap-2">
+                          <ImageIcon className="h-4 w-4 text-green-500" />
+                          <span className="text-sm text-green-600">
+                            업로드 완료
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      id="backdropUpload"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleImageUpload(e.target.files, 'backdrop')
+                      }
+                      className="hidden"
+                    />
+                    {formData.backdropUrl && (
+                      <div className="relative w-32 h-20 border rounded overflow-hidden">
+                        <Image
+                          src={formData.backdropUrl}
+                          alt="배경 이미지 미리보기"
+                          fill
+                          unoptimized
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -445,7 +522,7 @@ export default function ContentForm({
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="openDate" className="mb-3">
-                    개봉일 *
+                    개봉일
                   </Label>
                   <Input
                     id="openDate"
@@ -505,21 +582,14 @@ export default function ContentForm({
                   onValueChange={(value) => {
                     updateFormData((prev) => {
                       const updatedCategories = [...prev.categories];
-                      const currentGenres = updatedCategories[0]?.genres || [];
-                      const newAvailableGenres = getGenresByCategory(value);
-
-                      // 새로운 카테고리에서 허용되지 않는 장르 제거
-                      const filteredGenres = currentGenres.filter((genre) =>
-                        newAvailableGenres.includes(genre),
-                      );
 
                       if (updatedCategories[0]) {
                         updatedCategories[0].categoryType = value;
-                        updatedCategories[0].genres = filteredGenres;
+                        updatedCategories[0].genres = [];
                       } else {
                         updatedCategories[0] = {
                           categoryType: value,
-                          genres: filteredGenres,
+                          genres: [],
                         };
                       }
                       return { ...prev, categories: updatedCategories };
@@ -611,41 +681,45 @@ export default function ContentForm({
               <CardTitle className="mt-5">감독 정보</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex gap-2 mb-3">
-                <Input
-                  value={newDirector}
-                  onChange={(e) => setNewDirector(e.target.value)}
-                  placeholder="감독 이름 입력"
-                  onKeyDown={(e) =>
-                    e.key === 'Enter' && (e.preventDefault(), addDirector())
-                  }
-                />
-                <Button
-                  type="button"
-                  onClick={addDirector}
-                  className="cursor-pointer"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-3">
+              <Button
+                type="button"
+                onClick={() => setIsDirectorSearchOpen(true)}
+                className="w-full"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                감독 검색 및 추가
+              </Button>
+              <div className="space-y-2 mb-5">
                 {formData.directors.map((director) => (
-                  <Badge
-                    key={director}
-                    variant="secondary"
-                    className="flex items-center gap-1"
+                  <div
+                    key={director.directorId}
+                    className="flex items-center justify-between p-2 border rounded"
                   >
-                    {director}
+                    <div className="flex items-center gap-2">
+                      {director.directorImageUrl && (
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+                          <Image
+                            src={
+                              director.directorImageUrl || '/placeholder.svg'
+                            }
+                            alt={director.directorName || '감독 이미지'}
+                            fill
+                            unoptimized
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <span>{director.directorName}</span>
+                    </div>
                     <Button
                       type="button"
-                      size="icon"
-                      variant="ghost"
-                      className="h-4 w-4 p-0 cursor-pointer"
-                      onClick={() => removeDirector(director)}
+                      className="cursor-pointer"
+                      size="sm"
+                      onClick={() => removeDirector(director.directorName)}
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                     </Button>
-                  </Badge>
+                  </div>
                 ))}
               </div>
             </CardContent>
@@ -657,34 +731,18 @@ export default function ContentForm({
               <CardTitle className="mt-5">출연진 정보</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                <Input
-                  value={newCast.castName}
-                  onChange={(e) =>
-                    setNewCast({ ...newCast, castName: e.target.value })
-                  }
-                  placeholder="배우 이름"
-                />
-                <Input
-                  value={newCast.castImageUrl}
-                  onChange={(e) =>
-                    setNewCast({ ...newCast, castImageUrl: e.target.value })
-                  }
-                  placeholder="배우 이미지 URL"
-                />
-              </div>
               <Button
                 type="button"
-                onClick={addCast}
-                className="w-full cursor-pointer"
+                onClick={() => setIsActorSearchOpen(true)}
+                className="w-full"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                출연진 추가
+                출연진 검색 및 추가
               </Button>
               <div className="space-y-2 mb-5">
-                {formData.casts.map((cast, index) => (
+                {formData.casts.map((cast) => (
                   <div
-                    key={index}
+                    key={cast.castId}
                     className="flex items-center justify-between p-2 border rounded"
                   >
                     <div className="flex items-center gap-2">
@@ -705,7 +763,7 @@ export default function ContentForm({
                       type="button"
                       className="cursor-pointer"
                       size="sm"
-                      onClick={() => removeCast(index)}
+                      onClick={() => removeCast(cast.castName)}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -789,117 +847,35 @@ export default function ContentForm({
               </div>
             </CardContent>
           </Card>
+
+          {/* 배우 검색 다이얼로그 */}
+          <ActorSearchDialog
+            open={isActorSearchOpen}
+            onOpenChange={setIsActorSearchOpen}
+            onSelectCasts={(casts) => {
+              setFormData({
+                ...formData,
+                casts: [...formData.casts, ...casts],
+              });
+            }}
+            existingCasts={formData.casts}
+          />
+
+          {/* 감독 검색 다이얼로그 */}
+          <DirectorSearchDialog
+            open={isDirectorSearchOpen}
+            onOpenChange={setIsDirectorSearchOpen}
+            onSelectDirectors={(directors) => {
+              setFormData({
+                ...formData,
+                directors: [...formData.directors, ...directors],
+              });
+            }}
+            existingDirectors={formData.directors}
+          />
         </TabsContent>
 
-        <TabsContent value="platforms" className="space-y-6 mt-3">
-          {/* <Card>
-            <CardHeader>
-              <CardTitle className="mt-5">감독 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2 mb-3">
-                <Input
-                  value={newDirector}
-                  onChange={(e) => setNewDirector(e.target.value)}
-                  placeholder="감독 이름 입력"
-                  onKeyDown={(e) =>
-                    e.key === 'Enter' && (e.preventDefault(), addDirector())
-                  }
-                />
-                <Button
-                  type="button"
-                  onClick={addDirector}
-                  className="cursor-pointer"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-3">
-                {formData.directors.map((director) => (
-                  <Badge
-                    key={director}
-                    variant="secondary"
-                    className="flex items-center gap-1"
-                  >
-                    {director}
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      className="h-4 w-4 p-0 cursor-pointer"
-                      onClick={() => removeDirector(director)}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="mt-5">출연진 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                <Input
-                  value={newCast.castName}
-                  onChange={(e) =>
-                    setNewCast({ ...newCast, castName: e.target.value })
-                  }
-                  placeholder="배우 이름"
-                />
-                <Input
-                  value={newCast.castImageUrl}
-                  onChange={(e) =>
-                    setNewCast({ ...newCast, castImageUrl: e.target.value })
-                  }
-                  placeholder="배우 이미지 URL"
-                />
-              </div>
-              <Button
-                type="button"
-                onClick={addCast}
-                className="w-full cursor-pointer"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                출연진 추가
-              </Button>
-              <div className="space-y-2 mb-5">
-                {formData.casts.map((cast, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-2 border rounded"
-                  >
-                    <div className="flex items-center gap-2">
-                      {cast.castImageUrl && (
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                          <Image
-                            src={cast.castImageUrl || '/placeholder.svg'}
-                            alt={cast.castName || '출연진 이미지'}
-                            fill
-														unoptimized
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        </div>
-                      )}
-                      <span>{cast.castName}</span>
-                    </div>
-                    <Button
-                      type="button"
-                      className="cursor-pointer"
-                      size="sm"
-                      onClick={() => removeCast(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card> */}
-        </TabsContent>
+        <TabsContent value="platforms" className="space-y-6 mt-3"></TabsContent>
       </Tabs>
 
       <div className="flex justify-end space-x-2">

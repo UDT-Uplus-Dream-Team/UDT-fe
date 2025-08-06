@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { LogOut } from 'lucide-react';
+import { Button } from '@components/ui/button';
 import AdminDashboard from '@components/admin/AdminDashboard';
 import { BatchRequestQueueDashboard } from '@components/admin/BatchRequestQueueDashboard';
 import { SmoothExpandableSidebar } from '@components/admin/SmoothExpandableSidebar';
@@ -66,6 +68,17 @@ export default function AdminPage() {
             </p>
           </div>
         </div>
+
+        {/* 로그아웃 버튼 */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {}}
+          className="flex items-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          로그아웃
+        </Button>
       </header>
 
       {/* 메인 콘텐츠 영역 */}

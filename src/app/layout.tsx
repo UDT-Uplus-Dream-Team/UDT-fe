@@ -30,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className="w-full flex justify-center bg-gray-100 h-[100svh] overflow-x-hidden">
+      <body className="w-screen flex justify-center bg-gray-100 h-[100svh] overflow-x-hidden">
         <Providers>
           <Toaster
             position="top-center"

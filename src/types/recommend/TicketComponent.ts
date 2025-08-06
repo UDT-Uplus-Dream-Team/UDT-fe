@@ -13,6 +13,7 @@ export interface TicketComponent {
   directors: string[];
   casts: string[];
   platforms: string[];
+  watchUrls: string[];
 }
 
 export const getMovieCategory = (movie: TicketComponent): string => {

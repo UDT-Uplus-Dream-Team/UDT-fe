@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+import { LogOut } from 'lucide-react';
+import { Button } from '@components/ui/button';
 import AdminDashboard from '@components/admin/AdminDashboard';
 import { RequestQueueDashboard } from '@components/admin/RequestQueueDashboard';
 import { SmoothExpandableSidebar } from '@components/admin/SmoothExpandableSidebar';
@@ -35,8 +37,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background transition-all duration-300 ease-out">
-      {/* 동적 헤더 */}
-      <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
         <div className="flex flex-col">
           <h1 className="text-xl font-semibold text-foreground leading-tight">
             {currentTab.title}
@@ -45,6 +46,17 @@ export default function AdminPage() {
             {currentTab.description}
           </p>
         </div>
+
+        {/* 로그아웃 버튼 */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {}}
+          className="flex items-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          로그아웃
+        </Button>
       </header>
 
       {/* 메인 콘텐츠 영역 */}

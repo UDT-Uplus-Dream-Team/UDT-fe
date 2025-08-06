@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -185,6 +185,10 @@ export default function AdminDashboard() {
 
   // 모든 페이지의 콘텐츠 합치기
   const allContents = data?.pages.flatMap((page) => page.item) || [];
+  const triggerIndex = useMemo(
+    () => allContents.length - 8,
+    [allContents.length],
+  );
 
   return (
     <div className="h-screen overflow-y-auto bg-gray-50 p-6">
@@ -202,8 +206,10 @@ export default function AdminDashboard() {
           <div className="w-full max-w-5xl">
             {isMetricsLoading ? (
               <div className="text-center py-4">차트를 불러오는 중...</div>
-            ) : metricsError || !categoryMetricsData ? (
+            ) : metricsError ? (
               <div className="text-center py-4">카테고리 지표 로드 실패</div>
+            ) : !categoryMetricsData ? (
+              <div className="text-center py-4">카테고리 데이터가 없습니다</div>
             ) : (
               <CategoryChart
                 categoryMetrics={categoryMetricsData.categoryMetrics}
@@ -252,7 +258,7 @@ export default function AdminDashboard() {
                       onEdit={openEditDialog}
                       onDelete={handleDeleteContent}
                     />
-                    {idx === allContents.length - 8 && (
+                    {idx === triggerIndex && (
                       <div ref={loadMoreRef} style={{ height: 1 }} />
                     )}
                   </div>

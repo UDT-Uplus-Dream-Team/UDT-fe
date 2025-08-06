@@ -9,7 +9,7 @@ import {
   OctagonX,
   Layers,
 } from 'lucide-react';
-import { Category, Platform } from '@type/admin/Content';
+import { Category, PlatformInfo } from '@type/admin/Content';
 
 // '배치 대기열' 및 '배치 결과' 페이지에서 사용할 타입을 정의하는 곳
 export type BatchRequestQueueKeys =
@@ -161,7 +161,7 @@ export type RegisterBatchResult = BatchResultBase & {
   countries: string[];
   directors: number[];
   casts: number[];
-  platforms: Platform[];
+  platforms: PlatformInfo[];
 };
 
 // '콘텐츠 수정' 관련 배치 결과 타입

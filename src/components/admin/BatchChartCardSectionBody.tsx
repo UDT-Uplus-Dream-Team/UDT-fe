@@ -4,14 +4,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@components/ui/chart';
-import {
-  CirclePlus,
-  FolderCheck,
-  FolderPlus,
-  FolderX,
-  Pencil,
-  Trash,
-} from 'lucide-react';
+import { batchTopCardDataConfigMap } from '@type/admin/batch';
 import { useMemo } from 'react';
 
 interface BatchChartCardSectionBodyProps {
@@ -32,24 +25,21 @@ export function BatchChartCardSectionBody({
   chartConfig,
   chartData,
 }: BatchChartCardSectionBodyProps) {
-  // 아이콘 목록 (chartData의 길이에 따라 아이콘 개수 조정)
-  const iconList = useMemo(() => {
-    if (chartData.length === 3) {
-      return [FolderCheck, FolderPlus, FolderX];
-    } else if (chartData.length === 4) {
-      return [FolderCheck, Pencil, CirclePlus, Trash];
-    }
-    return [];
+  // Pie 차트에서 제외할 데이터 분리 ('전체'는 제외)
+  const pieChartData = useMemo(() => {
+    return chartData.filter(
+      (item) => item.name !== 'totalRead' && item.name !== 'total',
+    );
   }, [chartData]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full justify-items-center">
       {/* 왼쪽: 파이 차트 */}
-      <div className="flex flex-col items-center">
-        <ChartContainer config={chartConfig}>
+      <div className="flex flex-col items-center w-full h-full">
+        <ChartContainer config={chartConfig} className="w-full h-full">
           <PieChart width={250} height={250}>
             <Pie
-              data={chartData}
+              data={pieChartData}
               dataKey="value"
               nameKey="name"
               cx="50%"
@@ -58,7 +48,7 @@ export function BatchChartCardSectionBody({
               innerRadius={40}
               strokeWidth={2}
             >
-              {chartData.map((entry, idx) => (
+              {pieChartData.map((entry, idx) => (
                 <Cell
                   key={`cell-${idx}`}
                   fill={chartConfig[entry.name].color}
@@ -74,36 +64,46 @@ export function BatchChartCardSectionBody({
       </div>
 
       {/* 오른쪽: 상세 카드 */}
-      <div className="flex flex-col w-full gap-6">
-        {/* 상단: 총계 (이건 크게 만들어줘야 함) */}
-        <div className="w-full">
-          <div className="flex items-center gap-4 p-6 rounded-xl border bg-card shadow hover:bg-accent/40 transition-colors">
-            <FolderCheck
-              className="h-8 w-8"
-              color={chartConfig.totalRead.color}
-            />
-            <span className="font-bold text-2xl">
-              {chartConfig.totalRead.label}
-            </span>
-            <span className="ml-auto text-4xl font-extrabold">
-              {chartData[0].value}
-            </span>
-          </div>
-        </div>
+      <div className="flex flex-col w-full gap-6 justify-center">
         {/* 하단: 세부 항목 (작게, 세로) */}
         <div className="flex flex-col w-full gap-2">
-          {chartData.slice(1).map((stat, idx) => {
-            const Icon = iconList[idx];
+          {chartData.map((stat, idx) => {
+            const config =
+              batchTopCardDataConfigMap[
+                stat.name as keyof typeof batchTopCardDataConfigMap
+              ]; // 해당 통계 데이터에 대해 맵핑된 정보 가져오기
+            const Icon = config?.icon;
+            // "전체"를 나타내는 key가 무엇인지 실제 config에서 확인 ("totalRead" or "total" 등)
+            const isTotal = stat.name === 'totalRead' || stat.name === 'total';
+
             return (
               <div
-                key={stat.name}
-                className="flex items-center gap-3 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                key={`${stat.name}-${idx}`}
+                className={[
+                  // 전체 대기열인 경우 특별한 스타일 적용 (isTotal이 true인 경우)
+                  'flex items-center gap-3 p-4 rounded-lg border transition-colors',
+                  isTotal
+                    ? 'bg-gray-50 border-gray-200 shadow-xs mb-4'
+                    : 'bg-card hover:bg-accent/50',
+                ].join(' ')}
               >
-                <Icon className={`w-6 h-6 ${chartConfig[stat.name].color}`} />
-                <span className="font-medium text-base">
-                  {chartConfig[stat.name].label}
+                <Icon className="w-6 h-6" color={config?.color} />
+                <span
+                  className={
+                    isTotal ? 'text-lg font-extrabold' : 'font-medium text-base'
+                  }
+                >
+                  {config?.label}
                 </span>
-                <span className="ml-auto text-xl font-bold">{stat.value}</span>
+                <span
+                  className={
+                    isTotal
+                      ? 'ml-auto text-2xl font-extrabold'
+                      : 'ml-auto text-xl font-bold'
+                  }
+                >
+                  {stat.value}
+                </span>
               </div>
             );
           })}

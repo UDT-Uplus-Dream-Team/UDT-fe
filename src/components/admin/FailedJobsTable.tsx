@@ -1,11 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@components/ui/dropdown-menu';
-import {
   Table,
   TableBody,
   TableCell,
@@ -15,16 +9,18 @@ import {
 } from '@components/ui/table';
 import { Badge } from '@components/ui/badge';
 import { Button } from '@components/ui/button';
-import { Filter, ChevronDown } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BatchJobDetailDialog } from '@components/admin/BatchJobDetailDialog';
-import { useGetBatchJobList } from '@/hooks/admin/useGetBatchJobList';
-import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
+import { useGetBatchJobList } from '@hooks/admin/useGetBatchJobList';
+import { useQueryErrorToast } from '@hooks/useQueryErrorToast';
 import { requestTypeConfigInBatchJobList } from '@type/admin/batch';
+import { usePostRetryFailedJobs } from '@hooks/admin/usePostRetryFailedJobs';
+import { JobTypeDropdown } from '@components/admin/JobTypeDropDown';
 
 // 배치 대기열에서 배치 목록을 보여주는 테이블
 export function FailedJobsTable() {
-  const [selectedJobType, setSelectedJobType] = useState<string>('전체');
+  const [filterJobType, setFilterJobType] = useState<string>('전체'); // 선택된 "필터링" 옵션
+  const [selectedJobType, setSelectedJobType] = useState<string>('REGISTER');
   const [isDialogOpen, setIsDialogOpen] = useState(false); // 상세보기 모달 창 열기 위한 상태 관리
   const [selectedJobId, setSelectedJobId] = useState<number>(-1); // 상세보기 모달 창에 표시할 요청 정보 관리
   const observerRef = useRef<IntersectionObserver | null>(null); // 무한 스크롤 처리를 위한 Intersection Observer 설정
@@ -41,6 +37,10 @@ export function FailedJobsTable() {
   // batchJobListQuery에서 제공하는 객체 가져오기
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     batchJobListQuery;
+
+  // 실패한 배치 목록 재시도 api 호출하는 커스텀 훅
+  const { mutate: postRetryFailedJobs, isPending: isPostingRetryFailedJobs } =
+    usePostRetryFailedJobs();
 
   // 무한 스크롤 처리
   useEffect(() => {
@@ -70,19 +70,18 @@ export function FailedJobsTable() {
       .flatMap((page) => page.item)
       .filter((req) => {
         const typePass =
-          selectedJobType === '전체' || req.jobType === selectedJobType;
+          filterJobType === '전체' || req.jobType === filterJobType;
         const statusPass =
-          selectedJobType === '전체' || req.jobType === selectedJobType; // 선택된 상태와 일치하는 요청만 필터링
+          filterJobType === '전체' || req.jobType === filterJobType; // 선택된 상태와 일치하는 요청만 필터링
         return typePass && statusPass;
       });
-  }, [selectedJobType, selectedJobType, data]);
+  }, [filterJobType, data]);
 
   // "상세보기" 버튼을 눌렀을 경우 모달 창 열기
-  const handleDetailClick = (requestId: number) => {
+  const handleDetailClick = (requestId: number, jobType: string) => {
     setIsDialogOpen(true);
-    if (!isDialogOpen) {
-      setSelectedJobId(requestId);
-    }
+    setSelectedJobId(requestId);
+    setSelectedJobType(jobType);
   };
 
   return (
@@ -94,26 +93,25 @@ export function FailedJobsTable() {
 
           {/* 필터 드롭다운 */}
           <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 bg-transparent">
-                  <Filter className="h-4 w-4" />
-                  {selectedJobType}
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {jobTypeOptions.map((option) => (
-                  <DropdownMenuItem
-                    key={option}
-                    onClick={() => setSelectedJobType(option)}
-                    className={selectedJobType === option ? 'bg-accent' : ''}
-                  >
-                    {option}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <JobTypeDropdown
+              options={jobTypeOptions}
+              value={filterJobType}
+              onChange={setFilterJobType}
+            />
+            {/* 삭제 버튼 */}
+            <Button
+              variant="default"
+              disabled={
+                !filteredJobs ||
+                filteredJobs.length === 0 ||
+                isPostingRetryFailedJobs
+              }
+              className="ml-2"
+              // 실제 재시도 함수 연결
+              onClick={() => postRetryFailedJobs()}
+            >
+              {isPostingRetryFailedJobs ? '재시도 중...' : '재시도하기'}
+            </Button>
           </div>
         </div>
       </CardHeader>
@@ -145,85 +143,102 @@ export function FailedJobsTable() {
           (!filteredJobs || filteredJobs.length === 0) && (
             <div className="flex flex-1 flex-col justify-center items-center py-8 text-gray-400">
               <span>조건에 맞는 실패한 배치 목록이 없습니다.</span>
-              {/* 필터 초기화하는 버튼 하나 추가 */}
-              <Button
-                size="sm"
-                variant="ghost"
-                className="mt-2"
-                onClick={() => {
-                  setSelectedJobType('전체');
-                }}
-              >
-                필터 초기화
-              </Button>
+              {/* 필터 초기화하는 버튼 하나 추가 (필터가 전체가 아닐 때만) */}
+              {filterJobType !== '전체' && (
+                <>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="mt-2"
+                    onClick={() => {
+                      setFilterJobType('전체');
+                    }}
+                  >
+                    필터 초기화
+                  </Button>
+                </>
+              )}
             </div>
           )}
 
         {/* 4. 정상일 때 */}
         {status === 'success' && filteredJobs && filteredJobs.length > 0 && (
-          <Table>
-            <TableHeader>
-              <TableRow className="sticky top-0 z-10 bg-white">
-                <TableHead>요청 ID</TableHead>
-                <TableHead>요청 타입</TableHead>
-                <TableHead>요청자</TableHead>
-                <TableHead>생성 시간</TableHead>
-                <TableHead>실패 시각</TableHead>
-                <TableHead>상태</TableHead>
-                <TableHead>상세보기</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredJobs?.map((request) => {
-                return (
-                  <TableRow key={request.id}>
-                    <TableCell className="font-medium">{request.id}</TableCell>
-                    <TableCell>{request.jobType}</TableCell>
-                    <TableCell>{request.memberId}</TableCell>
-                    <TableCell>{request.createdAt}</TableCell>
-                    <TableCell>{request.finishedAt}</TableCell>
-                    <TableCell>
-                      <Badge
-                        className={`${
-                          requestTypeConfigInBatchJobList[
-                            request.status as keyof typeof requestTypeConfigInBatchJobList
-                          ].color
-                        }`}
-                      >
-                        {
-                          requestTypeConfigInBatchJobList[
-                            request.status as keyof typeof requestTypeConfigInBatchJobList
-                          ].label
-                        }
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        size="sm"
-                        className="rounded-full w-16 h-full p-1 bg-gray-400 opacity-80 text-white cursor-pointer"
-                        onClick={() => handleDetailClick(request.id)}
-                      >
-                        상세보기
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow className="sticky top-0 z-10 bg-white">
+                  <TableHead>요청 ID</TableHead>
+                  <TableHead>요청 타입</TableHead>
+                  <TableHead>요청자 ID</TableHead>
+                  <TableHead>생성 시간</TableHead>
+                  <TableHead>실패 시각</TableHead>
+                  <TableHead>상태</TableHead>
+                  <TableHead>상세보기</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredJobs?.map((request) => {
+                  return (
+                    <TableRow key={`${request.id}-${request.jobType}`}>
+                      <TableCell className="font-medium">
+                        {request.id}
+                      </TableCell>
+                      <TableCell>{request.jobType}</TableCell>
+                      <TableCell>{request.memberId}</TableCell>
+                      <TableCell>{request.createdAt}</TableCell>
+                      <TableCell>{request.finishedAt}</TableCell>
+                      <TableCell>
+                        <Badge
+                          className={`${
+                            requestTypeConfigInBatchJobList[
+                              request.status as keyof typeof requestTypeConfigInBatchJobList
+                            ].color
+                          }`}
+                        >
+                          {
+                            requestTypeConfigInBatchJobList[
+                              request.status as keyof typeof requestTypeConfigInBatchJobList
+                            ].label
+                          }
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          className="rounded-full w-16 h-full p-1 bg-gray-400 opacity-80 text-white cursor-pointer"
+                          onClick={() =>
+                            handleDetailClick(request.id, request.jobType)
+                          }
+                        >
+                          상세보기
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+            {/* 무한 스크롤 트리거용 요소 */}
+            <div ref={loadMoreRef} className="h-4" />
+          </>
         )}
       </CardContent>
 
-      {/* 상세보기를 눌렀을 경우 모달 창 열기 */}
-      <BatchJobDetailDialog
-        open={isDialogOpen}
-        onOpenChange={(open) => {
-          // 모달 창 닫을 때 선택된 요청 정보 초기화
-          setIsDialogOpen(open);
-          if (!open) setSelectedJobId(-1);
-        }}
-        jobId={selectedJobId}
-      />
+      {isDialogOpen && (
+        // 상세보기를 눌렀을 경우 모달 창 열기
+        <BatchJobDetailDialog
+          open={isDialogOpen}
+          onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) {
+              setSelectedJobId(-1);
+              setSelectedJobType('전체');
+            }
+          }}
+          jobId={selectedJobId}
+          jobType={selectedJobType}
+        />
+      )}
     </Card>
   );
 }

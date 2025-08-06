@@ -37,6 +37,13 @@ export function BatchRequestQueueTopCardSection() {
     ];
   }, [data]);
 
+  // 데이터가 비어 있거나, 모든 값이 0인 경우에 대한 flag 값 (chartData가 바뀌는 경우에만 계산)
+  const isAllZero = useMemo(() => {
+    return (
+      chartData.length === 0 || chartData.every((item) => item.value === 0)
+    );
+  }, [chartData]);
+
   return (
     <Card className="w-full py-4 px-2">
       <CardHeader>
@@ -44,7 +51,7 @@ export function BatchRequestQueueTopCardSection() {
           배치 대기열 전체 현황
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 items-center justify-center">
         {/* 1. 로딩 중 */}
         {status === 'pending' && (
           <div className="flex flex-1 justify-center items-center py-8 text-gray-400">
@@ -59,8 +66,15 @@ export function BatchRequestQueueTopCardSection() {
           </div>
         )}
 
-        {/* 3. 정상 */}
-        {status === 'success' && (
+        {/* 3. 데이터가 비어 있거나, 모든 값이 0인 경우 */}
+        {status === 'success' && isAllZero && (
+          <div className="flex flex-1 justify-center items-center py-8 text-gray-400 h-32">
+            배치 대기열에 대한 데이터가 없습니다.
+          </div>
+        )}
+
+        {/* 4. 데이터가 있는 경우 */}
+        {status === 'success' && !isAllZero && (
           <BatchChartCardSectionBody
             chartConfig={chartConfig}
             chartData={chartData}

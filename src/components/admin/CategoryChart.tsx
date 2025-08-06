@@ -13,37 +13,34 @@ import {
   ChartTooltipContent,
 } from '@components/ui/chart';
 import { PieChart, Pie, Cell } from 'recharts';
-import { ContentSummary } from '@type/admin/Content';
-import { generateChartData } from '@utils/getContentUtils';
 import { CHART_COLORS } from '@/constants';
 import { useMemo } from 'react';
+import { CategoryMetric } from '@type/admin/CategoryMetric';
 
-interface ContenChartProps {
-  contents: ContentSummary[];
+interface CategoryChartProps {
+  categoryMetrics: CategoryMetric[];
 }
-
-export default function ContentChart({ contents }: ContenChartProps) {
-  const chartData = useMemo(() => generateChartData(contents), [contents]); // [{ name: '영화', value: 20 }, { name: '드라마', value: 10 }]
+export default function CategoryChart({ categoryMetrics }: CategoryChartProps) {
+  const formattedData = useMemo(() => {
+    return categoryMetrics.map((item) => ({
+      name: item.categoryType,
+      count: item.count,
+      fill: CHART_COLORS[item.categoryId % CHART_COLORS.length],
+    }));
+  }, [categoryMetrics]);
 
   const chartConfig = useMemo(() => {
-    return chartData.reduce(
-      (acc, item, index) => {
-        acc[item.name] = {
-          label: item.name,
-          color: CHART_COLORS[index % CHART_COLORS.length],
+    return categoryMetrics.reduce(
+      (acc, item) => {
+        acc[item.categoryType] = {
+          label: item.categoryType,
+          color: CHART_COLORS[item.categoryId % CHART_COLORS.length],
         };
         return acc;
       },
       {} as Record<string, { label: string; color: string }>,
     );
-  }, [chartData]);
-
-  const formattedData = useMemo(() => {
-    return chartData.map((item, index) => ({
-      ...item,
-      fill: CHART_COLORS[index % CHART_COLORS.length],
-    }));
-  }, [chartData]);
+  }, [categoryMetrics]);
 
   return (
     <Card className="bg-white">
@@ -69,8 +66,8 @@ export default function ContentChart({ contents }: ContenChartProps) {
                 `${name} ${(percent * 100).toFixed(0)}%`
               }
             >
-              {formattedData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
+              {formattedData.map((entry) => (
+                <Cell key={entry.name} fill={entry.fill} />
               ))}
             </Pie>
           </PieChart>

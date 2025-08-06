@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -28,14 +28,33 @@ import { useGetContentDetail } from '@hooks/admin/useGetContentDetail';
 import { useMutationErrorToast } from '@hooks/useMutationErrorToast';
 import ContentForm from '@components/admin/ContentForm';
 import ContentCard from '@components/admin/ContentCard';
-import ContentChart from '@components/admin/ContentChart';
+import CategoryChart from '@/components/admin/CategoryChart';
 import ContentDetail from '@components/admin/ContentDetail';
 import SearchFilter from '@components/admin/SearchFilter';
+import { useGetCategoryMetrics } from '@hooks/admin/useGetCategoryMetrics';
 
 export default function AdminDashboard() {
+  // 카테고리 지표 조회
+  const {
+    data: categoryMetricsData,
+    isLoading: isMetricsLoading,
+    error: metricsError,
+  } = useGetCategoryMetrics();
+
+  const [categoryType, setCategoryType] = useState<string>('');
+
+  const filteredCategoryCount =
+    categoryType && categoryType !== 'all'
+      ? (categoryMetricsData?.categoryMetrics.find(
+          (metric) => metric.categoryType === categoryType,
+        )?.count ?? 0)
+      : (categoryMetricsData?.categoryMetrics.reduce(
+          (sum, metric) => sum + metric.count,
+          0,
+        ) ?? 0);
+
   // 무한 스크롤용 필터 상태
   const size = 20;
-  const [categoryType, setCategoryType] = useState<string>('');
 
   // 무한 스크롤 쿼리
   const { data, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -166,6 +185,10 @@ export default function AdminDashboard() {
 
   // 모든 페이지의 콘텐츠 합치기
   const allContents = data?.pages.flatMap((page) => page.item) || [];
+  const triggerIndex = useMemo(
+    () => allContents.length - 8,
+    [allContents.length],
+  );
 
   return (
     <div className="h-screen overflow-y-auto bg-gray-50 p-6">
@@ -181,7 +204,17 @@ export default function AdminDashboard() {
         {/* 콘텐츠 분포 차트 */}
         <div className="w-full flex justify-center">
           <div className="w-full max-w-5xl">
-            <ContentChart contents={allContents} />
+            {isMetricsLoading ? (
+              <div className="text-center py-4">차트를 불러오는 중...</div>
+            ) : metricsError ? (
+              <div className="text-center py-4">카테고리 지표 로드 실패</div>
+            ) : !categoryMetricsData ? (
+              <div className="text-center py-4">카테고리 데이터가 없습니다</div>
+            ) : (
+              <CategoryChart
+                categoryMetrics={categoryMetricsData.categoryMetrics}
+              />
+            )}
           </div>
         </div>
 
@@ -194,7 +227,7 @@ export default function AdminDashboard() {
                   등록된 콘텐츠 목록
                 </CardTitle>
                 <CardDescription>
-                  전체 {allContents.length}개의 콘텐츠
+                  전체 {filteredCategoryCount}개의 콘텐츠
                 </CardDescription>
               </div>
               <Button
@@ -206,7 +239,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* 검색 및 필터 */}
-            <div className="mt-4">
+            <div className="mt-1">
               <SearchFilter
                 filterType={categoryType}
                 onFilterChange={handleFilterChange}
@@ -215,18 +248,21 @@ export default function AdminDashboard() {
           </CardHeader>
 
           <CardContent>
-            <ScrollArea className="h-96">
+            <ScrollArea className="h-[500px]">
               <div className="space-y-3 mb-3">
                 {allContents.map((content, idx) => (
-                  <ContentCard
-                    key={`${content.contentId}-${idx}`}
-                    content={content}
-                    onView={openDetailDialog}
-                    onEdit={openEditDialog}
-                    onDelete={handleDeleteContent}
-                  />
+                  <div key={content.contentId}>
+                    <ContentCard
+                      content={content}
+                      onView={openDetailDialog}
+                      onEdit={openEditDialog}
+                      onDelete={handleDeleteContent}
+                    />
+                    {idx === triggerIndex && (
+                      <div ref={loadMoreRef} style={{ height: 1 }} />
+                    )}
+                  </div>
                 ))}
-                <div ref={loadMoreRef} style={{ height: 1 }} />
               </div>
             </ScrollArea>
             {isFetchingNextPage && (

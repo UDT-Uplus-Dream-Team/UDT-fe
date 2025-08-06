@@ -471,7 +471,8 @@ export default function CastSearchDialog({
                   <label className="text-sm font-medium mb-1 block">
                     프로필 이미지
                   </label>
-                  <div className="flex gap-2">
+                  {/* 버튼 + 미리보기 영역 */}
+                  <div className="flex gap-2 items-center">
                     <Input
                       type="file"
                       accept="image/*"
@@ -479,28 +480,30 @@ export default function CastSearchDialog({
                       className="hidden"
                       ref={castImageRef}
                     />
+
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => castImageRef.current?.click()}
-                      className="flex-1"
+                      onClick={() =>
+                        document.getElementById('cast-image-upload')?.click()
+                      }
+                      className="flex-1 max-w-[160px]"
                     >
                       <Upload className="h-4 w-4 mr-2" />
                       이미지 업로드
                     </Button>
-                  </div>
-                  {newCast.castImageUrl && (
-                    <div className="mt-2">
+
+                    {/* 미리보기 이미지 */}
+                    {newCast.castImageUrl && (
                       <Image
                         src={newCast.castImageUrl || '/placeholder.svg'}
                         alt="미리보기"
-                        width={64}
-                        height={64}
-                        unoptimized
-                        className="w-16 h-16 rounded-full object-cover"
+                        width={48}
+                        height={48}
+                        className="w-12 h-12 rounded-full object-cover"
                       />
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
 

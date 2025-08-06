@@ -6,6 +6,7 @@ import { Button } from '@components/ui/button';
 import AdminDashboard from '@components/admin/AdminDashboard';
 import { BatchRequestQueueDashboard } from '@components/admin/BatchRequestQueueDashboard';
 import { SmoothExpandableSidebar } from '@components/admin/SmoothExpandableSidebar';
+import UserManagement from '@/components/admin/userManagement/UserManagement';
 import { BatchResultDashboard } from '@components/admin/BatchResultDashboard';
 import Image from 'next/image';
 
@@ -36,7 +37,7 @@ const tabConfig = {
   'member-management': {
     title: '회원 정보 관리',
     description: '회원 정보를 조회하고 관리할 수 있습니다',
-    component: AdminDashboard,
+    component: UserManagement,
   },
 };
 

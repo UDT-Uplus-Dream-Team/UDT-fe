@@ -112,21 +112,15 @@ export default function ContentDetail({
                           key={director.directorId}
                           className="flex items-center gap-3 p-3 border rounded-lg"
                         >
-                          {director.directorImageUrl ? (
-                            <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                              <Image
-                                src={director.directorImageUrl}
-                                alt={director.directorName || '출연진 이미지'}
-                                fill
-                                unoptimized
-                                className="object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                              <Users className="h-6 w-6 text-gray-400" />
-                            </div>
-                          )}
+                          <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+                            <Image
+                              src={director.directorImageUrl}
+                              alt={director.directorName || '감독 이미지'}
+                              fill
+                              unoptimized
+                              className="object-cover"
+                            />
+                          </div>
                           <div>
                             <div className="font-medium">
                               {director.directorName}
@@ -192,21 +186,15 @@ export default function ContentDetail({
                         key={cast.castId}
                         className="flex items-center gap-3 p-3 border rounded-lg"
                       >
-                        {cast.castImageUrl ? (
-                          <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                            <Image
-                              src={cast.castImageUrl}
-                              alt={cast.castName || '출연진 이미지'}
-                              fill
-                              unoptimized
-                              className="object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                            <Users className="h-6 w-6 text-gray-400" />
-                          </div>
-                        )}
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+                          <Image
+                            src={cast.castImageUrl}
+                            alt={cast.castName || '출연진 이미지'}
+                            fill
+                            unoptimized
+                            className="object-cover"
+                          />
+                        </div>
                         <div>
                           <div className="font-medium">{cast.castName}</div>
                         </div>

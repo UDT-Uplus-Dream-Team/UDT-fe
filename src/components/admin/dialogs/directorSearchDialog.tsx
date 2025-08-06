@@ -7,12 +7,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
+} from '@components/ui/dialog';
+import { Input } from '@components/ui/input';
+import { Button } from '@components/ui/button';
+import { Badge } from '@components/ui/badge';
+import { Card, CardContent } from '@components/ui/card';
+import { ScrollArea } from '@components/ui/scroll-area';
 
 import { Search, Plus, Users, Upload, Check, Loader2 } from 'lucide-react';
 import { useInfiniteDirectorsSearch } from '@hooks/admin/useGetDirectorsSearch';
@@ -20,6 +20,7 @@ import { usePostUploadImages } from '@hooks/admin/usePostUploadImages';
 import { usePostAdminDirectors } from '@hooks/admin/usePostDirectors';
 import Image from 'next/image';
 import { Director } from '@type/admin/Content';
+import { showSimpleToast } from '@components/common/Toast';
 
 interface DirectorSearchDialogProps {
   open: boolean;
@@ -53,10 +54,11 @@ export default function DirectorSearchDialog({
         URL.revokeObjectURL(newDirector.directorImageUrl);
       }
     };
-  }, []);
+  }, [newDirector.directorImageUrl]); // 의존성 배열에 directorImageUrl 추가
 
   // 무한 스크롤용 ref
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const directorImageRef = useRef<HTMLInputElement>(null);
 
   // 이미지 업로드 및 감독 등록 훅
   const uploadImagesMutation = usePostUploadImages();
@@ -164,12 +166,24 @@ export default function DirectorSearchDialog({
 
     // 이미지가 업로드된 경우 서버에 업로드
     if (newDirector.directorImageFile) {
-      const fileArray = [newDirector.directorImageFile];
-      const uploadResponse = await uploadImagesMutation.mutateAsync(fileArray);
+      try {
+        const fileArray = [newDirector.directorImageFile];
+        const uploadResponse =
+          await uploadImagesMutation.mutateAsync(fileArray);
 
-      if (uploadResponse.data.uploadedFileUrls.length > 0) {
-        imageUrl = uploadResponse.data.uploadedFileUrls[0];
+        if (uploadResponse.data.uploadedFileUrls.length > 0) {
+          imageUrl = uploadResponse.data.uploadedFileUrls[0];
+        }
+      } catch {
+        showSimpleToast.error({ message: '이미지 업로드에 실패했습니다.' });
+        return;
       }
+    } else if (
+      newDirector.directorImageUrl &&
+      newDirector.directorImageUrl.startsWith('blob:')
+    ) {
+      // blob URL인 경우 빈 문자열로 설정
+      imageUrl = '';
     }
 
     // 감독 등록
@@ -182,25 +196,32 @@ export default function DirectorSearchDialog({
       ],
     };
 
-    const response = await postDirectorsMutation.mutateAsync(directorData);
+    try {
+      const response = await postDirectorsMutation.mutateAsync(directorData);
 
-    if (response.directorIds.length > 0) {
-      // 등록된 감독을 선택된 감독 목록에 추가
-      const newDirectorItem: Director = {
-        directorId: response.directorIds[0],
-        directorName: newDirector.directorName,
-        directorImageUrl: imageUrl || '',
-      };
+      if (response.directorIds.length > 0) {
+        // 등록된 감독을 선택된 감독 목록에 추가
+        const newDirectorItem: Director = {
+          directorId: response.directorIds[0],
+          directorName: newDirector.directorName,
+          directorImageUrl: imageUrl || '',
+        };
 
-      setSelectedDirectors([...selectedDirectors, newDirectorItem]);
+        setSelectedDirectors([...selectedDirectors, newDirectorItem]);
 
-      // 폼 초기화
-      setNewDirector({
-        directorName: '',
-        directorImageFile: null,
-        directorImageUrl: '',
+        // 폼 초기화
+        setNewDirector({
+          directorName: '',
+          directorImageFile: null,
+          directorImageUrl: '',
+        });
+        setShowAddForm(false);
+      }
+      showSimpleToast.success({ message: '감독 등록이 완료되었습니다.' });
+    } catch {
+      showSimpleToast.error({
+        message: '감독 등록에 실패했습니다.',
       });
-      setShowAddForm(false);
     }
   };
 
@@ -208,15 +229,21 @@ export default function DirectorSearchDialog({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 기존 blob URL 정리
       if (
         newDirector.directorImageUrl &&
         newDirector.directorImageUrl.startsWith('blob:')
       ) {
         URL.revokeObjectURL(newDirector.directorImageUrl);
       }
-      setNewDirector({ ...newDirector, directorImageFile: file });
+
+      // 새로운 blob URL 생성 및 상태 업데이트
       const imageUrl = URL.createObjectURL(file);
-      setNewDirector((prev) => ({ ...prev, directorImageUrl: imageUrl }));
+      setNewDirector({
+        ...newDirector,
+        directorImageFile: file,
+        directorImageUrl: imageUrl,
+      });
     }
   };
 
@@ -377,6 +404,7 @@ export default function DirectorSearchDialog({
                                       alt={director.directorName}
                                       width={48}
                                       height={48}
+                                      unoptimized
                                       className="w-12 h-12 rounded-full object-cover"
                                     />
                                   ) : (
@@ -471,16 +499,12 @@ export default function DirectorSearchDialog({
                       accept="image/*"
                       onChange={handleImageUpload}
                       className="hidden"
-                      id="director-image-upload"
+                      ref={directorImageRef}
                     />
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() =>
-                        document
-                          .getElementById('director-image-upload')
-                          ?.click()
-                      }
+                      onClick={() => directorImageRef.current?.click()}
                       className="flex-1"
                     >
                       <Upload className="h-4 w-4 mr-2" />
@@ -494,6 +518,7 @@ export default function DirectorSearchDialog({
                         alt="미리보기"
                         width={64}
                         height={64}
+                        unoptimized
                         className="w-16 h-16 rounded-full object-cover"
                       />
                     </div>

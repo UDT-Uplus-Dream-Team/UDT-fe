@@ -11,7 +11,7 @@ import { useFetchRecommendations } from '@hooks/recommend/useGetRecommendationCo
 import { useRefreshCuratedContents } from '@hooks/recommend/useGetCuratedContents';
 import { FinishScreen } from './FinishScreen';
 import { sendAnalyticsEvent } from '@lib/gtag';
-import { LoadingScreen } from './LoadingScreen';
+import { LoadingScreen } from '../../components/common/LoadingScreen';
 import { toast } from 'sonner';
 import type {
   SwipeResult,

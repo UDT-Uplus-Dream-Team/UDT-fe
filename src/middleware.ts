@@ -25,14 +25,7 @@ interface ReissueResult {
 /* -------------------------------------------------------------------------- */
 /* 상수                                                                      */
 /* -------------------------------------------------------------------------- */
-const PUBLIC_PATHS = [
-  '/_next',
-  '/favicon.ico',
-  '/fonts',
-  '/images',
-  '/icons',
-  '/test',
-];
+const PUBLIC_PATHS = ['/_next', '/favicon.ico', '/fonts', '/images', '/icons'];
 
 const ROLE_RESTRICTIONS = {
   ROLE_GUEST: {
@@ -41,11 +34,11 @@ const ROLE_RESTRICTIONS = {
   },
   ROLE_USER: {
     allowed: [],
-    denied: ['/survey', '/admin'],
+    denied: ['/survey'],
   },
   ROLE_ADMIN: {
-    allowed: [],
-    denied: ['/survey', '/onboarding'], // 슬래시 추가
+    allowed: ['/admin'],
+    denied: [],
   },
 } as const;
 
@@ -75,7 +68,7 @@ function hasPermission(role: string, pathname: string): boolean {
   }
 
   // GUEST의 경우: allowed 목록에 있는 경로만 접근 가능
-  if (role === 'ROLE_GUEST') {
+  if (role === 'ROLE_GUEST' || role == 'ROLE_ADMIN') {
     const hasAccess = restrictions.allowed.some((path) =>
       pathname.startsWith(path),
     );
@@ -89,17 +82,13 @@ function hasPermission(role: string, pathname: string): boolean {
   return !isDenied;
 }
 
-function getDefaultPath(role: string, request: NextRequest): string {
+function getDefaultPath(role: string): string {
   switch (role) {
     case 'ROLE_GUEST':
       return '/survey';
     case 'ROLE_ADMIN':
       return '/admin';
     case 'ROLE_USER':
-      const isNewUserCookie = request.cookies.get('X-New-User')?.value;
-      if (isNewUserCookie === 'true') {
-        return '/onboarding';
-      }
       return '/recommend';
     default:
       return '/recommend';
@@ -213,7 +202,7 @@ export async function middleware(request: NextRequest) {
 
     if (verification.payload) {
       // 유효한 토큰이 있으면 기본 경로로 리다이렉트
-      const defaultPath = getDefaultPath(verification.payload.ROLE, request);
+      const defaultPath = getDefaultPath(verification.payload.ROLE);
       return NextResponse.redirect(new URL(defaultPath, request.url));
     }
 
@@ -253,7 +242,7 @@ export async function middleware(request: NextRequest) {
   if (verification.payload) {
     // 유효한 토큰이 있는 경우 권한 체크로 진행
     if (!hasPermission(verification.payload.ROLE, pathname)) {
-      const defaultPath = getDefaultPath(verification.payload.ROLE, request);
+      const defaultPath = getDefaultPath(verification.payload.ROLE);
       const redirectUrl = addMessageToUrl(
         new URL(defaultPath, request.url),
         'access-denied',

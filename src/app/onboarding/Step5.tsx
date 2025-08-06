@@ -60,7 +60,7 @@ export default function Step5({ onNext }: StepProps5) {
           className="px-8 py-4 text-sm md:text-lg font-semibold rounded-xl bg-white text-black hover:bg-white/90 transition"
           onClick={onNext}
         >
-          계속하기
+          넘어가기
         </Button>
       </div>
     </div>

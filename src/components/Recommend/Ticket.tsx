@@ -266,6 +266,11 @@ export const Ticket = ({ movie, variant, feedback }: TicketProps) => {
             className="object-cover"
             priority
             onError={() => setPosterSrc('/images/default-poster.png')}
+            style={{
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              pointerEvents: 'none', // 이미지 자체에 대한 포인터 이벤트 방지
+            }}
           />
           {feedback === 'liked' && (
             <div className="absolute inset-0 z-20 flex justify-start items-center bg-like/70">

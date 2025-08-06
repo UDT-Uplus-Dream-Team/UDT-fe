@@ -1,26 +1,38 @@
 'use client';
 
 import * as React from 'react';
-import { Clock, FileText, Users } from 'lucide-react';
+import { Clock, FileText, FolderCheck, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type TabType = 'request-queue' | 'content-management' | 'member-management';
+// 탭 종류 정의
+type TabType =
+  | 'request-queue'
+  | 'content-management'
+  | 'member-management'
+  | 'batch-result';
 
+// 사이드바 컴포넌트 속성 정의
 interface SmoothExpandableSidebarProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
 }
 
+// 메뉴 아이템 정의
 const menuItems = [
-  {
-    id: 'request-queue' as TabType, // 요청 대기열
-    title: '요청 대기열',
-    icon: Clock,
-  },
   {
     id: 'content-management' as TabType, // 콘텐츠 관리
     title: '콘텐츠 관리',
     icon: FileText,
+  },
+  {
+    id: 'request-queue' as TabType, // 요청 대기열
+    title: '배치 대기열',
+    icon: Clock,
+  },
+  {
+    id: 'batch-result' as TabType, // 배치 결과
+    title: '배치 결과',
+    icon: FolderCheck,
   },
   {
     id: 'member-management' as TabType, // 회원 정보 관리
@@ -64,7 +76,7 @@ export function SmoothExpandableSidebar({
             onClick={() => onTabChange(item.id)}
             className={cn(
               'w-full h-12 flex items-center transition-all duration-200',
-              'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+              'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer',
               'px-4 group relative',
               activeTab === item.id &&
                 'bg-sidebar-accent text-sidebar-accent-foreground',

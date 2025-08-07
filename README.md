@@ -35,7 +35,6 @@ OTT 콘텐츠가 넘쳐나는 시대, 아직도 “무엇을 볼지” 30분씩 
 │   └── images/                     # 이미지 자산
 ├── 📂 src/                        
 │   ├── 📂 app/                     
-│   │   ├── 📂 admin/               # 🛠️ 백오피스 관리자 페이지
 │   │   ├── 📂 profile/             # 👤 마이페이지 & 사용자 관리
 │   │   ├── 📂 explore/             # 🖥️ OTT 플랫폼과 같은 컨텐츠 찾아보기
 │   │   ├── 📂 onboarding/          # 🎯 온보딩 튜토리얼 페이지
@@ -45,8 +44,8 @@ OTT 콘텐츠가 넘쳐나는 시대, 아직도 “무엇을 볼지” 30분씩 
 │   │   ├── globals.css             # 전역 스타일
 │   │   └── page.tsx                # 로그인 페이지
 │   ├── 📂 components/              # 재사용 가능한 UI 컴포넌트
-│   │   ├── 📂 admin/               # 🛠️ 백오피스 전용 컴포넌트
 │   │   ├── 📂 common/              # 🔄 공통 컴포넌트(Navbar, Toast)
+│   │   ├── 📂 explore/             # 🖥️ 컨텐츠 둘러보기 관련 컴포넌트
 │   │   ├── 📂 profile/             # 👤 마이페이지 관련 컴포넌트
 │   │   ├── 📂 recommend/           # 🎪 추천 시스템 전용 컴포넌트
 │   │   ├── 📂 survey/              # 📊 설문조사 전용 컴포넌트
@@ -139,6 +138,13 @@ npm run dev:https
 npm run build
 ```
 
+#### 3.3 테스트 진행(선택)
+
+```bash
+#서버를 킨 상태에서 
+npm run test
+```
+
 ### 3. 접속
 
 아래 주소로 접속:
@@ -148,8 +154,7 @@ npm run build
 
 ### 🚀 프로덕션 환경
 - **메인 서비스**: `www.banditbool.com`
-- **백오피스**: `www.banditbool.com/admin`
-
+> 서비스 로그인을 위해 카카오 계정이 필요합니다.
 
 ### 📱 접속 안내
 - **권장 브라우저**: Chrome, Safari, Edge 최신 버전
@@ -157,7 +162,6 @@ npm run build
 - **반응형 디자인**: 데스크탑, 태블릿, 모바일 모든 디바이스 대응
 
 > ⚠️ **주의사항**
->> 현재 베타 서비스로 운영 중이며, 매일 17:00~18:00에 개발 진행 내용 바탕으로 재배포가 이루어질 수 있습니다.
 >> 모바일 환경의 경우 375*667px 이하의 뷰포트를 가진 기기의 경우 일부 화면에서 사용에 불편함이 있을 수 있습니다.
 
 ---
@@ -165,26 +169,25 @@ npm run build
 ## 🖥️ 주요 화면 및 기능
 
 ### 1. 설문조사 페이지 (`/survey`)
-> 사용자의 취향을 파악하기 위한 설문 진행 및 결과 기반 맞춤 추천이 시작되는 첫 화면입니다.
-- OTT 구독 서비스 선택
-- 선호 장르 선택
-- 관련 콘텐츠 리스트업 (회원들의 좋아요/싫어요 기반 정렬)
+> 사용자의 취향을 파악하기 위한 설문이 진행되는 화면입니다.
+- 구독 중인 OTT 서비스 선택
+- 선호 장르(최대 3개) 선택
 - Survey 완료 전 이탈 시 → 임시회원 처리 및 재접속 유도
 - Survey 완료 시 → 일반회원 전환 후 메인 페이지 진입
 
-<img width="300" height="778" alt="image" src="https://github.com/user-attachments/assets/ac8ce252-743b-4ee6-966b-90d4f13d6c7c" />
-<img width="300" height="778" alt="image" src="https://github.com/user-attachments/assets/1f0cc4dd-b062-43e7-a21f-823aa4707459" />
+<img width="360" height="778" alt="image" src="https://github.com/user-attachments/assets/c4a3c451-eaf0-4783-86bc-71b4ec0e48b6" />
+<img width="360" height="778" alt="image" src="https://github.com/user-attachments/assets/4d8cb293-3383-496e-a91e-a60a2f49c16e" />
+
 
 ### 2. 온보딩 페이지 (`/onboarding`)
 > 서비스 이용 방법과 스와이프 인터랙션을 튜토리얼로 안내하는 페이지입니다.
 - 스와이프 인터랙션 튜토리얼
 - 추천 시스템 및 사용 방식 설명
 - 모든 튜토리얼 완료 시 → 메인 페이지 진입
+- 튜토리얼에서의 스와이프 액션은 체험으로, 컨텐츠에 대해 제공하는 피드백으로 취급되지 않습니다.
+- 메인 페이지 시작 화면에서 ? 버튼을 누르면 다시 튜토리얼을 진행할 수 있습니다.
 
-https://github.com/user-attachments/assets/f72a8e93-0234-4d8f-81cc-bc89ee466c19
-
-https://github.com/user-attachments/assets/62a24579-3ecd-4d47-9bae-574e67a85192
-
+https://github.com/user-attachments/assets/f9969c2d-2a04-4864-9a63-89c041da69e0
 
 
 ### 3. 빠른 콘텐츠 추천 페이지 (`/recommend`)
@@ -194,15 +197,12 @@ https://github.com/user-attachments/assets/62a24579-3ecd-4d47-9bae-574e67a85192
   - 왼쪽 스와이프: 싫어요
   - 넘기기: 관심 없음
 - **스와이프를 통한 피드백 진행 경과**에 따라 엄선된 결과 추천 페이지 트리거
-- 엄선된 추천 결과가 준비되면 토스트 알림
+- 엄선된 추천 결과가 준비되면 토스트 알림(최대 2회)
+- 토스트를 수락하면 **엄선된 컨텐츠**로 트리거되며, 거절 시 진행 게이지 바가 초기화 됩니다.
+- 2번 거절 후 다시 진행 게이지 바를 채울 경우, 엄선된 컨텐츠 보러 가기 혹은 처음부터 다시 컨텐츠 추천 받기로 진행됩니다. 
 - 추천 결과는 한 번씩 리롫이 가능하며, 각 컨텐츠의 상세 정보 조회 및 저장 가능
 
-
-https://github.com/user-attachments/assets/a630cfd4-4dd1-4d9f-b8a6-7b9defb66c9b
-
-https://github.com/user-attachments/assets/783100d6-4069-4b64-91e7-d955b226acfb
-
-
+https://github.com/user-attachments/assets/8272de5c-2d44-4654-a334-56df89b4f474
 
 ### 4. 마이페이지 (`/mypage`)
 > 나의 선호, 구독 현황, 추천 및 활동 이력을 한 눈에 관리할 수 있는 개인화 페이지입니다.
@@ -216,27 +216,16 @@ https://github.com/user-attachments/assets/ea4ddad5-b91d-453d-acc8-08fc9f1ea69c
 https://github.com/user-attachments/assets/4d399b28-f4c9-44a6-bd8d-74f881309bb3
 
 
-### 5. 리스트 페이지 (`/list`)
+### 5. 리스트 페이지 (`/explore`)
 > 전체 콘텐츠를 필터링·검색하고 상세 정보를 확인할 수 있는 콘텐츠 탐색 페이지입니다.
 - DB 전체 콘텐츠 필터링 및 검색
-- 콘텐츠 상세 조회 제공
+- 콘텐츠 상세 조회 제공(출연진, 줄거리, 트레일러 동영상, 지원 플랫폼 등)
+- 인기 컨텐츠, 플랫폼 별 추천 컨텐츠, 요일 별 추천 컨텐츠 조회 가능
 - 상세 조회에서 해당 콘텐츠를 서비스하는 OTT로의 바로가기 지원
 
 https://github.com/user-attachments/assets/c399b362-cafd-4503-a772-63abbf15b038
 
 https://github.com/user-attachments/assets/591d4065-c45b-446f-ba4c-d041a295e808
-
-
-### 6. 백오피스 페이지 (`/admin`)
-> 콘텐츠 및 통계를 효율적으로 관리할 수 있는 관리자 전용 백오피스 페이지입니다.
-- 등록된 전체 콘텐츠 리스트 조회
-- 콘텐츠 장르 기반 필터링
-- 개별 콘텐츠 등록, 수정, 삭제 가능
-- 콘텐츠 카드 클릭 시 모달 형태로 상세 정보 조회
-
-<img width="800" height="921" alt="image" src="https://github.com/user-attachments/assets/365dc320-c791-410f-bf64-b9c5a60d915d" />
-
----
 
 ## 🧱 기술 스택
 
@@ -252,3 +241,5 @@ https://github.com/user-attachments/assets/591d4065-c45b-446f-ba4c-d041a295e808
 | **Tanstack Query + Axios**    | 서버 상태 캐싱 및 API 통신                   |
 | **Storybook**                 | 컴포넌트 문서화 및 시각 테스트               |
 | **ESLint + Prettier + Husky** | 코드 스타일 및 커밋 전 검사 자동화           |
+| **PlayWright**                | 브라우저 환경에서 자동 테스팅            |
+

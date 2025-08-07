@@ -15,7 +15,13 @@
     "prepare": "husky",
     "postinstall": "husky install",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "test:mobile": "playwright test --project=mobile-chrome",
+    "test:report": "playwright show-report"
   },
   "dependencies": {
     "@next/third-parties": "^15.4.3",
@@ -55,6 +61,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@next/eslint-plugin-next": "^15.3.5",
+    "@playwright/test": "^1.54.2",
     "@storybook/addon-docs": "^9.0.15",
     "@storybook/addon-links": "^9.0.16",
     "@storybook/addon-onboarding": "^9.0.15",

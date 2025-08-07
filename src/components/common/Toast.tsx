@@ -189,7 +189,7 @@ export const showInteractiveToast = {
                   opts.onCancel?.();
                   toast.dismiss(id);
                 }}
-                className="h-8 px-3"
+                className="h-8 px-3 text-black"
               >
                 {opts.cancelText ?? '취소'}
               </Button>

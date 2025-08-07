@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { FilterRadioButton } from '@/components/explore/FilterRadioButton';
+import { FilterRadioButton } from '@components/explore/FilterRadioButton';
 
 const meta = {
   title: 'Components/Explore/FilterRadioButton',

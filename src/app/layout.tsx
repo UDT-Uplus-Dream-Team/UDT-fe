@@ -3,12 +3,16 @@ import Providers from './providers';
 import './globals.css';
 import LayoutWrapper from './layout-wrapper';
 import { Toaster } from 'sonner';
-import { AuthToastHandler } from '@/components/common/AuthToastHandler';
+import { AuthToastHandler } from '@components/common/AuthToastHandler';
 import { GoogleAnalytics } from '@next/third-parties/google'; // 구글 애널리틱스 추가
 
 export const metadata: Metadata = {
   title: '반딧불',
   description: '30초만에 수많은 OTT 콘텐츠 숲을 밝히는 작은 빛',
+  verification: {
+    // 구글 검색 최적화 설정
+    google: '0E3RMyeSu9rwEAfCiNnkRmZII-E8a-V1MgFB5m-axfc',
+  },
 };
 
 export const viewport: Viewport = {

@@ -1,9 +1,8 @@
 // 콘텐츠 상세 정보를 보여주는 BottomSheet 컴포넌트
 
-// import { useGetContentDetail } from '@/hooks/useGetContentDetail';
 import Image from 'next/image';
-import { PlatformButton } from '@/components/explore/PlatformButton';
-import { getPlatformLogo } from '@/utils/getPlatformLogo';
+import { PlatformButton } from '@components/explore/PlatformButton';
+import { getPlatformLogo } from '@utils/getPlatformLogo';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import {
   memo,

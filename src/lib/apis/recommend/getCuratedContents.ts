@@ -1,4 +1,4 @@
-import axiosInstance from '@/lib/apis/axiosInstance';
+import axiosInstance from '@lib/apis/axiosInstance';
 import { TicketComponent } from '@type/recommend/TicketComponent';
 
 export const getCuratedContents = async (): Promise<TicketComponent[]> => {

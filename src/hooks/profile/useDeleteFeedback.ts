@@ -1,4 +1,4 @@
-import { deleteFeedback } from '@/lib/apis/profile/feedbackService';
+import { deleteFeedback } from '@lib/apis/profile/feedbackService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteFeedback = () => {

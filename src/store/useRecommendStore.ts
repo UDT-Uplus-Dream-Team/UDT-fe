@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector, devtools } from 'zustand/middleware';
-import { TicketComponent } from '@/types/recommend/TicketComponent';
+import { TicketComponent } from '@type/recommend/TicketComponent';
 
 type Phase = 'start' | 'recommend' | 'result';
 

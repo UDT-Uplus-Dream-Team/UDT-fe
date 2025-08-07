@@ -1,4 +1,4 @@
-import { getCuratedContents } from '@/lib/apis/profile/recommendService';
+import { getCuratedContents } from '@lib/apis/profile/recommendService';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import type {
   GetRecommendedContentsResponse,

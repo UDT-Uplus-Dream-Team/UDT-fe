@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { PosterCard } from '@/components/explore/PosterCard';
+import { PosterCard } from '@components/explore/PosterCard';
 
 const meta = {
   title: 'Components/Explore/PosterCard',
@@ -44,7 +44,6 @@ export const Default: Story = {
     image: '/images/poster1.webp',
     isTitleVisible: true,
     onClick: () => {
-      console.log('귀를 기울이면 포스터 클릭됨!');
       alert('귀를 기울이면 포스터가 클릭되었습니다!');
     },
   },
@@ -57,7 +56,6 @@ export const HiddenTitle: Story = {
     image: '/images/poster2.webp',
     isTitleVisible: false,
     onClick: () => {
-      console.log('고양이의 보은 포스터 클릭됨! (제목 숨김)');
       alert('고양이의 보은 포스터가 클릭되었습니다!');
     },
   },
@@ -70,7 +68,6 @@ export const LongTitle: Story = {
     image: '/images/poster3.webp',
     isTitleVisible: true,
     onClick: () => {
-      console.log('긴 제목 포스터 클릭됨!');
       alert('긴 제목 포스터가 클릭되었습니다!');
     },
   },

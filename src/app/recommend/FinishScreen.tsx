@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRecommendStore } from '@store/useRecommendStore';
 import { useQueryClient } from '@tanstack/react-query';
-import { useRefreshCuratedContents } from '@/hooks/recommend/useGetCuratedContents';
+import { useRefreshCuratedContents } from '@hooks/recommend/useGetCuratedContents';
 import { LoadingScreen } from '../../components/common/LoadingScreen';
 
 export const FinishScreen: React.FC = () => {
@@ -37,8 +37,7 @@ export const FinishScreen: React.FC = () => {
       ]);
 
       setPhase('result');
-    } catch (error) {
-      console.error('FinishScreen에서 큐레이션 콘텐츠 새로고침 실패:', error);
+    } catch {
       // 에러 발생 시에도 최소 로딩 시간 유지
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setPhase('result');

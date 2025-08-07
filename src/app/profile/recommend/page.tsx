@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, Pencil } from 'lucide-react';
-import { usePosterModal } from '@/hooks/usePosterModal';
+import { usePosterModal } from '@hooks/usePosterModal';
 import { useInfiniteCuratedContents } from '@hooks/profile/useInfiniteCuratedContents';
 import { useGetStoredContentDetail } from '@hooks/profile/useGetStoredContentDetail';
 import { PosterCard } from '@components/explore/PosterCard';

@@ -7,7 +7,7 @@ import { Button } from '@components/ui/button';
 import { useRecommendStore } from '@store/useRecommendStore';
 import { showInteractiveToast } from '@components/common/Toast';
 import { useRouter } from 'next/navigation';
-import SparkleBackground from '@/components/common/sparkle_background';
+import SparkleBackground from '@components/common/sparkle_background';
 
 interface StartScreenProps {
   onStart: () => void;

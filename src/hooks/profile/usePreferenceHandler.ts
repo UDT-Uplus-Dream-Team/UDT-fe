@@ -81,8 +81,7 @@ export const usePreferenceHandler = (
           }
 
           await clearCacheAsync();
-        } catch (error) {
-          console.error(error);
+        } catch {
           showError('설정 저장에 실패했습니다.');
         } finally {
           isToastOpen.current = false; // 확인 누른 뒤 상태 복구

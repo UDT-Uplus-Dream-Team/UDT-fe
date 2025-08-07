@@ -128,8 +128,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
 
         setMoviePool(initialMovies);
         setLoadingDelayOver(true);
-      } catch (error) {
-        console.error('초기 콘텐츠 로딩 실패:', error);
+      } catch {
         hasInitialized.current = false;
         setTimeout(() => setLoadingDelayOver(true), 2000);
       }
@@ -148,9 +147,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
       try {
         const newMovies = await fetchRecommendations(10);
         addMoviesToPool(newMovies);
-      } catch (error) {
-        console.error('추가 영화 로드 실패:', error);
-      }
+      } catch {}
     };
 
     loadMoreMovies();
@@ -213,8 +210,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
             ]);
             setResultReady(true);
             onComplete();
-          } catch (error) {
-            console.error('큐레이션 콘텐츠 새로고침 실패:', error);
+          } catch {
             setResultReady(true);
             onComplete();
           } finally {
@@ -262,9 +258,7 @@ export function RecommendScreen({ onComplete }: Readonly<RecommendProps>) {
     try {
       const movies = await fetchRecommendations(10);
       setMoviePool(movies);
-    } catch (error) {
-      console.error('재시도 실패:', error);
-    }
+    } catch {}
   };
 
   useEffect(() => {

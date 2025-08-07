@@ -7,7 +7,7 @@ import {
   COUNTRIES,
 } from '@constants/FilterData';
 import { OttCircleOption } from '@components/explore/OttCircleOption';
-import { useExploreTempFilters } from '@/hooks/useExplorePageState';
+import { useExploreTempFilters } from '@hooks/useExplorePageState';
 
 // 필터링 버튼 누를 시 표시되는 BottomSheet 콘텐츠의 내용
 export const FilterBottomSheetContent = () => {

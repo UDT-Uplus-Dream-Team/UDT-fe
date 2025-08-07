@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { OttCircleOption } from '@/components/explore/OttCircleOption';
-import { PLATFORMS } from '@/constants/FilterData';
+import { OttCircleOption } from '@components/explore/OttCircleOption';
+import { PLATFORMS } from '@constants/FilterData';
 
 const meta = {
   title: 'Components/Explore/OttCircleOption',
@@ -46,7 +46,6 @@ export const Default: Story = {
     isSelected: false,
     showLabel: false,
     onToggle: (label, isSelected) => {
-      console.log(`${label} 토글됨: ${isSelected}`);
       alert(`${label}가 ${isSelected ? '선택' : '해제'}되었습니다!`);
     },
   },
@@ -59,7 +58,6 @@ export const Selected: Story = {
     isSelected: true,
     showLabel: true,
     onToggle: (label, isSelected) => {
-      console.log(`${label} 토글됨: ${isSelected}`);
       alert(`${label}가 ${isSelected ? '선택' : '해제'}되었습니다!`);
     },
   },

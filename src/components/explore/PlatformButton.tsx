@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@components/ui/avatar';
 import { PlatFormButtonProps } from '@type/profile/Mypage';
 import { Button } from '../ui/button';
 

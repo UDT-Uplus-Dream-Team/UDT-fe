@@ -27,6 +27,7 @@ interface ReissueResult {
 /* -------------------------------------------------------------------------- */
 const PUBLIC_PATHS = ['/_next', '/favicon.ico', '/fonts', '/images', '/icons'];
 
+// ADMIN 역할 제거 - ROLE_USER와 ROLE_GUEST만 허용
 const ROLE_RESTRICTIONS = {
   ROLE_GUEST: {
     allowed: ['/survey'],
@@ -36,11 +37,11 @@ const ROLE_RESTRICTIONS = {
     allowed: [],
     denied: ['/survey'],
   },
-  ROLE_ADMIN: {
-    allowed: ['/admin'],
-    denied: [],
-  },
 } as const;
+
+// 허용된 역할 목록
+const ALLOWED_ROLES = ['ROLE_USER', 'ROLE_GUEST'] as const;
+type AllowedRole = (typeof ALLOWED_ROLES)[number];
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
@@ -59,39 +60,47 @@ function isStaticPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((path) => pathname.startsWith(path));
 }
 
-function hasPermission(role: string, pathname: string): boolean {
-  const restrictions =
-    ROLE_RESTRICTIONS[role as keyof typeof ROLE_RESTRICTIONS];
+// 역할이 허용된 역할인지 확인
+function isValidRole(role: string): role is AllowedRole {
+  return ALLOWED_ROLES.includes(role as AllowedRole);
+}
 
-  if (!restrictions) {
+function hasPermission(role: string, pathname: string): boolean {
+  // 허용되지 않은 역할인 경우 접근 거부
+  if (!isValidRole(role)) {
     return false;
   }
 
+  const restrictions = ROLE_RESTRICTIONS[role];
+
   // GUEST의 경우: allowed 목록에 있는 경로만 접근 가능
-  if (role === 'ROLE_GUEST' || role == 'ROLE_ADMIN') {
+  if (role === 'ROLE_GUEST') {
     const hasAccess = restrictions.allowed.some((path) =>
       pathname.startsWith(path),
     );
     return hasAccess;
   }
 
-  // USER, ADMIN의 경우: denied 목록에 없으면 접근 가능
-  const isDenied = restrictions.denied.some((path) =>
-    pathname.startsWith(path),
-  );
-  return !isDenied;
+  // USER의 경우: denied 목록에 없으면 접근 가능
+  if (role === 'ROLE_USER') {
+    const isDenied = restrictions.denied.some((path) =>
+      pathname.startsWith(path),
+    );
+    return !isDenied;
+  }
+
+  return false;
 }
 
 function getDefaultPath(role: string): string {
   switch (role) {
     case 'ROLE_GUEST':
       return '/survey';
-    case 'ROLE_ADMIN':
-      return '/admin';
     case 'ROLE_USER':
       return '/recommend';
     default:
-      return '/recommend';
+      // 허용되지 않은 역할의 경우 루트로 이동
+      return '/';
   }
 }
 
@@ -109,6 +118,16 @@ async function verifyToken(token: string): Promise<TokenVerificationResult> {
       typeof payload.iat === 'number' &&
       typeof payload.exp === 'number'
     ) {
+      // 허용되지 않은 역할인 경우 무효한 토큰으로 처리
+      if (!isValidRole(payload.ROLE)) {
+        console.warn(`Invalid role detected: ${payload.ROLE}`);
+        return {
+          payload: null,
+          isExpired: false,
+          isInvalid: true,
+        };
+      }
+
       return {
         payload: payload as CustomJWTPayload,
         isExpired: false,
@@ -151,7 +170,7 @@ async function verifyToken(token: string): Promise<TokenVerificationResult> {
 /* -------------------------------------------------------------------------- */
 async function reissueToken(request: NextRequest): Promise<ReissueResult> {
   try {
-    console.log('🔄 토큰 재발급 시도 시작');
+    console.log('토큰 재발급');
     console.log('API_BASE_URL:', API_BASE_URL);
 
     const cookieHeader = request.headers.get('cookie') || '';
@@ -240,7 +259,7 @@ export async function middleware(request: NextRequest) {
   const verification = await verifyToken(token);
 
   if (verification.payload) {
-    // 유효한 토큰이 있는 경우 권한 체크로 진행
+    // 유효한 토큰이 있는 경우 권한 체크
     if (!hasPermission(verification.payload.ROLE, pathname)) {
       const defaultPath = getDefaultPath(verification.payload.ROLE);
       const redirectUrl = addMessageToUrl(
@@ -258,7 +277,8 @@ export async function middleware(request: NextRequest) {
     const { ok, setCookie } = await reissueToken(request);
 
     if (ok) {
-      // 재발급 성공 시 같은 경로로 리다이렉트
+      // 재발급 성공 시 같은 경로로 리다이렉트하되,
+      // 재발급된 토큰의 역할도 다시 검증해야 함
       const response = NextResponse.redirect(new URL(pathname, request.url));
       if (setCookie) {
         response.headers.set('set-cookie', setCookie);
@@ -278,12 +298,12 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // 무효한 토큰인 경우
+  // 무효한 토큰인 경우 (허용되지 않은 역할 포함)
   const response = NextResponse.redirect(
     addMessageToUrl(
       new URL('/', request.url),
       'auth-invalid',
-      '유효하지 않은 인증 정보입니다.',
+      '유효하지 않은 인증 정보입니다. 다시 로그인해주세요.',
     ),
   );
   response.cookies.delete('Authorization');

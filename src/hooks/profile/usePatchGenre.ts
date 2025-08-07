@@ -1,4 +1,4 @@
-import { patchGenre } from '@/lib/apis/profile/surveyService';
+import { patchGenre } from '@lib/apis/profile/surveyService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const usePatchGenre = () => {

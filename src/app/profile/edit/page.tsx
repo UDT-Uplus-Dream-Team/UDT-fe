@@ -17,8 +17,8 @@ import {
 import { usePreferenceHandler } from '@hooks/profile/usePreferenceHandler';
 import { useGetUserProfile } from '@hooks/useGetUserProfile';
 import { showSimpleToast } from '@components/common/Toast';
-import { usePageStayTracker } from '@/hooks/usePageStayTracker';
-import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
+import { usePageStayTracker } from '@hooks/usePageStayTracker';
+import { useQueryErrorToast } from '@hooks/useQueryErrorToast';
 
 export default function EditPreferencePage() {
   // 페이지 머무르는 시간 추적 (프로필 수정 페이지 추적 / Google Analytics 연동을 위함)

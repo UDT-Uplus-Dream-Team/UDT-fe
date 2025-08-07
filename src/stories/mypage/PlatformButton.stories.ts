@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { PlatformButton } from '@/components/explore/PlatformButton';
+import { PlatformButton } from '@components/explore/PlatformButton';
 
 const meta: Meta<typeof PlatformButton> = {
   title: 'Components/PlatformButton',

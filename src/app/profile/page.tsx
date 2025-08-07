@@ -17,7 +17,7 @@ import { useGetUserProfile } from '@hooks/useGetUserProfile';
 import { Skeleton } from '@components/ui/skeleton';
 import { useLogoutHandler } from '@hooks/profile/useLogoutHandler';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
-import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
+import { useQueryErrorToast } from '@hooks/useQueryErrorToast';
 import { useMemo } from 'react';
 
 const ProfilePage = () => {

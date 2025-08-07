@@ -1,5 +1,5 @@
-import { TicketComponent } from '@/types/recommend/TicketComponent';
-import axiosInstance from '@/lib/apis/axiosInstance';
+import { TicketComponent } from '@type/recommend/TicketComponent';
+import axiosInstance from '@lib/apis/axiosInstance';
 
 // 실제로는 API에서 받아올 데이터
 let contentDataPool: TicketComponent[] = [
@@ -271,13 +271,11 @@ const fetchContents = async (
 
     // API 응답이 배열인지 확인
     if (!Array.isArray(response.data)) {
-      console.error('API 응답이 배열 형태가 아닙니다:', response.data);
       throw new Error('잘못된 API 응답 형식입니다.');
     }
 
     return response.data;
   } catch (error) {
-    console.error('API에서 콘텐츠 가져오기 실패:', error);
     throw error;
   }
 };
@@ -309,8 +307,7 @@ export const getAvailableContents = async (): Promise<TicketComponent[]> => {
 
       const newContents = await fetchContents();
       addContentDataPool(newContents);
-    } catch (error) {
-      console.error('API 호출 실패:', error);
+    } catch {
       // API 실패 시 기본 목데이터라도 사용할 수 있도록 처리
     } finally {
       isLoadingFromApi = false;
@@ -342,9 +339,7 @@ export const fetchMoreContents = async (
     const newContents = await fetchContents(limit);
     addContentDataPool(newContents);
     return newContents;
-  } catch (error) {
-    console.error('추가 콘텐츠 가져오기 실패:', error);
-
+  } catch {
     // API 실패 시 빈 배열 반환
     return [];
   }

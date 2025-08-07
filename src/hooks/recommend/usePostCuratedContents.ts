@@ -1,6 +1,6 @@
 import { postCuratedContent } from '@lib/apis/recommend/postCuratedContents';
 import { useMutation } from '@tanstack/react-query';
-import { showSimpleToast } from '@/components/common/Toast';
+import { showSimpleToast } from '@components/common/Toast';
 
 interface UsePostCuratedContentOptions {
   onSuccessCallback?: () => void;
@@ -42,8 +42,6 @@ export const usePostCuratedContent = (
     },
 
     onError: (error: Error, contentId: number) => {
-      console.error('컨텐츠 저장 실패:', error.message);
-
       options?.onOptimisticRevert?.(contentId);
       options?.onErrorCallback?.(error);
 

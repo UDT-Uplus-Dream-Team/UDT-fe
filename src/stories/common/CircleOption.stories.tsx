@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/nextjs';
-import { CircleOption } from '@/components/common/circleOption';
+import { CircleOption } from '@components/common/circleOption';
 import { CheckCircle } from 'lucide-react'; // shadcn 아이콘 예시
 
 const meta: Meta<typeof CircleOption> = {

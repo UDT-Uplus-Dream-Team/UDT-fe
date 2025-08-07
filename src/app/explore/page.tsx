@@ -9,11 +9,11 @@ import { useGetFilteredContents } from '@hooks/explore/useGetFilteredContents';
 import {
   useExploreFilters,
   useExploreInitializer,
-} from '@/hooks/useExplorePageState';
-import { PosterCardScrollBox } from '@/components/explore/PosterCardScrollBox';
-import { useFetchTodayRecommendSentence } from '@/hooks/explore/useFetchTodayRecommendSentence';
+} from '@hooks/useExplorePageState';
+import { PosterCardScrollBox } from '@components/explore/PosterCardScrollBox';
+import { useFetchTodayRecommendSentence } from '@hooks/explore/useFetchTodayRecommendSentence';
 import { usePageStayTracker } from '@hooks/usePageStayTracker';
-import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
+import { useQueryErrorToast } from '@hooks/useQueryErrorToast';
 
 export default function ExplorePage() {
   // 페이지 머무르는 시간 추적 (탐색 페이지 추적 / Google Analytics 연동을 위함)

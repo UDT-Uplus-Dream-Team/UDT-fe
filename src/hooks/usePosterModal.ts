@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FeedbackContent } from '@/types/profile/FeedbackContent';
+import { FeedbackContent } from '@type/profile/FeedbackContent';
 
 export const usePosterModal = () => {
   const [selectedPosterData, setSelectedPosterData] =

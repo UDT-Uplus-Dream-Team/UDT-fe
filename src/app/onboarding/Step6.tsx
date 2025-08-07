@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Ticket } from '@/components/Recommend/Ticket';
+import { Ticket } from '@components/Recommend/Ticket';
 import { showInteractiveToast } from '@components/common/Toast';
 import { toast } from 'sonner';
 import { MockMovies } from './moviedata';

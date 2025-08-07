@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { Ticket } from '@/components/Recommend/Ticket';
+import { Ticket } from '@components/Recommend/Ticket';
 import type { TicketComponent } from '@type/recommend/TicketComponent';
 
 const dummyMovie: TicketComponent = {

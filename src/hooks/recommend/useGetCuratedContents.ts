@@ -86,8 +86,7 @@ const fetchCuratedContentsWithFallback = async (): Promise<
 
     // API 성공했지만 데이터가 없는 경우
     return [];
-  } catch (error) {
-    console.error('큐레이션 API 오류:', error);
+  } catch {
     return [];
   }
 };

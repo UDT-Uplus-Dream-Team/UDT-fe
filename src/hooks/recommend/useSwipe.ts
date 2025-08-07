@@ -7,7 +7,7 @@ import type {
   SwipeResult,
 } from '@type/recommend/swipe';
 import type { TicketComponent } from '@type/recommend/TicketComponent';
-import { useRecommendStore } from '@/store/useRecommendStore';
+import { useRecommendStore } from '@store/useRecommendStore';
 
 interface UseSwipeOptions {
   threshold?: number;

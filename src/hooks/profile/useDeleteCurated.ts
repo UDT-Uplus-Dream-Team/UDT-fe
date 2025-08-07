@@ -1,4 +1,4 @@
-import { deleteCuratedContents } from '@/lib/apis/profile/recommendService';
+import { deleteCuratedContents } from '@lib/apis/profile/recommendService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteCurated = () => {

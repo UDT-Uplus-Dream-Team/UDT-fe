@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { patchPlatform } from '@/lib/apis/profile/surveyService';
+import { patchPlatform } from '@lib/apis/profile/surveyService';
 
 /**
  * OTT 플랫폼 목록 수정 훅

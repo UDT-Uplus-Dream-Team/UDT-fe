@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { StoredContentDetail } from '@type/profile/StoredContentDetail';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { CircleOption } from '../common/circleOption';
-import { getPlatformLogo } from '@/utils/getPlatformLogo';
+import { getPlatformLogo } from '@utils/getPlatformLogo';
 
 const fallbackUrls: Record<string, string> = {
   넷플릭스: 'https://www.netflix.com',

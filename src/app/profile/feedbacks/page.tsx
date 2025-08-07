@@ -11,7 +11,7 @@ import { useInfiniteFeedbacks } from '@hooks/profile/useInfiniteFeedbacks';
 import { useGetStoredContentDetail } from '@hooks/profile/useGetStoredContentDetail';
 import { FeedbackContent } from '@type/profile/FeedbackContent';
 import { useDeleteFeedback } from '@hooks/profile/useDeleteFeedback';
-import { usePageStayTracker } from '@/hooks/usePageStayTracker';
+import { usePageStayTracker } from '@hooks/usePageStayTracker';
 import { useDeleteToast } from '@hooks/profile/useDeleteToast';
 
 const FeedbackPage = () => {
